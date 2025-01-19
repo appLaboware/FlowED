@@ -1,125 +1,216 @@
-# `FlowED` (Flow Education-Driven)
+<p align="center">
+  <img src="./assets/FlowED.svg" alt="FlowED Logo" width="30%"/>
+</p>
 
-**FlowEd** (Flow Education-Driven - Fluxo Orientado para a Educação) é uma filosofia de gestão de projetos de software. 
+> 🚧 **FlowED ainda está em fase de protótipo!**
+>
+> Esta versão está focada na **definição conceitual e estruturação inicial**. Algumas seções podem estar **incompletas ou em revisão**.  
+> Funcionalidades, documentação detalhada e exemplos práticos ainda estão sendo desenvolvidos.  
+>
+>📌 Nesta fase, estamos estruturando:
+>
+> - 🏗 Conceitos e fundamentos globais
+> - 📄 Documentação progressiva vinculada a este README
+> - 🌍 Repositórios do ecossistema como protótipos
 
-Projetado para ambientes educacionais, desenvolvedores individuais e até equipes pequenas e médias, é adaptável a diferentes níveis de complexidade. 
+# FlowED - _Flow Education-Driven_
 
-O `FlowEd` procura simplificar e automatizar a gestão de projetos, tornando a burocracia quase transparente para o desenvolvedor.
+![Status](https://img.shields.io/badge/Status-Protótipo-orange?style=for-the-badge)
+![GitHub contributors](https://img.shields.io/github/contributors/SysDevTools/FlowED?label=Contribuidores&style=for-the-badge)
+![Metodologia](https://img.shields.io/badge/Metodologia-Gestão%20de%20Projetos-green?style=for-the-badge)
 
-O nome condiz com o seu principal objetivo: Educar equipes de desenvolvimento no uso de processos de engenharia de software.
+**FlowED** (Flow Education-Driven - Fluxo Orientado por Educação) é uma metodologia de gestão de projetos que defende:
 
-## Missão
+>**"Conceito modelado desde o início, eficiência progressiva por aprendizado próprio."**
 
-É missão deste projeto (do qual sua ajuda é bem-vinda para contribuir) oferecer uma plataforma que proporcione documentação, rastreabilidade e monitoramento, garantindo um desenvolvimento eficiente, normatizado e alinhado com as melhores práticas de engenharia. Seja para projetos simples ou para aqueles que se tornam complexos ao longo do tempo, o `FlowEd` busca atender às necessidades dos desenvolvedores, facilitando a adoção de processos estruturados sem comprometer a agilidade e a simplicidade.
+O FlowED não é uma metodologia prescritiva, mas um modelo baseado em princípios sólidos de rastreabilidade, progressividade e adaptação, garantindo um fluxo estruturado sem comprometer a autonomia e identidade dos times. Ele fornece um ponto de partida comum e evolui conforme a experiência do time e do projeto.
 
-## Logotipo
+🔎 Para mais detalhes, acesse **[Visão Geral do FlowED](./docs/pt-br/philosophy/overview.md)**
 
-<div style="text-align: center;padding-top: 30px">
+O termo **_Education-Driven_** reflete a ideia de que a educação dos _stakeholders_ é o pilar central para a evolução do projeto. A metodologia estabelece princípios e pilares essenciais desde o início, garantindo **rastreabilidade** e **progressividade**. No entanto, defende que o próprio projeto se torne a principal fonte de aprendizado contínuo para a equipe, promovendo uma evolução estruturada, adaptativa e alinhada às necessidades reais do time e do produto.
 
-   ![logo](./assets/FlowED.svg)  
+🔎 Para mais detalhes, acesse **[Filosofia do FlowED](./docs/pt-br/philosophy/philosophy.md)**
 
-</div>
+## Motivação
 
-## Estrutura de Pastas do Projeto
+O **FlowED** nasceu da experiência no ambiente acadêmico, mas se mostrou igualmente relevante para a indústria. Seu desenvolvimento foi impulsionado por lacunas observadas nas metodologias tradicionais, especialmente na dificuldade de adaptação a diferentes escopos de projetos e times, além da desconexão entre _Academia_ e _Indústria_.
 
-<pre style="line-height: 1.2; font-size: 12px;">
-📦 FlowED/
-├── 📂 assets/
-│   └── 📜 <a href="#logotipo">FlowED.svg</a>
-├── 📂 <a href="#documentação-detalhada-e-estruturada">docs/</a>
-│   └── 📂 <a href="#documentação-detalhada-e-estruturada">pt-br/</a>
-│       ├── 📂 <a href="#ciclos-de-desenvolvimento">cycles/</a>
-│       │   ├── 📜 <a href="./docs/pt-br/cycles/development.md">development.md</a>
-│       │   ├── 📜 <a href="./docs/pt-br/cycles/homologation.md">homologation.md</a>
-│       │   └── 📜 <a href="./docs/pt-br/cycles/publication.md">publication.md</a>
-│       ├── 📂 <a href="#níveis-de-implementação">levels/</a>
-│       │   ├── 📜 <a href="./docs/pt-br/levels/advanced.md">advanced.md</a>
-│       │   ├── 📜 <a href="./docs/pt-br/levels/intermediate.md">intermediate.md</a>
-│       │   └── 📜 <a href="./docs/pt-br/levels/simple.md">simple.md</a>
-│       ├── 📂 <a href="#fundamentação-e-detalhamento">philosophy/</a>
-│       │   ├── 📜 <a href="./docs/pt-br/philosophy/comparison-scrum.md">comparison-scrum.md</a>
-│       │   ├── 📜 <a href="./docs/pt-br/philosophy/dec-b-alignment.md">dec-b-alignment.md</a>
-│       │   └── 📜 <a href="./docs/pt-br/philosophy/overview.md">overview.md</a>
-│       ├── 📂 <a href="#linhas-do-tempo">timelines/</a>
-│       │   ├── 📜 <a href="./docs/pt-br/timelines/develop.md">develop.md</a>
-│       │   ├── 📜 <a href="./docs/pt-br/timelines/main.md">main.md</a>
-│       │   ├── 📜 <a href="./docs/pt-br/timelines/releases.md">releases.md</a>
-│       │   └── 📜 <a href="./docs/pt-br/timelines/user-releases.md">user-releases.md</a>
-│       └── 📜 <a href="./docs/pt-br/contrib-guide.md">contrib-guide.md</a>
-├── 📜 <a href="./.gitignore">.gitignore</a>
-├── 📜 <a href="./LICENSE">LICENSE</a>
-└── 📜 <a href="./README.md">README.md</a>
-</pre>
+Essas lacunas se manifestam de maneiras distintas na indústria e na academia, criando desafios específicos que dificultam a adoção de metodologias eficazes. Isso pode ser observado em dois paradoxos:
 
-## Filosofia do FlowED
+🔧 **Na indústria**: Pequenos projetos evitam metodologias porque são burocráticas demais, mas, quando crescem, não possuem rastreabilidade suficiente para adotá-las.
 
-A filosofia do `FlowED` é baseada em três pilares fundamentais:
+🎓 **Na academia**: A complexidade dos métodos e a falta de estrutura prática impedem que alunos experimentem a gestão de projetos de forma realista.
 
-1. **Padronização e Simplicidade:**
-   O `FlowED` oferece um fluxo de trabalho claro, padronizado e simplificado. Seu objetivo é facilitar a entrada de novos desenvolvedores e manter um padrão consistente de qualidade e documentação, adaptando-se rapidamente a diferentes cenários e equipes de diversos níveis de experiência. Ele é ideal tanto para projetos em andamento quanto para novos projetos que exigem uma curva de aprendizado rápida.
+🔎 Para uma análise detalhada das lacunas metodológicas que motivaram a criação do FlowED, incluindo os paradoxos enfrentados pela indústria e pela academia, acesse **[A Motivação por Trás do FlowED](./docs/pt-br/philosophy/motivation.md)**
 
-2. **Granularidade e Automação:**
-   O `FlowED` promove a granularidade nos commits e o uso de branches desacopladas para diferentes fases de desenvolvimento, documentação e monitoramento. Isso permite que todos os commits sejam preservados, enquanto cada branch tem um nível específico de detalhe para diferentes finalidades. O [Dec-B](https://github.com/SysDevTools/Dec-B), criado para complementar o `FlowED`, gerencia não só o versionamento de código em si como também a infraestrutura, utilizando práticas de IAC (Infrastructure as Code) para automatizar a todo o ciclo de desenvolvimento e operações, sendo uma implementação dos principais processos de DevOps.
+### O manifesto FlowED
 
-3. **Progressividade e Flexibilidade:**
-   O `FlowED` define claramente as ações necessárias, mas oferece flexibilidade na escolha das ferramentas e na implementação das estratégias. Ele suporta desde projetos simples com um único desenvolvedor até equipes que trabalham em múltiplas features e releases, com diferentes cenários de infraestrutura, tanto local quanto remota.
+A partir de reflexões sobre as motivações que produziram os conceitos do FlowED, um manifesto foi criado para defender pilares e princípios. O Manifesto FlowED documenta os pilares e princípios da metodologia, consolidando sua filosofia em um formato independente. Embora seja um documento autônomo, ele se mantém alinhado e integrado ao FlowED.
 
-### Fundamentação e Detalhamento
+🔎 Para mais detalhes, acesse **[http://flowedmanifest.org].**
 
-A fundamentação do `FlowED` é útil para entender como ele foi construído e em que bases ele se apoia. Abaixo, você encontrará comparações com metodologias consagradas e o alinhamento com ferramentas como o `Dec-B` (feita para este projeto), que complementam e potencializam a aplicação desta filosofia.
+## Como Funciona
 
-[Neste documento](./docs/pt-br/philosophy/overview.md) você pode encontrar fundamentos, referências e detalhamento sobre a filosofia do `FlowED`, incluindo como ela se diferencia e se inspira em metodologias consagradas como Scrum, FDD, ASD e TDD.
+### 🔹 Introdução: os Níveis de Implantação no FlowED  
 
-- **[Comparação com Scrum e outras metodologias](./docs/pt-br/philosophy/comparison-scrum.md)**: O `FlowED` compartilha várias características com o Scrum, especialmente na sua ênfase na colaboração e na iteração contínua. No entanto, o `FlowED` se diferencia ao oferecer uma abordagem mais flexível e progressiva, que pode ser adaptada a diferentes níveis de complexidade e tamanhos de equipe. Enquanto o Scrum é altamente estruturado e prescritivo, o `FlowED` permite maior flexibilidade na escolha de ferramentas e métodos, facilitando a adoção em ambientes educacionais e em projetos menores ou com equipes inexperientes.
+O FlowED define **três níveis progressivos de implantação**, permitindo que projetos e times adotem um modelo compatível com sua complexidade e necessidade de rastreabilidade. Cada nível mantém **princípios comuns** desde o início, mas evolui progressivamente em termos de versionamento, gestão e documentação.  
 
-- **[Alinhamento com Dec-B](./docs/pt-br/philosophy/dec-b-alignment.md)**: O [Dec-B](https://github.com/SysDevTools/Dec-B) é uma ferramenta essencial para a implementação do `FlowED`, especialmente em relação ao versionamento de código e de infraestrutura. Ele automatiza os comandos Git, alinhando-os com os ciclos de desenvolvimento e publicação do `FlowED`. O [Dec-B](https://github.com/SysDevTools/Dec-B) facilita a granularidade dos commits e o uso de branches desacopladas, conforme defendido pelo `FlowED`, garantindo que cada fase do desenvolvimento seja registrada e documentada adequadamente, sem sobrecarregar o desenvolvedor com tarefas manuais repetitivas. Com o [Dec-B](https://github.com/SysDevTools/Dec-B), a filosofia do `FlowED` pode ser implementada de maneira mais eficaz e eficiente, assegurando que a rastreabilidade e a qualidade sejam mantidas ao longo de todo o ciclo de vida do projeto.
+> **Os níveis não são permanentes.** Um projeto pode iniciar como _Mono Dev_ e, conforme cresce ou novas necessidades surgem, pode adotar práticas do _Mono Release Dev_ ou _Feature Dev_. A transição entre níveis ocorre naturalmente conforme a maturidade do time e do produto, sendo documentada nos changelogs e nos registros de evolução do projeto.
 
-## Objetivos do FlowED
+### 🏗️ **Níveis de Implantação**  
 
-A partir destes pilares, o `FlowED` tem como objetivos:
+🔹 **Mono Dev** → Desenvolvedor Único.  
+ No nível mais básico, o desenvolvedor trabalha com **uma história local** e **uma história remota**, garantindo versionamento desde o início. A branch local funciona como um ambiente **de desenvolvimento isolado**, enquanto a branch remota representa a versão **em produção**.  
 
-1. Facilitar a entrada e a saída de desenvolvedores.
-2. Garantir a qualidade e a rastreabilidade do código.
-3. Promover a eficiência e a colaboração.
-4. Simplificar a gestão de projetos sem comprometer a qualidade.
-5. Adaptar-se a diferentes níveis de complexidade de forma progressiva.
-6. Educar, condicionar e facilitar o uso de desenvolvimento documentado e padronizado.
-7. Ser uma porta de entrada para princípios e filosofias ágeis como XP e DevOps.
+- O ambiente de desenvolvimento é padronizado utilizando **ambiente isolado, reproduzível e armazenável**.  
+- O fluxo de trabalho mantém um **ciclo estruturado**, permitindo rastreabilidade desde o primeiro commit.  
+- Sem necessidade de sincronização entre múltiplos desenvolvedores, mas com histórico rastreável e documentação mínima.  
+- **Documentação mínima exigida**, com backlog e changelog obrigatórios, permitindo transições rastreáveis entre níveis.  
 
-## Níveis de Implementação
+🔹 **Mono Release Dev** → Pequenos times com divisão de tarefas estruturada.  
+ A estrutura evolui para permitir **colaboração entre desenvolvedores**. Tem todas as características da anterior, mas adiciona **branches temporárias** para cada release, garantindo uma organização modular do desenvolvimento.  
 
-O `FlowED` é flexível e adaptável a diferentes níveis de complexidade nos projetos, permitindo que equipes escolham o nível mais adequado para suas necessidades.
+- Introdução de **cerimônias de início e conclusão de releases**.  
+- Cada desenvolvedor trabalha em um ambiente isolado como no nível anterior, mas em uma branch de _Release_.  
+- Atualizações intermediárias (antes do final de release) são enviadas diretamente para a branch do release remoto sempre que necessário.  
 
-1. **Nível 1: Implementação Simples**
-   - Ideal para desenvolvedores individuais ou projetos muito pequenos.
-   - Utiliza uma única linha do tempo local e remota.
-   - [Detalhes do Nível 1](./docs/pt-br/levels/simple.md)
+🔹 **Feature Dev** → Equipes maiores e desenvolvimento distribuído por features.  
+ Neste nível, cada **release se fragmenta em múltiplas features**, operando de forma independente. As features funcionam como **sub-releases**, permitindo desenvolvimento escalável.  
 
-2. **Nível 2: Implementação Intermediária**
-   - Adequado para pequenas equipes ou projetos que começam simples e se tornam mais complexos.
-   - Inclui uma linha do tempo de release, permitindo maior granularidade no controle de versões.
-   - [Detalhes do Nível 2](./docs/pt-br/levels/intermediate.md)
+- Cada **feature** recebe um fluxo semelhante ao de um **release** no nível anterior.  
+- Permite **múltiplos níveis de subdivisão**, criando um modelo dinâmico que pode escalar conforme a complexidade do projeto.  
+- Estrutura altamente modular, facilitando a rastreabilidade e permitindo a adoção de subfeatures conforme necessário.  
 
-3. **Nível 3: Implementação Avançada**
-   - Para equipes que trabalham em múltiplas features e releases simultâneas.
-   - Requer coordenação entre várias linhas do tempo e branches desacopladas.
-   - [Detalhes do Nível 3](./docs/pt-br/levels/advanced.md)
+🔎 Para uma análise detalhada sobre os níveis de desenvolvimento acesse **[Estratégias de Implantação](./docs/pt-br/adoption/implementation_levels.md)**  
 
-## Linhas do Tempo
+No FlowED, essa **progressão não acontece de forma abrupta**, mas sim documentada e rastreável. A evolução de um projeto ou time ocorre de forma iterativa, e cada mudança nos ciclos deve ser acompanhada por **changelogs, backlog e documentação mínima**, garantindo transparência e continuidade.
 
-O `FlowED` adota uma abordagem de múltiplas linhas do tempo desacopladas para gerenciar o desenvolvimento e a evolução do software.
+> **A experiência acumulada pelo time e pelo projeto se torna parte do conhecimento estruturado da equipe, servindo como referência para novos integrantes e garantindo evolução contínua sem comprometer identidade ou rastreabilidade.**  
 
-- **[Linha do Tempo da Main](./docs/pt-br/timelines/main.md)**
-- **[Linha do Tempo da Develop](./docs/pt-br/timelines/develop.md)**
-- **[Linhas do Tempo das Releases](./docs/pt-br/timelines/releases.md)**
+**A metodologia se estrutura em quatro ciclos principais**, que funcionam tanto como base para o ciclo de vida de um projeto quanto como _templates_ para novos projetos que adotam o FlowED:
 
-## Ciclos de Desenvolvimento
+### 🔄 **Ciclos do FlowED**  
 
-O desenvolvimento no `FlowED` é organizado em ciclos claros, cada um com objetivos específicos e etapas bem definidas.
+Os quatro ciclos do FlowED estruturam o desenvolvimento e a gestão do projeto, mas **não são estáticos nem obrigatoriamente sequenciais**. Dependendo do contexto, um projeto pode iniciar já com processos de desenvolvimento contínuo, enquanto outro pode passar por várias iterações na fase de prototipagem antes de evoluir.
 
-- **[Ciclo de Desenvolvimento](./docs/pt-br/cycles/development.md)**
-- **[Ciclo de Homologação](./docs/pt-br/cycles/homologation.md)**
-- **[Ciclo de Publicação](./docs/pt-br/cycles/publication.md)**
+> **A progressão entre ciclos é guiada pela necessidade do time e pela maturidade do projeto, mantendo rastreabilidade e adaptabilidade conforme a equipe define suas práticas.**  
+
+Os **quatro ciclos** servem como base para todos os **ciclos de vida do projeto** e como _template_ para novos projetos que seguem essa mesma estrutura progressiva:
+
+1️⃣ **Prototipagem** – Construção livre do conceito inicial, focada em experimentação e validação de ideias.  
+2️⃣ **Implantação** – Organização inicial do ambiente, definição de fluxos e adoção do modelo de versionamento adequado ao escopo do time e do projeto.  
+3️⃣ **Desenvolvimento** – Evolução iterativa do código, baseada nos princípios do FlowED e adaptada às necessidades do projeto.  
+4️⃣ **Homologação** – Validação final, refinamento e preparação para o ambiente de produção.  
+
+🔎 Para uma análise detalhada dos ciclos consulte **[Fluxo de Desenvolvimento no FlowED](./docs/pt-br/adoption/development_cycles.md)**  
+
+#### **Mudanças e Adaptação dos Ciclos**  
+
+ O **FlowED** **não impõe uma transição obrigatória entre ciclos**, pois cada equipe e projeto evolui de acordo com sua própria experiência. No entanto, a metodologia fornece **critérios rastreáveis e um modelo inicial sólido**, permitindo que a progressão ocorra de maneira orgânica, sem burocracia imposta.  
+
+ > **A rastreabilidade é garantida por changelogs, backlog e documentação mínima obrigatória**, assegurando que qualquer mudança de ciclo seja documentada e acessível para todos os envolvidos.  
+
+ Esse modelo assegura que:
+
+- Cada equipe se **autoeduque**, evoluindo naturalmente conforme suas necessidades e registrando suas adaptações.
+- A adaptação aos diferentes **tamanhos de equipe** ocorra de forma fluida, garantindo que projetos pequenos cresçam sem barreiras e que times maiores escalem sem engessamento.
+- As alterações nos ciclos sejam **revisadas e justificadas**, garantindo um aprendizado progressivo, sem perda de identidade ou boas práticas.  
+
+### 🔹 Conclusão: Rastreabilidade, progressividade e adaptabilidade com autonomia
+
+ O **FlowED** permite que cada projeto cresça **sem limitações artificiais**, mantendo flexibilidade sem comprometer a rastreabilidade. Seu modelo se baseia em **princípios sólidos**, mas a evolução **é conduzida pelo próprio projeto e pelo aprendizado contínuo do time**.
+
+ > **A estrutura é flexível, mas não arbitrária: a documentação e a rastreabilidade garantem que o progresso seja estruturado, consciente e alinhado com os objetivos do projeto.**
+
+## 🌍 Ecossistema FlowED  
+
+O `FlowED` possui um ecossistema integrado que cobre **versionamento, documentação, infraestrutura e processos de desenvolvimento**, garantindo que todas as fases do projeto sejam rastreáveis e estruturadas desde o início.  
+
+Os projetos do ecossistema foram projetados para funcionar de forma **independente ou integrada**, permitindo que cada equipe adote apenas os elementos necessários para seu contexto. Cada repositório fornece **ferramentas práticas** para implementar os princípios fundamentais da metodologia.  
+
+> **A metodologia prioriza a adoção dos conceitos essenciais desde o início do projeto, garantindo que as boas práticas sejam incorporadas progressivamente e refinadas conforme a equipe evolui.**  
+
+### 🚀 **Por que um ecossistema integrado?**
+
+- Desde o início, todos os projetos aplicam **os princípios da engenharia de software**, independentemente do nível de maturidade do time.  
+- O objetivo não é impor um modelo rígido, mas fornecer **uma base rastreável** para que projetos evoluam sem perder coerência.  
+- A eficiência **não é um pré-requisito inicial**, mas uma **consequência natural do aprendizado e da experiência acumulada**.  
+
+A seguir, os repositórios que compõem o ecossistema do `FlowED` e como cada um se alinha à metodologia.  
+
+### [ISO29110-Lite](https://github.com/SysDevTools/ISO29110-Lite)  
+
+ Adapta e simplifica a norma **ISO/IEC 29110**, fornecendo um modelo de documentação e rastreabilidade adequado a projetos de diferentes tamanhos. No `FlowED`, o **ISO29110-Lite** garante que a documentação evolua junto com o projeto, sem sobrecarga, estruturando processos desde o início.  
+
+ Além do [README](https://github.com/SysDevTools/ISO29110-Lite/README.md) do repositório, mais informações sobre sua integração com o `FlowED` estão disponíveis em:  
+🔹 **[FlowED <-> ISO29110-Lite](./docs/pt-br/philosophy/iso29110-lite-alignment.md)**  
+
+### [WSL-PortableEnv](https://github.com/SysDevTools/WSL-PortableEnv)  
+
+ Proporciona ambientes de desenvolvimento isolados, versionáveis e portáveis. No `FlowED`, garante que cada projeto tenha um ambiente reprodutível, evitando inconsistências entre desenvolvimento, homologação e produção.  
+
+ Ele permite que times trabalhem com configurações padronizadas e replicáveis, garantindo rastreabilidade e estabilidade desde o início do projeto.
+
+ Através de templates disponibilizados no repositório, cria a cultura do versionamento, da padronização, do isolamento e da reprodutividade do ambiente de desenvolvimento, adicionando-o ao versionamento e controles do projeto.
+
+ > **A metodologia defende que um ambiente de desenvolvimento deve ser completamente portável, reprodutível e versionável Assim, todo o poder e eficiência de um ambiente deve primeiramente satisfazer a sua portabilidade.**
+
+ Além do [README](https://github.com/SysDevTools/WSL-PortableEnv/README.md) do repositório, mais informações sobre sua integração com o `FlowED` estão disponíveis em:  
+🔹 **[FlowED <-> WSL-PortableEnv](./docs/pt-br/philosophy/wsl-portableenv-alignment.md)**  
+
+### [Dec-B](https://github.com/SysDevTools/Dec-B)  
+
+ O `Dec-B` é, ao mesmo tempo, um workflow estruturado para versionamento e um framework auxiliar para automação de `Git`. No `FlowED`, ele padroniza processos de versionamento, garantindo que a rastreabilidade e a organização do código evoluam de maneira estruturada e progressiva.  
+
+ Diferente de ferramentas que impõem abstrações sobre o `Git`, o `Dec-B` auxilia sem acoplar. Ele sugere fluxos padronizados, verifica se os comandos seguem as boas práticas do `FlowED` e fornece um **wizard interativo**, permitindo que desenvolvedores iniciantes executem operações complexas de forma progressiva. À medida que ganham experiência, podem substituir o `Dec-B` pelo `Git` puro sem fricção.  
+
+ O `Dec-B` contém comandos específicos alinhados com o `FlowED`, garantindo padronização em:  
+🔹 Nomenclatura e ciclo de vida das branches.  
+🔹 Estrutura mínima obrigatória de backlog e changelog.  
+🔹 Automação de processos como início e encerramento de releases e features.  
+
+ Além do [README](https://github.com/SysDevTools/Dec-B/README.md) do repositório, mais informações sobre sua integração com o `FlowED` estão disponíveis em:  
+🔹 **[FlowED <-> Dec-B](./docs/pt-br/philosophy/dec-b-alignment.md)**  
+
+## Por onde começar
+
+O **FlowED** não exige ferramentas específicas, mas oferece um fluxo estruturado para que qualquer projeto possa evoluir progressivamente.
+Quem desejar pode seguir o método manualmente, enquanto quem busca eficiência pode contar com a automação do **Dec-B**.
+Assim, para adotar a metodologia do **FlowED** em um projeto, há dois caminhos recomendados e mantidos pos este repositório:
+
+1️⃣ **Usando o Dec-B** (automação recomendada) → O `Dec-B` verifica a existência de um repositório remoto, estrutura o versionamento inicial e clona os templates do `ISO29110-Lite` para configurar a documentação mínima necessária.
+
+2️⃣ **Configuração manual** → Seguindo a estrutura metodológica do `FlowED`, o repositório pode ser montado manualmente, garantindo que os documentos essenciais sejam incluídos e versionados corretamente.
+
+### 🔹 Automação com Dec-B
+
+ Se estiver usando o **Dec-B**, a criação do repositório `FlowED` ocorre automaticamente ao iniciar um novo projeto. O `Dec-B`:
+
+✅ Verifica se o repositório já existe e está configurado corretamente.
+
+✅ Clona os templates do `ISO29110-Lite` e gera os **POP’s** iniciais necessários para a rastreabilidade do projeto. 
+
+✅ Define as **branches base** conforme o nível de implantação escolhido (`Mono Dev`, `Mono Release Dev` ou `Feature Dev`). 
+
+✅ Organiza a **documentação inicial** (`README.md`, `CHANGELOG.md`, `BACKLOG.md`). 
+
+✅ Proporciona comandos para versionamento contínuo dos documentos.
+
+🔎 Para uma análise detalhada essa abordagem, consulte **[Automação com Dec-B](./docs/pt-br/adoption/dec-b-integration.md)**
+
+### 🔹 Configuração Manual
+
+Se preferir seguir o **FlowED** sem automação, os mesmos princípios podem ser aplicados manualmente:
+
+1️⃣ Criar a estrutura base do repositório seguindo os padrões do `FlowED`.
+
+2️⃣ Adicionar os arquivos essenciais (`README.md`, `CHANGELOG.md`, `BACKLOG.md`).
+
+3️⃣ Clonar ou adaptar os templates do `ISO29110-Lite` manualmente.
+
+4️⃣ Configurar o fluxo de versionamento com base no nível de implantação adotado.
+
+🔎 Para uma análise detalhada sobre essa abordagem, consulte **[Estrutura manual de um projeto FlowED](./docs/pt-br/adoption/manual-setup.md)**
 
 ## Contribuição
 
@@ -138,7 +229,7 @@ Para mais detalhes sobre como contribuir, consulte o [Guia de Contribuição](./
 
 ## Contato
 
-Para dúvidas ou sugestões, entre em contato através do email: contato@flowed.org
+Para dúvidas ou sugestões, entre em contato através do email: <contato@flowed.org>
 
 ---
 
