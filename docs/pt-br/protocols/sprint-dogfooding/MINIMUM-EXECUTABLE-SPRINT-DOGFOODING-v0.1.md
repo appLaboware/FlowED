@@ -11,22 +11,26 @@ Define the minimum executable sprint flow required to test FlowED governance in 
 
 The flow MUST make execution measurable, traceable, criticizable, reproducible when applicable, and capable of improving its own templates and rules cycle by cycle.
 
+FlowED does not transfer organizational responsibility from humans to AI assistants. When adopted in LaboWare, the responsible human remains the role holder and quality gate; the AI operates inside that human's execution capacity.
+
 ## 2. Minimum flow
 
 ```text
-REQUESTER
-  -> DEMAND
+HUMAN SUPERIOR / REQUESTER
+  -> FORMAL DEMAND / INBOX
   -> REFERENCE VALIDATION
+  -> SESSION RESUMPTION FROM MATERIALIZED STATE
   -> VIEWPOINT ANALYSIS
-  -> PO RECONCILIATION
+  -> RESPONSIBLE HUMAN + AI ASSISTANT RECONCILIATION
   -> SPRINT CONTRACT
   -> CONTEXT MANIFEST
   -> ROLE-SPECIFIC RULE COMPILATION
-  -> EXECUTION
-  -> EXECUTION RECORD + EVIDENCE
+  -> EXECUTION / DELEGATION
+  -> CHAT LINEAGE + EXECUTION RECORD + EVIDENCE
   -> QUALITY CHECK
-  -> DELIVERY
-  -> REQUESTER FEEDBACK
+  -> RESPONSIBLE HUMAN GATE
+  -> FORMAL DELIVERY / OUTBOX
+  -> REQUESTER / SUPERIOR FEEDBACK
   -> MULTI-VIEWPOINT CLOSEOUT
   -> METRICS
   -> DECISION / LEARNING
@@ -40,7 +44,8 @@ Each relevant artifact MUST have identity and version.
 
 ```text
 SPRINT
-├── DEMAND
+├── DEMAND / INBOX REF
+├── CHAT-LINEAGE REF
 ├── VIEWPOINT-INPUTS
 ├── PO-RECONCILIATION
 ├── SPRINT-CONTRACT
@@ -48,11 +53,14 @@ SPRINT
 ├── ROLE-COMPILED-RULES
 ├── EXECUTION-RECORD
 ├── EVIDENCE
+├── FORMAL DELIVERY / OUTBOX REF
 ├── REQUESTER-FEEDBACK
 ├── MULTI-VIEWPOINT-CLOSEOUT
 ├── METRICS
 └── DECISION / LEARNING RECORD
 ```
+
+The concrete mailbox format is owned by the communication domain when InterMembers is adopted. FlowED only requires resolvable lineage between request, working conversation and formal delivery.
 
 ## 4. Context Manifest
 
@@ -63,12 +71,20 @@ Minimum structure:
 ```yaml
 context_id:
 context_version:
+session_id:
+human_role:
+ai_assistant_binding:
+superior:
+subordinates: []
 mission:
 scope:
 authoritative_sources: []
 applicable_rules: []
 adopted_affinities: []
 known_decisions: []
+current_inbox_ref:
+current_chat_ref:
+last_chat_turn_ref:
 input_artifacts: []
 output_contract:
 acceptance_tests: []
@@ -78,7 +94,49 @@ escalation_path:
 unresolved_references: []
 ```
 
-## 5. Verify Before Propagate
+## 5. Session resumption rule
+
+A work session MUST be materially initialized before the AI runtime is asked to operate.
+
+The first runtime invocation is semantically a resumption, not an empty project genesis conversation.
+
+```text
+SUPERIOR / BOOTSTRAP / PROJECT INITIALIZER
+        -> materializes session state
+        -> binds AI runtime
+        -> AI resolves identity / mission / authority / current demand
+        -> work resumes
+```
+
+FlowED requires the resumed session to resolve enough state to execute safely; it does not own the physical session-instantiation mechanism.
+
+## 6. Human responsibility and quality gate
+
+The organizational role belongs to the responsible human.
+
+Delegation and AI assistance distribute execution but do not transfer the responsibility that the human owes to the superior.
+
+Before formal OUTBOX delivery, the responsible human layer acts as a gate:
+
+```text
+SUBORDINATE DELIVERY
+      -> RESPONSIBLE HUMAN REVIEW
+      -> ACCEPT / RETURN / ESCALATE
+      -> ONLY ACCEPTED WORK MAY BE INTEGRATED UPWARD
+```
+
+For a hierarchy:
+
+```text
+DEV
+ -> PM GATE
+ -> PO GATE
+ -> MPO GATE
+```
+
+AI role compilation MUST support the human in exercising this gate, including critique, evidence checking, rejection recommendations, clarification and subordinate-work review.
+
+## 7. Verify Before Propagate
 
 Names, products, protocols, files, commands, versions, roles, identifiers, rules and operational facts MUST be resolved before propagation when they materially affect execution.
 
@@ -90,7 +148,7 @@ MARK UNKNOWN BEFORE GUESS.
 
 Unresolved critical references MUST trigger `UNKNOWN`, clarification or STOP according to their impact.
 
-## 6. Versioned templates
+## 8. Versioned templates
 
 Recurring questions and operational forms SHOULD come from versioned templates so their efficiency can be compared across cycles.
 
@@ -118,21 +176,23 @@ execution_id:
 answers:
 ```
 
-## 7. Role-specific compilation
+## 9. Role-specific compilation
 
-Applicable authority MUST be reconciled before execution and projected to the target role.
+Applicable authority MUST be reconciled before execution and projected to the target AI assistant role.
+
+A role such as `PO`, `PM` or `DEV` in AI compilation means "assistant behavior for the human occupying that role", unless another owning domain explicitly defines otherwise.
 
 ```text
 AUTHORITATIVE POLICIES
 + SPRINT CONTRACT
 + CONTEXT MANIFEST
-+ ROLE
-+ TARGET
++ HUMAN ROLE
++ AI ASSISTANT TARGET
         -> RULE COMPILATION
         -> ROLE-SPECIFIC EXECUTION CONTEXT
 ```
 
-The executor MUST receive at least:
+The AI executor/assistant MUST receive at least:
 
 ```text
 MISSION
@@ -146,21 +206,21 @@ ESCALATION PATH
 REQUIRED EVIDENCE
 ```
 
-## 8. Research viewpoint
+## 10. Research viewpoint
 
 Research MUST operate in two directions.
 
-### 8.1 Forward research
+### 10.1 Forward research
 
 Evaluate whether the sprint can generate generalizable knowledge, including hypothesis, experiment, benchmark, dataset, comparison, replication, case study, systematic review/mapping opportunity, paper, dissertation or thesis opportunity.
 
-### 8.2 Foundational research
+### 10.2 Foundational research
 
 Search for theories, theses, standards, methods and prior art that support, contradict, refine or eliminate the need for proprietary work.
 
 Research does not decide adoption. It produces evidence for the competent authority.
 
-## 9. Inspiration and affinity
+## 11. Inspiration and affinity
 
 `INSPIRATION` does not create a conformity obligation.
 
@@ -188,7 +248,29 @@ REQUIRES_REMEDIATION
 INCOMPATIBLE
 ```
 
-## 10. Execution Record
+## 12. CHAT lineage between INBOX and OUTBOX
+
+When a communication provider supports or requires conversational work between formal request and formal delivery, that conversation MUST be persistently correlated.
+
+FlowED requires this logical relationship:
+
+```text
+INBOX / DEMAND
+   -> CHAT TURN(S)
+   -> OUTBOX / DELIVERY
+```
+
+If InterMembers is adopted, InterMembers owns the concrete CHAT mailbox contract, naming and provider mapping.
+
+FlowED consumes only the stable facts that:
+
+- the root demand is resolvable;
+- the chronological working conversation is reconstructable;
+- session/runtime interruptions do not erase the work lineage;
+- the final OUTBOX is correlated to the originating INBOX;
+- provider-native chat history is not the sole authoritative memory of the work.
+
+## 13. Execution Record
 
 The execution log MUST be structured rather than only free text.
 
@@ -197,8 +279,8 @@ execution_id:
 sprint_id:
 demand_id:
 actor_id:
-role:
-runtime:
+human_role:
+ai_runtime:
 model:
 template_versions: {}
 contract_version:
@@ -218,6 +300,7 @@ tests_run: []
 tests_passed: []
 tests_failed: []
 evidence_refs: []
+chat_lineage_ref:
 result:
 requester_feedback_ref:
 cost:
@@ -225,7 +308,7 @@ tokens:
 duration:
 ```
 
-## 11. Requester feedback
+## 14. Requester feedback
 
 Every delivery MUST receive requester feedback, immediately or correlated with a later demand.
 
@@ -244,7 +327,7 @@ requester_comment:
 
 Without requester feedback, the system can measure execution but not perceived value.
 
-## 12. Metrics
+## 15. Metrics
 
 The sprint SHOULD collect comparable metrics in at least these dimensions:
 
@@ -252,12 +335,14 @@ The sprint SHOULD collect comparable metrics in at least these dimensions:
 - process: questions, STOPs, retries, human interventions, contract violations;
 - cognition: context size, tokens, model/runtime, agentic calls;
 - quality: tests, defects, acceptance, conformance violations;
+- leadership: subordinate acceptance/rejection quality, revision cycles, escaped defects;
+- human development: repeated-explanation reduction, independently applied learned rules, recurring-error reduction;
 - economics: execution cost, accepted-outcome cost, rework cost;
 - research: hypotheses, experiments, reproducibility, benchmarks, datasets, publication opportunities.
 
 Metrics MUST distinguish real observations from simulated or estimated data.
 
-## 13. Self-observation
+## 16. Self-observation
 
 An observability/logging tool SHOULD be capable of observing its own operation without special-case semantic bypass.
 
@@ -277,13 +362,15 @@ if tool == "log":
     bypass normal architecture
 ```
 
-## 14. Multi-viewpoint closeout
+## 17. Multi-viewpoint closeout
 
 Sprint closeout MUST allow independent analysis before authoritative reconciliation. Typical viewpoints include Product, Engineering, Quality, Marketing and Research; other viewpoints may be added when the domain requires them.
 
 Viewpoints MAY disagree. Conflict MUST be recorded before PO reconciliation rather than silently collapsed.
 
-## 15. Process improvement as an experimental outcome
+The closeout must evaluate not only output quality but whether the responsible human exercised the relevant leadership/quality gate and whether assistance reduced or increased avoidable dependence.
+
+## 18. Process improvement as an experimental outcome
 
 The process itself is part of the experiment.
 
@@ -295,9 +382,9 @@ same or comparable demand
         -> measurable outcome delta
 ```
 
-Potential improvements include less context, fewer questions, fewer retries, less human intervention, lower cost, better acceptance, less rework, higher deterministic coverage and stronger traceability.
+Potential improvements include less context, fewer questions, fewer retries, less human intervention, lower cost, better acceptance, less rework, higher deterministic coverage, stronger traceability, better leadership gates and measurable human learning.
 
-## 16. Evolution rule
+## 19. Evolution rule
 
 No new abstraction should enter the executable flow merely because it appears elegant.
 
