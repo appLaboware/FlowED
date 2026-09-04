@@ -8,6 +8,7 @@ Documentos atuais:
 
 - `RBP-v0.1.md` — protocolo geral.
 - `profiles/AI-RESEARCH-v0.1.md` — perfil para repositórios de pesquisa conduzida/assistida por IA.
+- `prompts/GITHUB-ORG-REPO-BOOTSTRAP-v0.1.md` — prompt template parametrizado para criação/preparação de organização + repositório GitHub, com separação explícita entre automação, gates humanos e handoff para ChatGPT.
 
 O RBP é um protocolo de bootstrap/orquestração do FlowED. Protocolos de domínio continuam responsáveis pelo conteúdo específico. Exemplo: uma Tool pode ser formada pelo TFP; uma sessão de IA pode adotar o protocolo de IA Sessions/InterMembers; versionamento e SCM permanecem responsabilidade do domínio correspondente.
 
