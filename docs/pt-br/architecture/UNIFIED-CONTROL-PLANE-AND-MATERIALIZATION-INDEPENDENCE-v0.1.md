@@ -13,23 +13,61 @@
 
 > **FlowED busca reduzir a carga cognitiva sem eliminar a pluralidade metodológica nem centralizar a soberania dos domínios.**
 
+> **ABSTRAÇÃO PARA USO + TRANSPARÊNCIA PARA APRENDIZAGEM.**
+
 Estas afirmações constituem teses arquitetônicas, industriais e acadêmicas centrais do FlowED.
 
 Elas não significam que o FlowED implemente internamente todos os domínios. O FlowED não é um monólito funcional e não deve absorver a soberania dos componentes que coordena. Seu papel é oferecer um plano de controle comum, contratual e automatizável sobre domínios independentes.
 
 ---
 
-## 2. Consequências obrigatórias
+## 2. Missão de longo prazo — aprender uma coisa para operar muitas
 
-A tese acima implica simultaneamente as seguintes propriedades.
+A ambição de longo prazo do FlowED é deliberadamente extrema e deve funcionar como direção de projeto, ainda que sua realização integral precise ser demonstrada progressivamente:
 
-### 2.1. Plano de controle único
+> **Tornar possível que uma pessoa aprenda uma única linguagem operacional — FlowED — para operar, de forma determinística, rastreável e não aprisionante, o conjunto crescente de capacidades necessárias à engenharia e à gestão organizacional.**
+
+Em forma aspiracional:
+
+> **“Aprenda uma coisa para operar muitas — sem ficar preso a ela.”**
+
+Esta é uma missão, não uma alegação de que o objetivo já foi atingido ou de que conhecimento conceitual dos domínios deixa de ser necessário.
+
+O FlowED deve perseguir continuamente a redução do conhecimento instrumental obrigatório para executar operações recorrentes. O conhecimento profundo de Git, infraestrutura, processos, qualidade, documentação, segurança, gestão ou qualquer outro domínio continua válido, útil e acessível; o objetivo é que ele deixe de ser pré-requisito para toda operação cotidiana que possa ser expressa com segurança pelo plano de controle.
+
+### 2.1. Determinismo como direção
+
+O FlowED deve transformar decisões amadurecidas em contratos, regras, schemas, validadores, programas e automações reproduzíveis. IA/LLM pode participar de descoberta, análise e resolução de ambiguidade, mas não deve transformar variabilidade probabilística em dependência permanente quando uma regra já puder ser materializada deterministicamente.
+
+A evolução desejada é:
+
+```text
+interpretação repetida
+        ↓
+decisão comprovada
+        ↓
+contrato explícito
+        ↓
+validação
+        ↓
+automação determinística
+        ↓
+execução reproduzível
+```
+
+O objetivo é preservar conhecimento de engenharia fora da memória efêmera de pessoas, chats ou modelos probabilísticos.
+
+---
+
+## 3. Consequências obrigatórias
+
+### 3.1. Plano de controle único
 
 Toda capability operacional oficialmente exposta pelo ecossistema FlowED deve possuir acesso pelo CLI `fled` ou por uma interface programática equivalente que preserve o mesmo contrato.
 
 O `fled` é uma porta pública de orquestração. Ele não deve concentrar lógica de negócio pertencente aos bounded contexts dos componentes.
 
-### 2.2. Soberania absoluta de domínio
+### 3.2. Soberania absoluta de domínio
 
 A soberania de domínio é uma lei absoluta do FlowED.
 
@@ -43,7 +81,7 @@ Cada domínio:
 
 Um domínio consumidor deve enxergar apenas a dependência imediata que contratou.
 
-### 2.3. Composição por contratos
+### 3.3. Composição por contratos
 
 O FlowED compõe capabilities, não implementações.
 
@@ -63,7 +101,7 @@ A integração de um componente ao ecossistema deve ser declarativa e estruturad
 
 Wizard, CLI interativo, web, GitHub App, IDE, prompt e agente são projeções desses contratos, nunca sua fonte de verdade.
 
-### 2.4. Materialização independente
+### 3.4. Materialização independente
 
 O FlowED deve produzir, na ponta, artefatos nativos dos domínios e das tecnologias escolhidas, portáveis, auditáveis e utilizáveis sem o FlowED.
 
@@ -79,7 +117,7 @@ Exemplos:
 
 ---
 
-## 3. Lei absoluta de não aprisionamento
+## 4. Lei absoluta de não aprisionamento
 
 > **Nada materializado pelo FlowED, nem por qualquer cadeia de capacidades acionada por ele, pode exigir o FlowED para continuar existindo, sendo compreendido ou sendo operado no domínio de destino.**
 
@@ -89,7 +127,7 @@ Depois da materialização, o usuário deve poder remover completamente FlowED e
 
 A remoção do FlowED pode eliminar conveniências adicionais de automação, validação, reconciliação ou governança oferecidas pelo plano de controle, mas não pode invalidar artificialmente o resultado materializado.
 
-### 3.1. Homologação não é aprisionamento
+### 4.1. Homologação não é aprisionamento
 
 Se um usuário modificar diretamente um artefato nativo depois da materialização, ele continua dono e operador legítimo desse artefato.
 
@@ -112,15 +150,31 @@ Portanto:
 
 ---
 
-## 4. Redução de carga cognitiva sem apagar os domínios
+## 5. Abstração para uso + transparência para aprendizagem
+
+> **ABSTRAÇÃO PARA USO + TRANSPARÊNCIA PARA APRENDIZAGEM.**
 
 O FlowED busca reduzir o número de interfaces operacionais que uma pessoa precisa dominar para executar tarefas recorrentes em múltiplos domínios.
 
 > **Reduzir a carga cognitiva sem eliminar a pluralidade metodológica nem centralizar a soberania dos domínios.**
 
-Isso não elimina a necessidade de conhecimento conceitual dos próprios domínios.
+A abstração existe para diminuir a barreira de operação. Ela não pode esconder de forma irrecuperável o que foi produzido, inventar um universo proprietário ou impedir a aprendizagem da tecnologia real.
 
 O usuário iniciante pode operar por `fled`; o especialista pode operar diretamente sobre os mesmos artefatos nativos. Ambos devem encontrar o mesmo estado materializado, e não uma representação proprietária escondida atrás do FlowED.
+
+A progressão educacional desejada é:
+
+```text
+iniciante
+   ↓
+usa a abstração do FlowED
+   ↓
+inspeciona artefatos industriais reais
+   ↓
+compreende progressivamente os domínios
+   ↓
+pode operar diretamente a tecnologia nativa
+```
 
 Isso permite simultaneamente:
 
@@ -134,7 +188,7 @@ Isso permite simultaneamente:
 
 ---
 
-## 5. Ponte entre aprendizagem e indústria
+## 6. Ponte entre aprendizagem e indústria
 
 Uma hipótese acadêmica essencial do FlowED é reduzir o gap entre ambientes educacionais simplificados e ambientes industriais reais.
 
@@ -150,7 +204,7 @@ Essa hipótese deve ser avaliada empiricamente; não é considerada comprovada a
 
 ---
 
-## 6. Arquitetura de referência
+## 7. Arquitetura de referência
 
 ```text
 USUÁRIO / EMPRESA / PROJETO
@@ -172,7 +226,7 @@ O FlowED orquestra a composição. Cada domínio preserva sua autoridade interna
 
 ---
 
-## 7. Inspirações explícitas e princípio de adoção
+## 8. Inspirações explícitas e princípio de adoção
 
 O FlowED não deve reinventar mecanismos consolidados apenas para torná-los internos ao seu ecossistema. Deve estudar, adotar e compor capacidades existentes sempre que elas satisfizerem o contrato requerido.
 
@@ -199,13 +253,13 @@ O FlowED deve buscar utilizar, por adapters e contratos, tudo que essas referên
 
 Essas referências não transferem soberania de domínio ao FlowED. O FlowED deve consumi-las por contratos e preservar seus artefatos, formatos, contratos e expertise nativos sempre que aplicável.
 
-### 7.1. Regra Adopt Before Build
+### 8.1. Regra Adopt Before Build
 
 > **Se uma capability necessária já existir de forma madura, sustentável, contratável e compatível com a soberania de domínio e a não dependência operacional, o FlowED deve adotá-la antes de considerar implementação proprietária.**
 
 A existência de um adapter FlowED nunca justifica duplicar uma capability já consolidada.
 
-### 7.2. Materialização no formato nativo do domínio
+### 8.2. Materialização no formato nativo do domínio
 
 ```text
 fled
@@ -221,24 +275,9 @@ artefato nativo
 
 O adapter é ponte, não destino.
 
-### 7.3. FlowED como camada acima, não como substituição
-
-```text
-iniciante
-   → usa fled
-
-especialista
-   → usa diretamente a tecnologia de destino
-
-ambos
-   → trabalham sobre o mesmo artefato materializado
-```
-
-Essa propriedade diferencia orquestração de apropriação de domínio.
-
 ---
 
-## 8. Hipóteses acadêmicas associadas
+## 9. Hipóteses acadêmicas associadas
 
 ### H1 — Unified Operational Language / Cognitive Load
 
@@ -264,7 +303,7 @@ Estas hipóteses devem ser testadas; não devem ser apresentadas como comprovada
 
 ---
 
-## 9. Critério de admissão de componentes
+## 10. Critério de admissão de componentes
 
 Nenhum componente deve ser tratado como integrante maduro do ecossistema FlowED sem declarar, em nível compatível com sua maturidade:
 
@@ -284,7 +323,7 @@ Nenhum componente deve ser tratado como integrante maduro do ecossistema FlowED 
 
 ---
 
-## 10. Relação com os demais princípios do FlowED
+## 11. Relação com os demais princípios do FlowED
 
 Esta tese deve ser interpretada em conjunto com os princípios já documentados de:
 
@@ -300,10 +339,12 @@ Nenhuma dessas regras autoriza o FlowED a ultrapassar a soberania de um domínio
 
 ---
 
-## 11. Regra resumida
+## 12. Regra resumida
 
 ```text
 ONE CONTROL PLANE
++ ABSTRACTION FOR USE
++ TRANSPARENCY FOR LEARNING
 + ABSOLUTE DOMAIN SOVEREIGNTY
 + LOWER COGNITIVE LOAD WITHOUT METHODOLOGICAL MONOCULTURE
 + CONTRACT-BASED COMPOSITION
@@ -311,6 +352,7 @@ ONE CONTROL PLANE
 + NATIVE ARTIFACT MATERIALIZATION
 + EDUCATION-TO-INDUSTRY CONTINUITY
 + ABSOLUTE NON-CAPTIVE OPERATION
++ PROGRESSIVE DETERMINISM
 + OPERATIONAL EXITABILITY
 = FLOWED ARCHITECTURAL THESIS
 ```
