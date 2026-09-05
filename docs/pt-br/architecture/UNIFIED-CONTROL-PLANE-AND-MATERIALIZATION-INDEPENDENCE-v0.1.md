@@ -7,13 +7,15 @@
 
 ---
 
-## 1. Tese arquitetônica central
+## 1. Teses arquitetônicas centrais
 
 > **FlowED propõe um plano de controle único para engenharia e gestão organizacional, preservando soberania absoluta dos domínios, compondo ferramentas heterogêneas por contratos e materializando resultados portáveis que continuam utilizáveis sem dependência operacional do próprio FlowED.**
 
-Esta afirmação é uma tese arquitetônica, industrial e acadêmica central do FlowED.
+> **FlowED busca reduzir a carga cognitiva sem eliminar a pluralidade metodológica nem centralizar a soberania dos domínios.**
 
-Ela não significa que o FlowED implemente internamente todos os domínios. O FlowED não é um monólito funcional e não deve absorver a soberania dos componentes que coordena. Seu papel é oferecer um plano de controle comum, contratual e automatizável sobre domínios independentes.
+Estas afirmações constituem teses arquitetônicas, industriais e acadêmicas centrais do FlowED.
+
+Elas não significam que o FlowED implemente internamente todos os domínios. O FlowED não é um monólito funcional e não deve absorver a soberania dos componentes que coordena. Seu papel é oferecer um plano de controle comum, contratual e automatizável sobre domínios independentes.
 
 ---
 
@@ -63,40 +65,50 @@ Wizard, CLI interativo, web, GitHub App, IDE, prompt e agente são projeções d
 
 ### 2.4. Materialização independente
 
-O FlowED deve privilegiar a produção de artefatos nativos, portáveis, auditáveis e utilizáveis fora dele.
+O FlowED deve produzir, na ponta, artefatos nativos dos domínios e das tecnologias escolhidas, portáveis, auditáveis e utilizáveis sem o FlowED.
 
-Quando tecnicamente possível, um resultado produzido pelo FlowED deve continuar compreensível e operacional mesmo que o FlowED deixe de estar presente após a materialização.
+O FlowED não deve substituir um artefato nativo por um formato proprietário apenas para manter controle sobre o resultado.
 
-Exemplos de artefatos esperados:
+Exemplos:
 
-- repositórios Git;
-- Markdown;
-- YAML;
-- JSON;
-- scripts;
-- configurações;
-- pipelines;
-- estruturas de diretórios;
-- documentos;
-- contratos;
-- evidências;
-- arquivos de regras.
-
-O FlowED deve evitar criar dependência operacional desnecessária de runtime proprietário para manter funcionando algo que já poderia existir como artefato nativo.
+- Git permanece Git;
+- um container permanece um container compatível com a tecnologia escolhida;
+- Terraform/OpenTofu permanece Terraform/OpenTofu;
+- manifests Kubernetes permanecem manifests Kubernetes;
+- documentos, scripts, pipelines e configurações devem permanecer em formatos nativos ou abertos adequados ao domínio.
 
 ---
 
-## 3. Princípio de exitabilidade operacional
+## 3. Lei absoluta de não aprisionamento
 
-A materialização independente estabelece uma propriedade adicional:
+> **Nada materializado pelo FlowED, nem por qualquer cadeia de capacidades acionada por ele, pode exigir o FlowED para continuar existindo, sendo compreendido ou sendo operado no domínio de destino.**
 
-> **Um sistema gerenciado pelo FlowED deve permanecer compreensível e, sempre que tecnicamente possível, operacional após a remoção do próprio FlowED.**
+O FlowED é uma ferramenta de conforto e orquestração, não uma dependência obrigatória do resultado.
 
-Essa propriedade será tratada como **Operational Exitability**.
+Depois da materialização, o usuário deve poder remover completamente FlowED e `fled` e continuar trabalhando diretamente com os artefatos e ferramentas de destino.
 
-A exitabilidade não exige que toda conveniência de orquestração continue disponível sem o FlowED. Ela exige que os artefatos, decisões, configurações e mecanismos materializados não sejam artificialmente aprisionados ao plano de controle.
+A remoção do FlowED pode eliminar conveniências adicionais de automação, validação, reconciliação ou governança oferecidas pelo plano de controle, mas não pode invalidar artificialmente o resultado materializado.
 
-O FlowED pode agregar valor continuamente sem possuir o resultado final.
+### 3.1. Homologação não é aprisionamento
+
+Se um usuário modificar diretamente um artefato nativo depois da materialização, ele continua dono e operador legítimo desse artefato.
+
+A modificação pode tornar o estado incompatível com o contrato anteriormente homologado pelo FlowED. Nesse caso, a consequência correta é:
+
+```text
+ARTEFATO NATIVO ALTERADO
+        ↓
+VALIDAÇÃO PELO CONTRATO
+        ↓
+COMPATÍVEL?
+  ├─ SIM → permanece homologado
+  └─ NÃO → deixa de estar homologado para aquela automação
+           mas continua válido e operável no domínio nativo
+```
+
+Portanto:
+
+> **O FlowED pode negar homologação futura; nunca pode negar a propriedade, portabilidade ou operabilidade nativa do artefato materializado.**
 
 ---
 
@@ -104,24 +116,41 @@ O FlowED pode agregar valor continuamente sem possuir o resultado final.
 
 O FlowED busca reduzir o número de interfaces operacionais que uma pessoa precisa dominar para executar tarefas recorrentes em múltiplos domínios.
 
+> **Reduzir a carga cognitiva sem eliminar a pluralidade metodológica nem centralizar a soberania dos domínios.**
+
 Isso não elimina a necessidade de conhecimento conceitual dos próprios domínios.
 
-Portanto:
-
-> **FlowED reduz carga operacional sem substituir conhecimento de domínio.**
-
-O usuário pode executar uma intenção por meio de `fled`, mas os artefatos materializados devem permanecer transparentes e estudáveis nos termos dos domínios originais.
+O usuário iniciante pode operar por `fled`; o especialista pode operar diretamente sobre os mesmos artefatos nativos. Ambos devem encontrar o mesmo estado materializado, e não uma representação proprietária escondida atrás do FlowED.
 
 Isso permite simultaneamente:
 
-- abstração para uso;
+- uma linguagem operacional comum para quem deseja abstração;
+- pluralidade de metodologias e tecnologias;
 - transparência para estudo;
+- acesso direto para especialistas;
 - rastreabilidade para auditoria;
-- independência para continuidade.
+- independência para continuidade;
+- possibilidade de abandonar o FlowED sem reconstruir o projeto.
 
 ---
 
-## 5. Arquitetura de referência
+## 5. Ponte entre aprendizagem e indústria
+
+Uma hipótese acadêmica essencial do FlowED é reduzir o gap entre ambientes educacionais simplificados e ambientes industriais reais.
+
+O objetivo não é ensinar uma ferramenta didática que precise ser descartada quando o aluno chega à produção. O objetivo é permitir que a mesma linguagem operacional acompanhe o usuário enquanto os mecanismos materializados evoluem para tecnologias industriais reais.
+
+O iniciante pode receber abstração e automação. O resultado, porém, deve continuar sendo um artefato industrial nativo, que um profissional experiente reconhece e pode operar diretamente.
+
+Portanto:
+
+> **A abstração educacional do FlowED deve terminar em artefatos industriais reais, e não em substitutos pedagógicos incompatíveis com produção.**
+
+Essa hipótese deve ser avaliada empiricamente; não é considerada comprovada apenas por definição arquitetônica.
+
+---
+
+## 6. Arquitetura de referência
 
 ```text
 USUÁRIO / EMPRESA / PROJETO
@@ -132,18 +161,18 @@ USUÁRIO / EMPRESA / PROJETO
             ↓
   CONTRACT / CAPABILITY LAYER
             ↓
- ┌──────────┼───────────┬───────────┐
- ↓          ↓           ↓           ↓
-InitProj  ISO29110    Dec-B       outros
-   ↓                                  
- internos soberanos e substituíveis
+        ADAPTERS
+            ↓
+ DOMÍNIOS / TECNOLOGIAS SOBERANAS
+            ↓
+      ARTEFATOS NATIVOS
 ```
 
-O FlowED orquestra a composição. Cada domínio preserva sua autoridade interna.
+O FlowED orquestra a composição. Cada domínio preserva sua autoridade interna e o resultado permanece no domínio de destino.
 
 ---
 
-## 6. Inspirações explícitas e princípio de adoção
+## 7. Inspirações explícitas e princípio de adoção
 
 O FlowED não deve reinventar mecanismos consolidados apenas para torná-los internos ao seu ecossistema. Deve estudar, adotar e compor capacidades existentes sempre que elas satisfizerem o contrato requerido.
 
@@ -168,78 +197,66 @@ ServiceNow
 
 O FlowED deve buscar utilizar, por adapters e contratos, tudo que essas referências ou soluções equivalentes já ofereçam de forma madura e adequada ao domínio, em vez de reimplementar a mesma capability.
 
-Isto significa:
+Essas referências não transferem soberania de domínio ao FlowED. O FlowED deve consumi-las por contratos e preservar seus artefatos, formatos, contratos e expertise nativos sempre que aplicável.
 
-- Terraform/OpenTofu inspiram e podem fornecer capacidades de infraestrutura e o padrão de providers;
-- Kubernetes inspira APIs declarativas, reconciliação e extensibilidade por controllers/operators;
-- Backstage inspira catálogos, templates, descoberta e self-service orientado por contratos;
-- GitLab inspira um plano de controle integrado para o ciclo de desenvolvimento;
-- ServiceNow inspira workflows empresariais, gestão de processos e governança organizacional.
+### 7.1. Regra Adopt Before Build
 
-Essas referências não transferem soberania de domínio ao FlowED. O FlowED deve consumi-las através de adapters e preservar seus artefatos, formatos, contratos e expertise nativos sempre que possível.
-
-### 6.1. Regra Adopt Before Build
-
-> **Se uma capability necessária já existir de forma madura, sustentável, contratável e compatível com a soberania de domínio e a exitabilidade operacional, o FlowED deve adotá-la antes de considerar implementação proprietária.**
+> **Se uma capability necessária já existir de forma madura, sustentável, contratável e compatível com a soberania de domínio e a não dependência operacional, o FlowED deve adotá-la antes de considerar implementação proprietária.**
 
 A existência de um adapter FlowED nunca justifica duplicar uma capability já consolidada.
 
-### 6.2. Materialização no formato nativo do domínio
-
-O FlowED não deve substituir o artefato final de um domínio por um artefato proprietário apenas para manter controle sobre ele.
-
-Exemplos desejados:
+### 7.2. Materialização no formato nativo do domínio
 
 ```text
-fled infra ...
-   → pode materializar Terraform/OpenTofu/Pulumi/etc. nativo
-
-fled repo ...
-   → materializa Git e políticas compatíveis com o provider adotado
-
-fled project ...
-   → materializa arquivos, contratos, repositórios e estruturas nativas
+fled
+   ↓
+contrato de intenção
+   ↓
+adapter
+   ↓
+ferramenta/domínio escolhido
+   ↓
+artefato nativo
 ```
 
-O usuário experiente deve poder abandonar `fled` e continuar operando diretamente sobre o artefato nativo. O usuário que preferir o plano de controle pode continuar usando `fled` sobre o mesmo resultado por meio do adapter correspondente.
+O adapter é ponte, não destino.
 
-### 6.3. FlowED como camada acima, não como substituição
-
-A abstração oferecida pelo FlowED deve reduzir carga operacional para iniciantes sem apagar ou sequestrar os domínios subjacentes.
+### 7.3. FlowED como camada acima, não como substituição
 
 ```text
 iniciante
-   → aprende fled
-   → opera múltiplos domínios por uma linguagem comum
+   → usa fled
 
 especialista
-   → inspeciona e opera diretamente Terraform/Git/Kubernetes/etc.
+   → usa diretamente a tecnologia de destino
 
 ambos
-   → trabalham sobre os mesmos artefatos materiais
+   → trabalham sobre o mesmo artefato materializado
 ```
 
-Essa propriedade diferencia orquestração de substituição de domínio.
+Essa propriedade diferencia orquestração de apropriação de domínio.
 
 ---
 
-## 7. Hipóteses acadêmicas associadas
+## 8. Hipóteses acadêmicas associadas
 
-Esta arquitetura permite investigar formalmente, entre outras, as seguintes hipóteses.
+### H1 — Unified Operational Language / Cognitive Load
 
-### H1 — Unified Operational Language
+Uma linguagem operacional uniforme sobre múltiplos domínios pode reduzir carga cognitiva e erros de integração quando comparada à operação direta de toolchains heterogêneas, sem eliminar a pluralidade metodológica nem centralizar a soberania dos domínios.
 
-Uma linguagem operacional uniforme sobre múltiplos domínios pode reduzir carga cognitiva e erros de integração quando comparada à operação direta de toolchains heterogêneas.
+### H2 — Education-to-Industry Continuity
 
-### H2 — Sovereign Domain Composition
+Uma abstração operacional que materializa tecnologias industriais nativas pode reduzir a ruptura entre ferramentas usadas no aprendizado e ferramentas usadas em produção.
+
+### H3 — Sovereign Domain Composition
 
 Uma arquitetura baseada em contratos e soberania absoluta de domínio pode permitir substituição de componentes sem propagar dependências transitivas aos consumidores.
 
-### H3 — Materialization Independence
+### H4 — Non-Captive Materialization / Operational Exitability
 
-Um plano de controle que materializa artefatos nativos e autossuficientes pode reduzir dependência operacional da própria plataforma e preservar continuidade após sua remoção.
+Um plano de controle que materializa artefatos nativos e autossuficientes pode permitir a remoção completa do próprio orquestrador sem perda da operabilidade fundamental do resultado.
 
-### H4 — Progressive Determinism
+### H5 — Progressive Determinism
 
 A substituição progressiva de interpretação humana ou probabilística por contratos, validadores e automação determinística pode reduzir custo e variabilidade sem alterar a semântica do processo.
 
@@ -247,7 +264,7 @@ Estas hipóteses devem ser testadas; não devem ser apresentadas como comprovada
 
 ---
 
-## 8. Critério de admissão de componentes
+## 9. Critério de admissão de componentes
 
 Nenhum componente deve ser tratado como integrante maduro do ecossistema FlowED sem declarar, em nível compatível com sua maturidade:
 
@@ -261,11 +278,13 @@ Nenhum componente deve ser tratado como integrante maduro do ecossistema FlowED 
 - interface automatizável;
 - critérios de teste;
 - formato de evidência;
-- comportamento de materialização e exitabilidade quando aplicável.
+- formato nativo materializado;
+- caminho operacional sem FlowED;
+- condições que invalidam homologação sem invalidar o artefato nativo.
 
 ---
 
-## 9. Relação com os demais princípios do FlowED
+## 10. Relação com os demais princípios do FlowED
 
 Esta tese deve ser interpretada em conjunto com os princípios já documentados de:
 
@@ -277,19 +296,21 @@ Esta tese deve ser interpretada em conjunto com os princípios já documentados 
 - Verify Before Propagate;
 - adoção antes de construção proprietária.
 
-Nenhuma dessas regras autoriza o FlowED a ultrapassar a soberania de um domínio adotado.
+Nenhuma dessas regras autoriza o FlowED a ultrapassar a soberania de um domínio adotado ou a tornar seus artefatos dependentes do FlowED.
 
 ---
 
-## 10. Regra resumida
+## 11. Regra resumida
 
 ```text
 ONE CONTROL PLANE
 + ABSOLUTE DOMAIN SOVEREIGNTY
++ LOWER COGNITIVE LOAD WITHOUT METHODOLOGICAL MONOCULTURE
 + CONTRACT-BASED COMPOSITION
 + ADOPT BEFORE BUILD
 + NATIVE ARTIFACT MATERIALIZATION
-+ PORTABLE MATERIALIZATION
++ EDUCATION-TO-INDUSTRY CONTINUITY
++ ABSOLUTE NON-CAPTIVE OPERATION
 + OPERATIONAL EXITABILITY
 = FLOWED ARCHITECTURAL THESIS
 ```
