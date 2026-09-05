@@ -143,7 +143,87 @@ O FlowED orquestra a composição. Cada domínio preserva sua autoridade interna
 
 ---
 
-## 6. Hipóteses acadêmicas associadas
+## 6. Inspirações explícitas e princípio de adoção
+
+O FlowED não deve reinventar mecanismos consolidados apenas para torná-los internos ao seu ecossistema. Deve estudar, adotar e compor capacidades existentes sempre que elas satisfizerem o contrato requerido.
+
+As seguintes referências são inspirações arquitetônicas explícitas:
+
+```text
+Terraform / OpenTofu
+   → Core + providers
+
+Kubernetes
+   → API declarativa + controllers/operators
+
+Backstage
+   → portal/plataforma + plugins/templates
+
+GitLab
+   → control plane integrado de SDLC
+
+ServiceNow
+   → control plane corporativo e workflows
+```
+
+O FlowED deve buscar utilizar, por adapters e contratos, tudo que essas referências ou soluções equivalentes já ofereçam de forma madura e adequada ao domínio, em vez de reimplementar a mesma capability.
+
+Isto significa:
+
+- Terraform/OpenTofu inspiram e podem fornecer capacidades de infraestrutura e o padrão de providers;
+- Kubernetes inspira APIs declarativas, reconciliação e extensibilidade por controllers/operators;
+- Backstage inspira catálogos, templates, descoberta e self-service orientado por contratos;
+- GitLab inspira um plano de controle integrado para o ciclo de desenvolvimento;
+- ServiceNow inspira workflows empresariais, gestão de processos e governança organizacional.
+
+Essas referências não transferem soberania de domínio ao FlowED. O FlowED deve consumi-las através de adapters e preservar seus artefatos, formatos, contratos e expertise nativos sempre que possível.
+
+### 6.1. Regra Adopt Before Build
+
+> **Se uma capability necessária já existir de forma madura, sustentável, contratável e compatível com a soberania de domínio e a exitabilidade operacional, o FlowED deve adotá-la antes de considerar implementação proprietária.**
+
+A existência de um adapter FlowED nunca justifica duplicar uma capability já consolidada.
+
+### 6.2. Materialização no formato nativo do domínio
+
+O FlowED não deve substituir o artefato final de um domínio por um artefato proprietário apenas para manter controle sobre ele.
+
+Exemplos desejados:
+
+```text
+fled infra ...
+   → pode materializar Terraform/OpenTofu/Pulumi/etc. nativo
+
+fled repo ...
+   → materializa Git e políticas compatíveis com o provider adotado
+
+fled project ...
+   → materializa arquivos, contratos, repositórios e estruturas nativas
+```
+
+O usuário experiente deve poder abandonar `fled` e continuar operando diretamente sobre o artefato nativo. O usuário que preferir o plano de controle pode continuar usando `fled` sobre o mesmo resultado por meio do adapter correspondente.
+
+### 6.3. FlowED como camada acima, não como substituição
+
+A abstração oferecida pelo FlowED deve reduzir carga operacional para iniciantes sem apagar ou sequestrar os domínios subjacentes.
+
+```text
+iniciante
+   → aprende fled
+   → opera múltiplos domínios por uma linguagem comum
+
+especialista
+   → inspeciona e opera diretamente Terraform/Git/Kubernetes/etc.
+
+ambos
+   → trabalham sobre os mesmos artefatos materiais
+```
+
+Essa propriedade diferencia orquestração de substituição de domínio.
+
+---
+
+## 7. Hipóteses acadêmicas associadas
 
 Esta arquitetura permite investigar formalmente, entre outras, as seguintes hipóteses.
 
@@ -167,7 +247,7 @@ Estas hipóteses devem ser testadas; não devem ser apresentadas como comprovada
 
 ---
 
-## 7. Critério de admissão de componentes
+## 8. Critério de admissão de componentes
 
 Nenhum componente deve ser tratado como integrante maduro do ecossistema FlowED sem declarar, em nível compatível com sua maturidade:
 
@@ -185,7 +265,7 @@ Nenhum componente deve ser tratado como integrante maduro do ecossistema FlowED 
 
 ---
 
-## 8. Relação com os demais princípios do FlowED
+## 9. Relação com os demais princípios do FlowED
 
 Esta tese deve ser interpretada em conjunto com os princípios já documentados de:
 
@@ -201,12 +281,14 @@ Nenhuma dessas regras autoriza o FlowED a ultrapassar a soberania de um domínio
 
 ---
 
-## 9. Regra resumida
+## 10. Regra resumida
 
 ```text
 ONE CONTROL PLANE
 + ABSOLUTE DOMAIN SOVEREIGNTY
 + CONTRACT-BASED COMPOSITION
++ ADOPT BEFORE BUILD
++ NATIVE ARTIFACT MATERIALIZATION
 + PORTABLE MATERIALIZATION
 + OPERATIONAL EXITABILITY
 = FLOWED ARCHITECTURAL THESIS
