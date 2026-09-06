@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://flowed.example/schemas/telemetry/operational-event.schema.json",
+  "title": "FlowED Operational Telemetry Event",
+  "description": "Blueprint contract for operational evidence. It does not authorize research, publication, or commercial reuse.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "event_id",
+    "execution_id",
+    "capability_id",
+    "event_type",
+    "occurred_at",
+    "purpose"
+  ],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "event_id": { "type": "string", "minLength": 1 },
+    "execution_id": { "type": "string", "minLength": 1 },
+    "session_id": { "type": ["string", "null"] },
+    "capability_id": { "type": "string", "minLength": 1 },
+    "execution_scenario": {
+      "type": ["string", "null"],
+      "description": "Examples: prompt-only, assisted, agent, deterministic. Extensible by design."
+    },
+    "event_type": { "type": "string", "minLength": 1 },
+    "occurred_at": { "type": "string", "format": "date-time" },
+    "purpose": { "const": "operational" },
+    "runtime": {
+      "type": ["object", "null"],
+      "additionalProperties": true
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "elapsed_ms": { "type": ["number", "null"], "minimum": 0 },
+        "human_time_ms": { "type": ["number", "null"], "minimum": 0 },
+        "model_time_ms": { "type": ["number", "null"], "minimum": 0 },
+        "input_tokens": { "type": ["integer", "null"], "minimum": 0 },
+        "output_tokens": { "type": ["integer", "null"], "minimum": 0 },
+        "tool_calls": { "type": ["integer", "null"], "minimum": 0 },
+        "retries": { "type": ["integer", "null"], "minimum": 0 },
+        "human_interventions": { "type": ["integer", "null"], "minimum": 0 },
+        "estimated_cost": { "type": ["number", "null"], "minimum": 0 }
+      }
+    },
+    "validation": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "validator_id": { "type": ["string", "null"] },
+        "validator_version": { "type": ["string", "null"] },
+        "status": { "type": ["string", "null"] },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        }
+      }
+    },
+    "data_classification": {
+      "type": ["string", "null"],
+      "description": "Classification is implementation-defined and must be governed separately."
+    },
+    "retention_policy_id": { "type": ["string", "null"] }
+  }
+}
