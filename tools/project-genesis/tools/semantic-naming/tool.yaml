@@ -1,0 +1,21 @@
+id: flowed.project-genesis.semantic-naming
+version: 0.1-draft
+status: incubation
+kind: tool
+owner_domain: FlowED
+promotion_ready_root: true
+input:
+  required:
+    - validated_model
+    - technical_category
+    - invariant_function
+    - intended_scope
+output:
+  required:
+    - naming_decision_record
+invariants:
+  - model_before_name
+  - architecture_correction_before_renaming
+  - technical_category_before_brand
+  - separate_category_abstraction_brand_provider_and_repo_names
+  - no_trademark_certainty_from_basic_search
