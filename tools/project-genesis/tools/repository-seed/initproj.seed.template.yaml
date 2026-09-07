@@ -1,0 +1,14 @@
+schema: initproj.seed/v1
+project:
+  name: UNKNOWN
+  directory: ~/dev
+  human: UNKNOWN
+  description: UNKNOWN
+  github:
+    organization: UNKNOWN
+repositories:
+  - name: UNKNOWN
+    role: main
+    description: UNKNOWN
+    topics: []
+    visibility: private

@@ -1,0 +1,63 @@
+# PREANALYSIS-UNDERSTANDING-RECORD
+
+## Metadata
+
+- `subject_id:`
+- `originator_id:`
+- `conductor_id:`
+- `protocol_version:`
+- `date:`
+- `understanding_state: NOT_READY | READY_WITH_OPEN_UNKNOWNS | READY`
+
+## ORIGINAL_EXPOSITION
+
+## WHOLE_MODEL_SYNTHESIS
+
+## WHOLE_MODEL_HOMOLOGATION
+
+- `state: WHOLE_MODEL_REJECTED | WHOLE_MODEL_PARTIAL | WHOLE_MODEL_CONFIRMED`
+- `originator_confirmation:`
+
+## CURRENT_IDEA_STATEMENT
+
+## INTENDED_TRANSFORMATION
+
+## ACTORS
+
+## BOUNDARIES
+
+## NON_GOALS
+
+## INVARIANTS
+
+## EXAMPLES
+
+## COUNTEREXAMPLES
+
+## ORIGINATOR_FACTS
+
+## CONDUCTOR_INFERENCES
+
+## UNKNOWNS
+
+## RESOLVED_AMBIGUITIES
+
+## OPEN_AMBIGUITIES
+
+## IDEA_CHANGES_DURING_INTERVIEW
+
+## MISINTERPRETATION_RISKS
+
+## PRELIMINARY_REFERENCE_PREVIEW
+
+This section is informational only. It must not contain a novelty or feasibility verdict.
+
+## MULTI_SOURCE_INVESTIGATION_DECISION
+
+- `requested: YES | NO`
+
+## ORIGINATOR_HOMOLOGATION
+
+- `confirmed: YES | NO`
+- `statement:`
+- `date:`

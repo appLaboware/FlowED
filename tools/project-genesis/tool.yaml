@@ -1,0 +1,31 @@
+id: flowed.project-genesis
+version: 0.1-draft
+status: incubation
+kind: composite-tool
+owner_domain: FlowED
+promotion_ready_root: true
+input:
+  required:
+    - raw_idea
+output:
+  possible_verdicts:
+    - NO-GO
+    - GO-BY-ADOPTION
+    - GO-CUSTOMIZE
+    - GO-COMPOSE-ADAPT
+    - GO-BUILD-MINIMUM-RESIDUAL
+subtools:
+  - path: tools/viability-gate
+    required: true
+  - path: tools/semantic-naming
+    required_when: project_identity_required
+  - path: tools/repository-design
+    required_when: repository_materialization_authorized
+  - path: tools/repository-seed
+    required_when: repository_materialization_authorized
+rules:
+  - discovery_precedes_identity
+  - adopt_before_build
+  - child_tools_are_contract_isolated
+  - unknown_is_never_invented
+  - future_internal_tools_are_not_leaked_without_need
