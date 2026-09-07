@@ -122,11 +122,23 @@ No global `IDEA SCORE` or automatic GO/NO-GO is permitted.
 - `003-FOREIGN-PROTOTYPE-INGEST-INITPROJ-PR2.md` — ingests useful atoms from the InitProj PR without importing its authority or topology.
 - `004-VIABILITY-DISCOVERY-FIRST-PASS.md` — first explicit viability/discovery pass and first rules derived from observed use.
 - `005-PHASE-01-PREANALYSIS-INVESTIGATIVE-UNDERSTANDING-v0.1.md` — corrective upstream protocol draft: faithful understanding before evaluation.
+- `006-PMFN-PRIOR-ART-FOREIGN-RUN-RECONCILIATION.md` — reconciles the parallel team's PMFN prior-art package, verifies critical collisions, narrows the research hypothesis and preserves phase order.
 - `prompts/PHASE-01-INDEPENDENT-INVESTIGATOR-PROMPT-v0.1.md` — multi-agent independent investigation prompt with template and variable table.
-- `PROTOCOL-DRAFT-v0.1.md` — first emergent viability-discovery protocol consolidated from earlier live runs; now downstream of Phase 01 conceptually.
+- `PROTOCOL-DRAFT-v0.1.md` — historical first emergent viability-discovery protocol.
+- `PROTOCOL-DRAFT-v0.2.md` — current experimental protocol draft after Phase 01 protection and PMFN prior-art reconciliation.
+
+## Current research position
+
+The latest prior-art confrontation establishes that generic decomposition stopping, multi-option component sourcing, COTS combination/selection, software reuse/composition and requirements/architecture granularity already have substantial prior art.
+
+Therefore Project Genesis/PMFN MUST NOT claim these mechanisms as novel.
+
+The candidate residual is narrower and remains unvalidated: discovery-specific decision sufficiency, evidence-aware factor realization, neutral evidence-position profiles and longitudinal genealogy/handoff.
 
 ## Current next run
 
 Run Phase 01 independently with multiple agents against Project Genesis, then consolidate their reports without majority voting. The originator must resolve conflicting interpretations and homologate the first **Pre-analysis Investigative Understanding Record**.
 
-Only after that homologation should the viability/discovery protocol continue.
+Only after that homologation should the viability/prior-art analysis be rerun canonically against the homologated idea statement.
+
+The foreign Run 006 is retained as a comparator so we can observe what changed because the earlier study began from an analyst-created representation rather than from a rigorously homologated understanding.
