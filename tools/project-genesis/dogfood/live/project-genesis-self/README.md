@@ -14,6 +14,22 @@ This directory is simultaneously:
 
 The dogfood MUST NOT assume that the current Project Genesis decomposition is correct.
 
+## Reflexive-case classification
+
+`Project Genesis → Project Genesis` is a special reflexive case, not the definition of generic discovery.
+
+It is governed by:
+
+- `../../../overlays/reflexive-discovery/REFLEXIVE-DISCOVERY-OVERLAY-v0.1.md`
+
+The self-case may generate candidate rules quickly, but rules discovered exclusively here remain overlay-specific until they survive external cases.
+
+Core protection:
+
+> **SELF-DERIVED EVIDENCE IS NOT INDEPENDENT CORROBORATION.**
+
+The live run must preserve `OBJECT_VERSION`, `PROTOCOL_VERSION`, `EVIDENCE_SNAPSHOT` and `RESULT_VERSION` separately whenever the object and the discovery instrument co-evolve.
+
 ## Rule of execution
 
 We do not decompose every imaginable part up front.
