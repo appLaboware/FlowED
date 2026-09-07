@@ -64,6 +64,18 @@ NEXT LIVE USE
 
 No correction is accepted as merely editorial when it reflects a methodological defect. The missing or inadequate rule must be identified.
 
+## Phase 01 protection rule
+
+Before viability, market, sourcing, novelty or technical analysis, the idea must pass through a protected pre-analysis understanding phase.
+
+> **NO EVALUATION BEFORE UNDERSTANDING SUFFICIENCY.**
+
+The first concern is semantic fidelity and the risk of destroying or diverting an idea through analyst misinterpretation, premature closure, leading questions, category capture or evaluation leakage.
+
+See:
+- `005-PHASE-01-PREANALYSIS-INVESTIGATIVE-UNDERSTANDING-v0.1.md`
+- `prompts/PHASE-01-INDEPENDENT-INVESTIGATOR-PROMPT-v0.1.md`
+
 ## Run structure
 
 Each step should record, when applicable:
@@ -93,14 +105,12 @@ No global `IDEA SCORE` or automatic GO/NO-GO is permitted.
 - `002-PREMATURE-MATERIALIZATION-INCIDENT.md` — records the InitProj premature-materialization incident and the need for authorization gating.
 - `003-FOREIGN-PROTOTYPE-INGEST-INITPROJ-PR2.md` — ingests useful atoms from the InitProj PR without importing its authority or topology.
 - `004-VIABILITY-DISCOVERY-FIRST-PASS.md` — first explicit viability/discovery pass and first rules derived from observed use.
-- `PROTOCOL-DRAFT-v0.1.md` — first emergent viability-discovery protocol consolidated from the live runs; not validated or frozen.
+- `005-PHASE-01-PREANALYSIS-INVESTIGATIVE-UNDERSTANDING-v0.1.md` — corrective upstream protocol draft: faithful understanding before evaluation.
+- `prompts/PHASE-01-INDEPENDENT-INVESTIGATOR-PROMPT-v0.1.md` — multi-agent independent investigation prompt with template and variable table.
+- `PROTOCOL-DRAFT-v0.1.md` — first emergent viability-discovery protocol consolidated from earlier live runs; now downstream of Phase 01 conceptually.
 
 ## Current next run
 
-Apply `PROTOCOL-DRAFT-v0.1.md` manually to the first narrower factor:
+Run Phase 01 independently with multiple agents against Project Genesis, then consolidate their reports without majority voting. The originator must resolve conflicting interpretations and homologate the first **Pre-analysis Investigative Understanding Record**.
 
-```text
-A1 — elicitation / assumptions
-```
-
-The human may first perform an unconstrained/manual version. The protocol run must then preserve the delta and turn methodological corrections into explicit protocol evolution.
+Only after that homologation should the viability/discovery protocol continue.
