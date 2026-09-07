@@ -14,6 +14,7 @@ output:
     - materialized_paths
     - provenance
     - validation_state
+    - initproj_seed_yaml
 invariants:
   - create_only_what_current_stage_requires
   - preserve_user_owned_content
@@ -21,3 +22,7 @@ invariants:
   - inspect_before_write_on_existing_repository
   - do_not_leak_future_internal_tools_without_operational_need
   - no_silent_overwrite
+  - initproj_seed_schema_is_initproj.seed/v1
+  - exactly_one_main_repository
+  - main_repository_name_equals_project_name
+  - repository_metadata_includes_description_topics_visibility
