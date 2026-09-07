@@ -1,0 +1,33 @@
+id: flowed.project-genesis.viability-gate
+version: 0.1-draft
+status: incubation
+kind: tool
+owner_domain: FlowED
+promotion_ready_root: true
+input:
+  required:
+    - raw_idea
+output:
+  required:
+    - corrected_boundary
+    - engineering_verdict
+    - business_verdict
+    - research_verdict
+    - adoption_path
+    - residual
+    - evidence_summary
+    - uncertainty
+  verdicts:
+    - NO-GO
+    - GO-BY-ADOPTION
+    - GO-CUSTOMIZE
+    - GO-COMPOSE-ADAPT
+    - GO-BUILD-MINIMUM-RESIDUAL
+invariants:
+  - search_before_architecture
+  - adopt_before_customize
+  - customize_before_adapt
+  - adapt_or_compose_before_build
+  - build_only_proven_residual
+  - novelty_is_never_inferred_from_product_viability
+  - no_naming_before_project_identity_is_justified
