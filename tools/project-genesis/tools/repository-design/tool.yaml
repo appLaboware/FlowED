@@ -1,0 +1,20 @@
+id: flowed.project-genesis.repository-design
+version: 0.1-draft
+status: incubation
+kind: tool
+owner_domain: FlowED
+promotion_ready_root: true
+input:
+  required:
+    - viability_verdict
+    - naming_decision_record
+    - domain_boundaries
+output:
+  required:
+    - repository_plan
+invariants:
+  - preserve_domain_sovereignty
+  - do_not_split_without_justification
+  - do_not_collapse_sovereign_domains_for_convenience
+  - description_target_max_350_characters
+  - promotion_ready_components_start_at_future_repository_path
