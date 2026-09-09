@@ -128,7 +128,7 @@ Investigar se a documentação normativa e metodológica melhora em compreensão
 
 Questões candidatas:
 
-- como representar problemas, alternativas, critérios, decisões, rejeições, revisões e racional sem transformar conversa bruta em norma?
+- como representar problemas, alternativas, critérios, decisões, rejeições e racional sem transformar conversa bruta em norma?
 - qual é a relação entre a camada normativa consolidada e sua linhagem cognitiva?
 - em que medida a linhagem melhora aprendizagem, auditabilidade, atualização e interpretação de normas?
 - como preservar fonte, extração, inferência, confirmação, evidência e projeção sem promoção epistemológica silenciosa?
@@ -136,21 +136,21 @@ Questões candidatas:
 
 Este paper pode ser evolução direta do EDT existente, não necessariamente um paper totalmente separado. A decisão deverá ser **CONTINUE EDT / SPLIT / MERGE / ADOPT / DON'T GO** após revisão do rascunho atual e pesquisa de anterioridade.
 
-## P18 — Contract-Test-Driven Development (CTDD)
+## P18 — Linha aberta: composição test-driven de contratos públicos
 
-**Nome de trabalho; não reivindicar novidade.** O identificador P17 permanece alocado à linha sobre conhecimento cognitivo estruturado para IA registrada em `EDT-CCP-FLOWED-LINEAGE.md`.
+**Nome e conceito final em aberto.** O identificador P17 permanece alocado à linha sobre conhecimento cognitivo estruturado para IA registrada em `EDT-CCP-FLOWED-LINEAGE.md`.
 
-Investigar se há contribuição residual na composição de TDD, Consumer-Driven Contract Testing, contract/conformance testing, Design by Contract, behavioral substitutability e mocks/fakes em um ciclo no qual o **contrato público executável** é definido antes da implementação e passa a orientar simultaneamente consumidor, mock inicial, verificação de providers reais e substituição entre implementações.
+Existe uma composição operacional candidata reunindo TDD, Consumer-Driven Contract Testing, contract/conformance testing, Design by Contract, behavioral substitutability e mocks/fakes em um ciclo no qual o contrato público executável é definido antes da implementação e passa a orientar consumidor, mock inicial, verificação de providers reais e substituição entre implementações.
 
-Ciclo candidato:
+Ciclo observado:
 
 **comportamento desejado → exemplos executáveis → contrato público → consumidor contra mock → provider contra o mesmo contrato → substituição/conformidade → evolução versionada do contrato**.
 
-O ponto de partida experimental é o `flwd`, mas o candidato a artigo deve ser estudado como método geral e não como descrição específica do produto FlowED.
+A linha permanece deliberadamente aberta: ainda não há decisão de que essa composição constitua um conceito autônomo, nem nome próprio aprovado. O rótulo anterior `Contract-Test-Driven Development (CTDD)` fica preservado apenas como parte da linhagem histórica e não deve ser tratado como nomenclatura consolidada.
 
-A busca preliminar já encontrou anterioridade relevante em TDD, Contract-Driven Development de Meyer, Consumer-Driven Contract Testing e specification-based conformance testing. Portanto, a pergunta científica não é se contratos + testes são novos, mas se a composição específica acima possui residual distinto, mensurável e generalizável.
+O ponto de partida experimental é o `flwd`, mas a linha deve ser estudada como hipótese metodológica geral. A revisão de anterioridade decidirá entre **GO / MERGE / ADOPT / DON'T GO** e, somente se houver residual real, se merece nomenclatura própria.
 
-Estado atual: **CANDIDATE / GO FOR PRIOR-ART REVIEW**. Documento próprio: `P18-CONTRACT-TEST-DRIVEN-DEVELOPMENT.md`.
+Estado atual: **CANDIDATE / OPEN CONCEPT / GO FOR PRIOR-ART REVIEW**. Documento próprio: `P18-CONTRACT-TEST-DRIVEN-DEVELOPMENT.md` (path legado preservado por rastreabilidade).
 
 ## Critério de promoção
 
