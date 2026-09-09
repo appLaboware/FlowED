@@ -269,4 +269,19 @@ Este documento é uma Referência Experimental em `R1 — realizável em princí
 
 Ele compõe diretamente o `DISCOVERY-AND-PROGRESSIVE-VALIDATION-PROTOCOL.md` e o `THEORY-SIMULATION-PROTOCOL.md`.
 
-A próxima ação correta não é promovê-lo a norma, mas usá-lo em pelo menos uma entrada real e registrar atrito, omissões, decisões desnecessárias e informação faltante.
+A próxima ação correta não é promovê-lo a norma, mas usá-lo em entradas reais e registrar atrito, omissões, decisões desnecessárias e informação faltante.
+
+## 13. Dogfood obrigatório do próprio protocolo
+
+O intake não será testado apenas por referências externas. **O próprio protocolo de entrada e progressão de referências é sua Referência Experimental permanente de dogfood.**
+
+Cada execução real deve avaliar simultaneamente:
+
+1. a referência que entrou no fluxo;
+2. o protocolo que processou essa referência.
+
+Assim, cada uso deve produzir uma segunda saída mínima sobre o próprio intake: etapas necessárias, etapas desnecessárias, informação faltante, informação pedida cedo demais, ambiguidade, tempo/custo, improvisações fora do protocolo e alterações candidatas.
+
+Uma alteração aceita no intake também deve entrar como referência vinculada à versão anterior e passar pelo próprio processo em intensidade proporcional. O protocolo não pode exigir das demais referências uma disciplina da qual ele próprio esteja isento.
+
+A rotina detalhada está registrada em `NEW-REFERENCE-INTAKE-DOGFOOD.md`.
