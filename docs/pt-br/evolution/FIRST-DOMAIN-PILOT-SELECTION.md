@@ -1,82 +1,75 @@
 # Seleção do primeiro piloto de domínio FlowED
 
-**Status:** decisão de trabalho provisória; ainda não normativa.
+**Status:** decisão de trabalho provisória; revisada após dogfood arquitetural.
 
 ## Contexto
 
-Após estabilizar parcialmente a hipótese de uma linguagem pública comum do FlowED — com `flwd` como cliente e CLI/YAML/API/SDK/UI/agents falando o mesmo contrato semântico — é necessário escolher um primeiro recorte de domínio para estruturar de forma concreta.
+Após estabilizar parcialmente a hipótese de uma linguagem pública comum do FlowED — com `flwd` como cliente e CLI/YAML/API/SDK/UI/agents falando o mesmo contrato semântico — tornou-se necessário escolher um primeiro recorte concreto para testar a arquitetura.
 
-Dois candidatos imediatos foram considerados:
+Dois candidatos imediatos foram inicialmente considerados:
 
 1. `ISO29110-lite`;
 2. `InitProj POC`.
 
-## Critérios de escolha
+A primeira proposta sugeriu usar `InitProj POC` como piloto e `ISO29110-lite` como profile/reference ligado a ele. O debate seguinte revelou **acoplamento arquitetural indevido** nessa formulação.
 
-O primeiro piloto deve maximizar aprendizagem arquitetural com custo baixo. Deve, preferencialmente:
+## Correção
 
-- produzir operações reais e observáveis;
-- exercitar verbo + parâmetros + opções e equivalente declarativo;
-- exigir múltiplos materializadores/adapters ou pelo menos admitir sua substituição;
-- possuir fronteira suficientemente pequena para um POC;
-- expor rapidamente gaps na linguagem comum, contracts e progressividade;
-- permitir dogfood sem depender de certificação ou de uma taxonomia normativa já fechada;
-- ter relação com artefatos e fluxos já existentes, para evitar inventar um cenário artificial.
+Na esfera maior está o FlowED. Abaixo dele existem módulos horizontais/capabilities pares, ligados por **ports com contratos públicos**.
 
-## Comparação preliminar
+FlowED não deve depender diretamente de `ISO29110-lite`, `InitProj` ou de qualquer provider específico. Deve depender do contrato do port correspondente à capability desejada.
 
-### ISO29110-lite
+Um provider concreto pode ser retirado e substituído por outro que implemente o mesmo port, mesmo que o resultado produzido possua personalidade, organização interna ou artefatos próprios.
 
-Vantagens:
-- traz uma referência normativa externa e força o FlowED a provar que consegue materializar uma referência sem tratá-la como implementação única;
-- é excelente para testar baseline, alinhamento, intensidade e projeção normativa;
-- pode se tornar um caso forte de Adapt First.
+Portanto, `ISO29110-lite` não deve ser modelado como profile interno do `InitProj` salvo se um caso futuro demonstrar explicitamente essa relação. Ambos devem permanecer desacoplados enquanto pertencem a capabilities distintas.
 
-Riscos neste momento:
-- pode misturar cedo demais problemas de interpretação normativa, copyright/licenciamento, baseline e score com problemas básicos da linguagem operacional;
-- existe risco de desenhar o primeiro domínio em torno da norma em vez de testar a generalidade do FlowED;
-- o recorte “lite” ainda precisaria ser formalmente definido.
+## Novo critério para o primeiro piloto
 
-### InitProj POC
+O primeiro piloto não é mais “qual produto/módulo devemos estruturar primeiro?”.
 
-Vantagens:
-- já possui intenção operacional clara: transformar um contexto inicial de projeto em uma estrutura executável/reprodutível;
-- possui ações, estado desejado, arquivos, Git, sessões/agents, templates e possíveis adapters;
-- exercita naturalmente CLI, YAML e API sobre a mesma língua;
-- possui alta capacidade de dogfood porque o próprio FlowED e outros projetos podem ser inicializados por ele;
-- expõe cedo a fronteira entre linguagem pública e comportamento interno;
-- permite começar pequeno e depois ligar ISO 29110, Scrum, XP ou outro baseline como profiles/references, sem tornar a norma o próprio domínio.
+A pergunta correta passa a ser:
 
-Riscos:
-- InitProj pode carregar decisões históricas específicas demais se não separarmos capability de implementação existente;
-- é necessário evitar transformar “InitProj atual” em contrato canônico por acidente.
+> **qual é o menor port real que podemos especificar e testar com substituição de provider?**
 
-## Recomendação provisória
+O piloto deve:
 
-Escolher **InitProj POC como primeiro piloto de domínio/capability**, e usar **ISO29110-lite como um dos primeiros profiles/baselines que deverão ser materializados sobre esse piloto**.
+- representar uma capability pequena e observável;
+- possuir contrato semântico independente da implementação;
+- ser acionável pela mesma língua FlowED via CLI/YAML/API;
+- permitir ao menos dois providers, ou um provider real + fake/reference implementation;
+- permitir verificar substituição sem alterar o consumidor;
+- preservar personalidade própria do provider fora do mínimo exigido pelo contrato;
+- produzir evidence/receipt suficiente para comparação.
 
-A razão principal é metodológica: primeiro testar a língua operacional e a arquitetura com um problema executável e conhecido; depois testar se uma referência normativa externa consegue entrar sem contaminar o domínio com sua própria estrutura.
+## Papel de InitProj e ISO29110-lite
 
-A sequência recomendada é:
+`InitProj POC` continua candidato forte como fonte de uma capability/port pequeno porque possui comportamento executável e já conhecido.
 
-**InitProj mínimo → contrato público FlowED → CLI/YAML equivalentes → materialização local/Git → profile simples → ISO29110-lite como profile/reference → comparação com outro profile não-ISO.**
+`ISO29110-lite` continua candidato forte para testar uma capability normativa/metodológica porque força o FlowED a absorver referência externa e permitir providers alternativos.
 
-Isso permitirá testar tanto generalidade quanto Adapt First.
+Entretanto, nenhum deles deve ser declarado o “domínio hospedeiro” do outro.
 
 ## Próxima ação sugerida
 
-Não portar o InitProj inteiro. Escolher uma capability mínima, provavelmente **`project.init`** ou equivalente ainda a nomear, e modelar:
+Escolher uma operação mínima e desenhar primeiro:
 
-- objetivo;
+- nome provisório da capability;
+- port público;
 - inputs;
 - outputs;
 - invariantes;
-- estados observáveis;
-- erros públicos;
-- CLI;
-- YAML equivalente;
-- contrato de adapter/materializer;
-- critérios de idempotência/reexecução;
-- evidence/receipt mínimo.
+- estados/erros observáveis;
+- contrato de compatibilidade;
+- dois providers candidatos;
+- CLI/YAML semanticamente equivalentes;
+- teste de substituição.
 
-A escolha do nome e da semântica deve passar pelo intake e pelo Discovery do próprio FlowED antes de ser consolidada.
+Somente depois escolher qual implementação será usada como primeiro provider real.
+
+## Evidência de dogfood
+
+A tentativa anterior de escolher InitProj como primeiro piloto revelou que a arquitetura poderia absorver `ISO29110-lite` como profile e, com isso, criar acoplamento entre módulos horizontais que deveriam permanecer substituíveis por contrato.
+
+A proposta foi corrigida antes da implementação. Este caso constitui evidência documental inicial de que o dogfood do protocolo consegue detectar e corrigir acoplamento conceitual durante a evolução da arquitetura.
+
+Documento relacionado: `HORIZONTAL-MODULES-AND-PORTS-DRAFT.md`.
