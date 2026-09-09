@@ -13,6 +13,8 @@ O modelo atual separa ao menos quatro dimensões:
 
 Essas dimensões não devem ser reduzidas prematuramente a um único número.
 
+Uma leitura categorial provisória pode distinguir, por exemplo, Full FlowED + Full Baseline, Full FlowED + Baseline divergente, Partial FlowED + alta afinidade de baseline e Partial FlowED + baixa afinidade. Os nomes ainda são de trabalho.
+
 ## 2. Superar o baseline
 
 Uma organização pode ter menor afinidade com o baseline e, ao mesmo tempo, referências mais bem sustentadas que as correspondentes do baseline.
@@ -25,6 +27,8 @@ Uma organização pode inclusive adotar políticas como:
 - não aceitar referências abaixo do baseline aplicável;
 - aceitar divergência apenas quando ela iguala ou supera a sustentação do baseline;
 - permitir quedas temporárias controladas para experimentação.
+
+Superar o baseline pode se tornar sinal reputacional verificável. Uma empresa pode demonstrar que determinadas referências são mais bem sustentadas que as equivalentes do baseline, em vez de apenas alegar excelência. Esse uso reputacional precisa permanecer associado à versão concreta do baseline e às evidências auditáveis.
 
 ## 3. Certificação não binária
 
@@ -112,3 +116,9 @@ Analogia de trabalho: reformar o restaurante sem deixar de servir. Em certos mom
 Hipótese adicional: além do estado atual, a trajetória pode ser relevante. Uma organização que evolui de forma sustentada pode apresentar uma característica de maturidade diferente de outra com score semelhante, porém estagnada.
 
 Não transformar essa ideia em métrica antes de pesquisa específica.
+
+## 12. Tempo como rendimento de evidência
+
+Intuição de trabalho: uma referência em execução pode "render juros" epistemológicos ao longo do tempo, mesmo sem se transformar em paper e mesmo sem adoção externa. Essa metáfora não implica que duração sozinha prove verdade.
+
+A hipótese a pesquisar é se exposição longitudinal bem observada — tempo, quantidade de execuções, contextos, sucessos, falhas, reversões e estabilidade — pode aumentar de forma calculável uma parcela da sustentação operacional da referência.
