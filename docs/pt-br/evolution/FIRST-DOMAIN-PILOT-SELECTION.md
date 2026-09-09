@@ -1,6 +1,6 @@
 # Seleção do primeiro piloto de domínio FlowED
 
-**Status:** decisão de trabalho provisória; revisada após dogfood arquitetural.
+**Status:** decisão de trabalho provisória; revisada após dogfood arquitetural e escolha do primeiro contrato público piloto.
 
 ## Contexto
 
@@ -13,63 +13,69 @@ Dois candidatos imediatos foram inicialmente considerados:
 
 A primeira proposta sugeriu usar `InitProj POC` como piloto e `ISO29110-lite` como profile/reference ligado a ele. O debate seguinte revelou **acoplamento arquitetural indevido** nessa formulação.
 
-## Correção
+## Correção arquitetural
 
-Na esfera maior está o FlowED. Abaixo dele existem módulos horizontais/capabilities pares, ligados por **ports com contratos públicos**.
+Na esfera maior está o FlowED. Abaixo dele existem capacidades/domínios e implementações concretas. Conceitualmente, o FlowED deve orientar-se por **contratos públicos**, e não por ports, adapters, providers ou qualquer padrão interno obrigatório.
 
-FlowED não deve depender diretamente de `ISO29110-lite`, `InitProj` ou de qualquer provider específico. Deve depender do contrato do port correspondente à capability desejada.
+Ports/adapters continuam possíveis como técnica de implementação, mas não são constitutivos do FlowED.
 
-Um provider concreto pode ser retirado e substituído por outro que implemente o mesmo port, mesmo que o resultado produzido possua personalidade, organização interna ou artefatos próprios.
+FlowED não deve depender diretamente de `ISO29110-lite`, `InitProj` ou de qualquer implementação específica. Deve depender do contrato público correspondente à capacidade desejada.
 
-Portanto, `ISO29110-lite` não deve ser modelado como profile interno do `InitProj` salvo se um caso futuro demonstrar explicitamente essa relação. Ambos devem permanecer desacoplados enquanto pertencem a capabilities distintas.
+Uma implementação concreta pode ser retirada e substituída por outra que satisfaça o mesmo contrato, mesmo que o resultado produzido possua personalidade, organização interna ou artefatos próprios.
+
+A equivalência exigida é **contratual**, não identidade física de artefatos.
 
 ## Novo critério para o primeiro piloto
 
-O primeiro piloto não é mais “qual produto/módulo devemos estruturar primeiro?”.
+O primeiro piloto não é mais “qual produto/módulo devemos estruturar primeiro?” nem “qual port devemos criar?”.
 
 A pergunta correta passa a ser:
 
-> **qual é o menor port real que podemos especificar e testar com substituição de provider?**
+> **qual é o menor contrato público real que podemos especificar e testar com duas implementações estruturalmente diferentes?**
 
 O piloto deve:
 
-- representar uma capability pequena e observável;
+- representar uma capacidade/prática pequena e observável;
 - possuir contrato semântico independente da implementação;
 - ser acionável pela mesma língua FlowED via CLI/YAML/API;
-- permitir ao menos dois providers, ou um provider real + fake/reference implementation;
+- permitir ao menos duas implementações;
 - permitir verificar substituição sem alterar o consumidor;
-- preservar personalidade própria do provider fora do mínimo exigido pelo contrato;
-- produzir evidence/receipt suficiente para comparação.
+- preservar personalidade própria da implementação fora do mínimo exigido pelo contrato;
+- produzir evidence/receipt suficiente para comparação;
+- evitar que detalhes internos de arquitetura subam para o modelo conceitual do FlowED.
 
-## Papel de InitProj e ISO29110-lite
+## Escolha atual: TDD
 
-`InitProj POC` continua candidato forte como fonte de uma capability/port pequeno porque possui comportamento executável e já conhecido.
+A escolha atual para o primeiro piloto é **TDD — Test-Driven Development**.
 
-`ISO29110-lite` continua candidato forte para testar uma capability normativa/metodológica porque força o FlowED a absorver referência externa e permitir providers alternativos.
+A decisão é experimental e busca maximizar pressão sobre o contrato público com baixo acoplamento arquitetural.
 
-Entretanto, nenhum deles deve ser declarado o “domínio hospedeiro” do outro.
+TDD é adequado porque possui uma intenção metodológica reconhecível e pode ser materializado em ecossistemas muito diferentes, por exemplo Java/JUnit, Python/pytest, JavaScript/Vitest/Jest ou PHP/PHPUnit. O FlowED deve conseguir expressar o contrato sem conhecer essas implementações.
 
-## Próxima ação sugerida
+O objetivo não é criar uma nova teoria de TDD nem definir um framework. O objetivo é usar TDD para testar se o FlowED consegue declarar somente o comportamento observável e permitir implementações diferentes abaixo dele.
 
-Escolher uma operação mínima e desenhar primeiro:
+Documento específico: `TDD-FIRST-PUBLIC-CONTRACT-PILOT.md`.
 
-- nome provisório da capability;
-- port público;
-- inputs;
-- outputs;
-- invariantes;
-- estados/erros observáveis;
-- contrato de compatibilidade;
-- dois providers candidatos;
-- CLI/YAML semanticamente equivalentes;
-- teste de substituição.
+## Papel futuro de InitProj e ISO29110-lite
 
-Somente depois escolher qual implementação será usada como primeiro provider real.
+`InitProj POC` e `ISO29110-lite` continuam candidatos fortes para expansões futuras, mas deixam de ser o primeiro piloto.
+
+Eles só devem ser modelados depois que o núcleo do FlowED estiver suficientemente consolidado e o piloto TDD tiver fornecido evidência real sobre linguagem, contratos e substituição.
+
+## Sequência pretendida
+
+1. definir contrato público mínimo de TDD;
+2. representar a mesma semântica por CLI, YAML e API;
+3. satisfazer o contrato com pelo menos duas implementações distintas;
+4. registrar dogfood, gaps e correções;
+5. consolidar e fechar a primeira versão conceitual do FlowED;
+6. somente depois iniciar novos domínios/capabilities.
 
 ## Evidência de dogfood
 
-A tentativa anterior de escolher InitProj como primeiro piloto revelou que a arquitetura poderia absorver `ISO29110-lite` como profile e, com isso, criar acoplamento entre módulos horizontais que deveriam permanecer substituíveis por contrato.
+A evolução desta decisão já produziu duas correções relevantes antes da implementação:
 
-A proposta foi corrigida antes da implementação. Este caso constitui evidência documental inicial de que o dogfood do protocolo consegue detectar e corrigir acoplamento conceitual durante a evolução da arquitetura.
+- a tentativa de ligar `ISO29110-lite` a `InitProj` revelou acoplamento conceitual indevido;
+- a tentativa de elevar ports ao nível conceitual revelou que o FlowED deve depender de contratos públicos, deixando ports/adapters como possíveis técnicas internas.
 
-Documento relacionado: `HORIZONTAL-MODULES-AND-PORTS-DRAFT.md`.
+A escolha de TDD é a próxima hipótese a ser testada, não uma verdade consolidada.
