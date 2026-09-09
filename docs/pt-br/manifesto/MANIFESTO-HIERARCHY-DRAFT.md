@@ -32,9 +32,11 @@ O próprio manifesto deve percorrer esse fluxo. Assim, sua versão preliminar n�
 
 Os pilares formam o primeiro nível de compreensão abaixo da missão e da tese central. Devem ser poucos, estáveis e suficientemente amplos para explicar o animal sem exigir que o interlocutor conheça seus mecanismos internos.
 
-### Pilar 1 — Unidade operacional e liberdade de materialização
+### Pilar 1 — Unidade operacional e liberdade governada
 
 Todos os domínios da Engenharia de Software devem poder participar de uma mesma linguagem operacional sem perder sua soberania interna nem ficar presos a uma implementação concreta.
+
+A liberdade de materialização não é liberdade caótica. Ela existe dentro de intenções explícitas, contratos públicos, rastreabilidade, regras de composição e capacidade de substituição controlada.
 
 O crescimento ocorre em três dimensões:
 
@@ -44,7 +46,7 @@ O crescimento ocorre em três dimensões:
 
 FlowED padroniza a expressão de intenção e os contratos públicos, não as tecnologias concretas. Artefatos permanecem nativos e utilizáveis fora do FlowED.
 
-Este pilar absorve tanto o problema histórico da fragmentação metodológica quanto a liberdade de materialização e a soberania dos artefatos.
+Este pilar absorve o problema histórico da fragmentação metodológica e estabelece a ideia de liberdade governada: múltiplas materializações são permitidas, mas precisam continuar inteligíveis, rastreáveis, comparáveis e substituíveis.
 
 ### Pilar 2 — Autoeducação e conhecimento vivo
 
@@ -56,23 +58,27 @@ Decisões, razões, mudanças, resultados e aprendizados relevantes devem poder 
 
 Assim, memória, continuidade e documentação normativa dinâmica são consequências necessárias deste pilar, e não um pilar separado.
 
-### Pilar 3 — Governança epistemológica rastreável
+### Pilar 3 — Sustentação científica e empírica explícita
 
-FlowED não declara verdade nem exige obediência ao próprio baseline. Ele torna explícitos referência, evidência, contexto, incerteza, divergência, decisão, revisão e evolução.
+Toda referência relevante deve tornar explícita sua relação com o conhecimento científico e normativo disponível e com a evidência empírica observada em seu contexto de uso.
 
-Uma organização pode divergir integralmente do baseline e ainda ser plenamente conforme ao mecanismo FlowED se tratar suas decisões segundo o protocolo estabelecido.
+FlowED não transforma ciência em dogma nem experiência local em verdade universal. O princípio é outro: uma decisão deve declarar o que a sustenta, o que a contradiz, o que ainda é desconhecido e qual parte de sua sustentação vem de ciência, norma, experimento, operação ou decisão contextual.
 
-Ciência, normas, evidência operacional, experiência do time e decisões contextuais são fontes distintas de sustentação e não devem ser confundidas entre si.
+Quando não houver sustentação suficiente, a referência pode continuar operacionalmente adotada, mas sua fragilidade deve permanecer visível e refletida no estado de evidência/score correspondente.
 
-O fluxo fundamental de evolução conecta este pilar à prática: referências são usadas, observadas e reavaliadas, e sua sustentação pode subir ou descer conforme a evidência produzida.
+O uso real participa desse pilar porque produz evidência. Testes, experimentos, resultados operacionais, falhas, replicações e observações podem aumentar, manter ou reduzir a sustentação de uma referência.
 
-### Pilar 4 — Progressividade, sustentabilidade e proporcionalidade
+Assim, o FlowED exige **ligação explícita com evidência**, não obediência automática a uma fonte externa.
 
-A sofisticação da Engenharia de Software deve crescer de acordo com a necessidade real do projeto e da organização, sem impor antecipadamente toda a complexidade possível.
+### Pilar 4 — Progressividade governada
 
-O FlowED preserva do manifesto histórico a prioridade dada ao crescimento do time, à sustentabilidade do projeto, à implantação progressiva, à rastreabilidade e à redução de burocracia desnecessária.
+A sofisticação da Engenharia de Software deve crescer conforme necessidade, contexto, risco, maturidade e evidência, sem impor antecipadamente toda a complexidade possível.
 
-A eficiência não deve ser perseguida isoladamente a ponto de destruir aprendizagem, sustentabilidade, previsibilidade ou capacidade futura de evolução.
+Progressividade é o princípio ativo deste pilar. Sustentabilidade, proporcionalidade e redução de burocracia são consequências esperadas de uma progressão bem governada.
+
+Uma implantação pode começar mínima e aumentar largura, profundidade e intensidade à medida que o contexto justificar. O crescimento deve preservar rastreabilidade e capacidade futura de evolução, evitando tanto subengenharia persistente quanto complexidade prematura.
+
+O FlowED preserva do manifesto histórico a prioridade dada ao crescimento do time, à sustentabilidade do projeto e à implantação progressiva, mas reorganiza esses elementos sob uma ideia mais concentrada: **crescer quando houver razão para crescer e saber por que cresceu**.
 
 ## 4. Princípios como aprofundamento progressivo dos pilares
 
@@ -82,28 +88,37 @@ Essa relação também deve orientar a futura documentação dinâmica do manife
 
 **missão → tese → fluxo fundamental → pilares → princípios → mecanismos → evidências/linhagem cognitiva**.
 
-Um interlocutor pode parar no nível suficiente para seu objetivo ou aprofundar progressivamente até a proveniência e o caminho cognitivo que sustentam uma referência.
+A progressividade de apresentação não significa que o interlocutor escolhe livremente qualquer profundidade e assume o risco de omitir informação necessária. A projeção deve ser governada pela **intenção, papel, contexto e objetivo do interlocutor**.
+
+O sistema conceitual deve determinar qual é a informação mínima suficiente para que aquele interlocutor compreenda e execute corretamente o que precisa fazer, incluindo o racional necessário para interpretação e crítica. O interlocutor pode aprofundar além desse mínimo quando desejar, mas não deve poder omitir silenciosamente aquilo que o próprio contexto torna necessário.
+
+Da mesma forma, o sistema não deve despejar automaticamente toda a informação disponível. O objetivo é fornecer **somente a informação necessária, mas nunca menos que a necessária**.
+
+Essa regra é central para a documentação normativa dinâmica defendida pelo EDT: a projeção depende do interlocutor, mas não é arbitrariamente escolhida por ele.
 
 ### Princípios candidatos
 
-1. **Uma intenção, muitas materializações.**
+1. **Uma intenção, muitas materializações governadas.**
 2. **Uma linguagem comum, muitas tecnologias.**
 3. **Domínios são pares e soberanos internamente.**
-4. **O conhecimento do time pode modificar conscientemente o modo de trabalho.**
-5. **Aprendizado relevante deve deixar rastros reutilizáveis.**
-6. **O consolidado é uma projeção do conhecimento, não o conhecimento inteiro.**
-7. **A projeção normativa depende do interlocutor e do objetivo.**
-8. **Divergir é permitido; esconder a divergência não.**
-9. **Score zero não invalida uma decisão operacional.**
-10. **O baseline é ponto de partida, não verdade nem ponto final.**
-11. **O FlowED deve poder ser superado por evidência melhor que a sua própria.**
-12. **A sofisticação da engenharia pode crescer sem burocracia proporcional.**
-13. **Experimentar uma nova prática deve ser mais barato que reconstruir a organização.**
-14. **Artefatos nativos permanecem soberanos e portáveis.**
-15. **O mesmo modelo mental deve poder acompanhar estudante, profissional, equipe e empresa ao longo do crescimento.**
-16. **O próprio FlowED deve explicar sua evolução usando os mecanismos que exige de seus usuários.**
-17. **Uma referência adotada deve permanecer aberta à evidência produzida por seu próprio uso.**
-18. **Evidência pode confirmar, enfraquecer ou invalidar uma referência; uso não é confirmação automática.**
+4. **Liberdade de implementação exige rastreabilidade e contratos explícitos.**
+5. **O conhecimento do time pode modificar conscientemente o modo de trabalho.**
+6. **Aprendizado relevante deve deixar rastros reutilizáveis.**
+7. **O consolidado é uma projeção do conhecimento, não o conhecimento inteiro.**
+8. **A projeção normativa depende da intenção, do papel, do contexto e do objetivo do interlocutor.**
+9. **A projeção deve fornecer somente a informação necessária, mas nunca menos que a necessária.**
+10. **Divergir é permitido; esconder a divergência não.**
+11. **Score zero não invalida uma decisão operacional.**
+12. **Toda referência relevante deve declarar sua sustentação científica, normativa e/ou empírica disponível.**
+13. **O baseline é ponto de partida, não verdade nem ponto final.**
+14. **O FlowED deve poder ser superado por evidência melhor que a sua própria.**
+15. **A sofisticação da engenharia pode crescer sem burocracia proporcional.**
+16. **Experimentar uma nova prática deve ser mais barato que reconstruir a organização.**
+17. **Artefatos nativos permanecem soberanos e portáveis.**
+18. **O mesmo modelo mental deve poder acompanhar estudante, profissional, equipe e empresa ao longo do crescimento.**
+19. **O próprio FlowED deve explicar sua evolução usando os mecanismos que exige de seus usuários.**
+20. **Uma referência adotada deve permanecer aberta à evidência produzida por seu próprio uso.**
+21. **Evidência pode confirmar, enfraquecer ou invalidar uma referência; uso não é confirmação automática.**
 
 ## 5. Mecanismos estruturais
 
@@ -113,6 +128,7 @@ Os mecanismos não são pilares; são formas de realizar os pilares e podem evol
 - adapters/providers/materializadores verticais;
 - configuração de intensidade por contexto;
 - linguagem operacional comum de intenções;
+- contratos e governança de materialização;
 - baseline versionado;
 - referências com proveniência e estado de sustentação;
 - score/avaliação determinística onde os dados permitirem;
@@ -120,7 +136,7 @@ Os mecanismos não são pilares; são formas de realizar os pilares e podem evol
 - registro histórico de decisões e resultados;
 - EDT como mecanismo de autoeducação e evolução do conhecimento;
 - CCP/CCC como mecanismo de normalização do caminho cognitivo relevante;
-- projeções dinâmicas de documentação normativa;
+- projeções dinâmicas orientadas por intenção, papel, contexto e objetivo;
 - MyTrues como possível materialização de memória/proveniência.
 
 ## 6. Estados de evolução de uma hipótese ou referência
@@ -158,6 +174,7 @@ Hipótese de trabalho: Full FlowED não deve significar "seguir o baseline". Dev
 - rastreabilidade mínima das referências relevantes;
 - tratamento explícito de divergências;
 - preservação histórica suficiente;
+- ligação explícita das referências relevantes com sustentação científica, normativa e/ou empírica disponível;
 - critérios mínimos de realizabilidade quando uma hipótese sustenta mecanismos críticos;
 - eventual piso de sustentação/evidência para determinadas classes de referência.
 
@@ -175,7 +192,8 @@ O manifesto definitivo não deve existir apenas como texto estático. Sua public
 
 - existir uma referência canônica/versionada;
 - preservar a linhagem cognitiva e decisória relevante;
-- oferecer projeções diferentes para públicos e objetivos diferentes;
+- determinar projeções diferentes segundo intenção, papel, contexto e objetivo do interlocutor;
+- assegurar um mínimo informacional obrigatório quando o contexto o exigir;
 - permitir aprofundamento progressivo do "o quê" até o "por quê";
 - permitir crítica e evolução rastreáveis;
 - manter a projeção curta sem apagar a cadeia que a sustenta.
@@ -194,9 +212,11 @@ Essa hipótese não elimina a busca de anterioridade: o artigo-pai só deve ser 
 
 ## 10. Questões para debate antes da versão preliminar
 
-1. Os quatro pilares representam corretamente o primeiro nível de zoom do manifesto?
-2. Os nomes dos quatro pilares são suficientemente fortes e independentes?
-3. O fluxo fundamental de evolução deve ficar acima dos pilares, como comportamento transversal do FlowED, ou ser apresentado dentro do pilar de autoeducação?
-4. Quais princípios pertencem prioritariamente a cada pilar, admitindo relações secundárias entre eles?
-5. Qual é o conjunto mínimo obrigatório para alguém se declarar Full FlowED?
-6. Como definir o primeiro estado utilizável de "realizável em princípio" sem fingir validação?
+1. **Unidade operacional e liberdade governada** é o melhor nome para o Pilar 1 ou há termo mais preciso para liberdade não caótica, rastreável e contratual?
+2. **Sustentação científica e empírica explícita** concentra corretamente o Pilar 3 ou ainda mistura evidência com governança?
+3. **Progressividade governada** representa melhor o Pilar 4, com sustentabilidade e proporcionalidade como consequências?
+4. O fluxo fundamental de evolução deve ficar acima dos pilares, como comportamento transversal do FlowED, ou ser apresentado dentro do pilar de autoeducação?
+5. Quais princípios pertencem prioritariamente a cada pilar, admitindo relações secundárias entre eles?
+6. Qual é o conjunto mínimo obrigatório para alguém se declarar Full FlowED?
+7. Como definir o primeiro estado utilizável de "realizável em princípio" sem fingir validação?
+8. Como formalizar futuramente a determinação da projeção normativa mínima suficiente sem criar paternalismo, opacidade ou perda de autonomia do interlocutor?
