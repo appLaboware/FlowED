@@ -87,7 +87,28 @@ A organização aprende modificando progressivamente sua própria forma de traba
 
 A autoeducação no FlowED atual não é apenas pedagógica: ela é monitorada, histórica e comparável. A organização deve conseguir observar o que adotou, por que adotou, como aquilo se comportou, o que aprendeu e por que manteve, revisou ou abandonou uma referência.
 
-## 10. Ciência, prática e empirismo
+## 10. EDT e o caminho cognitivo do criador
+
+O **Education-Driven Thinking (EDT)** deixa de ser tratado como mera ideia lateral. Existe um rascunho de pesquisa já avançado cuja proposição central é que o processo cognitivo do criador seja registrado e estruturado como base da documentação, da rastreabilidade e da evolução do conhecimento.
+
+Essa ideia é altamente compatível com a autoeducação do FlowED e pode alterar de forma importante como o domínio de documentação normativa é materializado.
+
+Em vez de tratar a norma, metodologia ou documentação consolidada como único produto do conhecimento, o FlowED pode preservar também o **Caminho Cognitivo do Criador (CCC)**: problemas enfrentados, alternativas consideradas, critérios, decisões, rejeições, revisões e razões que levaram ao conteúdo consolidado.
+
+Nome inglês de trabalho, sem pretensão de terminologia científica estabelecida: **Creator's Cognitive Path (CCP)**. O nome deve permanecer provisório até pesquisa terminológica posterior.
+
+A consequência prática é separar ao menos duas camadas:
+
+1. **produto normativo consolidado** — a projeção concisa usada para consulta, adoção e conformidade;
+2. **linhagem cognitiva e decisória** — o caminho rastreável que explica como e por que aquele produto surgiu e evoluiu.
+
+Essa segunda camada não deve substituir a norma nem transformar toda conversa bruta em documentação normativa. Ela deve preservar origem, proveniência, racional, estado epistemológico e ligações entre decisões, permitindo reconstrução, aprendizagem e evolução sem obrigar o usuário comum a consumir toda a história.
+
+O material EDT Level-0 reforça ainda invariantes úteis ao FlowED: fonte, extração, inferência, confirmação, evidência e projeção não devem ser confundidas; projeções legíveis não ganham autoridade apenas por serem mais convenientes; interpretações rejeitadas ou superadas devem poder permanecer preservadas; e reprocessamentos precisam manter linhagem/versionamento.
+
+Assim, EDT pode funcionar como uma das referências internas mais importantes para o eixo de autoeducação, documentação, memória e proveniência do FlowED, sem concluir ainda que seja o pai científico geral do FlowED.
+
+## 11. Ciência, prática e empirismo
 
 FlowED pretende manter explícita a relação entre três fontes de sustentação e evolução:
 
@@ -97,15 +118,17 @@ FlowED pretende manter explícita a relação entre três fontes de sustentaçã
 
 O sistema não deve transformar ciência em dogma nem experiência local em verdade universal. Deve tornar visível onde existe alinhamento, divergência, incerteza, sustentação forte ou sustentação inexistente.
 
-## 11. Continuidade academia–indústria
+## 12. Continuidade academia–indústria
 
 A mesma linguagem operacional deve poder ser ensinada em ambiente acadêmico e continuar útil na indústria. O aluno pode começar com uma composição mínima e, ao longo da carreira, ampliar largura, profundidade e intensidade sem descartar o modelo mental aprendido.
 
-## 12. Escala
+EDT fortalece esse eixo ao permitir que o aprendizado não seja limitado ao artefato consolidado: o aluno pode reconstruir o percurso decisório e cognitivo que produziu uma norma, prática ou sistema, desde que esse percurso tenha sido registrado com rastreabilidade adequada.
+
+## 13. Escala
 
 FlowED não deve carregar como princípio a limitação pessoal de um desenvolvedor solo ou de uma equipe pequena. Deve poder representar desde estudante/indie hacker até empresas grandes com múltiplos projetos, governança, compliance e integrações corporativas.
 
-## 13. Cultura explícita, comportamento e memória organizacional
+## 14. Cultura explícita, comportamento e memória organizacional
 
 As decisões, princípios, justificativas, mudanças e aprendizados da organização devem ser explicitáveis e preserváveis.
 
@@ -113,9 +136,9 @@ O histórico de evolução deve permitir descrever aspectos do comportamento org
 
 Essas categorias ainda não são taxonomia final. Elas descrevem a intenção de que o FlowED consiga representar 'personalidade evolutiva' sem reduzi-la a opinião narrativa.
 
-MyTrues é atualmente imaginado como componente adjacente de memória/proveniência dessa cultura, mas sua relação arquitetural definitiva com FlowED ainda precisa ser formalizada.
+MyTrues é atualmente imaginado como componente adjacente de memória/proveniência dessa cultura. EDT/CCC fornece uma hipótese forte sobre **o que** vale preservar nessa memória: não apenas a decisão final, mas sua linhagem de criação, racional e transformação. A relação arquitetural definitiva entre FlowED, EDT e MyTrues ainda precisa ser formalizada.
 
-## 14. Pontuação determinística
+## 15. Pontuação determinística
 
 A pontuação é parte importante do animal pretendido, mas a matemática ainda não está definida.
 
@@ -131,11 +154,13 @@ No nível conceitual, ela deve:
 
 O manifesto deve defender o princípio de mensuração e rastreabilidade, não congelar prematuramente fórmula, pesos ou escala.
 
-## 15. Autoaplicação
+## 16. Autoaplicação
 
 O time que desenvolve FlowED deve usar o próprio mecanismo FlowED para desenvolver o FlowED. A autoaplicação deve ir além de dogfooding superficial: o sistema deve ser capaz de explicar e rastrear sua própria evolução usando o mesmo mecanismo que oferece aos usuários.
 
-## 16. Pontos ainda necessários para uma definição final de manifesto
+EDT/CCC torna essa exigência mais concreta: o desenvolvimento do próprio FlowED deve preservar não apenas versões e decisões finais, mas o caminho cognitivo que levou às principais decisões de manifesto, arquitetura e baseline, em forma reutilizável sem confundir registro histórico com autoridade normativa.
+
+## 17. Pontos ainda necessários para uma definição final de manifesto
 
 Antes de considerar a definição do animal completamente fechada, ainda faltam decisões humanas sobre:
 
@@ -147,7 +172,8 @@ Antes de considerar a definição do animal completamente fechada, ainda faltam 
 6. **Escopo do empirismo** — esclarecer se toda mudança deve produzir observação verificável ou se decisões puramente estratégicas também entram no mesmo mecanismo com score possivelmente zero.
 7. **Personalidade/Risco-FlowED** — decidir se o manifesto deve declarar explicitamente que FlowED caracteriza comportamento organizacional ou apenas registrar os dados que permitem ferramentas futuras inferirem esse perfil.
 8. **MyTrues** — decidir se a memória histórica é princípio obrigatório do FlowED e MyTrues apenas uma materialização, ou se memória/proveniência é um domínio opcional.
-9. **Compatibilidade com o legado** — revisar o manifesto/README histórico cláusula a cláusula usando a regra 'preservar por expansão' e marcar qualquer contradição real.
-10. **Critério de pertencimento** — definir o mínimo que uma organização precisa adotar para dizer que usa FlowED sem transformar baseline em obrigação.
+9. **EDT/CCC no manifesto** — decidir se o manifesto declara explicitamente que documentação normativa deve preservar o caminho cognitivo do criador, ou se isso aparece como princípio mais geral de preservação de racional/proveniência e EDT fica como uma materialização/referência.
+10. **Compatibilidade com o legado** — revisar o manifesto/README histórico cláusula a cláusula usando a regra 'preservar por expansão' e marcar qualquer contradição real.
+11. **Critério de pertencimento** — definir o mínimo que uma organização precisa adotar para dizer que usa FlowED sem transformar baseline em obrigação.
 
 Esses pontos são gaps do animal, não pesquisa científica. A ciência deverá ser buscada depois que essas decisões estiverem estabilizadas.
