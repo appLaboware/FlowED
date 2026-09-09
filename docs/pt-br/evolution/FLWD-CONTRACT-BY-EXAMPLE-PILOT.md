@@ -8,15 +8,19 @@ O objetivo do piloto não é usar Test-Driven Development como domínio do FlowE
 
 A intenção é aplicar **desenvolvimento guiado por contrato executável**, criando primeiro exemplos válidos de comandos e respostas para o cliente `flwd`, usando mocks/fakes, e somente depois implementar os produtores reais capazes de satisfazer o mesmo contrato.
 
-O padrão de referência mais próximo é uma composição de:
+Após Discovery científico inicial, a referência mais próxima e defensável é uma composição de:
 
-- contract-first / API-first design;
-- contract testing;
-- consumer-driven contracts;
-- contract by example;
-- mocks/fakes como substitutos temporários do provider real.
+- **Consumer-Driven Contract Testing (CDCT)**;
+- contract-based testing;
+- specification-based conformance testing;
+- behavioral contracts/substitutability;
+- mock objects como substitutos temporários do provider real.
+
+“Test-driven” pode continuar como analogia informal do processo de fora para dentro, mas não deve ser usado como nome científico principal desta abordagem.
 
 A regra Adapt First exige tratar essa linha como adoção/composição de prior art, não como invenção metodológica própria.
+
+Base científica registrada em: `SCIENTIFIC-BASIS-FLWD-CONTRACT-BY-EXAMPLE.md` (`REF-SCI-FLWD-CBE-001`).
 
 ## 2. Hipótese principal
 
@@ -166,15 +170,30 @@ O foco é determinismo de **interpretação e verificação pública**:
 
 Determinismo interno da implementação fica fora do escopo salvo quando produzir comportamento observável prometido pelo contrato.
 
-## 10. Dogfood
+## 10. Sustentação científica atual
+
+O Discovery encontrou sustentação externa relevante e separada por função:
+
+- **Schwarz, Quast & Riehle (2025)** — SLR + action research em Consumer-Driven Contract Testing; base principal para contratos orientados pelo consumidor e compatibilidade verificada isoladamente;
+- **Ayas et al. (2022)** — evidência empírica de uso de CDCT em sistemas de microservices;
+- **Heckel & Lohmann (2005)** — contract-based testing de serviços e simulação de componentes requeridos durante testes;
+- **Tretmans (1999)** — base formal para conformidade e derivação de testes a partir de especificações;
+- **de Alfaro & Henzinger (2001)** — interfaces comportamentais com suposições de entrada e garantias de saída;
+- **Liskov & Wing (1994)** — substituição baseada na preservação de propriedades comportamentais;
+- **Meyer (1992)** — Design by Contract, com obrigações/garantias explícitas;
+- **Freeman et al. (2004)** e **Spadini et al. (2019)** — mock objects como técnica de desenvolvimento/teste e evidência empírica de uso.
+
+Essas referências sustentam o mecanismo-base, mas **não provam** que um único contrato FlowED servirá a todos os domínios, que haverá equivalência semântica profunda em qualquer contexto ou que a abordagem reduzirá custo/complexidade. Essas claims continuam experimentais.
+
+## 11. Dogfood
 
 Este refinamento corrige a leitura anterior de “TDD” como domínio piloto.
 
 O próprio debate mostrou que a intenção real era testar o FlowED de fora para dentro: primeiro o consumidor e seus contratos executáveis, depois os produtores reais.
 
-Isso reduz acoplamento e aproxima o piloto de prior art consolidado de contract testing/consumer-driven contracts.
+O Discovery seguinte confirmou que esta forma possui prior art suficiente para ser classificada como `COMPOSE`, e não `INVENT`.
 
-## 11. Próxima ação
+## 12. Próxima ação
 
 Escolher uma operação mínima de `flwd` e criar quatro artefatos antes de qualquer provider real:
 
