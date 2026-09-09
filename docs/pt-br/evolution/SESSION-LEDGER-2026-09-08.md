@@ -122,3 +122,26 @@ Ao final de cada interação, verificar explicitamente se houve materialização
 18. **Autossuperação do FlowED** — princípio conceitual aceito, operacionalização e anterioridade ainda abertas.
 19. **MyTrues e memória organizacional** — relação com a governança epistemológica do FlowED ainda precisa ser formalizada sem acoplamento indevido.
 20. **Arquitetura horizontal/provedores/intensidade** — animal está bem descrito, mas termos científicos e antecedentes precisam ser normalizados antes de consolidação normativa.
+
+## Fluxo para fechar o manifesto antes da pesquisa científica
+
+Decisão de trabalho: o manifesto deve ser fechado primeiro como descrição prática completa do "animal" FlowED, sem ainda procurar fundamentação científica para cada proposição. A pesquisa de anterioridade e a busca do artigo-pai começam somente depois que o manifesto estiver conceitualmente completo.
+
+Método das próximas rodadas:
+
+1. selecionar um único gap do manifesto que dependa de decisão conceitual do usuário;
+2. discutir somente esse gap até estabilizá-lo;
+3. registrar a decisão no modelo conceitual e no ledger;
+4. identificar se a discussão gera, altera, funde ou elimina candidato a paper;
+5. marcar impacto no futuro manifesto;
+6. repetir até não restarem gaps conceituais relevantes;
+7. somente então escrever o manifesto de trabalho completo;
+8. depois iniciar pesquisa científica e revisão de anterioridade.
+
+### Primeiro gap selecionado — identidade e fronteira do próprio FlowED
+
+Antes de fechar o manifesto, é necessário estabilizar o que o FlowED *é* no nível mais alto. O README histórico ainda o descreve principalmente como metodologia de gestão de projetos baseada em autoeducação, enquanto o modelo conceitual atual o descreve como linguagem operacional comum para expressar intenções de Engenharia de Software em múltiplos domínios, com materializações variáveis.
+
+Pergunta de decisão: **FlowED é, em essência, uma metodologia de gestão de projetos que cresceu para integrar outros domínios, ou é uma camada/sistema operacional de organização da Engenharia de Software cuja gestão de projetos é apenas um dos domínios possíveis?**
+
+Esta decisão impacta diretamente a abertura do manifesto, o escopo dos princípios, a relação com os domínios, o significado de "Education-Driven" e a futura busca do artigo-pai.
