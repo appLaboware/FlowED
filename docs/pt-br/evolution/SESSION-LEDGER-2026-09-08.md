@@ -93,3 +93,32 @@
 - Não nomear definitivamente conceitos sem pesquisa terminológica.
 - Não inventar pesos ou fórmulas de score antes da pesquisa adequada.
 - Não afirmar que maturidade epistemológica mede diretamente qualidade de software sem validação empírica.
+
+## Regra operacional da sessão de IA
+
+A partir desta interação, toda conversa que altere, refine ou acrescente conceitos do FlowED deve ser registrada no repositório `appLaboware/FlowED` antes de seguir adiante. O registro pode ser detalhado no artefato conceitual correspondente ou, no mínimo, resumido neste ledger de sessão.
+
+Ao final de cada interação, verificar explicitamente se houve materialização no repositório. Se não houve, informar ao usuário. Se houve falha de escrita, branch, proteção, PR ou qualquer outro impedimento, informar imediatamente e não fingir persistência.
+
+## Estado aberto para continuidade
+
+1. **Novo manifesto** — ainda não existe como artefato canônico; o manifesto histórico continua embutido no README e precisa ser substituído após estabilização do animal.
+2. **Pasta de manifesto** — ainda não existe; candidato de próximo passo: `docs/pt-br/manifesto/` com manifesto de trabalho e rastreabilidade das afirmações.
+3. **Artigo-pai / teoria-pai** — pesquisa sistemática ainda não executada; regra permanece ADOPT FIRST.
+4. **Anterioridade dos 15 papers candidatos** — todos ainda precisam passar por busca, revisão de constructo e decisão GO/MERGE/ADOPT/DON'T GO.
+5. **Terminologia** — nomes como Full FlowED, Baseline Alignment, Referência, Risco-FlowED e outros ainda são nomes de trabalho.
+6. **Modelo de score de evidência** — aberto; não definir pesos antes de pesquisar evidence grading, assurance, maturity models e afins.
+7. **Fontes não científicas de evidência** — aberto; classificar e validar contribuição de normas, evidência operacional, benchmarks, replicações e outros mecanismos.
+8. **Evidência longitudinal** — aberto; estudar como tempo, exposição, diversidade de contexto, falhas e resultados podem aumentar ou reduzir confiança sem confundir longevidade com verdade.
+9. **Maturidade epistemológica** — aberto; constructo ainda não validado e não deve ser vendido como proxy direto de qualidade de software.
+10. **Certificação determinística não binária** — aberto; investigar componentes determinísticos, julgamento humano e formato vetorial de certificação.
+11. **Baseline versionado** — conceito aceito, modelo formal ainda aberto: versionamento, comparação histórica, afinidade relativa e referência superior ao baseline.
+12. **Políticas de piso epistemológico** — abertas: não reduzir score, não cair abaixo do baseline, aceitar divergência somente se igualar/superar baseline e exceções controladas para experimentação.
+13. **Risco-FlowED** — aberto como paper e ferramenta; precisa de anterioridade, definição do constructo, dimensões e validação.
+14. **Queda deliberada de score para inovar** — aberta; distinguir queda temporária do score da definitividade operacional da referência adotada.
+15. **Ferramentas derivadas** — backlog conceitual existe, mas nenhuma deve ser tratada como produto decidido antes de pesquisa de anterioridade e valor residual.
+16. **Integração academia–indústria** — aberta como linha de pesquisa forte, incluindo ensino com referências de score zero e linguagem operacional contínua.
+17. **Feedback prática→ciência** — aberto; modelar como divergências recorrentes e gaps do baseline viram agenda de pesquisa verificável.
+18. **Autossuperação do FlowED** — princípio conceitual aceito, operacionalização e anterioridade ainda abertas.
+19. **MyTrues e memória organizacional** — relação com a governança epistemológica do FlowED ainda precisa ser formalizada sem acoplamento indevido.
+20. **Arquitetura horizontal/provedores/intensidade** — animal está bem descrito, mas termos científicos e antecedentes precisam ser normalizados antes de consolidação normativa.
