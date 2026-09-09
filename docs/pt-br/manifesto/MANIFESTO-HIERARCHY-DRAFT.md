@@ -16,11 +16,25 @@ O FlowED parte da hipótese de que a Engenharia de Software pode aumentar sua so
 
 Para isso, separa intenção de materialização, preserva uma linguagem operacional comum, permite composição modular e transforma a experiência da organização em insumo rastreável para sua própria evolução.
 
-## 2. Pilares propostos
+## 2. Fluxo fundamental de evolução
 
-### Pilar 1 — Unidade operacional da Engenharia de Software
+O FlowED não trata uma referência adotada como conhecimento congelado. Sua forma de trabalhar deve evoluir por um fluxo explícito e recorrente:
 
-Todos os domínios da Engenharia de Software devem poder participar de uma mesma linguagem operacional sem perder sua soberania interna.
+**esboço → debate → refinamento → versão preliminar → uso real → evidência → alteração de sustentação/score → revisão → novo ciclo**.
+
+Este fluxo é candidato a elemento central do manifesto, e não apenas ao processo usado para escrevê-lo. Ele representa como uma organização FlowED transforma hipótese em prática, prática em evidência e evidência em evolução consciente.
+
+O ciclo não pressupõe que uso confirme uma regra. A experiência pode aumentar, manter ou reduzir sua sustentação; revelar inadequação contextual; produzir divergência; ou levar ao abandono da referência. O valor está em tornar a evolução observável, rastreável, criticável e reutilizável.
+
+O próprio manifesto deve percorrer esse fluxo. Assim, sua versão preliminar não será apresentada como verdade final: será uma referência utilizável cuja sustentação deverá evoluir com aplicação, observação e crítica.
+
+## 3. Quatro pilares propostos
+
+Os pilares formam o primeiro nível de compreensão abaixo da missão e da tese central. Devem ser poucos, estáveis e suficientemente amplos para explicar o animal sem exigir que o interlocutor conheça seus mecanismos internos.
+
+### Pilar 1 — Unidade operacional e liberdade de materialização
+
+Todos os domínios da Engenharia de Software devem poder participar de uma mesma linguagem operacional sem perder sua soberania interna nem ficar presos a uma implementação concreta.
 
 O crescimento ocorre em três dimensões:
 
@@ -28,17 +42,19 @@ O crescimento ocorre em três dimensões:
 - verticalmente, por materializadores/adapters substituíveis;
 - em intensidade, pelo grau de rigor e profundidade com que cada capability é aplicada em determinado contexto.
 
-Este pilar absorve o problema histórico da fragmentação metodológica e da "colagem" de padrões incompatíveis.
+FlowED padroniza a expressão de intenção e os contratos públicos, não as tecnologias concretas. Artefatos permanecem nativos e utilizáveis fora do FlowED.
 
-### Pilar 2 — Autoeducação como mecanismo de evolução
+Este pilar absorve tanto o problema histórico da fragmentação metodológica quanto a liberdade de materialização e a soberania dos artefatos.
+
+### Pilar 2 — Autoeducação e conhecimento vivo
 
 A organização não deve apenas executar um processo; deve aprender com a própria execução e ser capaz de transformar esse aprendizado em evolução consciente de sua forma de trabalhar.
 
-No modelo atual, esse eixo é operacionalizado principalmente pelo **Education-Driven Thinking (EDT)**.
+No modelo atual, esse eixo é operacionalizado principalmente pelo **Education-Driven Thinking (EDT)**. O **Creator's Cognitive Path / Caminho Cognitivo do Criador (CCP/CCC)** é tratado como pré-requisito metodológico pretendido do EDT para normalizar e tornar rastreável o percurso cognitivo relevante à criação de decisões, normas, práticas e conhecimento.
 
-O **Creator's Cognitive Path / Caminho Cognitivo do Criador (CCP/CCC)** é tratado como pré-requisito metodológico pretendido do EDT para normalizar e tornar rastreável o percurso cognitivo relevante à criação de decisões, normas, práticas e conhecimento.
+Decisões, razões, mudanças, resultados e aprendizados relevantes devem poder ser preservados e reutilizados. O conhecimento consolidado é uma projeção adequada a um interlocutor e objetivo, não o conhecimento inteiro.
 
-EDT é, portanto, o ancestral principal do eixo de autoeducação do FlowED, mas não é pressuposto como único ancestral do sistema completo.
+Assim, memória, continuidade e documentação normativa dinâmica são consequências necessárias deste pilar, e não um pilar separado.
 
 ### Pilar 3 — Governança epistemológica rastreável
 
@@ -48,6 +64,8 @@ Uma organização pode divergir integralmente do baseline e ainda ser plenamente
 
 Ciência, normas, evidência operacional, experiência do time e decisões contextuais são fontes distintas de sustentação e não devem ser confundidas entre si.
 
+O fluxo fundamental de evolução conecta este pilar à prática: referências são usadas, observadas e reavaliadas, e sua sustentação pode subir ou descer conforme a evidência produzida.
+
 ### Pilar 4 — Progressividade, sustentabilidade e proporcionalidade
 
 A sofisticação da Engenharia de Software deve crescer de acordo com a necessidade real do projeto e da organização, sem impor antecipadamente toda a complexidade possível.
@@ -56,25 +74,17 @@ O FlowED preserva do manifesto histórico a prioridade dada ao crescimento do ti
 
 A eficiência não deve ser perseguida isoladamente a ponto de destruir aprendizagem, sustentabilidade, previsibilidade ou capacidade futura de evolução.
 
-### Pilar 5 — Liberdade de materialização e soberania dos artefatos
+## 4. Princípios como aprofundamento progressivo dos pilares
 
-FlowED padroniza a expressão de intenção e os contratos públicos, não as tecnologias concretas.
+Os princípios não competem com os pilares. Eles são o próximo nível de zoom: dissecam, explicam e tornam operacionalmente compreensíveis as ideias contidas nos pilares.
 
-Uma mesma intenção pode ser materializada por ferramentas, metodologias ou plataformas diferentes. Repositórios, documentos, pipelines e demais artefatos devem continuar utilizáveis em suas ferramentas nativas e fora do FlowED.
+Essa relação também deve orientar a futura documentação dinâmica do manifesto:
 
-A implementação pode mudar sem obrigar o usuário a reaprender a linguagem operacional central.
+**missão → tese → fluxo fundamental → pilares → princípios → mecanismos → evidências/linhagem cognitiva**.
 
-### Pilar 6 — Memória, continuidade e conhecimento vivo
+Um interlocutor pode parar no nível suficiente para seu objetivo ou aprofundar progressivamente até a proveniência e o caminho cognitivo que sustentam uma referência.
 
-Decisões, razões, mudanças, resultados e aprendizados relevantes devem poder ser preservados historicamente e reutilizados.
-
-O conhecimento consolidado não é tratado como todo o conhecimento disponível, mas como uma **projeção** adequada a um interlocutor e a um objetivo.
-
-No eixo EDT, a documentação normativa é pretendida como dinâmica: diferentes interlocutores podem receber projeções diferentes da mesma base cognitiva, com somente a informação necessária ao seu objetivo e com acesso ao racional suficiente para compreensão e crítica.
-
-MyTrues é candidato futuro a materializar a memória histórica, epistemológica e decisória que suporta essa continuidade.
-
-## 3. Princípios derivados propostos
+### Princípios candidatos
 
 1. **Uma intenção, muitas materializações.**
 2. **Uma linguagem comum, muitas tecnologias.**
@@ -92,8 +102,10 @@ MyTrues é candidato futuro a materializar a memória histórica, epistemológic
 14. **Artefatos nativos permanecem soberanos e portáveis.**
 15. **O mesmo modelo mental deve poder acompanhar estudante, profissional, equipe e empresa ao longo do crescimento.**
 16. **O próprio FlowED deve explicar sua evolução usando os mecanismos que exige de seus usuários.**
+17. **Uma referência adotada deve permanecer aberta à evidência produzida por seu próprio uso.**
+18. **Evidência pode confirmar, enfraquecer ou invalidar uma referência; uso não é confirmação automática.**
 
-## 4. Mecanismos estruturais
+## 5. Mecanismos estruturais
 
 Os mecanismos não são pilares; são formas de realizar os pilares e podem evoluir tecnicamente.
 
@@ -111,13 +123,13 @@ Os mecanismos não são pilares; são formas de realizar os pilares e podem evol
 - projeções dinâmicas de documentação normativa;
 - MyTrues como possível materialização de memória/proveniência.
 
-## 5. Estados de evolução de uma hipótese ou referência
+## 6. Estados de evolução de uma hipótese ou referência
 
 A evolução conceitual deve permitir trabalhar com algo ainda não plenamente comprovado sem tratá-lo como verdade e sem bloquear o desenvolvimento.
 
 Proposta inicial de separação entre dois eixos:
 
-### 5.1 Estado de realizabilidade
+### 6.1 Estado de realizabilidade
 
 Exemplos provisórios:
 
@@ -128,7 +140,7 @@ Exemplos provisórios:
 
 Este eixo responde: **é possível fazer?**
 
-### 5.2 Sustentação / evidência
+### 6.2 Sustentação / evidência
 
 Parte de score zero quando ainda não há sustentação admissível suficiente. Uso controlado, experimentação, observação, evidência científica/normativa/operacional e replicação podem aumentar a sustentação conforme regras ainda a pesquisar e formalizar.
 
@@ -136,7 +148,7 @@ Este eixo responde: **quão sustentada está a referência?**
 
 Não misturar inviabilidade, desconhecimento e ausência de evidência em um mesmo número.
 
-## 6. Critério futuro de Full FlowED
+## 7. Critério futuro de Full FlowED
 
 Hipótese de trabalho: Full FlowED não deve significar "seguir o baseline". Deve significar cumprir um conjunto mínimo obrigatório de mecanismos de governança, rastreabilidade e evolução.
 
@@ -151,23 +163,15 @@ Hipótese de trabalho: Full FlowED não deve significar "seguir o baseline". Dev
 
 Os limiares não estão definidos e não devem ser inventados antes de pesquisa e uso prático.
 
-## 7. Ciclo de evolução do próprio manifesto
+## 8. O manifesto como primeira autoaplicação do fluxo
 
-O manifesto deve obedecer ao princípio que propõe:
+O manifesto deve obedecer ao fluxo fundamental que propõe:
 
-1. esboço baseado no conhecimento atual;
-2. debate e refinamento;
-3. versão preliminar;
-4. uso real do FlowED e do próprio manifesto;
-5. coleta de evidência, falhas, divergências e resultados;
-6. aumento, manutenção ou redução da sustentação das referências;
-7. revisão do manifesto e do baseline quando o aprendizado justificar.
+**esboço → debate → refinamento → versão preliminar → uso real → evidência → alteração de sustentação/score → revisão**.
 
-A prática não transforma automaticamente uma regra em verdade. Ela produz evidência operacional que pode aumentar sua sustentação quando houver exposição, resultado e rastreabilidade suficientes.
+A prática não transforma automaticamente uma regra em verdade. Ela produz evidência operacional que pode aumentar, manter ou reduzir sua sustentação quando houver exposição, resultado e rastreabilidade suficientes.
 
-## 8. O manifesto como prova de EDT
-
-O manifesto definitivo não deve existir apenas como texto estático. A publicação deve demonstrar a própria tese de documentação normativa dinâmica:
+O manifesto definitivo não deve existir apenas como texto estático. Sua publicação deve demonstrar a própria tese de documentação normativa dinâmica:
 
 - existir uma referência canônica/versionada;
 - preservar a linhagem cognitiva e decisória relevante;
@@ -190,11 +194,9 @@ Essa hipótese não elimina a busca de anterioridade: o artigo-pai só deve ser 
 
 ## 10. Questões para debate antes da versão preliminar
 
-1. Os seis pilares representam corretamente a hierarquia ou algum deles deve ser princípio/consequência?
-2. "Unidade operacional da Engenharia de Software" é o melhor nome para o primeiro pilar?
-3. Memória/conhecimento vivo merece ser pilar próprio ou é consequência de autoeducação + governança epistemológica?
-4. Liberdade de materialização/soberania merece pilar próprio ou pertence ao pilar de unidade operacional?
-5. O eixo de progressividade/sustentabilidade deve permanecer um pilar central como no FlowED histórico?
-6. Quais princípios históricos do README precisam ser promovidos, rebaixados ou renomeados?
-7. Qual é o conjunto mínimo obrigatório para alguém se declarar Full FlowED?
-8. Como definir o primeiro estado utilizável de "realizável em princípio" sem fingir validação?
+1. Os quatro pilares representam corretamente o primeiro nível de zoom do manifesto?
+2. Os nomes dos quatro pilares são suficientemente fortes e independentes?
+3. O fluxo fundamental de evolução deve ficar acima dos pilares, como comportamento transversal do FlowED, ou ser apresentado dentro do pilar de autoeducação?
+4. Quais princípios pertencem prioritariamente a cada pilar, admitindo relações secundárias entre eles?
+5. Qual é o conjunto mínimo obrigatório para alguém se declarar Full FlowED?
+6. Como definir o primeiro estado utilizável de "realizável em princípio" sem fingir validação?
