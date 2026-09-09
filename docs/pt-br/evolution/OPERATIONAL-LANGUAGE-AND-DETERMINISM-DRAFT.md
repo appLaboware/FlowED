@@ -7,287 +7,210 @@
 **Diligência de Discovery:** L1 — exploratory/scoping.  
 **Rota provisória:** `COMPOSE` — combinar padrões existentes antes de inventar sintaxe/semântica própria.
 
-## 1. Pergunta
+## 1. Correção de arquitetura desta rodada
 
-Qual deve ser a unidade primária da linguagem operacional do FlowED e como uma interface humana simples pode preservar comportamento determinístico, auditável e independente de tecnologia?
+A rodada anterior misturou dois níveis diferentes: **linguagem pública do FlowED** e **comportamento interno do runtime**.
 
-## 2. Decisão provisória
+A distinção provisória passa a ser:
 
-O FlowED **não deve fazer da string de comando sua unidade semântica primária**.
+1. **FlowED Language/Protocol** — contrato semântico comum, independente de transporte e cliente;
+2. **`flwd`** — cliente CLI de referência para humanos e automação de shell;
+3. **YAML/arquivo declarativo** — outra forma de expressar a mesma linguagem semântica;
+4. **API/SDK/UI/agentes/outros clientes** — outros meios de falar a mesma língua;
+5. **runtime/materializadores** — interpretam a requisição normalizada e realizam a operação segundo contratos internos.
 
-A hipótese atual é:
+Portanto, `flwd` não é a linguagem: é um cliente da linguagem FlowED.
 
-> **O núcleo recebe uma requisição operacional canônica, tipada e versionada. CLI, UI, API e linguagem natural são projeções/compiladores dessa requisição.**
+## 2. Objetivo da linguagem pública
 
-A interface humana pode continuar usando verbos, parâmetros e opções. Porém, antes de qualquer efeito, a entrada deve ser normalizada para uma representação canônica, validada e versionada.
+A linguagem precisa suportar a vasta gama de operações que podem partir do FlowED sem obrigar todos os domínios a expor a mesma implementação interna.
 
-Isso permite manter uma linguagem agradável para humanos sem transformar particularidades de CLI, shell, agente ou ferramenta externa em semântica central do FlowED.
+A regra central passa a ser:
 
-A requisição operacional possui três modos semânticos iniciais: observação, estado e ação. Apenas os dois últimos expressam intenção de mudança.
+> **Muitos clientes e transportes; uma semântica operacional comum.**
 
-## 3. Prior art adotado na composição
+CLI, YAML, API, SDK, UI e agentes não precisam ter a mesma sintaxe superficial, mas devem preservar o mesmo vocabulário, tipos, operações, parâmetros, opções, constraints e significado observável.
 
-### 3.1 Desired state + reconciliation — Kubernetes
+## 3. Forma humana primária: `flwd`
 
-Controllers Kubernetes operam por reconciliação entre estado desejado e estado atual. A lição adotada é que, para objetos persistentes, o usuário deve preferencialmente declarar **o resultado desejado**, e o sistema calcula como convergir.
+Hipótese atual para o cliente de referência:
 
-### 3.2 Plan antes de Apply — Terraform
+**`flwd <verbo> [parâmetros] [opções]`**
 
-Terraform compara configuração/estado desejado com estado anterior e produz um plano de mudanças antes da aplicação. A lição adotada é separar **decisão semântica** de **execução efetiva**, tornando a mudança inspecionável e reproduzível.
+O verbo expressa a operação. Parâmetros posicionais são usados apenas quando sua função é inequívoca e estável. Opções nomeadas refinam a operação, selecionam comportamento, contexto, intensidade, materialização ou fonte declarativa.
 
-### 3.3 Resource-oriented/declarative-friendly APIs — Google AIP
+Exemplos meramente ilustrativos:
 
-As AIPs favorecem recursos e métodos padronizados que funcionam em clientes declarativos, CLIs e UIs; recursos declarative-friendly usam controles como `etag`, e identificadores de requisição são usados para deduplicação, retries seguros e auditoria.
+- `flwd create project myapp`
+- `flwd validate release 1.4.0`
+- `flwd publish release 1.4.0 --channel stable`
+- `flwd test project --level standard`
+- `flwd apply --file flowed.yaml`
 
-### 3.4 Hermeticity/reproducibility — Bazel
+Não se fixa ainda uma gramática definitiva nem um conjunto final de verbos.
 
-Bazel trata hermeticidade como dependência apenas de entradas conhecidas/declaradas e restringe fontes ambientais implícitas para favorecer reprodutibilidade.
+## 4. Declarativo como outra projeção da mesma língua
 
-### 3.5 Validation-first configuration — CUE
+Uma opção do cliente pode apontar para uma declaração YAML ou outro formato suportado. Nesse caso, o usuário troca a expressão curta imperativa por uma descrição declarativa mais extensa sem mudar de modelo semântico.
 
-CUE trata validação e constraints como responsabilidade central da linguagem de configuração. A lição adotada é que uma requisição não deve ser apenas parseável; ela precisa satisfazer schema, constraints e policies antes de planejamento ou execução.
+Exemplo conceitual:
 
-## 4. Três classes semânticas de requisição
+- CLI curta: verbo + parâmetros + opções;
+- CLI declarativa: `flwd apply --file flowed.yaml`;
+- API: envia uma requisição estruturada equivalente;
+- SDK: constrói a mesma estrutura por objetos/tipos;
+- UI: produz a mesma estrutura a partir de controles;
+- agente: propõe/preenche a mesma estrutura e a submete ao mesmo contrato.
 
-Forçar toda Engenharia de Software a um único estilo — imperativo ou declarativo — produz distorções. A proposta é distinguir três classes.
+A equivalência exigida é **semântica**, não textual.
 
-### 4.1 Observe Request — observação/consulta
+## 5. Envelope semântico comum
 
-Expressa necessidade de informação sem intenção de produzir efeito no domínio.
+Nome de trabalho: **FlowED Operational Request**.
 
-Exemplos conceituais:
+O envelope é o contrato compartilhado entre clientes e runtime. Campos candidatos mínimos:
 
-- obter estado atual;
-- comparar estado desejado e atual;
-- explicar por que uma policy se aplica;
-- inspecionar plano;
-- validar uma declaração sem executá-la.
+- versão do protocolo/schema;
+- operação/verbo canônico;
+- alvo/objeto;
+- parâmetros;
+- opções;
+- contexto declarado;
+- constraints/policies aplicáveis;
+- origem/ator;
+- identificador da requisição;
+- referências de proveniência/racional quando exigidas pelo risco ou pela operação.
 
-O mecanismo preferencial é **read/derive → validate authorization → return view/explanation**, preservando proveniência da resposta quando relevante.
+Domínio/capability pode existir como metadado explícito ou ser resolvido deterministicamente pelo registro da operação. Não deve ser imposto na sintaxe humana se não trouxer valor ao usuário.
 
-### 4.2 State Intent — intenção de estado
+A representação física desse envelope ainda não está decidida. YAML, JSON, CUE, Protobuf ou combinação permanecem candidatos de materialização do contrato.
 
-Expressa **como algo deve permanecer/terminar**, não a sequência exata de passos.
+## 6. Relação verbo × declarativo
 
-Exemplos conceituais:
+O FlowED não precisa escolher entre uma CLI imperativa e uma configuração declarativa como modelos concorrentes.
 
-- projeto deve possuir versionamento ativo;
-- branch principal deve exigir determinada política;
-- qualidade deve operar em determinada intensidade;
-- ambiente deve possuir determinado conjunto de capabilities.
+- **verbo** é a forma compacta de solicitar uma operação;
+- **parâmetros** identificam os elementos essenciais da solicitação;
+- **opções** refinam ou qualificam a operação;
+- **arquivo declarativo** expressa de forma explícita e reprodutível uma configuração/solicitação maior;
+- todos convergem para o mesmo envelope semântico.
 
-O mecanismo preferencial é **desired state → diff → plan → reconcile/apply**.
+Assim, um mesmo conceito pode nascer de comando curto, arquivo, API ou outro cliente sem criar dialetos semanticamente incompatíveis.
 
-Reexecução da mesma intenção, sob o mesmo estado relevante, deve tender a `no-op`.
+## 7. O que pertence à linguagem e o que pertence ao runtime
 
-### 4.3 Action Intent — intenção de ação/evento
+### 7.1 Pertence à linguagem/protocolo público
 
-Expressa uma ação com significado temporal próprio, em que repetir pode significar fazer novamente.
+- operações e seus significados;
+- tipos de alvo;
+- parâmetros e opções válidos;
+- schemas e constraints públicas;
+- erros/estados observáveis;
+- capabilities declaradas;
+- compatibilidade/versionamento do contrato;
+- proveniência e requisitos de autoridade quando fizerem parte da operação;
+- equivalência semântica entre clientes.
 
-Exemplos conceituais:
+### 7.2 Pertence principalmente ao comportamento interno
 
-- publicar uma release;
-- aprovar uma entrega;
-- disparar um benchmark;
-- registrar uma decisão;
-- executar uma migração específica.
+- reconciliation loops;
+- cálculo de diff;
+- plan/apply interno;
+- hashes internos;
+- locks;
+- transações/compensações;
+- retries;
+- snapshots;
+- estratégia de adapters/materializadores;
+- implementação de idempotência;
+- mecanismos de persistência.
 
-O mecanismo preferencial é **validate → plan/preconditions → invoke → receipt/result**.
+Esses mecanismos podem ser necessários para cumprir garantias públicas de determinismo, rastreabilidade e segurança, mas não precisam aparecer como parte da língua cotidiana do usuário.
 
-Ações devem usar idempotency/request IDs quando repetição acidental não deve duplicar efeitos.
+## 8. Determinismo como garantia do contrato, não como sintaxe
 
-## 5. Unidade canônica proposta
+A linguagem deve permitir que o runtime seja determinístico onde a operação admite determinismo.
 
-Nome de trabalho: **Operational Request / Requisição Operacional**.
+A garantia conceitual é:
 
-A `Operational Intent / Intenção Operacional` permanece como subtipo de requisição que pretende alterar estado ou produzir ação. Essa distinção evita chamar consultas e explicações de “intenção de mudança”.
+> **A mesma requisição semântica, no mesmo contexto declarado e sob as mesmas versões relevantes, deve produzir a mesma interpretação e o mesmo plano/decisão quando isso for tecnicamente possível.**
 
-Não é ainda terminologia consolidada. A unidade deve carregar, no mínimo:
+Como o runtime implementa isso é responsabilidade interna. Recursos como canonicalização, snapshots, plan hashes, etags, idempotency keys e hermeticidade são candidatos técnicos para realizar essa garantia, não elementos obrigatórios da gramática humana.
 
-- `schema_version` — versão semântica da declaração;
-- `request_id` — identidade estável da requisição/tentativa;
-- `mode` — `observe`, `state` ou `action`;
-- `domain` — domínio/capability responsável;
-- `operation` — operação semântica padronizada;
-- `target` — objeto/escopo afetado ou consultado;
-- `desired` ou `arguments` — conteúdo declarado;
-- `constraints` — limites obrigatórios;
-- `policy_refs` — políticas/baselines aplicáveis e respectivas versões;
-- `context_refs` — contexto que influencia legitimamente a resolução;
-- `adapter_constraints` — requisitos de materialização quando existirem;
-- `state_revision`/equivalente — proteção contra executar sobre estado diferente do planejado;
-- `provenance` — quem/o que originou a requisição;
-- `rationale_ref` — vínculo opcional/obrigatório conforme risco com decisão e racional.
+## 9. Prior art atualmente aproveitado
 
-A representação concreta pode ser JSON, YAML, CUE, Protobuf ou outro formato. O princípio é semântico, não sintático.
+A composição continua inspirada em padrões existentes:
 
-## 6. CLI como projeção humana
+- desired state e reconciliation para operações declarativas persistentes;
+- plan/apply para separar intenção de efeito quando necessário;
+- resource-oriented/declarative-friendly APIs para semântica uniforme entre clientes;
+- request IDs/etags para segurança de repetição e concorrência;
+- hermeticidade/reprodutibilidade para reduzir inputs implícitos;
+- validation-first para garantir schema e constraints antes de efeitos.
 
-A CLI pode usar uma gramática convencional e previsível:
+A contribuição candidata do FlowED não é reinventar esses mecanismos, mas oferecer uma linguagem operacional comum capaz de atravessar domínios distintos da Engenharia de Software.
 
-**`flow <domain> <verb> [target] [named options]`**
+## 10. Hipótese atual para GAP-M004
 
-Exemplos apenas ilustrativos:
+A unidade primária não deve ser nem a string CLI nem obrigatoriamente uma "intenção" abstrata.
 
-- `flow quality ensure projeto --level standard`
-- `flow release publish v1.4.0 --channel stable`
-- `flow project plan --profile enterprise`
+Hipótese refinada:
 
-A CLI não executa a string diretamente. Ela a compila para uma `Operational Request` canônica.
+> **A unidade primária é uma requisição operacional semanticamente tipada; `flwd`, YAML, API e demais clientes são diferentes projeções dessa mesma unidade.**
 
-### 6.1 Verbos
+Essa hipótese ainda precisa ser testada em uma amostra ampla de operações de domínios diferentes.
 
-Verbos são úteis para a interface humana, mas não devem criar semânticas arbitrárias por domínio.
+## 11. Teste necessário
 
-Preferência atual:
+O próximo experimento deve evitar testar apenas Versionamento e Qualidade. Como o FlowED pretende cobrir uma gama ampla de Engenharia de Software, a linguagem deve ser exercitada contra uma matriz heterogênea, por exemplo:
 
-- pequeno vocabulário transversal de observação/controle (`get`, `diff`, `plan`, `explain`, `validate`, `apply`);
-- operações de estado com semântica declarativa (`ensure`, `set` ou equivalente a definir após teste);
-- verbos de ação/evento somente quando o domínio realmente expressa evento (`publish`, `approve`, `run`, etc.).
+- projeto/inicialização;
+- versionamento;
+- qualidade/testes;
+- documentação;
+- release/deploy;
+- infraestrutura;
+- segurança/compliance;
+- gestão de trabalho;
+- evidência/research;
+- educação/aprendizado;
+- comunicação/coordenação;
+- consulta/observação.
 
-O vocabulário final deve ser pesquisado/testado antes de normalização.
+O objetivo não é implementar todos os domínios, mas verificar se operações reais de naturezas muito diferentes cabem no mesmo contrato `verbo + parâmetros + opções ↔ requisição estruturada`, sem criar exceções semânticas artificiais.
 
-### 6.2 Parâmetros posicionais
-
-Usar poucos parâmetros posicionais e somente quando sua semântica é inequívoca e estável — tipicamente o alvo principal ou identidade do recurso.
-
-Todos os demais dados semânticos devem ser nomeados no modelo canônico.
-
-### 6.3 Opções/flags
-
-Flags servem como ergonomia. Antes de planejar, devem ser resolvidas para campos explícitos.
-
-Regra proposta: **não existe default oculto no plano final**.
-
-Um perfil como `--profile enterprise` pode ser conveniente, mas o planner deve expandi-lo para os valores concretos e versões que realmente participarão da execução.
-
-## 7. Declarativo ou imperativo?
-
-A proposta não escolhe um lado para tudo.
-
-- **estado persistente:** declarativo por padrão;
-- **consulta/explicação:** observacional;
-- **evento temporal:** imperativo explícito;
-- **CLI:** pode continuar verbal/imperativa por ergonomia;
-- **núcleo:** trabalha com semântica tipada, não com interpretação ad hoc da frase de comando.
-
-Assim, a escolha entre verbo imperativo e declaração de estado deixa de ser estética e passa a depender da natureza semântica da operação.
-
-## 8. Determinismo: definição operacional proposta
-
-Determinismo no FlowED não deve significar que o mundo externo nunca falha ou muda. Deve significar que a **decisão do sistema é reproduzível quando seus inputs legítimos são os mesmos**.
-
-Proposta de contrato:
-
-> `Plan = F(CanonicalRequest, StateSnapshot, PolicySet, CapabilitySet, AdapterSet)`
-
-onde todos os argumentos relevantes são identificados e versionados.
-
-Se essas entradas forem semanticamente idênticas, o planner determinístico deve produzir o mesmo plano canônico e o mesmo `plan_hash`.
-
-A execução pode encontrar falhas externas; essas falhas não devem alterar silenciosamente a decisão original. Devem produzir estado/receipt observável e, para State Intents, nova reconciliação explícita.
-
-## 9. Camadas de determinismo
-
-### 9.1 Determinismo de interpretação
-
-Mesma requisição canônica e mesma versão de schema produzem a mesma interpretação.
-
-Linguagem natural/IA nunca é entrada autoritativa direta do executor: precisa primeiro ser compilada e validada em requisição canônica.
-
-### 9.2 Determinismo de planejamento
-
-Mesma requisição + mesmo snapshot + mesmas policies/capabilities/adapters versionados produzem mesmo plano.
-
-### 9.3 Determinismo de execução possível
-
-Quando o domínio permite, ações devem ser idempotentes, retry-safe, transacionais ou compensáveis.
-
-Quando não permitem, a não determinabilidade deve ser declarada em contrato e tratada por preconditions, receipts, locks, compensation ou reconciliação.
-
-### 9.4 Reprodutibilidade de artefatos
-
-Quando relevante, versões, dependências, timestamps, seeds, environment variables, network inputs e demais fontes de variação devem ser declaradas, fixadas ou registradas. O objetivo é reduzir estado ambiental implícito.
-
-## 10. Pipeline canônico
-
-Entrada humana/máquina → parse/compile → canonicalize → validate constraints → resolve explicit context/policies → snapshot state → plan/derive → explain/diff → authorize quando houver efeito → apply/reconcile/invoke → receipt/result → observe → evidence/history.
-
-Para operações de baixo risco, algumas etapas podem ser agrupadas na UX, mas devem continuar existindo conceitualmente e ser recuperáveis para auditoria.
-
-Para operações de alto risco, `plan` e `apply` devem ser separáveis e a autorização deve apontar para o hash exato do plano aprovado.
-
-## 11. Regras contra não determinismo acidental
-
-1. nenhum efeito antes de validação/canonicalização;
-2. defaults resolvidos e registrados antes do plano;
-3. contexto ambiental só influencia se declarado como input legítimo;
-4. adapters/providers e policies relevantes são versionados;
-5. estado usado no planejamento recebe revisão/hash/etag equivalente;
-6. apply de plano antigo deve falhar ou exigir replanejamento quando preconditions mudarem;
-7. request IDs/idempotency keys evitam duplicação acidental onde necessário;
-8. plano recebe identidade/hash imutável;
-9. resultado produz receipt observável;
-10. IA pode interpretar/sugerir, mas não introduzir silenciosamente campos ou autoridade no executor.
-
-## 12. Consequência para o Pilar 1
-
-`Liberdade governada` ganha uma definição operacional mais concreta:
-
-> O domínio é livre para materializar uma intenção por implementações diferentes, desde que preserve o contrato semântico, declare capacidades e limitações, aceite inputs explícitos, produza plano/resultado rastreável e não altere silenciosamente a intenção recebida.
-
-Assim, o núcleo governa **semântica, contratos, validação, políticas, planejamento e rastreabilidade**; o domínio conserva soberania sobre sua implementação interna dentro do contrato declarado.
-
-## 13. Estado dos gaps após esta rodada
+## 12. Estado dos gaps
 
 ### GAP-M004 — Unidade primária da linguagem operacional
 
-Avança de `OPEN` para `PARTIAL`.
-
-Hipótese atual: `Operational Request` é envelope semântico primário; `Operational Intent` é o subtipo de mudança. Comando é projeção. Ainda falta provar suficiência em domínios distintos e estabilizar ontologia/nome.
+Permanece `PARTIAL`, com hipótese refinada para `Operational Request` comum a múltiplos clientes.
 
 ### GAP-M005 — Coordenação comum versus soberania dos domínios
 
-Avança para `PARTIAL`.
-
-Fronteira candidata: núcleo governa representação canônica, contratos, validation/policies, planning e provenance; domínio governa implementação/materialização interna. Precisa teste em pelo menos dois domínios.
+Permanece `PARTIAL`. A linguagem governa o contrato público; o runtime/materializador conserva liberdade interna desde que satisfaça o contrato.
 
 ### GAP-M015 — Liberdade governada
 
-Avança para `PARTIAL`.
+Permanece `PARTIAL`. A governança pública deve se concentrar em semântica, compatibilidade, contratos, rastreabilidade e resultados observáveis, evitando prescrever mecanismos internos desnecessariamente.
 
-Propriedades mínimas candidatas: contrato semântico, inputs explícitos, constraints, rastreabilidade, versionamento de materializadores/policies, plan/receipt, idempotência/reconciliação conforme natureza da operação.
+### GAP-M021 — Observe × State × Action
 
-## 14. Novos gaps
-
-### GAP-M021 — Suficiência da taxonomia Observe × State × Action
-
-Validar se três modos cobrem operações reais de domínios distintos sem criar exceções artificiais.
+Rebaixado de possível fundamento da linguagem para **classificação interna/candidata de operações**, a validar. Pode ser útil ao runtime sem necessariamente aparecer para o usuário.
 
 ### GAP-M022 — Vocabulário operacional transversal
 
-Definir conjunto mínimo de verbos padronizados e separar verbos de controle do runtime de operações próprias dos domínios.
+Permanece aberto. O desafio é definir verbos suficientemente estáveis para uma gama ampla de domínios sem criar uma DSL artificial.
 
 ### GAP-M023 — Contrato formal de determinismo
 
-Definir exatamente quais inputs entram no hash/planejamento, equivalência semântica, canonicalização e tratamento de nondeterminism declarado.
+Permanece aberto, mas separado da gramática pública. Deve definir garantias observáveis e deixar liberdade de implementação interna.
 
 ### GAP-M024 — Representação canônica e linguagem de schema
 
-Escolher ou compor formato/schema (JSON Schema, CUE, Protobuf, outro) somente depois de POC comparativo; não inventar DSL antes de demonstrar residual.
+Permanece aberto. A escolha deve ser orientada pela equivalência entre CLI, YAML, API, SDK/UI e automação, não apenas pela conveniência de um runtime específico.
 
-## 15. Dogfood desta referência
+## 13. Dogfood da correção
 
-Esta proposta entrou como `REF-2026-002` e foi submetida ao intake atual.
+Esta rodada é uma correção produzida pelo próprio uso conceitual do protocolo: a formulação anterior expôs mecanismos internos como se fossem parte da linguagem. O debate revelou que isso reduziria a clareza e poderia limitar a ampla gama de clientes/operações prevista para FlowED.
 
-- `CAPTURED`: questão sobre comando/parâmetros/opções e determinismo;
-- `FRAMED`: unidade semântica precisa ser comum a domínios e não depender de materializador;
-- diligência: L1;
-- prior art: reconciliation/desired state, plan/apply, resource-oriented declarative-friendly APIs, hermeticity e validation-first;
-- rota: `COMPOSE`;
-- residual atual: composição específica para linguagem horizontal de Engenharia de Software e vínculo com governança epistemológica FlowED;
-- estado: `EXPERIMENTAL` conceitualmente, ainda sem implementação.
-
-O próprio refinamento desta rodada encontrou uma terceira classe necessária para evitar chamar consultas de “intenção de mudança”: `observe`. Isso é evidência documental de que o dogfood já está corrigindo o modelo antes de implementação.
-
-O próximo teste não deve discutir sintaxe abstratamente. Deve escolher dois domínios de natureza diferente — por exemplo Versionamento e Qualidade — e verificar se ambos podem expressar operações reais usando o mesmo envelope de requisição sem perder semântica.
+A referência `REF-2026-002` é portanto refinada sem apagar a versão anterior. A evidência é conceitual/documental, de força baixa, e exige teste contra a matriz ampla de domínios antes de qualquer promoção.
