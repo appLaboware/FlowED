@@ -15,6 +15,21 @@
 - FlowED deve servir desde estudante/indie hacker até grandes organizações sem trocar o modelo mental central.
 - A mesma linguagem deve aproximar academia e indústria.
 - FlowED deve desenvolver o próprio FlowED usando seus próprios mecanismos e explicar sua própria evolução.
+- Missão explicitamente fechada nesta rodada: cobrir **todos os domínios da Engenharia de Software** por crescimento horizontal em módulos pares/hub e crescimento vertical por materializadores/adapters.
+- Definição atual do animal: sistema operacional modular para Engenharia de Software, baseado em autoeducação monitorada/rastreável, empirismo, alinhamento a ciência e prática, pontuação determinística, caracterização do comportamento organizacional e memória histórica de evolução.
+- O FlowED histórico não foi descartado; deve ser preservado por expansão e recontextualização, removendo apenas contradições reais.
+
+## EDT / Caminho Cognitivo do Criador
+
+- EDT não é apenas candidato novo: existe rascunho de pesquisa anterior e relativamente avançado, com identidade, problema, resumo, objetivos, revisão inicial, metodologia e resultados esperados.
+- Proposição central preservada: o processo cognitivo do criador pode ser registrado e estruturado como base da documentação, rastreabilidade e evolução do conhecimento técnico/normativo.
+- O EDT passa a ser uma das principais referências internas de origem do FlowED para autoeducação, documentação, memória, rastreabilidade e continuidade academia–indústria.
+- Conceito de trabalho em português: **Caminho Cognitivo do Criador (CCC)**.
+- Tradução inglesa provisória: **Creator's Cognitive Path (CCP)**; naming ainda não validado.
+- Consequência prática para documentação normativa: separar o artefato normativo consolidado de sua linhagem cognitiva/decisória. A norma continua concisa e operacional, enquanto o caminho que explica problemas, alternativas, critérios, decisões, rejeições e revisões permanece rastreável por trás dela.
+- A linhagem não deve transformar conversa bruta em norma, nem substituir o artefato consolidado. Ela serve para reconstrução, ensino, auditoria, interpretação e evolução.
+- Invariantes úteis vindos do Level-0 EDT: SOURCE ≠ EXTRACTED ≠ INFERRED ≠ CONFIRMED ≠ EVIDENCED ≠ PROJECTION; projeções não ganham autoridade por legibilidade; conteúdo rejeitado/superado deve poder permanecer preservado; reprocessamentos devem manter linhagem/versionamento.
+- MyTrues é candidato natural a materializador futuro dessa memória/proveniência, mas EDT/CCC descreve principalmente **o que** preservar, não necessariamente **como** armazenar.
 
 ## Governança epistemológica
 
@@ -73,6 +88,8 @@
 - Paper sobre políticas de piso epistemológico.
 - Paper sobre ensino com referências de score zero.
 - Paper sobre sistema capaz de aceitar evidência que destrua seu próprio baseline.
+- EDT existente registrado como ativo de pesquisa R00, não como mero Pxx novo.
+- Nova linha P16: documentação normativa orientada pelo caminho cognitivo do criador; pode ser continuação/expansão direta do EDT, não necessariamente paper separado.
 
 ## Frases de trabalho preservadas
 
@@ -105,8 +122,8 @@ Ao final de cada interação, verificar explicitamente se houve materialização
 1. **Novo manifesto** — ainda não existe como artefato canônico; o manifesto histórico continua embutido no README e precisa ser substituído após estabilização do animal.
 2. **Pasta de manifesto** — ainda não existe; candidato de próximo passo: `docs/pt-br/manifesto/` com manifesto de trabalho e rastreabilidade das afirmações.
 3. **Artigo-pai / teoria-pai** — pesquisa sistemática ainda não executada; regra permanece ADOPT FIRST.
-4. **Anterioridade dos 15 papers candidatos** — todos ainda precisam passar por busca, revisão de constructo e decisão GO/MERGE/ADOPT/DON'T GO.
-5. **Terminologia** — nomes como Full FlowED, Baseline Alignment, Referência, Risco-FlowED e outros ainda são nomes de trabalho.
+4. **Anterioridade dos papers candidatos** — todos ainda precisam passar por busca, revisão de constructo e decisão GO/MERGE/ADOPT/DON'T GO; EDT/R00 é exceção porque já é linha iniciada e deve ser revisada/continuada.
+5. **Terminologia** — nomes como Full FlowED, Baseline Alignment, Referência, Risco-FlowED, CCC/CCP e outros ainda são nomes de trabalho.
 6. **Modelo de score de evidência** — aberto; não definir pesos antes de pesquisar evidence grading, assurance, maturity models e afins.
 7. **Fontes não científicas de evidência** — aberto; classificar e validar contribuição de normas, evidência operacional, benchmarks, replicações e outros mecanismos.
 8. **Evidência longitudinal** — aberto; estudar como tempo, exposição, diversidade de contexto, falhas e resultados podem aumentar ou reduzir confiança sem confundir longevidade com verdade.
@@ -117,11 +134,12 @@ Ao final de cada interação, verificar explicitamente se houve materialização
 13. **Risco-FlowED** — aberto como paper e ferramenta; precisa de anterioridade, definição do constructo, dimensões e validação.
 14. **Queda deliberada de score para inovar** — aberta; distinguir queda temporária do score da definitividade operacional da referência adotada.
 15. **Ferramentas derivadas** — backlog conceitual existe, mas nenhuma deve ser tratada como produto decidido antes de pesquisa de anterioridade e valor residual.
-16. **Integração academia–indústria** — aberta como linha de pesquisa forte, incluindo ensino com referências de score zero e linguagem operacional contínua.
+16. **Integração academia–indústria** — aberta como linha de pesquisa forte, incluindo ensino com referências de score zero, linguagem operacional contínua e possível uso de EDT/CCC.
 17. **Feedback prática→ciência** — aberto; modelar como divergências recorrentes e gaps do baseline viram agenda de pesquisa verificável.
 18. **Autossuperação do FlowED** — princípio conceitual aceito, operacionalização e anterioridade ainda abertas.
-19. **MyTrues e memória organizacional** — relação com a governança epistemológica do FlowED ainda precisa ser formalizada sem acoplamento indevido.
+19. **MyTrues e memória organizacional** — relação com a governança epistemológica do FlowED ainda precisa ser formalizada sem acoplamento indevido; EDT/CCC agora ajuda a definir o conteúdo dessa memória.
 20. **Arquitetura horizontal/provedores/intensidade** — animal está bem descrito, mas termos científicos e antecedentes precisam ser normalizados antes de consolidação normativa.
+21. **EDT/CCC no manifesto** — decidir se o manifesto cita explicitamente o caminho cognitivo do criador ou o generaliza como princípio de preservar racional/proveniência, deixando EDT como referência/materialização.
 
 ## Fluxo para fechar o manifesto antes da pesquisa científica
 
@@ -140,8 +158,6 @@ Método das próximas rodadas:
 
 ### Primeiro gap selecionado — identidade e fronteira do próprio FlowED
 
-Antes de fechar o manifesto, é necessário estabilizar o que o FlowED *é* no nível mais alto. O README histórico ainda o descreve principalmente como metodologia de gestão de projetos baseada em autoeducação, enquanto o modelo conceitual atual o descreve como linguagem operacional comum para expressar intenções de Engenharia de Software em múltiplos domínios, com materializações variáveis.
+A identidade avançou nesta rodada: FlowED é descrito como **sistema operacional modular para Engenharia de Software**, cuja missão é cobrir todos os domínios por crescimento horizontal e vertical, preservando e ampliando os princípios históricos de autoeducação, rastreabilidade, progressividade e sustentabilidade.
 
-Pergunta de decisão: **FlowED é, em essência, uma metodologia de gestão de projetos que cresceu para integrar outros domínios, ou é uma camada/sistema operacional de organização da Engenharia de Software cuja gestão de projetos é apenas um dos domínios possíveis?**
-
-Esta decisão impacta diretamente a abertura do manifesto, o escopo dos princípios, a relação com os domínios, o significado de "Education-Driven" e a futura busca do artigo-pai.
+Ainda resta definir a fronteira exata de "sistema operacional" e os demais gaps registrados no modelo conceitual.
