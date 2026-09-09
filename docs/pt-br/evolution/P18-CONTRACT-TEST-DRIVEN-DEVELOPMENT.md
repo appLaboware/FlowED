@@ -1,9 +1,11 @@
-# P18 — Contract-Test-Driven Development (CTDD)
+# P18 — Linha de pesquisa: composição test-driven de contratos públicos
 
-**Status:** candidato a artigo / hipótese de contribuição residual.  
-**Nome de trabalho:** **Contract-Test-Driven Development (CTDD)**.  
-**Estado epistemológico:** não reivindicar novidade antes de revisão sistemática de anterioridade.  
+**Status:** candidato a artigo / linha de pesquisa aberta.  
+**Nome:** **em aberto**.  
+**Estado epistemológico:** conceito ainda não consolidado; não reivindicar novidade nem fixar nomenclatura antes de revisão de anterioridade.  
 **Origem:** composição identificada durante o desenho test-first dos contratos públicos do `flwd`.
+
+> Nota de linhagem: o nome provisório **Contract-Test-Driven Development (CTDD)** foi usado em uma rodada anterior apenas como rótulo de trabalho. Ele não deve ser tratado como nome definido do conceito. O arquivo preserva o nome legado no path apenas por rastreabilidade histórica.
 
 ## 1. Motivação
 
@@ -19,15 +21,19 @@ Durante o desenho do `flwd`, surgiu uma composição operacional em que:
 
 Essa composição reúne elementos de **Test-Driven Development (TDD)**, **Consumer-Driven Contract Testing (CDCT)**, **contract/conformance testing**, **Design by Contract**, **behavioral substitutability** e **mocks/fakes**.
 
-## 2. Por que não chamar simplesmente de Contract-Driven Development
+## 2. Linha de pesquisa aberta
 
-`Contract-Driven Development (CDD)` já possui anterioridade científica, especialmente no trabalho de Bertrand Meyer e colaboradores, que combina Design by Contract, TDD, métodos formais e geração automática de testes a partir de contratos.
+A existência de uma composição útil está registrada, mas **não há conceito ou nome consolidado**.
 
-Portanto, o FlowED não deve reutilizar `CDD` como nome próprio de uma nova contribuição nem alegar que a combinação entre contratos e TDD é inédita.
+A revisão futura deverá determinar se essa composição:
 
-O nome **CTDD** é apenas um rótulo de trabalho para investigar um residual mais específico: **desenvolvimento guiado por testes de contrato executáveis na fronteira consumidor-provider, com mock primeiro, verificação posterior de providers e substituição por equivalência pública**.
+- já existe integralmente sob um nome estabelecido;
+- é apenas uma aplicação combinada de TDD + CDCT + CDD + conformance testing;
+- possui um residual metodológico próprio;
+- merece uma nova denominação;
+- ou deve ser simplesmente adotada sem criação conceitual.
 
-A revisão de anterioridade deverá decidir se o nome é preservado, alterado, absorvido por CDD/CDCT ou abandonado.
+Portanto, esta linha permanece deliberadamente aberta.
 
 ## 3. Hipótese de contribuição residual
 
@@ -54,25 +60,13 @@ O componente TDD é real: o comportamento verificável é definido antes da impl
 
 Entretanto, a unidade de pressão não é apenas uma função/classe e seu unit test. A unidade principal candidata é uma **fronteira pública contratual executável**, que pode atravessar processos, serviços, ferramentas ou módulos independentes.
 
-Assim, o artigo deve investigar em que medida CTDD é:
-
-- uma especialização de TDD;
-- uma operacionalização de CDD;
-- uma extensão de CDCT;
-- uma composição sem novidade metodológica suficiente;
-- ou uma contribuição residual própria.
+A pesquisa deverá verificar se isso é apenas aplicação de conceitos existentes ou se há residual próprio.
 
 ## 5. Relação com Consumer-Driven Contract Testing
 
 CDCT fornece o antecedente mais direto para consumidor + mock + contrato + provider verification.
 
-O residual possível a investigar é ampliar o foco de compatibilidade consumidor-provider para um ciclo explícito de **desenvolvimento guiado pelo contrato executável**, incluindo:
-
-- desenho do consumidor antes do provider;
-- contrato como artefato central de evolução;
-- projeções múltiplas de interface sobre a mesma semântica;
-- substituição de providers como requisito primário;
-- versionamento e evolução contratual como parte do método.
+O residual possível a investigar é ampliar o foco de compatibilidade consumidor-provider para um ciclo explícito de desenvolvimento guiado pelo contrato executável, incluindo desenho do consumidor antes do provider, contrato como artefato central de evolução, projeções múltiplas de interface sobre a mesma semântica, substituição de providers como requisito primário e versionamento/evolução contratual como parte do método.
 
 Nada disso deve ser tratado como novo sem revisão sistemática.
 
@@ -107,38 +101,15 @@ A linha deve seguir Adapt First.
 
 ### Discovery
 
-Realizar revisão estruturada de:
-
-- Test-Driven Development;
-- Contract-Driven Development;
-- contract-first/API-first development;
-- Consumer-Driven Contract Testing;
-- specification-based/conformance testing;
-- executable specifications;
-- behavioral contracts/interfaces;
-- mock-driven/outside-in development;
-- interface substitutability/refinement.
+Realizar revisão estruturada de TDD, Contract-Driven Development, contract-first/API-first development, Consumer-Driven Contract Testing, specification-based/conformance testing, executable specifications, behavioral contracts/interfaces, mock-driven/outside-in development e interface substitutability/refinement.
 
 ### POC/artefato
 
-Implementar o ciclo em um caso pequeno com:
-
-- consumidor funcional contra mock;
-- contrato executável versionado;
-- pelo menos dois providers estruturalmente distintos;
-- mesma suíte de conformidade;
-- registros de mudanças de contrato e incompatibilidades encontradas.
+Implementar o ciclo em um caso pequeno com consumidor funcional contra mock, contrato executável versionado, pelo menos dois providers estruturalmente distintos, mesma suíte de conformidade e registros de mudanças de contrato/incompatibilidades.
 
 ### Avaliação
 
-Comparar pelo menos:
-
-- quantidade/tipo de incompatibilidades detectadas antes da integração;
-- retrabalho provocado por mudanças de interface;
-- acoplamento consumidor-provider;
-- esforço de manutenção dos contratos;
-- capacidade real de substituição;
-- limitações semânticas dos exemplos/matchers.
+Comparar quantidade/tipo de incompatibilidades detectadas antes da integração, retrabalho provocado por mudanças de interface, acoplamento consumidor-provider, esforço de manutenção dos contratos, capacidade real de substituição e limitações semânticas dos exemplos/matchers.
 
 ## 9. Relação com FlowED
 
@@ -146,18 +117,10 @@ FlowED é inicialmente **caso de uso e dogfood**, não prova científica da prop
 
 Se o método funcionar no `flwd`, isso produz evidência de realizabilidade e um caso inicial. Não demonstra validade geral.
 
-O artigo pode existir independentemente do FlowED se o residual científico for confirmado. Se a revisão mostrar que CDD/CDCT já cobre suficientemente a composição, a decisão correta é **ADOPT/MERGE**, e não criar uma nova teoria.
+O artigo pode existir independentemente do FlowED se o residual científico for confirmado. Se a revisão mostrar que conceitos existentes já cobrem suficientemente a composição, a decisão correta é **ADOPT/MERGE**, e não criar uma nova teoria.
 
 ## 10. Gate para virar paper
 
-Estado atual: **CANDIDATE / GO FOR PRIOR-ART REVIEW**.
+Estado atual: **CANDIDATE / OPEN CONCEPT / GO FOR PRIOR-ART REVIEW**.
 
-Não promover para contribuição científica até existir:
-
-1. revisão de anterioridade com boundary explícito;
-2. comparação formal com CDD, CDCT, TDD e conformance testing;
-3. definição clara do residual;
-4. hipótese falsificável;
-5. desenho de avaliação;
-6. pelo menos uma materialização reproduzível;
-7. decisão final `GO / MERGE / ADOPT / DON'T GO`.
+Não promover para contribuição científica até existir revisão de anterioridade com boundary explícito, comparação formal com CDD/CDCT/TDD/conformance testing, definição clara do residual, hipótese falsificável, desenho de avaliação, ao menos uma materialização reproduzível e decisão final `GO / MERGE / ADOPT / DON'T GO`.
