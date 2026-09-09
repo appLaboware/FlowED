@@ -13,11 +13,25 @@ O FlowED deve separar claramente:
 
 Os candidatos abaixo nasceram da modelagem do FlowED, mas ainda precisam de pesquisa sistemática.
 
+## R00 — EDT já existe como ativo de pesquisa avançado
+
+O **Education-Driven Thinking (EDT)** não deve ser tratado como mero candidato recém-inventado nesta agenda. Já existe um rascunho de projeto/paper anterior, com problema, resumo, objetivo, revisão inicial, metodologia e resultados esperados.
+
+Sua proposição central é registrar e estruturar o processo cognitivo do criador como base da documentação, rastreabilidade e evolução do conhecimento técnico e normativo.
+
+No contexto FlowED, EDT passa a ser uma das principais referências internas de origem para os eixos de autoeducação, documentação, rastreabilidade, memória organizacional e continuidade academia–indústria.
+
+Isso não significa afirmar que EDT é, desde já, o pai científico completo do FlowED. Seu estado é diferente dos Pxx: trata-se de uma linha de pesquisa já iniciada que precisa ser retomada, atualizada e confrontada com a literatura e com o animal atual do FlowED.
+
+Nome de trabalho para o conceito central em português: **Caminho Cognitivo do Criador (CCC)**. Tradução inglesa provisória: **Creator's Cognitive Path (CCP)**. Naming permanece aberto à pesquisa terminológica.
+
 ## P01 — Artigo-pai do FlowED
 
 Pergunta central de trabalho: existe uma teoria única que sustente linguagem operacional comum de Engenharia de Software, separação entre intenção e materialização, composição horizontal de domínios, implementações substituíveis, intensidade contextual, soberania de artefatos e autoeducação rastreável?
 
 Se existir, adotar. Se não existir, produzir artigo de síntese a partir dos antecedentes científicos e normativos adequados. Esse trabalho deve tornar-se o pai conceitual direto do FlowED.
+
+EDT deverá ser avaliado como uma das referências principais desse estudo, especialmente para autoeducação, rastreabilidade do conhecimento e documentação baseada na trajetória de criação.
 
 ## P02 — Força epistemológica de referências de Engenharia de Software
 
@@ -57,6 +71,8 @@ Separar componentes determinísticos dos componentes que exigem julgamento human
 Investigar se uma linguagem operacional comum, iniciada no ensino e preservada na prática profissional, reduz ruptura entre aprendizagem acadêmica e ambientes industriais.
 
 Comparar progressão de complexidade por composição/intensidade com abordagens em que o aluno precisa abandonar ferramentas e modelos mentais ao entrar na indústria.
+
+EDT/CCC pode ser hipótese explicativa complementar: além de preservar a linguagem operacional, o ensino pode preservar o percurso cognitivo pelo qual práticas, normas e sistemas foram construídos.
 
 ## P08 — Prática industrial como geradora de agenda científica
 
@@ -105,6 +121,20 @@ Investigar políticas como "não reduzir score", "não ficar abaixo do baseline"
 Investigar o valor pedagógico de permitir que estudantes adotem hipóteses/práticas sem sustentação inicial e construam evidência ao longo do processo, em vez de apenas reproduzir baseline pronto.
 
 Relacionar com aprendizagem baseada em investigação, aprendizagem experiencial, problem-based learning e epistemologia da educação antes de propor novidade.
+
+## P16 — Documentação normativa orientada pelo caminho cognitivo do criador
+
+Investigar se a documentação normativa e metodológica melhora em compreensão, implantação, ensino, manutenção e evolução quando preserva, além do artefato consolidado, a trajetória cognitiva e decisória que o produziu.
+
+Questões candidatas:
+
+- como representar problemas, alternativas, critérios, decisões, rejeições, revisões e racional sem transformar conversa bruta em norma?
+- qual é a relação entre a camada normativa consolidada e sua linhagem cognitiva?
+- em que medida a linhagem melhora aprendizagem, auditabilidade, atualização e interpretação de normas?
+- como preservar fonte, extração, inferência, confirmação, evidência e projeção sem promoção epistemológica silenciosa?
+- como lidar com conteúdo rejeitado/superado e com reprocessamento de interpretações ao longo do tempo?
+
+Este paper pode ser evolução direta do EDT existente, não necessariamente um paper totalmente separado. A decisão deverá ser **CONTINUE EDT / SPLIT / MERGE / ADOPT / DON'T GO** após revisão do rascunho atual e pesquisa de anterioridade.
 
 ## Critério de promoção
 
