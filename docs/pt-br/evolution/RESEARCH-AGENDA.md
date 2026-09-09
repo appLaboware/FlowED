@@ -136,6 +136,22 @@ Questões candidatas:
 
 Este paper pode ser evolução direta do EDT existente, não necessariamente um paper totalmente separado. A decisão deverá ser **CONTINUE EDT / SPLIT / MERGE / ADOPT / DON'T GO** após revisão do rascunho atual e pesquisa de anterioridade.
 
+## P18 — Contract-Test-Driven Development (CTDD)
+
+**Nome de trabalho; não reivindicar novidade.** O identificador P17 permanece alocado à linha sobre conhecimento cognitivo estruturado para IA registrada em `EDT-CCP-FLOWED-LINEAGE.md`.
+
+Investigar se há contribuição residual na composição de TDD, Consumer-Driven Contract Testing, contract/conformance testing, Design by Contract, behavioral substitutability e mocks/fakes em um ciclo no qual o **contrato público executável** é definido antes da implementação e passa a orientar simultaneamente consumidor, mock inicial, verificação de providers reais e substituição entre implementações.
+
+Ciclo candidato:
+
+**comportamento desejado → exemplos executáveis → contrato público → consumidor contra mock → provider contra o mesmo contrato → substituição/conformidade → evolução versionada do contrato**.
+
+O ponto de partida experimental é o `flwd`, mas o candidato a artigo deve ser estudado como método geral e não como descrição específica do produto FlowED.
+
+A busca preliminar já encontrou anterioridade relevante em TDD, Contract-Driven Development de Meyer, Consumer-Driven Contract Testing e specification-based conformance testing. Portanto, a pergunta científica não é se contratos + testes são novos, mas se a composição específica acima possui residual distinto, mensurável e generalizável.
+
+Estado atual: **CANDIDATE / GO FOR PRIOR-ART REVIEW**. Documento próprio: `P18-CONTRACT-TEST-DRIVEN-DEVELOPMENT.md`.
+
 ## Critério de promoção
 
 Nenhum Pxx vira "paper do FlowED" apenas porque parece interessante. Cada um deve passar por:
