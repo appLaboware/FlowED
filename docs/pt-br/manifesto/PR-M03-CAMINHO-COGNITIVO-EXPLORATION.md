@@ -12,25 +12,19 @@ A expressão **Primazia da Fonte Cognitiva** procura nomear exatamente essa orde
 
 "Preferência pela Fonte Cognitiva" expressa a mesma direção, mas pode soar opcional ou estilística. "Prioridade da Fonte Cognitiva" é mais direta. "Primazia da Fonte Cognitiva" permanece, neste estágio, a formulação mais curta que comunica explicitamente **colocar a fonte em primeiro lugar** sem transformar a própria fonte no princípio.
 
-Outros nomes ainda possíveis:
-
-- **Princípio da Prioridade da Fonte Cognitiva** — mais literal, porém menos compacto;
-- **Princípio da Preferência pela Fonte Cognitiva** — semanticamente próximo, mas mais fraco quanto à hierarquia proposta;
-- **Princípio da Primazia Cognitiva** — curto, porém amplo demais e pode parecer uma afirmação genérica sobre cognição.
-
-A recomendação atual é **Princípio da Primazia da Fonte Cognitiva**.
-
 ## Formulação do princípio em avaliação
 
-> **O caminho cognitivo estruturado deve constituir a base primária do conhecimento normativo; todo consolidado deve ser uma projeção contextual dessa base.**
+> **O caminho cognitivo estruturado deve constituir a base primária do conhecimento normativo. Todo consolidado deve ser tratado como uma projeção contextual dessa base.**
 
-Essa frase define a regra que o nome resume: não basta existir uma Fonte Cognitiva; o princípio estabelece que ela deve ter precedência sobre o consolidado como base do conhecimento.
+A expressão **"deve ser tratado"** é deliberada. O ponto não é apenas descrever uma relação estrutural possível entre fonte e consolidado, mas estabelecer uma prioridade de uso, interpretação e apresentação: o consolidado não deve ocupar o lugar da fonte cognitiva apenas porque é menor, mais conveniente ou mais fácil de publicar.
+
+A formulação consolidada continua útil, mas deve assumir posição secundária diante da base cognitiva que a sustenta. Em termos de hierarquia informacional, o caminho cognitivo não deve aparecer como anexo da norma; a norma consolidada é que deve ser entendida como uma projeção compacta — quase um anexo de acesso — da base cognitiva principal.
 
 ## Tese refinada
 
 A norma consolidada é comparável a uma síntese: ela diz, de forma compacta, a conclusão vigente. Ao fazer isso, necessariamente deixa de expor grande parte da estrutura que tornou essa conclusão possível — problema, contexto, hipóteses, alternativas, argumentos, evidências, rejeições, incertezas, conflitos, revisões e condições de validade.
 
-A crítica em exploração não é que o consolidado seja inútil ou que deva desaparecer. É que **ele hoje costuma ocupar o lugar de conhecimento principal**, enquanto o caminho que o produziu fica secundário, implícito, disperso ou de difícil acesso. O princípio propõe o contrário: o caminho cognitivo estruturado é o patrimônio primário; o consolidado é uma porta de entrada e uma projeção adequada a uma necessidade de leitura ou ação.
+A crítica em exploração não é que o consolidado seja inútil ou que deva desaparecer. É que **ele hoje costuma ocupar o lugar de conhecimento principal**, enquanto o caminho que o produziu fica secundário, implícito, disperso ou de difícil acesso. O princípio propõe inverter essa hierarquia: o caminho cognitivo estruturado é o patrimônio primário; o consolidado é uma porta de entrada e uma projeção adequada a uma necessidade de leitura ou ação.
 
 Uma formulação consequencial importante é:
 
@@ -72,7 +66,7 @@ O princípio questiona a arquitetura informacional em que a norma consolidada é
 
 A proposta é inverter essa relação. O patrimônio principal é a Fonte Cognitiva estruturada que permite compreender por que uma conclusão foi alcançada, quais alternativas foram consideradas, quais evidências a sustentaram, quais incertezas permaneceram e em que condições ela pode precisar ser revista.
 
-O consolidado continua existindo, mas como projeção. Ele pode ser curto, normativo, didático, operacional ou específico para um papel. Sua função é reduzir a quantidade de informação apresentada sem destruir ou substituir a fonte que permite gerar outras projeções quando uma necessidade diferente surgir.
+O consolidado continua existindo, mas como projeção contextual e secundária. Ele pode ser curto, normativo, didático, operacional ou específico para um papel. Sua função é reduzir a quantidade de informação apresentada sem destruir ou substituir a fonte que permite gerar outras projeções quando uma necessidade diferente surgir.
 
 Essa arquitetura permite que "somente a informação necessária" seja apresentada em cada contexto sem assumir que existe um único consolidado universalmente suficiente para todos os leitores e todas as decisões.
 
@@ -86,7 +80,9 @@ O PR-M02 busca tornar a forma de pensar da organização coerente e legível. O 
 
 - a Fonte Cognitiva não é o princípio; a **primazia atribuída a ela** é o princípio;
 - caminho cognitivo não é sinônimo de log técnico;
-- a Fonte Cognitiva é a base primária; o consolidado é projeção derivada;
+- a Fonte Cognitiva é a base primária; o consolidado deve ser tratado como projeção derivada e secundária;
+- o fato de o consolidado ser mais curto ou conveniente não lhe confere primazia epistemológica;
+- o caminho cognitivo não deve ser tratado como anexo da norma; a norma é que deve funcionar como projeção compacta da base cognitiva;
 - preservar o caminho cognitivo não significa apresentar o processo bruto inteiro ao leitor;
 - a viabilidade depende de estruturar, relacionar e projetar o caminho cognitivo, não apenas arquivá-lo;
 - uma projeção pode ser estática ou dinâmica conforme o contexto, mas não deve apagar a fonte da qual deriva;
@@ -95,4 +91,4 @@ O PR-M02 busca tornar a forma de pensar da organização coerente e legível. O 
 
 ## Questões para próxima rodada
 
-A tese está estável o suficiente para distinguir claramente objeto e princípio: **Fonte Cognitiva é o objeto; sua primazia sobre o consolidado é o princípio.** A recomendação atual é **Princípio da Primazia da Fonte Cognitiva**. Ainda deve ser decidido se esse nome será promovido ao pré-manifesto e quais frases consequenciais devem acompanhá-lo.
+A tese está estável o suficiente para distinguir claramente objeto e princípio: **Fonte Cognitiva é o objeto; sua primazia sobre o consolidado é o princípio.** A formulação preferida agora explicita também a atitude normativa desejada: **o consolidado deve ser tratado como projeção contextual da base cognitiva**, e não como a própria base do conhecimento.
