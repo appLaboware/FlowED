@@ -95,6 +95,10 @@ O produto existe para demonstrar e facilitar a filosofia; não define a filosofi
 
 > **Uma organização pode preservar uma identidade operacional reconhecível mesmo quando suas ferramentas mudam, quando essa identidade reside nos princípios, intenções e contratos que governam seu uso, e não nas implementações específicas.**
 
+> **Quando identidade intencional e materialização permanecem separadas, cada uma pode ser apresentada, avaliada e modificada em seu próprio momento.**
+
+> **Trocar uma tecnologia não precisa significar abandonar a forma de pensar; mudar a forma de pensar não precisa exigir trocar toda tecnologia que ainda a satisfaz.**
+
 ### O que este princípio quer fazer o leitor compreender
 
 Escolhas locais podem ser tecnicamente excelentes e ainda assim produzir, em conjunto, uma experiência organizacional fragmentada. Quando cada domínio adota sua própria linguagem, seus próprios critérios de decisão e sua própria forma de interação sem uma camada transversal comum, torna-se mais difícil perceber "como esta organização trabalha" como um todo.
@@ -105,12 +109,28 @@ Nesse sentido, identidade operacional não significa usar as mesmas ferramentas.
 
 Uma consequência esperada é que a organização possa substituir ferramentas, providers ou materializadores sem perder necessariamente a continuidade daquilo que a caracteriza operacionalmente. A identidade pode sobreviver à troca de tecnologia quando não está acoplada a ela.
 
+Uma superfície intencional comum pode unificar a expressão da forma de pensar da organização sem unificar as ferramentas que a realizam. Isso permite que intenção e materialização sejam apresentadas e julgadas separadamente e que cada uma evolua em seu próprio momento, desde que permaneçam compatíveis com os contratos aplicáveis.
+
 ### Distinção em relação ao PR-M01
 
 O PR-M01 trata da separação entre intenção e materialização e dos efeitos dessa separação sobre avaliação, aprendizagem, especialização e adaptação tecnológica.
 
 O PR-M02 trata de outra propriedade: **a coerência transversal entre decisões locais de diferentes domínios**. Ele pergunta se uma organização consegue manter uma forma de trabalhar reconhecível mesmo quando suas capacidades são materializadas por ferramentas distintas.
 
-## Próximo princípio
+## PR-M03 — Princípio do Foco no Caminho Cognitivo
 
-O próximo princípio ainda não está consolidado. Deve ser discutido separadamente, evitando promover como novo princípio algo que seja apenas consequência, mecanismo ou hipótese derivada dos princípios anteriores.
+**Nome provisoriamente adotado.** Pode ser substituído se surgir formulação mais precisa e igualmente direta.
+
+### Primeira frase nuclear — aceita
+
+> **O caminho cognitivo estruturado deve constituir a base primária do conhecimento normativo. Todo consolidado deve ser tratado como uma projeção contextual dessa base.**
+
+### O que este princípio quer fazer o leitor compreender
+
+O conhecimento normativo não deve ter como centro apenas sua formulação consolidada. O caminho cognitivo estruturado que produziu essa formulação deve ocupar a posição de base primária; normas, resumos, explicações e outras formas consolidadas são projeções de acesso, leitura e ação.
+
+O consolidado continua útil por reduzir a quantidade de informação apresentada, mas sua conveniência não deve transformá-lo na própria fonte do conhecimento. O caminho cognitivo não deve aparecer apenas como anexo da norma; a norma deve ser tratada como projeção compacta e contextual da base cognitiva que a sustenta.
+
+As consequências ainda estão em exploração. Entre elas estão a retenção de conhecimento produzido por pessoas que depois deixam uma organização, a continuidade de artefatos por novos mantenedores, a redução da dependência de uma única capacidade de síntese e a distinção entre a cognição de origem e interpretações produzidas posteriormente sobre seus consolidados.
+
+Uma consequência já identificada é que, quando o caminho cognitivo é estruturado, consolidados podem tornar-se dinâmicos: diferentes contextos podem receber diferentes sínteses sem transformar cada síntese em uma nova fonte independente de conhecimento.
