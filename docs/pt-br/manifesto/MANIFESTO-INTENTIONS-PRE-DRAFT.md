@@ -127,11 +127,21 @@ O PR-M02 trata de outra propriedade: **a coerência transversal entre decisões 
 
 > **O consolidado estabiliza uma decisão; o caminho cognitivo preserva o conhecimento que permite compreendê-la, retomá-la e fazê-la evoluir.**
 
+> **Quando o caminho cognitivo é a base, o consolidado deixa de ser o destino do conhecimento e passa a ser uma projeção regenerável dele.**
+
+> **A norma pode fixar o que deve ser cumprido sem ocupar o lugar do conhecimento que permite compreendê-la.**
+
+> **Preserva-se o caminho cognitivo; gera-se o consolidado. Quando necessário, uma projeção pode ser congelada e versionada sem deixar de ser projeção.**
+
 ### O que este princípio quer fazer o leitor compreender
 
 O conhecimento normativo não deve ter como centro apenas sua formulação consolidada. O caminho cognitivo estruturado que produziu essa formulação deve ocupar a posição de base primária; normas, resumos, explicações e outras formas consolidadas são projeções de acesso, leitura e ação.
 
 O consolidado continua útil por reduzir a quantidade de informação apresentada, mas sua conveniência não deve transformá-lo na própria fonte do conhecimento. O caminho cognitivo não deve aparecer apenas como anexo da norma; a norma deve ser tratada como projeção compacta e contextual da base cognitiva que a sustenta.
+
+Uma mesma base cognitiva pode sustentar diferentes consolidados sem fragmentar a origem do conhecimento. Quando houver autoridade normativa, uma projeção específica pode ser congelada, versionada e reconhecida como a conclusão obrigatória vigente. Isso não lhe transfere a posição de fonte primária do conhecimento.
+
+Reflexão e obediência são momentos diferentes. Para compreender, criticar, aprender e evoluir, consulta-se o caminho cognitivo. Para cumprir uma obrigação vigente, reconhece-se a conclusão autoritativa aplicável. A autoridade da norma e a centralidade cognitiva do caminho não se anulam.
 
 As consequências ainda estão em exploração. Entre elas estão a retenção de conhecimento produzido por pessoas que depois deixam uma organização, a continuidade de artefatos por novos mantenedores, a redução da dependência de uma única capacidade de síntese e a distinção entre a cognição de origem e interpretações produzidas posteriormente sobre seus consolidados.
 
