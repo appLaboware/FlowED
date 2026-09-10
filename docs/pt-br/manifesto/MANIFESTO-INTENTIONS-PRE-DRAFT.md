@@ -121,9 +121,11 @@ O PR-M02 trata de outra propriedade: **a coerência transversal entre decisões 
 
 **Nome provisoriamente adotado.** Pode ser substituído se surgir formulação mais precisa e igualmente direta.
 
-### Primeira frase nuclear — aceita
+### Frases nucleares — aceitas
 
 > **O caminho cognitivo estruturado deve constituir a base primária do conhecimento normativo. Todo consolidado deve ser tratado como uma projeção contextual dessa base.**
+
+> **O consolidado estabiliza uma decisão; o caminho cognitivo preserva o conhecimento que permite compreendê-la, retomá-la e fazê-la evoluir.**
 
 ### O que este princípio quer fazer o leitor compreender
 
