@@ -4,29 +4,28 @@
 
 ## Nome em avaliação
 
-### Candidato preferencial nesta rodada — Princípio da Centralidade do Caminho Cognitivo
+### Novo candidato preferencial — Princípio do Foco no Caminho Cognitivo
 
-A discussão mostrou que o nome do princípio precisa expressar mais do que existência, origem ou precedência temporal. O que se quer afirmar é uma **ordem de importância**: diante do caminho cognitivo estruturado e de sua forma consolidada, o primeiro deve ocupar a posição central do conhecimento normativo; a norma consolidada deve ser entendida como consequência, projeção e forma de acesso.
+A discussão mostrou uma fragilidade importante em **Centralidade do Caminho Cognitivo**: apesar de semanticamente próximo da tese, "centralidade" pode sugerir concentração ou centralização do próprio caminho cognitivo, deslocando a leitura da relação que o princípio realmente quer estabelecer.
 
-Por isso, **Centralidade do Caminho Cognitivo** permanece como referência semântica desta rodada. A palavra "centralidade" procura capturar a ideia de valorização e posição principal sem soar como mera preferência subjetiva e sem reduzir o princípio a uma ordem de leitura.
+O princípio não trata de centralizar o caminho em si. Trata de **onde se coloca o foco normativo e epistemológico** quando coexistem um caminho cognitivo estruturado e uma forma consolidada derivada dele.
 
-A comparação desejada é próxima da estrutura retórica "damos mais importância ao caminho cognitivo do que ao consolidado", mas o manifesto não precisa reproduzir essa forma. O nome deve fazer compreender que o caminho cognitivo é o centro de referência do conhecimento normativo e que o consolidado não deve ocupar esse lugar apenas por ser mais curto, estável ou conveniente para publicação.
+Por isso, **Princípio do Foco no Caminho Cognitivo** passa a ser o candidato preferencial desta rodada. "Foco" é mais cotidiano, direto e menos sujeito à leitura de centralização. Ele comunica que, ao interpretar, justificar, revisar e evoluir conhecimento normativo, a atenção principal deve recair sobre o caminho cognitivo estruturado, enquanto o consolidado deve ser tratado como projeção contextual dessa base.
 
-### Variantes semânticas a partir de "centralidade"
+A força de "foco" está justamente em não exigir uma palavra erudita para expressar a assimetria: **o caminho cognitivo recebe o foco; o consolidado permanece importante como projeção, mas não ocupa o lugar da base.**
 
-A busca agora não é por outro conceito, mas por uma palavra que preserve a mesma relação normativa de **maior peso e posição principal**.
+### Variantes ainda em comparação
 
-- **Princípio da Preeminência do Caminho Cognitivo** — enfatiza posição superior em importância. É elegante e forte, mas pode soar como superioridade absoluta se não vier acompanhado da formulação que limita essa preeminência à hierarquia do conhecimento normativo.
-- **Princípio da Preponderância do Caminho Cognitivo** — enfatiza maior peso relativo diante do consolidado. É semanticamente muito próximo da ideia "damos mais valor a X do que a Y", porém tem tom mais técnico e menos natural.
-- **Princípio da Centralidade do Caminho Cognitivo** — enfatiza que o caminho ocupa o centro da arquitetura do conhecimento, sem afirmar que toda consulta deve começar por ele. Continua sendo a expressão de referência.
-- **Princípio da Prioridade do Caminho Cognitivo** — comunica ordem de importância, mas pode soar administrativo ou procedimental.
-- **Princípio da Precedência do Caminho Cognitivo** — comunica que o caminho vem antes como referência, mas ainda pode ser confundido com ordem temporal ou de leitura.
-- **Princípio da Relevância do Caminho Cognitivo** — é correto quanto à importância, mas insuficiente para afirmar que o consolidado deve ocupar posição secundária.
-- **Princípio da Valorização do Caminho Cognitivo** — comunica a atitude desejada, mas não estabelece com clareza a relação hierárquica diante do consolidado.
-- **Princípio da Prevalência do Caminho Cognitivo** — sugere que o caminho deve prevalecer em conflito, mas pode deslocar o foco da arquitetura do conhecimento para uma regra de desempate.
-- **Princípio do Protagonismo do Caminho Cognitivo** — é retoricamente claro, porém mais metafórico e menos adequado a uma formulação normativa.
+- **Princípio do Foco no Caminho Cognitivo** — simples, direto e comunicável; expressa onde deve recair a atenção principal sem sugerir centralização técnica.
+- **Princípio da Centralidade do Caminho Cognitivo** — semanticamente forte, mas pode ser interpretado como centralização do próprio caminho.
+- **Princípio da Relevância do Caminho Cognitivo** — natural e simples, porém fraco demais para marcar posição principal diante do consolidado.
+- **Princípio da Prioridade do Caminho Cognitivo** — claro quanto à ordem de importância, mas pode soar administrativo ou procedimental.
+- **Princípio da Valorização do Caminho Cognitivo** — comunica atitude, mas não necessariamente hierarquia.
+- **Princípio da Preeminência do Caminho Cognitivo** — semanticamente preciso quanto à importância superior, mas menos cotidiano.
+- **Princípio da Preponderância do Caminho Cognitivo** — comunica maior peso relativo, porém soa mais técnico e menos natural.
+- **Princípio da Precedência do Caminho Cognitivo** — comunica que o caminho vem antes como referência, mas pode ser confundido com ordem temporal ou de leitura.
 
-Neste estágio, os três candidatos semanticamente mais próximos são **Centralidade**, **Preeminência** e **Preponderância**. "Centralidade" descreve melhor a posição arquitetural; "Preeminência" descreve melhor a importância; "Preponderância" descreve melhor o maior peso relativo. A escolha final deve considerar qual dessas nuances representa melhor o manifesto.
+Neste estágio, **Foco** parece a melhor combinação entre precisão suficiente e linguagem cotidiana. A questão ainda aberta é se "foco" consegue, sozinho, carregar a força hierárquica desejada ou se essa força deve permanecer principalmente na frase definidora do princípio.
 
 ## Formulação do princípio em avaliação
 
@@ -48,7 +47,7 @@ Uma formulação consequencial importante é:
 
 ## O problema do volume e da desorganização
 
-A centralidade do caminho cognitivo só é útil se não obrigar o leitor a consumir o processo bruto de criação. Uma norma de poucas páginas pode ter sido produzida por milhares de páginas de discussões, decisões, idas e vindas, alternativas descartadas e evidências. Expor tudo isso linearmente seria frequentemente pior do que o consolidado atual.
+O foco no caminho cognitivo só é útil se não obrigar o leitor a consumir o processo bruto de criação. Uma norma de poucas páginas pode ter sido produzida por milhares de páginas de discussões, decisões, idas e vindas, alternativas descartadas e evidências. Expor tudo isso linearmente seria frequentemente pior do que o consolidado atual.
 
 Portanto, o princípio não defende substituir uma norma curta por um arquivo cognitivo gigantesco e indiferenciado. Defende que **o caminho cognitivo seja capturado de forma estruturada e organizada**, para que possa ser projetado conforme a necessidade de quem consulta.
 
@@ -90,14 +89,15 @@ Essa arquitetura permite que "somente a informação necessária" seja apresenta
 
 O PR-M01 separa intenção e materialização. O PR-M03 aplica uma separação análoga no domínio do conhecimento: **a base cognitiva não deve ser confundida com uma de suas apresentações consolidadas.**
 
-O PR-M02 busca tornar a forma de pensar da organização coerente e legível. O PR-M03 acrescenta uma ordem de importância: a forma consolidada não substitui nem ocupa o centro da base cognitiva da qual deriva.
+O PR-M02 busca tornar a forma de pensar da organização coerente e legível. O PR-M03 acrescenta uma ordem de importância: a forma consolidada não substitui nem ocupa o foco principal da base cognitiva da qual deriva.
 
 ## Distinções a preservar
 
-- o objeto é o caminho cognitivo estruturado; o princípio é a **posição central e o maior peso atribuídos a ele** diante do consolidado;
+- o objeto é o caminho cognitivo estruturado; o princípio define que **o foco principal deve recair sobre ele** diante do consolidado;
 - caminho cognitivo não é sinônimo de log técnico;
 - o caminho cognitivo é a base primária; o consolidado deve ser tratado como projeção derivada e secundária;
-- o fato de o consolidado ser mais curto ou conveniente não lhe confere centralidade epistemológica;
+- foco não significa centralização técnica nem obrigação de leitura integral do caminho;
+- o fato de o consolidado ser mais curto ou conveniente não lhe confere posição primária;
 - o caminho cognitivo não deve ser tratado como anexo da norma; a norma é que deve funcionar como projeção compacta da base cognitiva;
 - preservar o caminho cognitivo não significa apresentar o processo bruto inteiro ao leitor;
 - a viabilidade depende de estruturar, relacionar e projetar o caminho cognitivo, não apenas arquivá-lo;
@@ -107,4 +107,4 @@ O PR-M02 busca tornar a forma de pensar da organização coerente e legível. O 
 
 ## Questões para próxima rodada
 
-A tese está estável: **o caminho cognitivo estruturado ocupa o centro e a base primária do conhecimento normativo; o consolidado é tratado como projeção contextual e secundária.** O nome ainda está em avaliação. Nesta rodada, **Centralidade**, **Preeminência** e **Preponderância** são os três candidatos que melhor preservam a ideia de maior importância relativa sem reduzi-la a mera preferência, relevância genérica ou precedência temporal.
+A tese permanece estável: **o caminho cognitivo estruturado ocupa a base primária do conhecimento normativo; o consolidado é tratado como projeção contextual e secundária.** O nome ainda está em avaliação. Nesta rodada, **Princípio do Foco no Caminho Cognitivo** torna-se o candidato preferencial por preservar a ideia de centralidade em linguagem mais simples e com menor risco de confusão com centralização.
