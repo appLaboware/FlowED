@@ -6,15 +6,15 @@
 
 O objetivo imediato é **terminar o manifesto**, não implementar todas as materializações nem fechar todas as linhas de pesquisa derivadas.
 
-Para cada pilar ou afirmação estrutural do manifesto, a rodada deve responder somente o suficiente para estabelecer que:
+A partir desta rodada, todos os pilares devem atingir o mesmo **gate de realizabilidade** antes de serem considerados suficientemente fechados: não basta coerência filosófica; deve existir no horizonte prior art e pelo menos uma tecnologia pronta ou composição tecnicamente plausível capaz de cumprir o futuro contrato.
 
-1. o conceito é coerente com o animal FlowED;
-2. não depende de uma implementação única;
-3. existe pelo menos um caminho plausível/realizável de materialização;
-4. gaps de implementação, formalização ou pesquisa podem ser deixados como linhas abertas para continuidade posterior;
-5. uma linha aberta não bloqueia o manifesto quando sua realizabilidade conceitual já está suficientemente estabelecida.
+Documento normativo da rodada: `MANIFESTO-PILLAR-FEASIBILITY-GATE.md`.
 
-A partir desse ponto, a discussão deve avançar para o próximo elemento do manifesto. O aprofundamento técnico fica para ciclos posteriores.
+Regra resumida:
+
+**prior art → propriedades úteis → composição → contrato FlowED → materialização de referência substituível**.
+
+Se não houver tecnologia suficiente para sustentar o horizonte de materialização, o pilar não avança: pesquisa-se mais, reduz-se a claim ou abre-se uma linha de viabilidade.
 
 ## Pilar 1 — Unidade operacional e liberdade governada
 
@@ -28,51 +28,62 @@ A linha de pesquisa derivada da composição test-driven/contract-driven permane
 
 ## Pilar 2 — Autoeducação e conhecimento vivo
 
-**Estado para fechamento do manifesto:** o componente de memória operacional estruturada atingiu maturidade de realizabilidade suficiente; resta consolidar a formulação constitutiva final e a fronteira com MyTrues/EDT/CCP.
+**Estado para fechamento do manifesto:** suficientemente realizável nesta fase.
 
-A exigência de maturidade desta rodada foi elevada: não basta uma filosofia plausível. Para fechar um pilar, deve existir no horizonte uma tecnologia pronta ou uma composição concreta de tecnologias capaz de cumprir o futuro contrato, em nível semelhante ao atingido pelo Pilar 1.
+A exigência de maturidade foi elevada até existir um horizonte tecnológico comparável ao Pilar 1. A pesquisa demonstrou que a memória operacional estruturada pode ser materializada por composição de tecnologias e padrões existentes, sem depender de uma única implementação.
 
-A pesquisa de realizabilidade identificou um caminho tecnológico forte:
+Horizonte identificado inclui CDEvents, OpenTelemetry, CloudEvents, OCEL, W3C PROV, OpenLineage, AsyncAPI/schema registries, Kafka/Redpanda/Pulsar/NATS/event stores e XES/Process Mining.
 
-- CDEvents já padroniza eventos comuns para partes relevantes do SDLC, com foco explícito em interoperabilidade e desacoplamento entre ferramentas;
-- OpenTelemetry fornece modelo estável e infraestrutura executável para logs/events/traces, incluindo semantic conventions para CI/CD e VCS;
-- CloudEvents fornece envelope genérico e extensível;
-- ActivityStreams 2.0 demonstra uma abstração genérica de atividade com ator, objeto, alvo, origem, resultado e instrumento;
-- OCEL 2.0 oferece event logs multiobjeto, relações qualificadas, mudanças temporais, schemas e formatos JSON/XML/SQLite, inclusive com dataset real de commits do Angular;
-- W3C PROV e OpenLineage fornecem proveniência e lineage extensíveis;
-- AsyncAPI e schema registries permitem contratos machine-readable, versionamento e validação de compatibilidade;
-- Kafka, Redpanda, Pulsar, NATS JetStream e event stores fornecem caminhos alternativos para transporte, persistência e replay;
-- OpenTelemetry Collector já implementa pipelines de receivers/processors/exporters e possui integração com Kafka;
-- XES/Process Mining e OCEL/OCPM fornecem caminhos concretos para análise posterior dos eventos.
+A conclusão é que não existe uma única ferramenta que seja o Pilar 2, mas existe tecnologia suficiente para construir uma futura capability de memória operacional capaz de cumprir um contrato extensível por domínio.
 
-A conclusão da rodada é que **não existe uma única ferramenta que seja o Pilar 2**, mas existe uma composição executável hoje que cobre todas as responsabilidades essenciais da memória operacional estruturada. Portanto, o contrato FlowED pode ser criado posteriormente a partir das melhores propriedades dessas referências sem depender de inventar infraestrutura fundamental.
+A relação conceitual permanece:
 
-Hipótese arquitetural preservada:
+- memória operacional — o que aconteceu;
+- memória decisória/cognitiva — por que foi feito, escolhido ou alterado;
+- autoeducação — relacionar intenção/decisão, execução, resultado e evidência para alimentar revisão consciente da forma de trabalhar.
 
-**ciência + padrões + grandes projetos → propriedades maduras → contrato FlowED → implementação futura substituível**.
+MyTrues/EDT/CCP permanecem mais frágeis e em evolução, mas essa fragilidade está explícita e não invalida a realizabilidade do núcleo técnico de memória operacional nem a proposição do pilar.
 
-O futuro projeto de memória/log estruturado deve ser uma capability separada, assim como outros projetos horizontais FlowED. Ele poderá compor várias ferramentas, mas nenhuma delas deve subir como dependência conceitual obrigatória.
-
-A relação com MyTrues permanece:
-
-- **memória operacional:** o que aconteceu, representado por eventos estruturados e correlacionáveis;
-- **memória decisória/cognitiva:** por que aconteceu, qual referência/decisão/racional/evidência estava vigente;
-- **autoeducação:** capacidade de relacionar intenção/decisão, execução, resultado e evidência para alimentar revisão consciente da forma de trabalhar.
-
-A parte de memória operacional está fortemente realizável. MyTrues/EDT/CCP permanecem mais frágeis e em evolução, mas já possuem caminho conceitual plausível e não precisam ser implementados antes do manifesto.
-
-Formulação candidata do Pilar 2:
+Formulação candidata:
 
 > **FlowED transforma execução em memória operacional estruturada e relacionável ao conhecimento que a motivou, permitindo que experiência, decisão e evidência retroalimentem conscientemente a evolução da forma de trabalhar.**
 
-O manifesto não deve alegar que um único vocabulário FlowED já cobre empiricamente todos os domínios da Engenharia de Software. O que está suficientemente sustentado é a **realizabilidade da arquitetura** e a existência de tecnologia capaz de cumprir um contrato extensível por domínio.
-
-Documentos de aprofundamento:
-
+Documentos relacionados:
 - `PILAR-2-STRUCTURED-OPERATIONAL-MEMORY-DRAFT.md`;
 - `PILAR-2-REFERENCE-STACK-DRAFT.md`;
 - `PILAR-2-FEASIBILITY-RESEARCH-001.md`.
 
+## Pilar 3 — Sustentação científica e empírica explícita
+
+**Estado para fechamento do manifesto:** em avaliação pelo mesmo gate; horizonte tecnológico inicial já encontrado.
+
+A pesquisa inicial identifica uma composição concreta capaz de representar e governar referências, claims, evidências e provenance:
+
+- Evidence-Based Software Engineering como antecedente metodológico;
+- Nanopublications para claims granulares com provenance;
+- RO-Crate para pacotes machine-readable de evidências e artefatos;
+- W3C PROV para provenance interoperável;
+- RDF + SHACL para representação e validação de constraints;
+- Crossref, DataCite e OpenAlex para identificação, enriquecimento e relações de literatura científica;
+- in-toto/SLSA para attestations e evidência operacional verificável;
+- OPA ou engines equivalentes para políticas/gates determinísticos;
+- memória operacional do Pilar 2 como fonte de evidência contextual;
+- MyTrues/EDT/CCP como possível camada decisória/cognitiva quando amadurecidos.
+
+A tecnologia necessária para representar, validar, consultar e aplicar políticas sobre evidências já existe por composição. O principal residual aberto é metodológico/científico: como graduar força de evidência, comparar classes heterogêneas de sustentação e definir score/maturidade sem falsa precisão.
+
+Esse residual já está separado nas linhas P02/P03/P06 e não invalida a realizabilidade técnica do pilar.
+
+Documento de pesquisa: `PILAR-3-FEASIBILITY-RESEARCH-001.md`.
+
+## Estratégia LaboWare relacionada, mas externa ao manifesto
+
+A estratégia da LaboWare de usar versões educacionais gratuitas para formar familiaridade acadêmica e favorecer posterior difusão industrial foi registrada separadamente em `LABOWARE-ACADEMIA-INDUSTRY-DIFFUSION-STRATEGY.md`.
+
+Essa estratégia se beneficia de propriedades FlowED — linguagem comum, contratos, progressividade, continuidade do modelo mental e substituibilidade — mas não deve virar requisito de conformidade do framework.
+
+A hipótese científica correspondente amplia P07: investigar se ferramentas contínuas entre academia e indústria podem inverter parcialmente a direção usual de difusão tecnológica.
+
 ## Próximo passo
 
-Consolidar entre nós apenas a formulação constitutiva final do Pilar 2 e, se não surgir contradição relevante, marcá-lo como suficientemente fechado para o manifesto. Depois avançar diretamente ao Pilar 3 — sustentação científica e empírica explícita.
+Debater a formulação constitutiva do Pilar 3 usando o mesmo critério: demonstrar que a proposição é tecnicamente realizável, explicitar o que já possui prior art e isolar o que continua sendo hipótese científica. Se o gate for satisfeito sem contradição relevante, marcar o Pilar 3 como fechado e avançar ao Pilar 4.
