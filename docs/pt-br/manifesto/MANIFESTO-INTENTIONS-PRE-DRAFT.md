@@ -85,6 +85,32 @@ Também não se assume que intenção seja imutável. Novas intenções podem su
 
 O produto existe para demonstrar e facilitar a filosofia; não define a filosofia nem recebe privilégio normativo por ter sido produzido pelos autores do FlowED.
 
+## PR-M02 — Princípio da Coerência Operacional
+
+**Nome provisório.** A expressão "identidade operacional" é tratada aqui como efeito percebido da coerência, e não como obrigação de uniformidade.
+
+### Frases nucleares candidatas
+
+> **Quando decisões, práticas e ferramentas de diferentes domínios compartilham princípios e contratos transversais, a forma de trabalhar da organização tende a se tornar mais coerente e reconhecível.**
+
+> **Uma organização pode preservar uma identidade operacional reconhecível mesmo quando suas ferramentas mudam, quando essa identidade reside nos princípios, intenções e contratos que governam seu uso, e não nas implementações específicas.**
+
+### O que este princípio quer fazer o leitor compreender
+
+Escolhas locais podem ser tecnicamente excelentes e ainda assim produzir, em conjunto, uma experiência organizacional fragmentada. Quando cada domínio adota sua própria linguagem, seus próprios critérios de decisão e sua própria forma de interação sem uma camada transversal comum, torna-se mais difícil perceber "como esta organização trabalha" como um todo.
+
+O FlowED não propõe uniformizar internamente todos os domínios nem obrigar todas as ferramentas a partilhar a mesma arquitetura, tecnologia ou método. A coerência desejada ocorre na superfície pública: princípios, intenções, contratos, rastreabilidade e regras de composição podem ser comuns, enquanto cada domínio continua soberano em sua materialização.
+
+Nesse sentido, identidade operacional não significa usar as mesmas ferramentas. Significa que escolhas diferentes continuam reconhecíveis como parte de uma mesma forma de trabalhar porque obedecem a compromissos transversais compartilhados.
+
+Uma consequência esperada é que a organização possa substituir ferramentas, providers ou materializadores sem perder necessariamente a continuidade daquilo que a caracteriza operacionalmente. A identidade pode sobreviver à troca de tecnologia quando não está acoplada a ela.
+
+### Distinção em relação ao PR-M01
+
+O PR-M01 trata da separação entre intenção e materialização e dos efeitos dessa separação sobre avaliação, aprendizagem, especialização e adaptação tecnológica.
+
+O PR-M02 trata de outra propriedade: **a coerência transversal entre decisões locais de diferentes domínios**. Ele pergunta se uma organização consegue manter uma forma de trabalhar reconhecível mesmo quando suas capacidades são materializadas por ferramentas distintas.
+
 ## Próximo princípio
 
-O próximo princípio ainda não está consolidado. Deve ser discutido separadamente, evitando promover como novo princípio algo que seja apenas consequência, mecanismo ou hipótese derivada do PR-M01.
+O próximo princípio ainda não está consolidado. Deve ser discutido separadamente, evitando promover como novo princípio algo que seja apenas consequência, mecanismo ou hipótese derivada dos princípios anteriores.
