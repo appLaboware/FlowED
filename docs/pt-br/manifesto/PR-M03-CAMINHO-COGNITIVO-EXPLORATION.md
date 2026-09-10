@@ -1,33 +1,18 @@
 # PR-M03 — Exploração do terceiro princípio
 
-**Status:** rascunho exploratório. Não normativo. O princípio foi proposto como terceiro princípio do pré-manifesto; a tese está mais estável do que seu nome final.
+**Status:** rascunho exploratório. Não normativo. O princípio foi proposto como terceiro princípio do pré-manifesto. O nome **Princípio do Foco no Caminho Cognitivo** fica adotado provisoriamente; pode ser substituído se surgir formulação melhor. A primeira frase nuclear foi aceita.
 
-## Nome em avaliação
+## Nome provisoriamente adotado
 
-### Novo candidato preferencial — Princípio do Foco no Caminho Cognitivo
+### Princípio do Foco no Caminho Cognitivo
 
 A discussão mostrou uma fragilidade importante em **Centralidade do Caminho Cognitivo**: apesar de semanticamente próximo da tese, "centralidade" pode sugerir concentração ou centralização do próprio caminho cognitivo, deslocando a leitura da relação que o princípio realmente quer estabelecer.
 
 O princípio não trata de centralizar o caminho em si. Trata de **onde se coloca o foco normativo e epistemológico** quando coexistem um caminho cognitivo estruturado e uma forma consolidada derivada dele.
 
-Por isso, **Princípio do Foco no Caminho Cognitivo** passa a ser o candidato preferencial desta rodada. "Foco" é mais cotidiano, direto e menos sujeito à leitura de centralização. Ele comunica que, ao interpretar, justificar, revisar e evoluir conhecimento normativo, a atenção principal deve recair sobre o caminho cognitivo estruturado, enquanto o consolidado deve ser tratado como projeção contextual dessa base.
+Por isso, **Princípio do Foco no Caminho Cognitivo** fica como nome provisoriamente adotado. "Foco" é cotidiano, direto e comunica onde deve recair a atenção principal sem exigir que o título carregue sozinho toda a hierarquia conceitual. A força normativa permanece explicitada pela frase nuclear.
 
-A força de "foco" está justamente em não exigir uma palavra erudita para expressar a assimetria: **o caminho cognitivo recebe o foco; o consolidado permanece importante como projeção, mas não ocupa o lugar da base.**
-
-### Variantes ainda em comparação
-
-- **Princípio do Foco no Caminho Cognitivo** — simples, direto e comunicável; expressa onde deve recair a atenção principal sem sugerir centralização técnica.
-- **Princípio da Centralidade do Caminho Cognitivo** — semanticamente forte, mas pode ser interpretado como centralização do próprio caminho.
-- **Princípio da Relevância do Caminho Cognitivo** — natural e simples, porém fraco demais para marcar posição principal diante do consolidado.
-- **Princípio da Prioridade do Caminho Cognitivo** — claro quanto à ordem de importância, mas pode soar administrativo ou procedimental.
-- **Princípio da Valorização do Caminho Cognitivo** — comunica atitude, mas não necessariamente hierarquia.
-- **Princípio da Preeminência do Caminho Cognitivo** — semanticamente preciso quanto à importância superior, mas menos cotidiano.
-- **Princípio da Preponderância do Caminho Cognitivo** — comunica maior peso relativo, porém soa mais técnico e menos natural.
-- **Princípio da Precedência do Caminho Cognitivo** — comunica que o caminho vem antes como referência, mas pode ser confundido com ordem temporal ou de leitura.
-
-Neste estágio, **Foco** parece a melhor combinação entre precisão suficiente e linguagem cotidiana. A questão ainda aberta é se "foco" consegue, sozinho, carregar a força hierárquica desejada ou se essa força deve permanecer principalmente na frase definidora do princípio.
-
-## Formulação do princípio em avaliação
+## Primeira frase nuclear — aceita
 
 > **O caminho cognitivo estruturado deve constituir a base primária do conhecimento normativo. Todo consolidado deve ser tratado como uma projeção contextual dessa base.**
 
@@ -37,13 +22,61 @@ A formulação consolidada continua útil, mas deve assumir posição secundári
 
 ## Tese refinada
 
-A norma consolidada é comparável a uma síntese: ela diz, de forma compacta, a conclusão vigente. Ao fazer isso, necessariamente deixa de expor grande parte da estrutura que tornou essa conclusão possível — problema, contexto, hipóteses, alternativas, argumentos, evidências, rejeições, incertezas, conflitos, revisões e condições de validade.
+A norma consolidada é comparável a uma síntese: ela diz, de forma compacta, a conclusão vigente. Ao fazer isso, deixa de expor parte da estrutura que tornou essa conclusão possível — problema, contexto, hipóteses, alternativas, argumentos, evidências, rejeições, incertezas, conflitos, revisões e condições de validade.
 
-A crítica em exploração não é que o consolidado seja inútil ou que deva desaparecer. É que **ele hoje costuma ocupar o lugar de conhecimento principal**, enquanto o caminho que o produziu fica secundário, implícito, disperso ou de difícil acesso. O princípio propõe inverter essa hierarquia: o caminho cognitivo estruturado é o patrimônio primário; o consolidado é uma porta de entrada e uma projeção adequada a uma necessidade de leitura ou ação.
+A crítica em exploração não é que o consolidado seja inútil ou que deva desaparecer. É que **ele costuma ocupar o lugar de conhecimento principal**, enquanto o caminho que o produziu fica secundário, implícito, disperso ou de difícil acesso. O princípio propõe inverter essa hierarquia: o caminho cognitivo estruturado é o patrimônio primário; o consolidado é uma porta de entrada e uma projeção adequada a uma necessidade de leitura ou ação.
 
-Uma formulação consequencial importante é:
+Uma formulação consequencial importante permanece:
 
 > **Quando o consolidado ocupa o lugar do conhecimento que o gerou, tornam-se menos acessíveis as razões, alternativas, evidências, incertezas e condições que permitem compreendê-lo e revê-lo.**
+
+## Consequências em exploração
+
+Os exemplos desta rodada não parecem convergir para uma única frase. Eles revelam faces diferentes do mesmo princípio e devem permanecer separáveis até sabermos quais merecem promoção ao pré-manifesto.
+
+### 1. Retenção do conhecimento organizacional
+
+Quando uma pessoa produz conhecimento dentro de uma organização, parte relevante desse conhecimento pode permanecer em seu percurso decisório e não apenas nos artefatos consolidados que deixou. Se esse percurso não é preservado, a organização pode conservar resultados, normas, documentos e código e ainda assim perder acesso a parte do conhecimento que tornou esses resultados possíveis quando aquela pessoa deixa de participar do trabalho.
+
+Frase candidata:
+
+> **Quando o caminho cognitivo não é preservado, parte do conhecimento produzido pela organização pode permanecer acoplada às pessoas que o geraram e deixar de permanecer acessível quando elas saem, mesmo que os consolidados permaneçam.**
+
+A intenção não é preservar a capacidade criativa da pessoa — que continua pertencendo a ela —, mas preservar o conhecimento efetivamente produzido no contexto da organização.
+
+### 2. Continuidade entre autores e mantenedores
+
+Código-fonte, arquitetura, procedimentos e outros artefatos registram decisões materializadas. Eles não registram necessariamente todo o raciocínio que levou a essas decisões. Quem assume depois pode então precisar reconstruir por inferência parte do contexto, das alternativas e das razões que o autor original já havia percorrido.
+
+Frase candidata:
+
+> **Quando o raciocínio que gerou um artefato não acompanha o próprio artefato, quem lhe dá continuidade precisa reconstruir por inferência parte do caminho que já havia sido percorrido.**
+
+O código-fonte é um exemplo particularmente expressivo: ele mostra o resultado executável de muitas decisões, mas não equivale ao caminho cognitivo completo que as produziu.
+
+### 3. Dependência da capacidade de síntese
+
+Quando o conhecimento é transmitido principalmente por uma norma ou outro consolidado, a preservação futura passa a depender fortemente das escolhas de quem sintetizou: o que incluiu, o que excluiu, o que agrupou, o que julgou óbvio e como representou intenções e trade-offs.
+
+Frase candidata:
+
+> **Quando o conhecimento é transmitido principalmente por um consolidado, sua compreensão futura fica condicionada às escolhas de síntese de quem o produziu.**
+
+Estruturar o caminho cognitivo não elimina interpretação nem mediação. O ganho pretendido é reduzir a dependência de uma única síntese como ponto de passagem obrigatório entre a cognição de origem e todo uso futuro.
+
+### 4. Origem, interpretação e novas projeções
+
+Uma pessoa pode interpretar corretamente uma norma consolidada e ainda assim chegar a uma reconstrução diferente da intenção, dos argumentos ou do contexto que levaram à sua formulação. Essa nova interpretação pode inclusive produzir conhecimento útil, mas não deve ser confundida com recuperação do caminho cognitivo original.
+
+Frase candidata:
+
+> **Preservar o caminho cognitivo permite distinguir o conhecimento de origem das interpretações produzidas depois sobre suas projeções consolidadas.**
+
+Essa distinção também abre uma consequência positiva: diferentes projeções podem ser geradas a partir da mesma base para responder a perguntas, papéis e contextos distintos, sem transformar cada síntese em uma nova fonte independente.
+
+Frase candidata:
+
+> **Uma mesma base cognitiva estruturada pode sustentar diferentes projeções sem multiplicar a origem do conhecimento.**
 
 ## O problema do volume e da desorganização
 
@@ -57,7 +90,7 @@ A relação desejada é:
 
 Assim, o consolidado deixa de ser o conhecimento principal e passa a ser uma visão produzida sobre a base cognitiva. Diferentes leitores podem receber diferentes níveis de síntese sem que a riqueza original precise ser descartada.
 
-Uma consequência forte é:
+Uma consequência forte permanece:
 
 > **Quando o caminho cognitivo é estruturado, o consolidado pode tornar-se dinâmico: cada contexto recebe a síntese necessária sem transformar a síntese na própria fonte do conhecimento.**
 
@@ -93,6 +126,7 @@ O PR-M02 busca tornar a forma de pensar da organização coerente e legível. O 
 
 ## Distinções a preservar
 
+- o nome provisório é **Princípio do Foco no Caminho Cognitivo**;
 - o objeto é o caminho cognitivo estruturado; o princípio define que **o foco principal deve recair sobre ele** diante do consolidado;
 - caminho cognitivo não é sinônimo de log técnico;
 - o caminho cognitivo é a base primária; o consolidado deve ser tratado como projeção derivada e secundária;
@@ -103,8 +137,10 @@ O PR-M02 busca tornar a forma de pensar da organização coerente e legível. O 
 - a viabilidade depende de estruturar, relacionar e projetar o caminho cognitivo, não apenas arquivá-lo;
 - uma projeção pode ser estática ou dinâmica conforme o contexto, mas não deve apagar a fonte da qual deriva;
 - o caminho cognitivo pode pertencer a uma pessoa, equipe, comitê, organização ou outro processo decisório, não apenas a um criador individual;
+- preservar conhecimento organizacional não significa preservar a capacidade criativa individual de quem o gerou;
+- distinguir cognição de origem de interpretações posteriores permite que novas leituras gerem conhecimento sem reescrever retroativamente a origem;
 - autoaprendizado exige relação entre decisão, execução, resultado, evidência e revisão, não apenas armazenamento.
 
 ## Questões para próxima rodada
 
-A tese permanece estável: **o caminho cognitivo estruturado ocupa a base primária do conhecimento normativo; o consolidado é tratado como projeção contextual e secundária.** O nome ainda está em avaliação. Nesta rodada, **Princípio do Foco no Caminho Cognitivo** torna-se o candidato preferencial por preservar a ideia de centralidade em linguagem mais simples e com menor risco de confusão com centralização.
+A primeira frase nuclear está aceita e o nome **Princípio do Foco no Caminho Cognitivo** fica adotado provisoriamente. As novas consequências sobre retenção institucional, continuidade de artefatos, dependência da síntese e distinção entre origem e interpretação ainda precisam ser refinadas para decidir quais merecem se tornar frases nucleares do pré-manifesto e quais devem permanecer apenas como explicações do princípio.
