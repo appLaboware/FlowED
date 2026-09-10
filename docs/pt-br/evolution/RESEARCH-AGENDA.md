@@ -35,14 +35,19 @@ EDT deverá ser avaliado como uma das referências principais desse estudo, espe
 
 ## P02 — Força epistemológica de referências de Engenharia de Software
 
-Investigar como avaliar gradualmente a força da sustentação de uma referência técnica, distinguindo tipos de evidência e a qualidade de cada evidência.
+Investigar como avaliar gradualmente a sustentação de uma referência técnica sem confundir sustentação, influência, uso e verdade.
+
+Direção atual: preferir um **vetor auditável** antes de qualquer score escalar universal. Dimensões candidatas incluem reconhecimento científico formal, influência científica por citações/indicadores normalizados, contexto do veículo, evidência operacional e rastreabilidade/proveniência.
 
 Questões candidatas:
 
-- como ponderar artigo individual, revisão sistemática, norma, benchmark, replicação e evidência operacional?
-- como tratar evidências conflitantes?
-- como separar qualidade metodológica e adequação contextual?
-- como registrar score zero sem invalidar uma decisão operacional?
+- o que conta como reconhecimento científico formal e como preservar diferenças entre artigo revisado por pares, conferência, tese e outros produtos?
+- como usar citações como sinal de influência sem tratá-las como confirmação de verdade?
+- quais normalizações por campo, idade, tipo de documento e cobertura de base são defensáveis?
+- qual papel métricas de periódico/venue podem ter sem funcionar como proxy indevido da qualidade de um artigo individual?
+- como tratar evidências conflitantes, retratações, autocitações e citações críticas/negativas?
+- como separar qualidade metodológica, influência e adequação contextual?
+- como registrar score científico zero sem invalidar uma decisão operacional sustentada por outras evidências?
 
 ## P03 — Maturidade epistemológica organizacional
 
@@ -62,9 +67,9 @@ Validar relação com resultados observáveis antes de qualquer alegação de qu
 
 ## P06 — Certificação determinística não binária
 
-Investigar modelos de certificação que produzam vetores auditáveis e reproduzíveis em vez de somente conforme/não conforme.
+Investigar modelos de certificação que produzam vetores auditáveis e reproduzíveis em vez de somente conforme/não conforme ou um único número opaco.
 
-Separar componentes determinísticos dos componentes que exigem julgamento humano.
+Separar componentes determinísticos dos componentes que exigem julgamento humano. Investigar também quando uma agregação escalar é legítima e quais condições devem impedir soma/multiplicação de dimensões heterogêneas que possam gerar falsa precisão ou dupla contagem.
 
 ## P07 — Integração academia–indústria e inversão da difusão tecnológica
 
@@ -97,9 +102,11 @@ Ciclo candidato: ciência → baseline → prática → divergência → hipóte
 
 ## P09 — Evidência longitudinal operacional
 
-Investigar se e como tempo de execução de uma referência pode aumentar confiança quando combinado com exposição mensurável, volume de uso, diversidade de contextos, falhas, ausência de falhas e resultados.
+Investigar como uma referência pode acumular sustentação operacional de maneira determinística e auditável ao longo do tempo.
 
-Hipótese importante a falsificar: mera longevidade não deve ser confundida com veracidade.
+Tempo em uso permanece relevante, mas não deve ser tratado isoladamente como prova. A pesquisa deve combinar, quando disponível, tempo, volume de execuções/exposição, diversidade de contextos, quantidade de projetos/organizações, falhas e sucessos observados, recência e mudanças de versão.
+
+Hipótese importante a falsificar: mera longevidade não deve ser confundida com veracidade nem com alta exposição empírica.
 
 ## P10 — Perfil de risco de evolução organizacional
 
