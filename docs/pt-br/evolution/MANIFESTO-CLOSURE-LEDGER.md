@@ -104,6 +104,54 @@ Documentos relacionados:
 - `PILAR-3-RESPONSIBLE-RESEARCH-ASSESSMENT-REFERENCE.md`;
 - `PILAR-3-CONTRACT-HORIZON-DRAFT.md`.
 
+## Pilar 4 — Progressividade governada
+
+**Estado para fechamento do manifesto:** realizabilidade fortemente avançada; em debate sobre formulação constitutiva final.
+
+A mesma exigência dos pilares anteriores foi aplicada: não basta afirmar que o FlowED poderá crescer progressivamente. Deve existir prior art, tecnologia concreta e um horizonte de contrato capaz de controlar variação de configuração/intensidade sem acoplamento a implementação única.
+
+A pesquisa encontrou quatro famílias complementares já maduras:
+
+- **software process tailoring / Situational Method Engineering** — adaptação de processos ao contexto;
+- **Software Process Lines e V-Modell XT** — famílias de processos, ativos reutilizáveis e operações explícitas de variabilidade;
+- **feature management / OpenFeature / OFREP** — avaliação contextual, providers substituíveis, variants, reasons/metadata e protocolo vendor-neutral;
+- **policy-as-code e progressive delivery** — OPA/Cedar para decisões sobre dados estruturados e Argo Rollouts/Unleash/LaunchDarkly para ativação gradual, métricas, pause, promote e rollback.
+
+MAPE-K/Autonomic Computing fornece ainda um antecedente consolidado para o ciclo monitorar → analisar → planejar → executar sobre conhecimento/políticas, mostrando que adaptação orientada por feedback pode ser estruturada tecnicamente.
+
+A principal conclusão conceitual é que progressividade FlowED **não deve significar uma escada universal de maturidade em que mais é sempre melhor**. Ela deve permitir que uma capability varie conforme contexto e evidência, inclusive para manter, reduzir, pausar ou reverter intensidade.
+
+Horizonte preliminar do contrato:
+
+- subject/capability/reference;
+- configuração/intensidade atual;
+- configuração candidata/alvo;
+- contexto;
+- políticas/regras versionadas;
+- evidência/métricas;
+- decisão de progressão (increase/maintain/reduce/pause/rollback/not-applicable ou equivalente);
+- escopo da mudança;
+- estratégia de transição;
+- guards/constraints;
+- reversibilidade/rollback quando aplicável;
+- reason/decision trace;
+- effective time/version;
+- outcome posteriormente observado.
+
+Pipeline conceitual previsível:
+
+**configuração atual + contexto + evidência + política → decisão de progressão → aplicação limitada/gradual → observação → manter/promover/reduzir/reverter → nova evidência**.
+
+Existe tecnologia real capaz de materializar cada parte dessa cadeia sem que nenhuma ferramenta precise se tornar obrigatória. O contrato pode continuar acima de providers substituíveis, preservando o Pilar 1; usar memória operacional do Pilar 2 para feedback; e consumir evidência/avaliações do Pilar 3.
+
+Formulação candidata do Pilar 4:
+
+> **O FlowED permite que a forma de trabalhar varie e evolua de maneira governada conforme contexto, risco, evidência e necessidade. Aumentar, manter, reduzir ou reverter intensidade deve ser uma decisão explícita e rastreável, sem transformar complexidade máxima em sinônimo de maturidade.**
+
+Gaps que podem permanecer abertos sem bloquear o manifesto: definição de intensidade específica por capability, conflitos de políticas, autorização humana versus automação, custo/benefício da progressão e casos não reversíveis.
+
+Documento relacionado: `PILAR-4-FEASIBILITY-RESEARCH-001.md`.
+
 ## Estratégia LaboWare relacionada, mas externa ao manifesto
 
 A estratégia da LaboWare de usar versões educacionais gratuitas para formar familiaridade acadêmica e favorecer posterior difusão industrial foi registrada separadamente em `LABOWARE-ACADEMIA-INDUSTRY-DIFFUSION-STRATEGY.md`.
@@ -114,4 +162,4 @@ A hipótese científica correspondente amplia P07: investigar se ferramentas con
 
 ## Próximo passo
 
-Avançar ao Pilar 4 — **Progressividade governada** — e aplicar o mesmo gate: definir a claim mínima, buscar prior art e tecnologias reais que já materializem seleção contextual de rigor/capability/policy, prever o horizonte de um contrato substituível e somente então considerar o pilar suficientemente fechado.
+Debater a formulação constitutiva do Pilar 4. Se a interpretação de progressividade bidirecional e contextual estiver correta, o pilar já possui prior art, horizonte tecnológico e contrato previsível suficientes para ser marcado como fechado no mesmo nível dos pilares 1–3.
