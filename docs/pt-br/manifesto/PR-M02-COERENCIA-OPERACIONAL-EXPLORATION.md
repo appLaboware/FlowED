@@ -46,12 +46,30 @@ Esta candidata pertence mais naturalmente ao PR-M02 do que ao PR-M01. O PR-M01 e
 
 A analogia com projetos fortemente associados a uma linha técnica consistente pode ajudar a explicar a ideia: mudanças concretas de tecnologia podem alterar a implementação sem apagar necessariamente a percepção de uma maneira estável de decidir. A analogia é apenas ilustrativa; o princípio não depende de uma pessoa centralizadora nem de liderança personalista.
 
+### Candidata F — identidade legível por uma superfície intencional comum
+
+> **Quando escolhas de engenharia convergem para uma superfície intencional comum, a identidade técnica da organização tende a ser mais legível do que quando precisa ser inferida da soma das ferramentas que utiliza.**
+
+Intenção: distinguir uma organização que apenas enumera tecnologias, métodos e ferramentas adotados de uma organização que consegue expressar essas escolhas como manifestações de uma mesma forma de decidir. Uma lista como linguagem, banco, método ágil, estratégia de versionamento e ferramentas de infraestrutura pode revelar partes da prática, mas não necessariamente torna explícita a identidade que atravessa essas escolhas. Uma superfície intencional comum pode funcionar como projeção mais direta dessa identidade.
+
+Esta candidata não exige que a organização adote um pacote monolítico de ferramentas nem que use qualquer produto específico. A unidade está na superfície intencional compartilhada, não na obrigatoriedade de uma implementação única.
+
+#### Ponte explícita com o PR-M01
+
+> **A unidade operacional não precisa implicar adesão tecnológica monolítica quando a superfície comum expressa intenção e contratos, e não um pacote obrigatório de implementações.**
+
+Essa ponte é importante para evitar uma leitura equivocada do PR-M02. Um produto de referência pode materializar uma determinada filosofia de forma integrada, mas a coerência organizacional não depende de usar esse produto inteiro. Uma organização pode construir outra superfície comum, adotar materializadores diferentes ou substituir todos eles, inclusive por soluções que expressem valores distintos dos do FlowED, e ainda assim obter o benefício estrutural de tornar sua identidade técnica mais explícita e duradoura.
+
+A ligação entre os princípios fica assim: o PR-M02 explica por que uma superfície comum pode tornar a identidade organizacional mais coerente e legível; o PR-M01 impede que essa unidade seja confundida com acoplamento às materializações. A mesma identidade intencional pode sobreviver à troca de tecnologias porque a superfície que a expressa está acima delas.
+
 ## Distinções a preservar
 
 - coerência não é uniformidade;
 - identidade operacional não é padronização tecnológica;
 - identidade técnica percebida não exige uma pessoa centralizadora;
 - transversalidade significa critérios compartilhados atravessando decisões locais, não resultados locais idênticos;
+- uma superfície intencional comum não significa pacote tecnológico obrigatório;
+- uma implementação integrada pode expressar uma filosofia, mas não possui monopólio sobre ela;
 - autonomia local não significa ausência de invariantes comuns;
 - uma base comum deve tornar diferenças visíveis, não apagá-las;
-- o princípio deve falar da organização como sistema coerente, enquanto o PR-M01 trata principalmente da separação entre intenção e materialização.
+- o PR-M02 trata da organização como sistema coerente, enquanto o PR-M01 garante que essa coerência possa permanecer separada das materializações concretas.
