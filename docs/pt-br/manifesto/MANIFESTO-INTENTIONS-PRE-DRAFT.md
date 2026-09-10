@@ -14,6 +14,8 @@ A intenção deste documento não é definir tecnologia, produto, provider ou im
 
 > **Separar intenção de materialização permite desenvolver e combinar excelência na decisão e excelência na realização sem pressupor que ambas coincidam na mesma pessoa ou no mesmo momento.**
 
+> **Quando iniciantes e especialistas compartilham a mesma linguagem de intenção, ensino e aprendizagem podem se tornar mais cumulativos: cresce a profundidade, o vocabulário e a precisão sem exigir a substituição da linguagem operacional.**
+
 ### O que este princípio quer fazer o leitor compreender
 
 A Engenharia de Software já conhece a separação entre intenção e implementação. O FlowED propõe elevar essa separação a uma prioridade operacional transversal.
@@ -34,6 +36,10 @@ Quando intenção e materialização são separadas, o aprendizado acumulado sob
 
 A consequência desejada não é ausência de reaprendizado, mas **menor ruptura**: aquilo que continuou conceitualmente válido não deveria ser descartado apenas porque mudou a ferramenta que o realiza.
 
+Compartilhar a mesma linguagem de intenção entre níveis de experiência não significa exigir a mesma profundidade, o mesmo repertório ou a mesma autonomia de um iniciante e de um especialista. Significa preservar uma base semântica comum sobre a qual a competência possa crescer. O iniciante pode operar com um vocabulário menor e com mais defaults e orientação; o especialista pode usar intenções mais compostas, parâmetros mais ricos, restrições mais precisas e maior consciência de trade-offs sem precisar migrar para outra linguagem operacional.
+
+Assim, a progressão de aprendizado desejada é por **ampliação e aprofundamento**, não por descarte sucessivo da linguagem anterior. A hipótese de que isso torne ensinar ou aprender efetivamente mais fácil, rápido ou eficiente deve ser validada empiricamente; o compromisso constitutivo é permitir continuidade semântica entre níveis de experiência.
+
 ### Consequências esperadas deste princípio
 
 Estas consequências explicam as frases nucleares, mas não são ainda claims independentes do manifesto:
@@ -45,6 +51,7 @@ Estas consequências explicam as frases nucleares, mas não são ainda claims in
 - permitir que conhecimento especializado em materialização seja reaproveitado por muitos usuários através de fronteiras reutilizáveis;
 - permitir que competências de intenção e de materialização sejam especializadas e compostas sem exigir que a mesma pessoa domine ambas no mesmo grau;
 - permitir crescimento progressivo do vocabulário de intenção sem exigir ruptura completa da forma de expressão a cada nova ferramenta;
+- permitir continuidade semântica entre aprendizado inicial e prática especializada, com aumento de profundidade em vez de troca de linguagem;
 - facilitar continuidade entre aprendizado inicial e uso profissional de maior escala;
 - reduzir o impacto da evolução tecnológica sobre conhecimento conceitual que permaneceu válido.
 
@@ -53,6 +60,8 @@ Estas consequências explicam as frases nucleares, mas não são ainda claims in
 O manifesto não deve afirmar, sem evidência própria, que esta separação automaticamente torna alguém sênior mais rápido, reduz universalmente carga cognitiva, melhora necessariamente a qualidade do software ou elimina a necessidade de especialistas conhecerem tecnologias concretas.
 
 A hipótese de que especialização separada em intenção e materialização, quando bem coordenada, aumente a probabilidade de melhores resultados é plausível e testável, mas não deve ser promovida a verdade constitutiva antes de evidência. A separação também pode introduzir custos de coordenação, perda de contexto ou fronteiras mal desenhadas; esses efeitos precisam permanecer visíveis.
+
+A hipótese de que uma linguagem de intenção compartilhada entre iniciantes e especialistas torne ensino, aprendizagem ou progressão profissional mais rápidos ou eficientes também deve permanecer testável. O princípio pode exigir continuidade semântica sem antecipar a magnitude dos benefícios educacionais.
 
 Esses efeitos são hipóteses empiricamente testáveis e podem tornar-se linhas de pesquisa. O compromisso filosófico anterior a essas hipóteses é a separação entre qualidade da decisão intencional e qualidade de sua materialização, acompanhada da preservação do conhecimento conceitual diante da volatilidade tecnológica.
 
