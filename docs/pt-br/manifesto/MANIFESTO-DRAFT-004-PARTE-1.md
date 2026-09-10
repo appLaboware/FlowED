@@ -8,11 +8,9 @@
 
 **A0.2** Os princípios deste manifesto não pretendem impor uma ideia, nem mesmo reivindicá-la como nova. Propõem apenas um convite à reflexão sobre o grau de importância atribuído a conceitos já presentes na ciência, nos padrões e na prática da engenharia.
 
-**A0.3** As formulações abaixo não procuram determinar como a Engenharia de Software deve trabalhar. Elas propõem direções de valor que podem ser examinadas, criticadas, refinadas e, quando fizer sentido, transformadas em compromissos de engenharia.
-
 ## 1. Princípio da Separação entre Intenção e Materialização
 
-**P1.1** Separar intenção de materialização tende a tornar mais clara a avaliação da qualidade do que foi decidido e da qualidade de como aquilo foi realizado.
+**P1.1** Separar intenção de materialização tende a tornar mais clara a avaliação do que foi decidido e de como foi realizado.
 
 **P1.2** Quando o conhecimento conceitual pode ser acumulado independentemente da ferramenta que o materializa, a evolução tecnológica tende a exigir menos readaptação.
 
