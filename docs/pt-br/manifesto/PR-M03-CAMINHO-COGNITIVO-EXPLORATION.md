@@ -4,13 +4,21 @@
 
 ## Nome em avaliação
 
-### Candidato preferencial — Princípio da Primazia da Fonte Cognitiva
+### Candidato preferencial nesta rodada — Princípio da Centralidade do Caminho Cognitivo
 
-A correção conceitual desta rodada é importante: **a Fonte Cognitiva não é, por si só, o princípio**. O princípio é a prioridade atribuída a ela diante de suas projeções consolidadas.
+A discussão mostrou que o nome do princípio precisa expressar mais do que existência, origem ou precedência temporal. O que se quer afirmar é uma **ordem de importância**: diante do caminho cognitivo estruturado e de sua forma consolidada, o primeiro deve ocupar a posição central do conhecimento normativo; a norma consolidada deve ser entendida como consequência, projeção e forma de acesso.
 
-A expressão **Primazia da Fonte Cognitiva** procura nomear exatamente essa ordem: quando há uma base cognitiva estruturada e uma ou mais formas consolidadas derivadas dela, a base deve ocupar a posição principal de conhecimento; os consolidados devem ocupar a posição de projeções de acesso, uso e comunicação.
+Por isso, **Centralidade do Caminho Cognitivo** passa a ser o candidato preferencial desta rodada. A palavra "centralidade" procura capturar a ideia de valorização e posição principal sem soar como mera preferência subjetiva e sem reduzir o princípio a uma ordem de leitura.
 
-"Preferência pela Fonte Cognitiva" expressa a mesma direção, mas pode soar opcional ou estilística. "Prioridade da Fonte Cognitiva" é mais direta. "Primazia da Fonte Cognitiva" permanece, neste estágio, a formulação mais curta que comunica explicitamente **colocar a fonte em primeiro lugar** sem transformar a própria fonte no princípio.
+A comparação desejada é próxima da estrutura retórica "damos mais importância ao caminho cognitivo do que ao consolidado", mas o manifesto não precisa reproduzir essa forma. O nome deve fazer compreender que o caminho cognitivo é o centro de referência do conhecimento normativo e que o consolidado não deve ocupar esse lugar apenas por ser mais curto, estável ou conveniente para publicação.
+
+Outros candidatos permanecem úteis para comparação:
+
+- **Princípio da Precedência do Caminho Cognitivo** — expressa bem que o caminho vem antes como referência, mas pode soar excessivamente temporal ou procedimental;
+- **Princípio da Primazia da Fonte Cognitiva** — expressa hierarquia forte, porém é mais abstrato e menos diretamente ligado ao percurso que gerou a norma;
+- **Princípio da Prioridade do Caminho Cognitivo** — é literal, mas menos elegante e pode soar administrativo;
+- **Princípio da Relevância do Caminho Cognitivo** — comunica importância, porém é fraco demais para estabelecer a inversão hierárquica pretendida;
+- **Princípio do Embasamento Cognitivo** — comunica que a norma deve se apoiar na cognição que a gerou, mas não deixa tão claro que esse caminho deve permanecer como base primária acessível.
 
 ## Formulação do princípio em avaliação
 
@@ -32,7 +40,7 @@ Uma formulação consequencial importante é:
 
 ## O problema do volume e da desorganização
 
-A primazia da Fonte Cognitiva só é útil se não obrigar o leitor a consumir o processo bruto de criação. Uma norma de poucas páginas pode ter sido produzida por milhares de páginas de discussões, decisões, idas e vindas, alternativas descartadas e evidências. Expor tudo isso linearmente seria frequentemente pior do que o consolidado atual.
+A centralidade do caminho cognitivo só é útil se não obrigar o leitor a consumir o processo bruto de criação. Uma norma de poucas páginas pode ter sido produzida por milhares de páginas de discussões, decisões, idas e vindas, alternativas descartadas e evidências. Expor tudo isso linearmente seria frequentemente pior do que o consolidado atual.
 
 Portanto, o princípio não defende substituir uma norma curta por um arquivo cognitivo gigantesco e indiferenciado. Defende que **o caminho cognitivo seja capturado de forma estruturada e organizada**, para que possa ser projetado conforme a necessidade de quem consulta.
 
@@ -40,7 +48,7 @@ A relação desejada é:
 
 **caminho cognitivo estruturado → projeções consolidadas dinâmicas por intenção, papel, contexto e objetivo**
 
-Assim, o consolidado deixa de ser o conhecimento principal e passa a ser uma visão produzida sobre a Fonte Cognitiva. Diferentes leitores podem receber diferentes níveis de síntese sem que a riqueza original precise ser descartada.
+Assim, o consolidado deixa de ser o conhecimento principal e passa a ser uma visão produzida sobre a base cognitiva. Diferentes leitores podem receber diferentes níveis de síntese sem que a riqueza original precise ser descartada.
 
 Uma consequência forte é:
 
@@ -50,11 +58,11 @@ Uma consequência forte é:
 
 No horizonte conceitual já em estudo, CCP representa precisamente essa inversão: o caminho cognitivo preservado e estruturado ocupa a posição de fonte primária; documentos consolidados, normas, explicações e outras apresentações tornam-se projeções derivadas.
 
-O manifesto não precisa necessariamente usar a sigla CCP na frase nuclear. O princípio filosófico deve poder ser compreendido independentemente de uma materialização específica. CCP pode ser uma forma de organizar e materializar essa Fonte Cognitiva.
+O manifesto não precisa necessariamente usar a sigla CCP na frase nuclear. O princípio filosófico deve poder ser compreendido independentemente de uma materialização específica. CCP pode ser uma forma de organizar e materializar essa base cognitiva.
 
 ## Dimensão de autoaprendizado
 
-A Fonte Cognitiva também sustenta autoaprendizado porque uma base que registra não apenas a conclusão, mas o percurso decisório, pode receber novos resultados e evidências e permitir revisão consciente.
+A base cognitiva também sustenta autoaprendizado porque uma estrutura que registra não apenas a conclusão, mas o percurso decisório, pode receber novos resultados e evidências e permitir revisão consciente.
 
 > **Quando decisões, execuções e resultados permanecem relacionáveis ao caminho cognitivo que os produziu, a experiência pode orientar conscientemente a próxima decisão.**
 
@@ -64,7 +72,7 @@ Essa frase continua relevante, mas pode ser consequência ou segunda dimensão d
 
 O princípio questiona a arquitetura informacional em que a norma consolidada é tratada como representação principal do conhecimento e seu processo de formação como material secundário.
 
-A proposta é inverter essa relação. O patrimônio principal é a Fonte Cognitiva estruturada que permite compreender por que uma conclusão foi alcançada, quais alternativas foram consideradas, quais evidências a sustentaram, quais incertezas permaneceram e em que condições ela pode precisar ser revista.
+A proposta é inverter essa relação. O patrimônio principal é o caminho cognitivo estruturado que permite compreender por que uma conclusão foi alcançada, quais alternativas foram consideradas, quais evidências a sustentaram, quais incertezas permaneceram e em que condições ela pode precisar ser revista.
 
 O consolidado continua existindo, mas como projeção contextual e secundária. Ele pode ser curto, normativo, didático, operacional ou específico para um papel. Sua função é reduzir a quantidade de informação apresentada sem destruir ou substituir a fonte que permite gerar outras projeções quando uma necessidade diferente surgir.
 
@@ -72,16 +80,16 @@ Essa arquitetura permite que "somente a informação necessária" seja apresenta
 
 ## Relação com os princípios anteriores
 
-O PR-M01 separa intenção e materialização. O PR-M03 aplica uma separação análoga no domínio do conhecimento: **a fonte cognitiva não deve ser confundida com uma de suas apresentações consolidadas.**
+O PR-M01 separa intenção e materialização. O PR-M03 aplica uma separação análoga no domínio do conhecimento: **a base cognitiva não deve ser confundida com uma de suas apresentações consolidadas.**
 
-O PR-M02 busca tornar a forma de pensar da organização coerente e legível. O PR-M03 acrescenta uma ordem de prioridade: a forma consolidada não substitui a base cognitiva da qual deriva.
+O PR-M02 busca tornar a forma de pensar da organização coerente e legível. O PR-M03 acrescenta uma ordem de importância: a forma consolidada não substitui nem ocupa o centro da base cognitiva da qual deriva.
 
 ## Distinções a preservar
 
-- a Fonte Cognitiva não é o princípio; a **primazia atribuída a ela** é o princípio;
+- o objeto é o caminho cognitivo estruturado; o princípio é a **centralidade atribuída a ele** diante do consolidado;
 - caminho cognitivo não é sinônimo de log técnico;
-- a Fonte Cognitiva é a base primária; o consolidado deve ser tratado como projeção derivada e secundária;
-- o fato de o consolidado ser mais curto ou conveniente não lhe confere primazia epistemológica;
+- o caminho cognitivo é a base primária; o consolidado deve ser tratado como projeção derivada e secundária;
+- o fato de o consolidado ser mais curto ou conveniente não lhe confere centralidade epistemológica;
 - o caminho cognitivo não deve ser tratado como anexo da norma; a norma é que deve funcionar como projeção compacta da base cognitiva;
 - preservar o caminho cognitivo não significa apresentar o processo bruto inteiro ao leitor;
 - a viabilidade depende de estruturar, relacionar e projetar o caminho cognitivo, não apenas arquivá-lo;
@@ -91,4 +99,4 @@ O PR-M02 busca tornar a forma de pensar da organização coerente e legível. O 
 
 ## Questões para próxima rodada
 
-A tese está estável o suficiente para distinguir claramente objeto e princípio: **Fonte Cognitiva é o objeto; sua primazia sobre o consolidado é o princípio.** A formulação preferida agora explicita também a atitude normativa desejada: **o consolidado deve ser tratado como projeção contextual da base cognitiva**, e não como a própria base do conhecimento.
+A tese está estável: **o caminho cognitivo estruturado ocupa o centro e a base primária do conhecimento normativo; o consolidado é tratado como projeção contextual e secundária.** O nome ainda está em avaliação, mas **Princípio da Centralidade do Caminho Cognitivo** passa a ser o candidato preferencial desta rodada por expressar importância e posição principal sem reduzir o princípio a preferência subjetiva ou simples precedência temporal.
