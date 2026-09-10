@@ -16,7 +16,7 @@ A intenção deste documento não é definir tecnologia, produto, provider ou im
 
 > **Quando iniciantes e especialistas compartilham a mesma linguagem de intenção, ensino e aprendizagem podem se tornar mais cumulativos: cresce a profundidade, o vocabulário e a precisão sem exigir a substituição da linguagem operacional.**
 
-> **Quando a primeira linguagem operacional aprendida permanece válida ao longo da evolução profissional, novos conhecimentos podem se acumular por extensão e refinamento, em vez de exigir sucessivas trocas de base.**
+> **Quando a primeira linguagem operacional aprendida permanece válida ao longo da evolução profissional, novos conhecimentos tendem a se acumular por extensão e refinamento, reduzindo a necessidade de substituir a base e favorecendo seu aprofundamento.**
 
 ### O que este princípio quer fazer o leitor compreender
 
@@ -40,7 +40,7 @@ A consequência desejada não é ausência de reaprendizado, mas **menor ruptura
 
 Compartilhar a mesma linguagem de intenção entre níveis de experiência não significa exigir a mesma profundidade, o mesmo repertório ou a mesma autonomia de um iniciante e de um especialista. Significa preservar uma base semântica comum sobre a qual a competência possa crescer. O iniciante pode operar com um vocabulário menor e com mais defaults e orientação; o especialista pode usar intenções mais compostas, parâmetros mais ricos, restrições mais precisas e maior consciência de trade-offs sem precisar migrar para outra linguagem operacional.
 
-Há também uma dimensão temporal: a linguagem encontrada no início da formação não precisa ser tratada como uma linguagem provisória destinada ao descarte. Quando continua semanticamente válida, ela pode servir de base para a progressão posterior. O crescimento desejado ocorre pela ampliação do repertório, pelo refinamento das intenções e pelo aumento da precisão, não pela substituição recorrente da base operacional a cada nova etapa ou tecnologia.
+Há também uma dimensão temporal: a linguagem encontrada no início da formação não precisa ser tratada como uma linguagem provisória destinada ao descarte. Quando continua semanticamente válida, ela pode servir de base para a progressão posterior. O crescimento desejado ocorre pela ampliação do repertório, pelo refinamento das intenções e pelo aumento da precisão, reduzindo a necessidade de substituir recorrentemente a base operacional.
 
 Assim, a progressão de aprendizado desejada é por **ampliação e aprofundamento**, não por descarte sucessivo da linguagem anterior. A hipótese de que isso torne ensinar ou aprender efetivamente mais fácil, rápido ou eficiente deve ser validada empiricamente; o compromisso constitutivo é permitir continuidade semântica entre níveis de experiência e ao longo da trajetória.
 
@@ -56,7 +56,7 @@ Estas consequências explicam as frases nucleares, mas não são ainda claims in
 - permitir que competências de intenção e de materialização sejam especializadas e compostas sem exigir que a mesma pessoa domine ambas no mesmo grau;
 - permitir crescimento progressivo do vocabulário de intenção sem exigir ruptura completa da forma de expressão a cada nova ferramenta;
 - permitir continuidade semântica entre aprendizado inicial e prática especializada, com aumento de profundidade em vez de troca de linguagem;
-- permitir que a primeira linguagem operacional continue útil como base de crescimento, em vez de funcionar apenas como etapa descartável de formação;
+- permitir que a primeira linguagem operacional continue útil como base de crescimento, reduzindo a necessidade de substituí-la quando seu significado permanece válido;
 - facilitar continuidade entre aprendizado inicial e uso profissional de maior escala;
 - reduzir o impacto da evolução tecnológica sobre conhecimento conceitual que permaneceu válido.
 
