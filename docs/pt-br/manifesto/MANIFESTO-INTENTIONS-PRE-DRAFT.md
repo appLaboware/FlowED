@@ -12,7 +12,7 @@ A intenção deste documento não é definir tecnologia, produto, provider ou im
 
 > **Quando o conhecimento conceitual é acumulado independentemente da ferramenta que o materializa, a evolução tecnológica tende a exigir menos readaptação.**
 
-> **Separar intenção de materialização permite desenvolver e combinar excelência na decisão e excelência na realização sem pressupor que ambas coincidam na mesma pessoa ou no mesmo momento.**
+> **Quando intenção e materialização são tratadas como competências distintas, cada uma pode ser aprofundada segundo suas próprias demandas de decisão e conhecimento técnico, e suas excelências podem ser combinadas sem pressupor que coexistam na mesma pessoa ou no mesmo momento.**
 
 > **Quando iniciantes e especialistas compartilham a mesma linguagem de intenção, ensino e aprendizagem podem se tornar mais cumulativos: cresce a profundidade, o vocabulário e a precisão sem exigir a substituição da linguagem operacional.**
 
@@ -30,7 +30,9 @@ O custo de adaptação à mudança tecnológica deve, sempre que possível, conc
 
 Não se separam necessariamente pessoas. Separam-se decisões e momentos decisórios. Uma mesma pessoa pode, em momentos diferentes, definir intenção, estabelecer políticas e restrições, especializar uma materialização e executar uma intenção.
 
-A separação também permite reconhecer que competência para formular boas intenções e competência para materializá-las bem não são necessariamente a mesma competência. Uma pessoa, equipe ou momento decisório pode ser forte em uma e fraco em outra. O objetivo não é criar castas profissionais rígidas, mas permitir que essas competências sejam desenvolvidas, avaliadas e combinadas separadamente.
+A separação também permite reconhecer que formular boas intenções e materializá-las bem envolvem competências parcialmente distintas. O primeiro trabalho tende a concentrar-se mais em objetivos, restrições, contexto, trade-offs e qualidade da decisão; o segundo, em conhecimento técnico profundo sobre mecanismos, tecnologias, limites e maneiras de realizar essas decisões. O FlowED não presume que isso corresponda a personalidades fixas ou a tipos cognitivos rígidos. A hipótese relevante é que separar os trabalhos permite aprofundá-los segundo suas demandas próprias e depois recombinar suas excelências.
+
+Uma pessoa, equipe ou momento decisório pode ser forte em uma dimensão e menos forte em outra. O objetivo não é criar castas profissionais rígidas, mas permitir que competências de intenção e de materialização sejam desenvolvidas, avaliadas e combinadas separadamente.
 
 A mudança de ferramenta pode continuar exigindo adaptação, aprendizado e especialização. O FlowED não propõe eliminar esse efeito. Propõe reduzir quanto dessa mudança precisa atingir quem continua expressando a mesma intenção ou trabalhando com o mesmo conhecimento conceitual.
 
@@ -53,7 +55,8 @@ Estas consequências explicam as frases nucleares, mas não são ainda claims in
 - tornar mais claro se um resultado ruim decorreu da intenção, da política, da materialização ou da execução;
 - permitir comparar múltiplas materializações de uma mesma intenção sem misturar automaticamente qualidade da intenção com qualidade da ferramenta;
 - permitir que conhecimento especializado em materialização seja reaproveitado por muitos usuários através de fronteiras reutilizáveis;
-- permitir que competências de intenção e de materialização sejam especializadas e compostas sem exigir que a mesma pessoa domine ambas no mesmo grau;
+- permitir que competências de intenção e de materialização sejam aprofundadas segundo demandas próprias e compostas sem exigir que a mesma pessoa domine ambas no mesmo grau;
+- ampliar o espaço para especialistas predominantemente orientados à decisão e especialistas predominantemente orientados à materialização contribuírem no mesmo sistema;
 - permitir crescimento progressivo do vocabulário de intenção sem exigir ruptura completa da forma de expressão a cada nova ferramenta;
 - permitir continuidade semântica entre aprendizado inicial e prática especializada, com aumento de profundidade em vez de troca de linguagem;
 - permitir que a primeira linguagem operacional continue útil como base de crescimento, reduzindo a necessidade de substituí-la quando seu significado permanece válido;
@@ -65,6 +68,8 @@ Estas consequências explicam as frases nucleares, mas não são ainda claims in
 O manifesto não deve afirmar, sem evidência própria, que esta separação automaticamente torna alguém sênior mais rápido, reduz universalmente carga cognitiva, melhora necessariamente a qualidade do software ou elimina a necessidade de especialistas conhecerem tecnologias concretas.
 
 A hipótese de que especialização separada em intenção e materialização, quando bem coordenada, aumente a probabilidade de melhores resultados é plausível e testável, mas não deve ser promovida a verdade constitutiva antes de evidência. A separação também pode introduzir custos de coordenação, perda de contexto ou fronteiras mal desenhadas; esses efeitos precisam permanecer visíveis.
+
+Também permanece aberta a hipótese de que os dois tipos de trabalho recrutem, em média, perfis cognitivos, preferências ou traços diferentes. O FlowED não precisa dessa hipótese psicológica para sustentar o princípio: basta reconhecer que as tarefas têm ênfases de competência diferentes e podem ser desenvolvidas separadamente.
 
 A hipótese de que uma linguagem de intenção compartilhada entre iniciantes e especialistas torne ensino, aprendizagem ou progressão profissional mais rápidos ou eficientes também deve permanecer testável. O princípio pode exigir continuidade semântica sem antecipar a magnitude dos benefícios educacionais.
 
