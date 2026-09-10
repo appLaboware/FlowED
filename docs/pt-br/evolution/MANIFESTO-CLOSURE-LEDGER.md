@@ -28,39 +28,51 @@ A linha de pesquisa derivada da composição test-driven/contract-driven permane
 
 ## Pilar 2 — Autoeducação e conhecimento vivo
 
-**Estado para fechamento do manifesto:** realizabilidade fortemente estabelecida; ainda em debate apenas sobre a formulação constitutiva final.
+**Estado para fechamento do manifesto:** o componente de memória operacional estruturada atingiu maturidade de realizabilidade suficiente; resta consolidar a formulação constitutiva final e a fronteira com MyTrues/EDT/CCP.
 
-A primeira formulação — apenas registrar experiência e permitir que ela altere conscientemente a forma de trabalhar — foi considerada fraca. O aprofundamento estabeleceu uma direção mais concreta: cada execução relevante pode produzir memória operacional estruturada e relacionável à memória decisória/cognitiva.
+A exigência de maturidade desta rodada foi elevada: não basta uma filosofia plausível. Para fechar um pilar, deve existir no horizonte uma tecnologia pronta ou uma composição concreta de tecnologias capaz de cumprir o futuro contrato, em nível semelhante ao atingido pelo Pilar 1.
 
-A regra metodológica para esta capability é compatível com o Pilar 1: o FlowED não escolhe uma tecnologia obrigatória. Em vez disso, deve estudar sistemas, padrões e frameworks maduros que resolvem partes do problema, extrair deles as melhores propriedades e compor um **contrato público genérico**.
+A pesquisa de realizabilidade identificou um caminho tecnológico forte:
 
-Fontes candidatas de propriedades incluem CloudEvents, OpenTelemetry, IEEE XES/Process Mining, W3C PROV, OpenLineage, AsyncAPI, Kafka e outros event-streaming systems, Event Sourcing e MyTrues/EDT/CCP para a dimensão decisória/cognitiva.
+- CDEvents já padroniza eventos comuns para partes relevantes do SDLC, com foco explícito em interoperabilidade e desacoplamento entre ferramentas;
+- OpenTelemetry fornece modelo estável e infraestrutura executável para logs/events/traces, incluindo semantic conventions para CI/CD e VCS;
+- CloudEvents fornece envelope genérico e extensível;
+- ActivityStreams 2.0 demonstra uma abstração genérica de atividade com ator, objeto, alvo, origem, resultado e instrumento;
+- OCEL 2.0 oferece event logs multiobjeto, relações qualificadas, mudanças temporais, schemas e formatos JSON/XML/SQLite, inclusive com dataset real de commits do Angular;
+- W3C PROV e OpenLineage fornecem proveniência e lineage extensíveis;
+- AsyncAPI e schema registries permitem contratos machine-readable, versionamento e validação de compatibilidade;
+- Kafka, Redpanda, Pulsar, NATS JetStream e event stores fornecem caminhos alternativos para transporte, persistência e replay;
+- OpenTelemetry Collector já implementa pipelines de receivers/processors/exporters e possui integração com Kafka;
+- XES/Process Mining e OCEL/OCPM fornecem caminhos concretos para análise posterior dos eventos.
 
-Essas referências são matéria-prima para o contrato, não dependências conceituais do FlowED.
+A conclusão da rodada é que **não existe uma única ferramenta que seja o Pilar 2**, mas existe uma composição executável hoje que cobre todas as responsabilidades essenciais da memória operacional estruturada. Portanto, o contrato FlowED pode ser criado posteriormente a partir das melhores propriedades dessas referências sem depender de inventar infraestrutura fundamental.
 
-A sequência conceitual é:
+Hipótese arquitetural preservada:
 
-**prior art maduro → boas propriedades → composição semântica → contrato público FlowED → projeto/materialização futura substituível**.
+**ciência + padrões + grandes projetos → propriedades maduras → contrato FlowED → implementação futura substituível**.
 
-A futura capability/projeto de memória operacional estruturada pode integrar MyTrues como implementação de referência da memória decisória, mas deve continuar desacoplada por contracts/ports para permitir outros providers.
+O futuro projeto de memória/log estruturado deve ser uma capability separada, assim como outros projetos horizontais FlowED. Ele poderá compor várias ferramentas, mas nenhuma delas deve subir como dependência conceitual obrigatória.
 
-A relação essencial permanece:
+A relação com MyTrues permanece:
 
-- memória operacional — **o que aconteceu**;
-- memória decisória/cognitiva — **por que foi feito, escolhido ou alterado**.
+- **memória operacional:** o que aconteceu, representado por eventos estruturados e correlacionáveis;
+- **memória decisória/cognitiva:** por que aconteceu, qual referência/decisão/racional/evidência estava vigente;
+- **autoeducação:** capacidade de relacionar intenção/decisão, execução, resultado e evidência para alimentar revisão consciente da forma de trabalhar.
 
-O valor de autoeducação surge ao correlacionar execução, decisão, referência, evidência, resultado e revisão.
+A parte de memória operacional está fortemente realizável. MyTrues/EDT/CCP permanecem mais frágeis e em evolução, mas já possuem caminho conceitual plausível e não precisam ser implementados antes do manifesto.
 
 Formulação candidata do Pilar 2:
 
-> **A execução relevante deve poder produzir memória operacional estruturada e relacionável às decisões, referências, evidências e aprendizados que a contextualizam. O FlowED deve permitir que essa memória seja reutilizada para compreender o que ocorreu e evoluir conscientemente a forma de trabalhar.**
+> **FlowED transforma execução em memória operacional estruturada e relacionável ao conhecimento que a motivou, permitindo que experiência, decisão e evidência retroalimentem conscientemente a evolução da forma de trabalhar.**
 
-Implementação, stack concreta, schema, storage, broker, engine de análise e integração física com MyTrues ficam para projeto posterior e não bloqueiam o manifesto.
+O manifesto não deve alegar que um único vocabulário FlowED já cobre empiricamente todos os domínios da Engenharia de Software. O que está suficientemente sustentado é a **realizabilidade da arquitetura** e a existência de tecnologia capaz de cumprir um contrato extensível por domínio.
 
-Apenas a redação constitutiva final do pilar e a definição mínima de relevância de execução permanecem abertas para debate antes de marcar o Pilar 2 como fechado.
+Documentos de aprofundamento:
 
-Documento de aprofundamento: `PILAR-2-REFERENCE-STACK-DRAFT.md`.
+- `PILAR-2-STRUCTURED-OPERATIONAL-MEMORY-DRAFT.md`;
+- `PILAR-2-REFERENCE-STACK-DRAFT.md`;
+- `PILAR-2-FEASIBILITY-RESEARCH-001.md`.
 
 ## Próximo passo
 
-Fechar a formulação mínima do Pilar 2 sem implementar sua stack. Depois avançar diretamente ao Pilar 3.
+Consolidar entre nós apenas a formulação constitutiva final do Pilar 2 e, se não surgir contradição relevante, marcá-lo como suficientemente fechado para o manifesto. Depois avançar diretamente ao Pilar 3 — sustentação científica e empírica explícita.
