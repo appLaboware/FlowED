@@ -22,6 +22,14 @@ Qualquer implementação capaz de cumprir integralmente o contrato aplicável é
 
 Conformidade contratual não equivale a qualidade, confiabilidade ou preferência por uma implementação. Essas avaliações pertencem ao time, à organização e às políticas que adotarem, exceto quando uma propriedade estiver explicitamente incluída no próprio contrato.
 
+O FlowED pode transportar e apresentar avaliações, recomendações ou opiniões produzidas por providers, mas deve preservar sua autoria. A saída de uma ferramenta não se transforma, por circular pelo FlowED, em opinião normativa do FlowED.
+
+## Fronteira entre manifesto, contrato e produto
+
+O manifesto declara **o que o FlowED considera importante e por quê**. Os contratos públicos transformam essas posições em comportamentos e informações interoperáveis. O produto executável de referência, incluindo o cliente `flwd`, operacionaliza esses contratos e conecta capabilities, adapters e providers sem transformar suas implementações ou opiniões em requisitos do manifesto.
+
+Assim, uma crítica ao valor defendido é uma crítica ao manifesto; uma crítica à informação ou comportamento que o contrato não consegue representar é uma crítica ao contrato; e uma crítica ao algoritmo, score, qualidade ou metodologia de uma ferramenta é uma crítica àquela ferramenta.
+
 ## Fluxo fundamental
 
 O FlowED entende evolução como um ciclo governado:
@@ -46,7 +54,7 @@ O FlowED exige essa capacidade no nível contratual, não uma tecnologia especí
 
 O conhecimento consolidado não é o conhecimento inteiro. É uma projeção adequada a um interlocutor e a um objetivo. Racional, proveniência, alternativas, divergências, evidências e revisões devem poder permanecer acessíveis para aprendizagem, crítica e evolução.
 
-EDT, CCP/CCC, MyTrues e composições de tecnologias de eventos, observabilidade e provenance permanecem referências e materializações candidatas, não requisitos tecnológicos do pilar.
+Ferramentas, métodos ou produtos destinados a memória operacional, memória decisória, documentação dinâmica ou reconstrução de racional são materializações possíveis desse pilar, não requisitos tecnológicos do FlowED.
 
 ## Pilar 3 — Sustentação científica e empírica explícita
 
@@ -56,7 +64,7 @@ O FlowED não transforma ciência em dogma, experiência local em verdade univer
 
 O contrato deve permitir representar, transportar, consultar e relacionar origem, reconhecimento, influência, estado, evidência operacional, lacunas e divergências de uma referência. A forma de classificar, ranquear, ponderar ou compor esses sinais pertence aos classificadores e às políticas escolhidas pelo adotante, não ao FlowED.
 
-Uma referência pode ser usada com sustentação baixa ou inexistente quando isso for conscientemente necessário, desde que a condição permaneça explícita e rastreável. Diferentes ferramentas podem emitir avaliações ou opiniões distintas sobre a mesma evidência sem deixar de ser compatíveis com o FlowED, desde que cumpram o contrato aplicável.
+Uma referência pode ser usada com sustentação baixa ou inexistente quando isso for conscientemente necessário, desde que a condição permaneça explícita e rastreável. Diferentes ferramentas podem emitir avaliações ou opiniões distintas sobre a mesma evidência sem deixar de ser compatíveis com o FlowED, desde que cumpram o contrato aplicável e que a autoria dessas opiniões permaneça identificável.
 
 ## Pilar 4 — Progressividade governada
 
@@ -75,22 +83,23 @@ Progressividade não é crescimento automático. Complexidade máxima não é si
 3. Domínios são pares e soberanos internamente, mas interoperam por contratos explícitos.
 4. O FlowED é rígido no contrato e livre na materialização.
 5. Cumprir o contrato não torna uma implementação automaticamente melhor que outra.
-6. O conhecimento do time pode modificar conscientemente o modo de trabalho.
-7. Aprendizado relevante deve deixar rastros reutilizáveis.
-8. O consolidado é uma projeção do conhecimento, não o conhecimento inteiro.
-9. A projeção normativa depende da intenção, do papel, do contexto e do objetivo do interlocutor.
-10. A projeção deve fornecer somente a informação necessária, mas nunca menos que a necessária.
-11. Divergir é permitido; esconder a divergência não.
-12. Ausência de sustentação não invalida automaticamente uma decisão operacional.
-13. Toda referência relevante deve declarar a sustentação disponível e suas lacunas.
-14. O baseline é ponto de partida, não verdade nem destino obrigatório.
-15. O FlowED deve poder ser superado por evidência melhor que a sua própria.
-16. A sofisticação da engenharia deve poder crescer sem burocracia proporcional.
-17. Experimentar uma prática deve ser mais barato que reconstruir a organização.
-18. Artefatos nativos permanecem soberanos e portáveis.
-19. O mesmo modelo mental deve poder acompanhar estudante, profissional, equipe e organização ao longo do crescimento.
-20. O próprio FlowED deve explicar e registrar sua evolução usando os mecanismos que exige de seus usuários.
-21. Uso produz evidência; não produz verdade automática.
+6. Opiniões produzidas por providers permanecem atribuídas aos seus autores; o FlowED não se apropria delas como verdade normativa.
+7. O conhecimento do time pode modificar conscientemente o modo de trabalho.
+8. Aprendizado relevante deve deixar rastros reutilizáveis.
+9. O consolidado é uma projeção do conhecimento, não o conhecimento inteiro.
+10. A projeção normativa depende da intenção, do papel, do contexto e do objetivo do interlocutor.
+11. A projeção deve fornecer somente a informação necessária, mas nunca menos que a necessária.
+12. Divergir é permitido; esconder a divergência não.
+13. Ausência de sustentação não invalida automaticamente uma decisão operacional.
+14. Toda referência relevante deve declarar a sustentação disponível e suas lacunas.
+15. O baseline é ponto de partida, não verdade nem destino obrigatório.
+16. O FlowED deve poder ser superado por evidência melhor que a sua própria.
+17. A sofisticação da engenharia deve poder crescer sem burocracia proporcional.
+18. Experimentar uma prática deve ser mais barato que reconstruir a organização.
+19. Artefatos nativos permanecem soberanos e portáveis.
+20. O mesmo modelo mental deve poder acompanhar estudante, profissional, equipe e organização ao longo do crescimento.
+21. O próprio FlowED deve explicar e registrar sua evolução usando os mecanismos que exige de seus usuários.
+22. Uso produz evidência; não produz verdade automática.
 
 ## Documentação normativa dinâmica
 
