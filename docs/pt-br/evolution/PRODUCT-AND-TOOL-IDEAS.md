@@ -14,6 +14,27 @@ Calcular afinidade de uma organização/projeto com um baseline FlowED específi
 
 Avaliar a sustentação de uma referência por categorias de evidência. A matemática e os pesos dependem de pesquisa própria e não devem ser inventados no produto antes disso.
 
+### 3.1 Classificador composto de opinião — produto de referência
+
+Evolução da ideia de `Evidence Scorer`: manter uma implementação de referência capaz de consumir bons indicadores científicos, bibliométricos e operacionais já disponíveis e produzir uma **opinião quantitativa composta**, explicitamente não autoritativa.
+
+Princípios:
+
+- o classificador não define verdade;
+- sua saída é uma opinião reproduzível baseada em métricas e metodologia versionada;
+- ele possui o mesmo peso contratual de qualquer classificador concorrente;
+- equipes podem usar outro provider ou comparar vários;
+- os dados e componentes subjacentes permanecem visíveis;
+- métricas semelhantes devem ser agrupadas por família para evitar dupla contagem;
+- normalização, pesos, agregação e tratamento de missing data devem ser públicos/versionados;
+- análise de robustez/sensibilidade é desejável antes de promover uma fórmula a baseline do produto.
+
+Base metodológica principal: literatura de **composite indicators**, especialmente o *OECD/JRC Handbook on Constructing Composite Indicators*, combinada com princípios de responsible research assessment (DORA/Leiden).
+
+Documento de aprofundamento: `PILAR-3-REFERENCE-OPINION-CLASSIFIER-DRAFT.md`.
+
+Naming comercial permanece aberto.
+
 ## 4. Epistemic Weakness Report
 
 Gerar relatório de pontos fracos com foco em referências de menor sustentação, ausência de evidência, divergências frágeis e gaps de compliance.
