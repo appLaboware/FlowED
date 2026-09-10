@@ -33,6 +33,20 @@ Código executável contém instruções imperativas para a máquina e materiali
 
 > **Uma ideia pode iniciar um caminho cognitivo; uma determinação precisa poder mostrar o caminho que a sustenta.**
 
-## Questão de pesquisa aberta
+## Verificação por prior art
 
-É necessário verificar em literatura de design rationale, argumentação, tomada de decisão, filosofia da ação, gestão do conhecimento e engenharia de requisitos se esta distinção entre proposição generativa e determinação imperativa possui apoio conceitual suficiente e quais termos estabelecidos devem ser preferidos antes de transformar essas formulações em linguagem final do manifesto.
+A literatura de **design rationale** sustenta fortemente a distinção entre racional decisório e registro bruto de conversa. Design rationale é descrito como o raciocínio que explica, deriva e justifica decisões, incluindo razões, alternativas, trade-offs e argumentação. Isso aproxima o objeto do PR-M03 de **rationale estruturado**, e não de transcrição integral do processo mental.
+
+Na engenharia de requisitos, orientações da NASA recomendam explicitamente registrar a razão de um requisito, pressupostos, relações e restrições para esclarecer a intenção do requisito no momento em que foi escrito. Isso reforça a relação entre determinação e racional que a sustenta.
+
+As ISO/IEC Directives também reconhecem a existência de documentos informativos destinados a fornecer rationale para requisitos de normas relacionadas. O FlowED não precisa afirmar que a ISO ignora rationale; sua proposta pode ser descrita como uma **mudança de prioridade**: trazer o racional decisório para a posição principal da arquitetura do conhecimento, mantendo a formulação normativa como projeção autoritativa quando necessário.
+
+Sobre o gênero manifesto, a pesquisa não sustenta uma regra universal de que manifestos sejam apenas convites neutros à reflexão. Manifestos são frequentemente performativos, valorativos e orientados a ação. O próprio Manifesto Ágil afirma valores e depois diz "we follow these principles". Portanto, o argumento do FlowED deve ser mais preciso: **o Manifesto FlowED será explicitamente definido como não normativo, axiológico e generativo**, em vez de depender de uma suposta natureza universal do gênero manifesto.
+
+Essa escolha evita uma exceção artificial ao PR-M03. O manifesto funciona como ponto de partida filosófico; as decisões normativas, contratuais e operacionais que vierem a ser derivadas dele deverão possuir racional decisório estruturado e rastreável.
+
+## Conclusão provisória
+
+Não há base para exigir que o Manifesto FlowED carregue toda a conversa que levou à sua redação. Há, porém, forte base para exigir que **decisões, requisitos e determinações posteriores preservem o racional decisório relevante que as sustenta**. O limite não é "tudo o que foi pensado", mas "o que é necessário para compreender por que uma decisão foi tomada, que alternativas existiam, quais evidências e restrições pesaram e em que condições ela pode ser revista".
+
+Isso sugere um refinamento terminológico futuro: avaliar se **caminho cognitivo decisório**, **racional decisório estruturado** ou outra expressão estabelecida deve ser usada quando o PR-M03 se referir especificamente à parte normativa do conhecimento.
