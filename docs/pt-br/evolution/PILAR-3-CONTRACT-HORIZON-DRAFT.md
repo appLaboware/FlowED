@@ -206,6 +206,31 @@ Pode conter:
 
 O contrato deve preservar os dados subjacentes para que qualquer score seja auditável e recalculável.
 
+### 4.7 ClassifierOpinion
+
+O contrato deve também admitir providers que produzam uma **opinião quantitativa composta** sobre o conjunto de evidências.
+
+Esse objeto não é obrigatório para todos os providers e não representa um score canônico do FlowED. Ele permite que classificadores independentes — inclusive uma implementação de referência mantida pelo ecossistema FlowED — expressem uma composição própria, desde que transparente e versionada.
+
+Campos semânticos candidatos:
+
+- `classifier_id`;
+- `classifier_version`;
+- `method_id` / `method_version`;
+- valor agregado e escala;
+- interpretação da escala;
+- dimensões/componentes;
+- snapshots de entrada;
+- normalizações;
+- pesos e método de agregação;
+- tratamento de dados ausentes;
+- warnings/conflitos;
+- robustez/incerteza quando disponível;
+- provenance;
+- `assessed_at`.
+
+Diferentes classificadores podem produzir opiniões distintas sobre a mesma evidência sem violar o contrato. A comparação deve preservar metodologia e decomposição, e não supor equivalência matemática entre scores.
+
 ## 5. Operações públicas candidatas
 
 Sem fechar sintaxe de CLI/API, a capability precisa ser capaz de materializar operações semanticamente equivalentes a:
@@ -217,7 +242,9 @@ Sem fechar sintaxe de CLI/API, a capability precisa ser capaz de materializar op
 5. **attach operational evidence** — relacionar observações operacionais do Pilar 2;
 6. **assess** — aplicar uma política/regra versionada sobre as observações;
 7. **explain assessment** — devolver todos os sinais, regras e provenance que produziram o resultado;
-8. **compare providers** — expor diferenças entre providers sem forçar equivalência falsa.
+8. **compare providers** — expor diferenças entre providers sem forçar equivalência falsa;
+9. **get classifier opinion** — solicitar opinião composta de um classificador específico;
+10. **compare classifier opinions** — comparar opiniões de classificadores preservando escala, método e componentes.
 
 Essas operações são horizonte de contrato, não API final.
 
@@ -227,20 +254,25 @@ Uma primeira implementação educacional/gratuita pode ser plausivelmente compos
 
 Uma implementação empresarial pode possuir adapters para SciVal/Scopus, Dimensions, Web of Science/InCites e outras fontes licenciadas, sem alterar a semântica pública do contrato.
 
-Portanto, o usuário/organização pode trocar providers ou combinar vários deles. O contrato deve sempre identificar **quem forneceu cada observação e sob qual metodologia/versão**.
+Além dos providers de evidência, o ecossistema FlowED deve manter um **classificador composto de referência** como alternativa pronta. Esse classificador deverá usar os melhores indicadores disponíveis segundo uma metodologia aberta/versionada e produzir uma opinião quantitativa reproduzível.
 
-Essa propriedade evita transformar divergências entre bases bibliométricas em erro: diferenças de cobertura e cálculo tornam-se dados explícitos.
+Ele terá o mesmo estatuto de qualquer outro classificador compatível. Uma equipe poderá substituí-lo, comparar vários classificadores ou ignorar scores agregados e trabalhar apenas com o vetor de evidências.
+
+A metodologia do classificador de referência deve seguir prior art de construção de composite indicators, incluindo normalização, peso, agregação, correlação, compensabilidade e análise de sensibilidade/robustez. Naming comercial fica aberto.
+
+Documento relacionado: `PILAR-3-REFERENCE-OPINION-CLASSIFIER-DRAFT.md`.
 
 ## 7. Determinismo possível
 
 O contrato permite determinismo no nível correto:
 
 - mesma observação armazenada + mesma versão de regra -> mesmo resultado de assessment;
+- mesma entrada + mesma versão de classificador/metodologia -> mesma opinião do classificador;
 - o resultado declara quais providers, timestamps, metodologias e versões alimentaram o cálculo;
 - uma atualização posterior da base pode alterar a observação, mas gera novo snapshot/assessment, não reescreve silenciosamente o anterior;
 - ausência/indisponibilidade de dado produz estado explícito, não valor inventado.
 
-O FlowED não promete que dois providers retornarão o mesmo número. Promete que cada número possui identidade semântica, provenance e regras de interpretação explícitas.
+O FlowED não promete que dois providers ou classificadores retornarão o mesmo número. Promete que cada número possui identidade semântica, provenance e regras de interpretação explícitas.
 
 ## 8. O que a amostragem prova
 
@@ -256,7 +288,9 @@ A amostragem mostra que já existem sistemas em produção capazes de fornecer o
 - alguns registros explícitos de peer review;
 - APIs/DSLs capazes de automatizar coleta.
 
-Logo, o FlowED não depende de inventar infraestrutura bibliométrica fundamental para materializar o Pilar 3.
+A literatura de composite indicators mostra ainda que há método estabelecido para transformar múltiplos indicadores heterogêneos em índices compostos, desde que normalização, pesos, agregação, correlação e incerteza sejam tratados explicitamente.
+
+Logo, o FlowED não depende de inventar infraestrutura bibliométrica nem metodologia geral de composição de indicadores para materializar o Pilar 3.
 
 ## 9. Limites preservados
 
@@ -267,19 +301,20 @@ Ainda ficam para pesquisa posterior:
 - tratamento de citações negativas, autocitações e manipulação bibliométrica;
 - qualidade mínima de provenance;
 - composição de evidência científica e operacional;
-- fórmula de score agregado, se algum dia houver justificativa para existir;
+- fórmula específica do classificador de referência;
+- validação de pesos, agregação e robustez;
 - validação da relação entre o perfil FlowED e qualidade/resultados reais de Engenharia de Software.
 
-Essas lacunas não impedem um contrato inicial porque o contrato pode preservar o vetor de observações sem inventar um ranking universal.
+Essas lacunas não impedem um contrato inicial porque o contrato pode preservar o vetor de observações e permitir classificadores concorrentes sem inventar um ranking universal.
 
 ## 10. Decisão para o manifesto
 
 **Estado de realizabilidade:** suficientemente forte para fechamento do Pilar 3 nesta fase.
 
-Há tecnologia real na ponta, fontes abertas e comerciais, métricas já operadas em escala, APIs e identificadores estáveis. Existe um caminho plausível para uma implementação gratuita/educacional e para providers empresariais alternativos.
+Há tecnologia real na ponta, fontes abertas e comerciais, métricas já operadas em escala, APIs e identificadores estáveis. Existe um caminho plausível para uma implementação gratuita/educacional, providers empresariais alternativos e um classificador composto de referência não autoritativo.
 
 Formulação candidata do Pilar 3:
 
 > **O FlowED torna explícita e rastreável a sustentação disponível para cada referência relevante, distinguindo reconhecimento científico, influência observável, estado da evidência e experiência operacional. Avaliações são produzidas por regras versionadas sobre evidências identificáveis e podem ser recalculadas ou substituídas sem confundir score com verdade.**
 
-O contrato definitivo será produzido em projeto posterior, guiado por contract tests e adapters, sem bloquear o manifesto atual.
+O contrato definitivo e a fórmula do classificador de referência serão produzidos em projeto posterior, guiados por contract tests e adapters, sem bloquear o manifesto atual.
