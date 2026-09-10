@@ -34,21 +34,24 @@ Intenção: explorar a hipótese de que coerência transversal reduz custo de co
 
 Intenção: complementar a segunda frase aceita com uma consequência organizacional mais concreta: mudanças de materialização podem ser contidas no domínio afetado quando a identidade não depende da ferramenta.
 
-### Candidata E — identidade técnica percebida
+### Candidata E — identidade técnica percebida pela coerência transversal
 
-> **Quando princípios e critérios de decisão permanecem coerentes e visíveis, mudanças de tecnologia podem ser percebidas como evolução de uma mesma identidade técnica, e não como decisões desconexas.**
+> **Quando escolhas locais de diferentes domínios são orientadas por critérios transversais comuns e seus fundamentos permanecem visíveis, a diversidade tecnológica pode expressar uma mesma identidade operacional, em vez de fragmentá-la.**
 
-Intenção: explorar o efeito externo e interno da coerência. A identidade técnica de uma organização pode ser percebida menos pelas tecnologias específicas que usa e mais pela constância de sua maneira de decidir, justificar e governar mudanças. Uma alteração de linguagem, framework, infraestrutura ou ferramenta não precisa romper essa identidade quando a nova escolha continua reconhecível como expressão dos mesmos princípios e critérios.
+Intenção: explicitar a transversalidade do princípio. A identidade técnica percebida de uma organização não nasce apenas de uma escolha isolada de linguagem, framework, ferramenta ou método, mas da recorrência de critérios reconhecíveis atravessando diferentes domínios. Se segurança, estabilidade, auditabilidade, reversibilidade, evidência ou qualquer outro valor organizacional relevante orienta escolhas locais distintas, essas escolhas podem continuar diferentes entre si e ainda assim serem percebidas como manifestações de uma mesma forma de pensar.
 
-Esta candidata pertence mais naturalmente ao PR-M02 do que ao PR-M01. O PR-M01 explica por que intenção e materialização podem evoluir separadamente. A candidata E trata do que essa coerência produz como identidade reconhecível da organização para quem observa suas decisões, inclusive clientes, parceiros, profissionais e comunidade técnica.
+A coerência desejada não pressupõe que todas as áreas escolham tecnologias equivalentes nem que um valor transversal determine sozinho cada decisão. O ponto é que escolhas locais possam ser justificadas por uma base filosófica e contratual comum, tornando a personalidade operacional da organização mais legível para dentro e para fora.
 
-A analogia com projetos fortemente associados a uma liderança técnica pode ajudar a explicar a ideia: mudanças concretas de tecnologia podem alterar a implementação sem apagar necessariamente a percepção de uma linha de pensamento consistente por trás do projeto. A analogia é apenas ilustrativa; o princípio não depende de uma pessoa centralizadora nem de liderança personalista.
+Esta candidata pertence mais naturalmente ao PR-M02 do que ao PR-M01. O PR-M01 explica por que intenção e materialização podem evoluir separadamente. A candidata E trata de como decisões heterogêneas, quando orientadas por critérios transversais comuns, podem compor uma identidade organizacional reconhecível.
+
+A analogia com projetos fortemente associados a uma linha técnica consistente pode ajudar a explicar a ideia: mudanças concretas de tecnologia podem alterar a implementação sem apagar necessariamente a percepção de uma maneira estável de decidir. A analogia é apenas ilustrativa; o princípio não depende de uma pessoa centralizadora nem de liderança personalista.
 
 ## Distinções a preservar
 
 - coerência não é uniformidade;
 - identidade operacional não é padronização tecnológica;
 - identidade técnica percebida não exige uma pessoa centralizadora;
+- transversalidade significa critérios compartilhados atravessando decisões locais, não resultados locais idênticos;
 - autonomia local não significa ausência de invariantes comuns;
 - uma base comum deve tornar diferenças visíveis, não apagá-las;
 - o princípio deve falar da organização como sistema coerente, enquanto o PR-M01 trata principalmente da separação entre intenção e materialização.
