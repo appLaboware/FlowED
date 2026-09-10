@@ -4,25 +4,27 @@
 
 ## Nome em avaliação
 
-### Candidato preferencial — Princípio da Fonte Cognitiva
+### Candidato preferencial — Princípio da Primazia da Fonte Cognitiva
 
-A expressão **Fonte Cognitiva** sintetiza a hierarquia que o princípio pretende estabelecer sem transformar a definição inteira em título. O ponto central é que o caminho cognitivo estruturado deve ocupar a posição de fonte primária do conhecimento normativo; consolidados, normas, resumos e outras apresentações são projeções derivadas dessa fonte.
+A correção conceitual desta rodada é importante: **a Fonte Cognitiva não é, por si só, o princípio**. O princípio é a prioridade atribuída a ela diante de suas projeções consolidadas.
 
-O nome evita carregar para o título toda a formulação "primazia do caminho cognitivo" e desloca a atenção para a relação arquitetural essencial: **fonte versus projeção**.
+A expressão **Primazia da Fonte Cognitiva** procura nomear exatamente essa ordem: quando há uma base cognitiva estruturada e uma ou mais formas consolidadas derivadas dela, a base deve ocupar a posição principal de conhecimento; os consolidados devem ocupar a posição de projeções de acesso, uso e comunicação.
 
-Outros nomes ainda possíveis, mas menos precisos neste estágio:
+"Preferência pela Fonte Cognitiva" expressa a mesma direção, mas pode soar opcional ou estilística. "Prioridade da Fonte Cognitiva" é mais direta. "Primazia da Fonte Cognitiva" permanece, neste estágio, a formulação mais curta que comunica explicitamente **colocar a fonte em primeiro lugar** sem transformar a própria fonte no princípio.
 
-- **Princípio da Base Cognitiva** — direto, mas "base" pode soar mais estático do que a ideia de uma fonte viva e projetável;
-- **Princípio da Primazia Cognitiva** — curto, porém amplo demais e pode parecer uma afirmação genérica sobre cognição;
-- **Princípio da Origem Cognitiva** — comunica procedência, mas não deixa tão clara a prioridade arquitetural da fonte sobre o consolidado.
+Outros nomes ainda possíveis:
 
-A recomendação atual é **Princípio da Fonte Cognitiva**.
+- **Princípio da Prioridade da Fonte Cognitiva** — mais literal, porém menos compacto;
+- **Princípio da Preferência pela Fonte Cognitiva** — semanticamente próximo, mas mais fraco quanto à hierarquia proposta;
+- **Princípio da Primazia Cognitiva** — curto, porém amplo demais e pode parecer uma afirmação genérica sobre cognição.
+
+A recomendação atual é **Princípio da Primazia da Fonte Cognitiva**.
 
 ## Formulação do princípio em avaliação
 
 > **O caminho cognitivo estruturado deve constituir a base primária do conhecimento normativo; todo consolidado deve ser uma projeção contextual dessa base.**
 
-Essa frase define o princípio. O nome curto — Fonte Cognitiva — serve para identificá-lo; a frase estabelece sua regra arquitetural.
+Essa frase define a regra que o nome resume: não basta existir uma Fonte Cognitiva; o princípio estabelece que ela deve ter precedência sobre o consolidado como base do conhecimento.
 
 ## Tese refinada
 
@@ -36,7 +38,7 @@ Uma formulação consequencial importante é:
 
 ## O problema do volume e da desorganização
 
-A Fonte Cognitiva só é útil se não obrigar o leitor a consumir o processo bruto de criação. Uma norma de poucas páginas pode ter sido produzida por milhares de páginas de discussões, decisões, idas e vindas, alternativas descartadas e evidências. Expor tudo isso linearmente seria frequentemente pior do que o consolidado atual.
+A primazia da Fonte Cognitiva só é útil se não obrigar o leitor a consumir o processo bruto de criação. Uma norma de poucas páginas pode ter sido produzida por milhares de páginas de discussões, decisões, idas e vindas, alternativas descartadas e evidências. Expor tudo isso linearmente seria frequentemente pior do que o consolidado atual.
 
 Portanto, o princípio não defende substituir uma norma curta por um arquivo cognitivo gigantesco e indiferenciado. Defende que **o caminho cognitivo seja capturado de forma estruturada e organizada**, para que possa ser projetado conforme a necessidade de quem consulta.
 
@@ -78,10 +80,11 @@ Essa arquitetura permite que "somente a informação necessária" seja apresenta
 
 O PR-M01 separa intenção e materialização. O PR-M03 aplica uma separação análoga no domínio do conhecimento: **a fonte cognitiva não deve ser confundida com uma de suas apresentações consolidadas.**
 
-O PR-M02 busca tornar a forma de pensar da organização coerente e legível. O PR-M03 permite que essa forma de pensar não seja conhecida apenas por suas conclusões atuais, mas também pelo caminho estruturado que explica como e por que elas surgiram e evoluíram.
+O PR-M02 busca tornar a forma de pensar da organização coerente e legível. O PR-M03 acrescenta uma ordem de prioridade: a forma consolidada não substitui a base cognitiva da qual deriva.
 
 ## Distinções a preservar
 
+- a Fonte Cognitiva não é o princípio; a **primazia atribuída a ela** é o princípio;
 - caminho cognitivo não é sinônimo de log técnico;
 - a Fonte Cognitiva é a base primária; o consolidado é projeção derivada;
 - preservar o caminho cognitivo não significa apresentar o processo bruto inteiro ao leitor;
@@ -92,4 +95,4 @@ O PR-M02 busca tornar a forma de pensar da organização coerente e legível. O 
 
 ## Questões para próxima rodada
 
-A tese está estável o suficiente para ser identificada por um nome curto. A recomendação atual é **Princípio da Fonte Cognitiva**. Ainda deve ser decidido se esse nome será promovido ao pré-manifesto e quais frases consequenciais devem acompanhá-lo.
+A tese está estável o suficiente para distinguir claramente objeto e princípio: **Fonte Cognitiva é o objeto; sua primazia sobre o consolidado é o princípio.** A recomendação atual é **Princípio da Primazia da Fonte Cognitiva**. Ainda deve ser decidido se esse nome será promovido ao pré-manifesto e quais frases consequenciais devem acompanhá-lo.
