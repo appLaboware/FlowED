@@ -55,44 +55,54 @@ Documentos relacionados:
 
 ## Pilar 3 — Sustentação científica e empírica explícita
 
-**Estado para fechamento do manifesto:** realizabilidade técnica fortemente estabelecida; modelo de scoring refinado, ainda não fechado em fórmula única.
+**Estado para fechamento do manifesto:** suficientemente realizável nesta fase.
 
-A pesquisa inicial identifica uma composição concreta capaz de representar e governar referências, claims, evidências e provenance:
+A pesquisa identificou tecnologia real suficiente tanto para representar evidências quanto para materializar um futuro contrato substituível. Além das referências gerais de provenance/evidência já registradas, foi feita amostragem de ferramentas bibliométricas concretas na ponta.
 
-- Evidence-Based Software Engineering como antecedente metodológico;
-- Nanopublications para claims granulares com provenance;
-- RO-Crate para pacotes machine-readable de evidências e artefatos;
-- W3C PROV para provenance interoperável;
-- RDF + SHACL para representação e validação de constraints;
-- Crossref, DataCite e OpenAlex para identificação, enriquecimento e relações de literatura científica;
-- in-toto/SLSA para attestations e evidência operacional verificável;
-- OPA ou engines equivalentes para políticas/gates determinísticos;
-- memória operacional do Pilar 2 como fonte de evidência contextual;
-- MyTrues/EDT/CCP como possível camada decisória/cognitiva quando amadurecidos.
+Amostras principais:
 
-A tecnologia necessária para representar, validar, consultar e aplicar políticas sobre evidências já existe por composição.
+- OpenAlex: resolução de works, DOI/IDs, relações bibliográficas, `cited_by_count`, séries por ano, FWCI e percentil normalizado em nível de work;
+- SciVal/Scopus: Citation Count, Citations per Publication, FWCI, percentis e refinamentos como exclusão de autocitações;
+- Dimensions: total/recent citations, FCR e RCR em nível de publicação;
+- Semantic Scholar: citationCount, influentialCitationCount, tipos, campos e grafo de citations/references;
+- Crossref: identidade DOI, tipos, metadados bibliográficos, relações, updates/retractions, dados da Retraction Watch e registros de peer review quando depositados.
 
-A discussão de scoring adotou uma postura mais humilde. Publicação científica, citações e tempo de operação não devem ser chamados de medida de verdade. Eles representam dimensões distintas de sustentação.
+Esses providers não são semanticamente idênticos, mas convergem em classes de informação suficientes para prever um contrato FlowED sem acoplá-lo a nenhuma métrica proprietária.
 
-Direção atual:
+Regra arquitetural:
 
-- **reconhecimento científico formal** pode ser uma dimensão determinística, preservando o tipo de revisão/publicação;
-- **influência científica** pode usar citações e métricas normalizadas quando disponíveis;
-- **métricas do veículo** podem ser registradas, mas não devem funcionar automaticamente como proxy de qualidade do artigo individual;
-- **evidência operacional** deve considerar tempo, exposição, diversidade de contexto, sucessos/falhas, recência e versões quando esses dados existirem;
-- **rastreabilidade/proveniência** qualifica a confiabilidade dos próprios sinais usados.
+**provedores reais → propriedades praticadas → classes semânticas comuns → contrato FlowED → adapters/providers substituíveis.**
 
-A fórmula simples `publicação × score do periódico + citações + tempo` não é aceita ainda porque pode produzir falsa precisão, dupla contagem e vieses de campo/idade. O estado preferido nesta fase é um vetor auditável e determinístico; agregação posterior só deve existir se seus pesos e normalizações forem defensáveis.
+O contrato futuro não deve exigir `FWCI`, `FCR`, `RCR` ou outra métrica específica. Deve admitir classes como `field-normalized citation impact`, `raw citation count`, `normalized citation percentile` e `influential citation count`, preservando sempre provider, nome externo da métrica, metodologia/versão, população/baseline, janela temporal, normalização, timestamp e provenance. Métricas distintas podem ocupar a mesma classe funcional sem serem declaradas numericamente equivalentes.
 
-Importante: existência de publicação científica não é gate global de Full FlowED. Ela pode ser uma condição de **compliance científico** ou dimensão do perfil de sustentação. Uma organização pode adotar referência não publicada e acumular evidência operacional forte, desde que a situação seja explícita e rastreável.
+Horizonte de objetos do contrato:
 
-Formulação candidata mais humilde para o Pilar 3:
+- `ReferenceIdentity` — identidade e metadados da referência;
+- `ScientificRecognition` — processo científico/institucional efetivamente comprovável, com estados como confirmed/absent/unknown/conflicting;
+- `InfluenceObservation` — observações bibliométricas brutas ou normalizadas com metodologia e provenance;
+- `ScientificState` — normal/corrected/expression of concern/retracted/reinstated/superseded/unknown;
+- `OperationalEvidence` — evidência de uso proveniente do Pilar 2;
+- `AssessmentProfile` — projeção calculada e auditável sobre as observações, nunca confundida com a própria evidência.
 
-> **Toda referência relevante deve tornar explícitos os tipos de sustentação que possui, sua proveniência, sua influência científica quando mensurável, sua evidência operacional e suas lacunas. O FlowED pode calcular indicadores determinísticos a partir de sinais externos e regras versionadas, sem declarar que esses indicadores medem verdade.**
+Horizonte de operações públicas: resolver referência, coletar evidência, consultar estado científico, obter influência, anexar evidência operacional, avaliar por política versionada, explicar avaliação e comparar providers.
 
-Documento de scoring: `PILAR-3-DETERMINISTIC-EVIDENCE-SCORING-DRAFT.md`.
+A implementação educacional/gratuita pode plausivelmente usar fontes abertas como OpenAlex + Crossref + Semantic Scholar. Implementações empresariais podem adicionar adapters para SciVal/Scopus, Dimensions, Web of Science/InCites ou outras fontes licenciadas sem alterar o contrato público.
 
-O residual metodológico/científico permanece em P02/P03/P06/P09 e não invalida a realizabilidade técnica do pilar.
+A discussão de scoring mantém postura humilde. Publicação, citação e tempo de operação não medem verdade; são sinais distintos. Existência de DOI ou tipo `journal-article` também não prova, isoladamente, peer review. Ausência de evidência deve poder permanecer `unknown`.
+
+O determinismo possível está no nível correto: **mesmas observações persistidas + mesma versão de regra = mesmo assessment**. Uma atualização posterior de uma base gera novo snapshot/assessment; não reescreve silenciosamente o passado.
+
+Formulação candidata do Pilar 3:
+
+> **O FlowED torna explícita e rastreável a sustentação disponível para cada referência relevante, distinguindo reconhecimento científico, influência observável, estado da evidência e experiência operacional. Avaliações são produzidas por regras versionadas sobre evidências identificáveis e podem ser recalculadas ou substituídas sem confundir score com verdade.**
+
+Ainda ficam abertos para pesquisa P02/P03/P06/P09: definição exata de reconhecimento científico por classe de artefato, normalização entre providers, citações negativas/autocitações, composição entre evidência científica e operacional e eventual score agregado. Essas lacunas não bloqueiam o manifesto porque a arquitetura e o contrato podem preservar o vetor de observações sem inventar ranking universal.
+
+Documentos relacionados:
+- `PILAR-3-FEASIBILITY-RESEARCH-001.md`;
+- `PILAR-3-DETERMINISTIC-EVIDENCE-SCORING-DRAFT.md`;
+- `PILAR-3-RESPONSIBLE-RESEARCH-ASSESSMENT-REFERENCE.md`;
+- `PILAR-3-CONTRACT-HORIZON-DRAFT.md`.
 
 ## Estratégia LaboWare relacionada, mas externa ao manifesto
 
@@ -104,4 +114,4 @@ A hipótese científica correspondente amplia P07: investigar se ferramentas con
 
 ## Próximo passo
 
-Debater se a formulação humilde do Pilar 3 é suficiente para fechamento do manifesto. Se sim, marcar o Pilar 3 como suficientemente realizável e avançar ao Pilar 4 — progressividade governada — aplicando o mesmo gate de realizabilidade tecnológica.
+Avançar ao Pilar 4 — **Progressividade governada** — e aplicar o mesmo gate: definir a claim mínima, buscar prior art e tecnologias reais que já materializem seleção contextual de rigor/capability/policy, prever o horizonte de um contrato substituível e somente então considerar o pilar suficientemente fechado.
