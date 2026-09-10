@@ -8,17 +8,25 @@
 
 A discussão mostrou que o nome do princípio precisa expressar mais do que existência, origem ou precedência temporal. O que se quer afirmar é uma **ordem de importância**: diante do caminho cognitivo estruturado e de sua forma consolidada, o primeiro deve ocupar a posição central do conhecimento normativo; a norma consolidada deve ser entendida como consequência, projeção e forma de acesso.
 
-Por isso, **Centralidade do Caminho Cognitivo** passa a ser o candidato preferencial desta rodada. A palavra "centralidade" procura capturar a ideia de valorização e posição principal sem soar como mera preferência subjetiva e sem reduzir o princípio a uma ordem de leitura.
+Por isso, **Centralidade do Caminho Cognitivo** permanece como referência semântica desta rodada. A palavra "centralidade" procura capturar a ideia de valorização e posição principal sem soar como mera preferência subjetiva e sem reduzir o princípio a uma ordem de leitura.
 
 A comparação desejada é próxima da estrutura retórica "damos mais importância ao caminho cognitivo do que ao consolidado", mas o manifesto não precisa reproduzir essa forma. O nome deve fazer compreender que o caminho cognitivo é o centro de referência do conhecimento normativo e que o consolidado não deve ocupar esse lugar apenas por ser mais curto, estável ou conveniente para publicação.
 
-Outros candidatos permanecem úteis para comparação:
+### Variantes semânticas a partir de "centralidade"
 
-- **Princípio da Precedência do Caminho Cognitivo** — expressa bem que o caminho vem antes como referência, mas pode soar excessivamente temporal ou procedimental;
-- **Princípio da Primazia da Fonte Cognitiva** — expressa hierarquia forte, porém é mais abstrato e menos diretamente ligado ao percurso que gerou a norma;
-- **Princípio da Prioridade do Caminho Cognitivo** — é literal, mas menos elegante e pode soar administrativo;
-- **Princípio da Relevância do Caminho Cognitivo** — comunica importância, porém é fraco demais para estabelecer a inversão hierárquica pretendida;
-- **Princípio do Embasamento Cognitivo** — comunica que a norma deve se apoiar na cognição que a gerou, mas não deixa tão claro que esse caminho deve permanecer como base primária acessível.
+A busca agora não é por outro conceito, mas por uma palavra que preserve a mesma relação normativa de **maior peso e posição principal**.
+
+- **Princípio da Preeminência do Caminho Cognitivo** — enfatiza posição superior em importância. É elegante e forte, mas pode soar como superioridade absoluta se não vier acompanhado da formulação que limita essa preeminência à hierarquia do conhecimento normativo.
+- **Princípio da Preponderância do Caminho Cognitivo** — enfatiza maior peso relativo diante do consolidado. É semanticamente muito próximo da ideia "damos mais valor a X do que a Y", porém tem tom mais técnico e menos natural.
+- **Princípio da Centralidade do Caminho Cognitivo** — enfatiza que o caminho ocupa o centro da arquitetura do conhecimento, sem afirmar que toda consulta deve começar por ele. Continua sendo a expressão de referência.
+- **Princípio da Prioridade do Caminho Cognitivo** — comunica ordem de importância, mas pode soar administrativo ou procedimental.
+- **Princípio da Precedência do Caminho Cognitivo** — comunica que o caminho vem antes como referência, mas ainda pode ser confundido com ordem temporal ou de leitura.
+- **Princípio da Relevância do Caminho Cognitivo** — é correto quanto à importância, mas insuficiente para afirmar que o consolidado deve ocupar posição secundária.
+- **Princípio da Valorização do Caminho Cognitivo** — comunica a atitude desejada, mas não estabelece com clareza a relação hierárquica diante do consolidado.
+- **Princípio da Prevalência do Caminho Cognitivo** — sugere que o caminho deve prevalecer em conflito, mas pode deslocar o foco da arquitetura do conhecimento para uma regra de desempate.
+- **Princípio do Protagonismo do Caminho Cognitivo** — é retoricamente claro, porém mais metafórico e menos adequado a uma formulação normativa.
+
+Neste estágio, os três candidatos semanticamente mais próximos são **Centralidade**, **Preeminência** e **Preponderância**. "Centralidade" descreve melhor a posição arquitetural; "Preeminência" descreve melhor a importância; "Preponderância" descreve melhor o maior peso relativo. A escolha final deve considerar qual dessas nuances representa melhor o manifesto.
 
 ## Formulação do princípio em avaliação
 
@@ -86,7 +94,7 @@ O PR-M02 busca tornar a forma de pensar da organização coerente e legível. O 
 
 ## Distinções a preservar
 
-- o objeto é o caminho cognitivo estruturado; o princípio é a **centralidade atribuída a ele** diante do consolidado;
+- o objeto é o caminho cognitivo estruturado; o princípio é a **posição central e o maior peso atribuídos a ele** diante do consolidado;
 - caminho cognitivo não é sinônimo de log técnico;
 - o caminho cognitivo é a base primária; o consolidado deve ser tratado como projeção derivada e secundária;
 - o fato de o consolidado ser mais curto ou conveniente não lhe confere centralidade epistemológica;
@@ -99,4 +107,4 @@ O PR-M02 busca tornar a forma de pensar da organização coerente e legível. O 
 
 ## Questões para próxima rodada
 
-A tese está estável: **o caminho cognitivo estruturado ocupa o centro e a base primária do conhecimento normativo; o consolidado é tratado como projeção contextual e secundária.** O nome ainda está em avaliação, mas **Princípio da Centralidade do Caminho Cognitivo** passa a ser o candidato preferencial desta rodada por expressar importância e posição principal sem reduzir o princípio a preferência subjetiva ou simples precedência temporal.
+A tese está estável: **o caminho cognitivo estruturado ocupa o centro e a base primária do conhecimento normativo; o consolidado é tratado como projeção contextual e secundária.** O nome ainda está em avaliação. Nesta rodada, **Centralidade**, **Preeminência** e **Preponderância** são os três candidatos que melhor preservam a ideia de maior importância relativa sem reduzi-la a mera preferência, relevância genérica ou precedência temporal.
