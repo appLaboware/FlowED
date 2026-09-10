@@ -8,6 +8,16 @@
 
 A palavra "primazia" aqui é deliberada. O ponto em exploração não é apenas preservar o caminho cognitivo junto do consolidado. É inverter a hierarquia habitual de apresentação do conhecimento normativo: **o caminho cognitivo que gerou a norma deve ser tratado como base primária do conhecimento; a formulação consolidada deve ser tratada como uma projeção derivada dessa base.**
 
+## Formulação do princípio em avaliação
+
+A formulação que melhor condensa a tese neste estágio é:
+
+> **O caminho cognitivo estruturado deve constituir a base primária do conhecimento normativo; todo consolidado deve ser uma projeção contextual dessa base.**
+
+Essa frase é proposta como princípio, e não como uma das consequências do princípio. Ela estabelece a hierarquia informacional pretendida: a fonte primária é o percurso cognitivo estruturado; normas, resumos, explicações, visões operacionais e outras formas consolidadas são projeções produzidas a partir dele.
+
+A formulação anterior — "Quando o caminho cognitivo é estruturado, o consolidado pode tornar-se dinâmico..." — permanece importante, mas passa a ser entendida como consequência direta desta regra mais fundamental. O princípio não é que o consolidado seja dinâmico; o princípio é que **ele não ocupe o lugar da base cognitiva que o torna possível**.
+
 ## Tese refinada
 
 A norma consolidada é comparável a uma síntese: ela diz, de forma compacta, a conclusão vigente. Ao fazer isso, necessariamente deixa de expor grande parte da estrutura que tornou essa conclusão possível — problema, contexto, hipóteses, alternativas, argumentos, evidências, rejeições, incertezas, conflitos, revisões e condições de validade.
@@ -22,7 +32,7 @@ Uma segunda formulação, explicitando a perda causada pela inversão atual, é:
 
 > **Quando o consolidado ocupa o lugar do conhecimento que o gerou, tornam-se menos acessíveis as razões, alternativas, evidências, incertezas e condições que permitem compreendê-lo e revê-lo.**
 
-Essas duas formulações são complementares: a primeira estabelece a ordem de importância; a segunda explicita o que se perde quando essa ordem é invertida.
+Essas duas formulações passam a ser tratadas como frases explicativas ou consequenciais do princípio, e não como sua definição principal.
 
 ## O problema do volume e da desorganização
 
@@ -39,6 +49,8 @@ Assim, o consolidado deixa de ser o conhecimento principal e passa a ser uma vis
 Uma formulação candidata para essa propriedade é:
 
 > **Quando o caminho cognitivo é estruturado, o consolidado pode tornar-se dinâmico: cada contexto recebe a síntese necessária sem transformar a síntese na própria fonte do conhecimento.**
+
+Esta frase é agora classificada como consequência forte do princípio: uma vez que o caminho cognitivo é a base primária, torna-se possível gerar consolidados distintos para necessidades distintas sem multiplicar fontes de verdade independentes.
 
 ## Relação com CCP
 
@@ -83,4 +95,4 @@ O PR-M02 busca tornar a forma de pensar da organização coerente e legível. O 
 
 ## Questões para próxima rodada
 
-Ainda deve ser decidido se "Primazia do Caminho Cognitivo" é o nome definitivo e quais frases devem compor o núcleo do princípio. A nova direção é clara: não apenas preservar o caminho junto da norma, mas **tratar o caminho cognitivo como fonte primária e os consolidados como projeções derivadas, preferencialmente capazes de variar conforme a necessidade de informação.**
+A formulação do princípio está mais próxima de estabilização: **o caminho cognitivo estruturado como base primária e o consolidado como projeção contextual dessa base.** Ainda deve ser decidido se "Primazia do Caminho Cognitivo" é o nome definitivo e quais frases consequenciais devem acompanhá-lo no pré-manifesto.
