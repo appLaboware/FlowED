@@ -34,10 +34,21 @@ Intenção: explorar a hipótese de que coerência transversal reduz custo de co
 
 Intenção: complementar a segunda frase aceita com uma consequência organizacional mais concreta: mudanças de materialização podem ser contidas no domínio afetado quando a identidade não depende da ferramenta.
 
+### Candidata E — identidade técnica percebida
+
+> **Quando princípios e critérios de decisão permanecem coerentes e visíveis, mudanças de tecnologia podem ser percebidas como evolução de uma mesma identidade técnica, e não como decisões desconexas.**
+
+Intenção: explorar o efeito externo e interno da coerência. A identidade técnica de uma organização pode ser percebida menos pelas tecnologias específicas que usa e mais pela constância de sua maneira de decidir, justificar e governar mudanças. Uma alteração de linguagem, framework, infraestrutura ou ferramenta não precisa romper essa identidade quando a nova escolha continua reconhecível como expressão dos mesmos princípios e critérios.
+
+Esta candidata pertence mais naturalmente ao PR-M02 do que ao PR-M01. O PR-M01 explica por que intenção e materialização podem evoluir separadamente. A candidata E trata do que essa coerência produz como identidade reconhecível da organização para quem observa suas decisões, inclusive clientes, parceiros, profissionais e comunidade técnica.
+
+A analogia com projetos fortemente associados a uma liderança técnica pode ajudar a explicar a ideia: mudanças concretas de tecnologia podem alterar a implementação sem apagar necessariamente a percepção de uma linha de pensamento consistente por trás do projeto. A analogia é apenas ilustrativa; o princípio não depende de uma pessoa centralizadora nem de liderança personalista.
+
 ## Distinções a preservar
 
 - coerência não é uniformidade;
 - identidade operacional não é padronização tecnológica;
+- identidade técnica percebida não exige uma pessoa centralizadora;
 - autonomia local não significa ausência de invariantes comuns;
 - uma base comum deve tornar diferenças visíveis, não apagá-las;
 - o princípio deve falar da organização como sistema coerente, enquanto o PR-M01 trata principalmente da separação entre intenção e materialização.
