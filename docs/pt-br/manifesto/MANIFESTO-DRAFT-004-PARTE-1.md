@@ -4,9 +4,9 @@
 
 ## Antes de começar
 
-**A0.1** Este manifesto nasce de perguntas recorrentes sobre como a Engenharia de Software trabalha, aprende e evolui. As proposições a seguir não pretendem encerrar o raciocínio; pretendem iniciá-lo.
+**A0.1** Este manifesto nasce de perguntas recorrentes sobre como a Engenharia de Software trabalha, aprende e evolui. As proposições a seguir não buscam encerrar o raciocínio, mas iniciá-lo.
 
-**A0.2** Não reivindicamos a criação dos princípios que seguem. Propomos reconsiderar a ordem de importância que damos a ideias já presentes na ciência, nos padrões e na prática da engenharia.
+**A0.2** Os princípios deste manifesto não pretendem impor uma ideia, nem mesmo reivindicá-la como nova. Propõem apenas um convite à reflexão sobre o grau de importância atribuído a conceitos já presentes na ciência, nos padrões e na prática da engenharia.
 
 **A0.3** As formulações abaixo não procuram determinar como a Engenharia de Software deve trabalhar. Elas propõem direções de valor que podem ser examinadas, criticadas, refinadas e, quando fizer sentido, transformadas em compromissos de engenharia.
 
