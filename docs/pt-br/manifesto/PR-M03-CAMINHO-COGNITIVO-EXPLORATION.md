@@ -6,65 +6,81 @@
 
 **Princípio da Primazia do Caminho Cognitivo**
 
-A palavra "primazia" não significa que o consolidado seja dispensável. O ponto em exploração é mais forte: uma norma, decisão vigente, guideline ou procedimento consolidado é uma expressão compacta de um conhecimento que pode ser mais rico do que o próprio artefato final. Quando essa riqueza cognitiva é preservada, ela pode ter maior valor para compreender, criticar, adaptar e evoluir a norma do que a simples conservação de sua formulação vigente.
+A palavra "primazia" aqui é deliberada. O ponto em exploração não é apenas preservar o caminho cognitivo junto do consolidado. É inverter a hierarquia habitual de apresentação do conhecimento normativo: **o caminho cognitivo que gerou a norma deve ser tratado como base primária do conhecimento; a formulação consolidada deve ser tratada como uma projeção derivada dessa base.**
 
 ## Tese refinada
 
-O princípio não deve soar como uma defesa do registro em oposição ao consolidado, nem como se a norma final não devesse ser registrada. Ambos devem permanecer. A assimetria proposta é de **relevância epistemológica e evolutiva**: o consolidado é necessário para uso corrente; o caminho cognitivo preservado contém a riqueza que explica por que ele existe e em quais condições pode deixar de ser adequado.
+A norma consolidada é comparável a uma síntese: ela diz, de forma compacta, a conclusão vigente. Ao fazer isso, necessariamente deixa de expor grande parte da estrutura que tornou essa conclusão possível — problema, contexto, hipóteses, alternativas, argumentos, evidências, rejeições, incertezas, conflitos, revisões e condições de validade.
 
-Uma formulação candidata é:
+A crítica em exploração não é que o consolidado seja inútil ou que deva desaparecer. É que **ele hoje costuma ocupar o lugar de conhecimento principal**, enquanto o caminho que o produziu fica secundário, implícito, disperso ou de difícil acesso. O princípio propõe o contrário: o caminho cognitivo estruturado é o patrimônio primário; o consolidado é uma porta de entrada e uma projeção adequada a uma necessidade de leitura ou ação.
 
-> **Uma norma consolidada é a expressão atual de um conhecimento mais amplo; preservar o caminho cognitivo que a produziu pode ser tão ou mais importante do que preservar apenas a própria norma.**
+Uma formulação nuclear candidata é:
 
-Outra formulação, mais curta e retórica, é:
+> **O caminho cognitivo que gera uma norma deve ser tratado como base primária do conhecimento; o consolidado é uma projeção derivada dessa base.**
 
-> **A norma preserva a decisão alcançada; o caminho cognitivo preserva a riqueza de conhecimento que tornou essa decisão possível.**
+Uma segunda formulação, explicitando a perda causada pela inversão atual, é:
 
-Uma terceira formulação, enfatizando que a riqueza não desaparece quando a norma é sintetizada:
+> **Quando o consolidado ocupa o lugar do conhecimento que o gerou, tornam-se menos acessíveis as razões, alternativas, evidências, incertezas e condições que permitem compreendê-lo e revê-lo.**
 
-> **Quando um conhecimento é consolidado em uma norma, sua formulação final não deveria substituir a riqueza cognitiva que lhe deu origem.**
+Essas duas formulações são complementares: a primeira estabelece a ordem de importância; a segunda explicita o que se perde quando essa ordem é invertida.
 
-As três frases exprimem a mesma direção e não devem necessariamente coexistir como frases nucleares finais.
+## O problema do volume e da desorganização
 
-## Relação com a formulação anterior
+A primazia do caminho cognitivo só é viável se não obrigar o leitor a consumir o processo bruto de criação. Uma norma de poucas páginas pode ter sido produzida por milhares de páginas de discussões, decisões, idas e vindas, alternativas descartadas e evidências. Expor tudo isso linearmente seria frequentemente pior do que o consolidado atual.
 
-A formulação anterior — "o consolidado é uma projeção do conhecimento" — continua útil, mas pode dar ênfase excessiva à incompletude do consolidado. A tese desejada é positiva: **a norma é valiosa justamente porque condensa um processo cognitivo rico; por isso, preservar esse processo acrescenta um patrimônio de conhecimento que a norma sozinha não carrega integralmente.**
+Portanto, o princípio não defende substituir uma norma curta por um arquivo cognitivo gigantesco e indiferenciado. Defende que **o caminho cognitivo seja capturado de forma estruturada e organizada**, para que possa ser projetado conforme a necessidade de quem consulta.
 
-O objetivo não é diminuir a norma, mas reconhecer que o conhecimento que a gerou possui valor próprio e pode superar o artefato consolidado em situações de revisão, adaptação, contestação, aprendizagem e evolução.
+A relação desejada é:
+
+**caminho cognitivo estruturado → projeções consolidadas dinâmicas por intenção, papel, contexto e objetivo**
+
+Assim, o consolidado deixa de ser o conhecimento principal e passa a ser uma visão produzida sobre a base cognitiva. Diferentes leitores podem receber diferentes níveis de síntese sem que a riqueza original precise ser descartada.
+
+Uma formulação candidata para essa propriedade é:
+
+> **Quando o caminho cognitivo é estruturado, o consolidado pode tornar-se dinâmico: cada contexto recebe a síntese necessária sem transformar a síntese na própria fonte do conhecimento.**
+
+## Relação com CCP
+
+No horizonte conceitual já em estudo, CCP representa precisamente essa inversão: o caminho cognitivo preservado e estruturado ocupa a posição de base primária; documentos consolidados, normas, explicações e outras apresentações tornam-se projeções derivadas.
+
+O manifesto não precisa necessariamente usar a sigla CCP na frase nuclear. O princípio filosófico deve poder ser compreendido independentemente de uma materialização específica. CCP pode ser uma forma de organizar e materializar essa base cognitiva.
 
 ## Dimensão de autoaprendizado
 
-O princípio não trata apenas de arquivamento histórico. Seu valor aparece quando resultados posteriores podem ser relacionados ao caminho que orientou a decisão e retornar como novo conhecimento.
+A primazia do caminho cognitivo também sustenta autoaprendizado porque uma base que registra não apenas a conclusão, mas o percurso decisório, pode receber novos resultados e evidências e permitir revisão consciente.
 
 > **Quando decisões, execuções e resultados permanecem relacionáveis ao caminho cognitivo que os produziu, a experiência pode orientar conscientemente a próxima decisão.**
 
-Essa formulação conecta preservação cognitiva a autoaprendizado sem afirmar que o sistema "aprende" de maneira antropomórfica. O compromisso é tornar possível registrar relações entre intenção, decisão, evidência, execução, resultado, revisão e aprendizado.
+Essa frase continua relevante, mas pode ser consequência ou segunda dimensão do princípio, não necessariamente sua formulação inaugural.
 
 ## O que este princípio quer fazer o leitor compreender
 
-Um consolidado — norma, decisão vigente, guideline, arquitetura, procedimento, política ou qualquer outra síntese — é útil porque reduz complexidade e oferece uma projeção operacional do conhecimento em determinado momento. Mas ele frequentemente omite alternativas rejeitadas, razões contextuais, evidências consideradas, dúvidas, conflitos, hipóteses e revisões que explicam por que aquela síntese existe.
+O princípio questiona a arquitetura informacional em que a norma consolidada é tratada como representação principal do conhecimento e seu processo de formação como material secundário.
 
-Preservar o caminho cognitivo não significa obrigar todos a consumir toda a história a todo momento. O consolidado continua sendo uma projeção legítima e necessária. A diferença é não tratá-lo como equivalente ao patrimônio completo de conhecimento quando decisões futuras dependem de compreender sua origem, seus limites ou as condições sob as quais deveria ser revisto.
+A proposta é inverter essa relação. O patrimônio principal é o caminho cognitivo estruturado que permite compreender por que uma conclusão foi alcançada, quais alternativas foram consideradas, quais evidências a sustentaram, quais incertezas permaneceram e em que condições ela pode precisar ser revista.
 
-O ganho central está na possibilidade de evolução consciente. Se uma decisão produz um resultado ruim, a organização pode voltar não apenas ao artefato final, mas às razões, alternativas e evidências que conduziram a ele. Se o resultado é bom, também pode compreender quais aspectos merecem ser preservados. O registro deixa de servir apenas para auditoria retrospectiva e passa a sustentar revisão e aprendizado.
+O consolidado continua existindo, mas como projeção. Ele pode ser curto, normativo, didático, operacional ou específico para um papel. Sua função é reduzir a quantidade de informação apresentada sem destruir ou substituir a base que permite gerar outras projeções quando uma necessidade diferente surgir.
+
+Essa arquitetura permite que "somente a informação necessária" seja apresentada em cada contexto sem assumir que existe um único consolidado universalmente suficiente para todos os leitores e todas as decisões.
 
 ## Relação com os princípios anteriores
 
-O PR-M01 separa intenção e materialização. Isso ajuda o PR-M03 porque permite que feedback seja atribuído à camada correta: uma intenção pode continuar válida enquanto a materialização é revista, ou o contrário.
+O PR-M01 separa intenção e materialização. O PR-M03 aplica uma separação análoga no domínio do conhecimento: **a base cognitiva não deve ser confundida com uma de suas apresentações consolidadas.**
 
-O PR-M02 torna a forma de pensar da organização mais coerente e legível. O PR-M03 acrescenta memória temporal a essa identidade: não apenas "como pensamos agora", mas também "como chegamos a pensar assim, o que aprendemos e por que mudamos".
+O PR-M02 busca tornar a forma de pensar da organização coerente e legível. O PR-M03 permite que essa forma de pensar não seja conhecida apenas por suas conclusões atuais, mas também pelo caminho estruturado que explica como e por que elas surgiram e evoluíram.
 
 ## Distinções a preservar
 
 - caminho cognitivo não é sinônimo de log técnico;
-- consolidado e caminho cognitivo devem ambos ser preservados quando relevantes;
-- a primazia proposta é de riqueza para compreensão, crítica, adaptação e evolução, não de utilidade operacional em todo contexto;
-- consolidado não é descartado; é tratado como expressão atual e compacta do conhecimento;
-- preservar história não significa apresentar toda a história a todo usuário;
-- autoaprendizado exige relação entre decisão, execução, resultado e revisão, não apenas armazenamento de eventos;
-- o princípio não depende de uma pessoa criadora individual; o caminho pode ser de uma pessoa, equipe, organização ou sistema decisório;
-- o registro deve preservar também alternativas rejeitadas, incertezas e revisões quando relevantes, não apenas a justificativa retrospectiva da decisão vencedora.
+- o consolidado não é a base primária; é uma projeção derivada;
+- preservar o caminho cognitivo não significa apresentar o processo bruto inteiro ao leitor;
+- a viabilidade depende de estruturar, relacionar e projetar o caminho cognitivo, não apenas arquivá-lo;
+- uma projeção pode ser estática ou dinâmica conforme o contexto, mas não deve apagar a base da qual deriva;
+- o caminho cognitivo pode pertencer a uma pessoa, equipe, comitê, organização ou outro processo decisório, não apenas a um criador individual;
+- autoaprendizado exige relação entre decisão, execução, resultado, evidência e revisão, não apenas armazenamento;
+- a primazia proposta é uma prioridade de arquitetura do conhecimento: compreender e evoluir deve partir da base cognitiva, enquanto o consolidado serve como acesso conveniente a ela.
 
 ## Questões para próxima rodada
 
-Ainda deve ser decidido se "Primazia do Caminho Cognitivo" é o melhor nome ou se o princípio deve enfatizar "conhecimento gerador", "memória cognitiva", "conhecimento vivo" ou "aprendizado rastreável". Também deve ser decidido qual das três formulações melhor expressa a assimetria entre a norma consolidada e a riqueza cognitiva que lhe deu origem, e se a frase sobre autoaprendizado é uma segunda frase nuclear do mesmo princípio ou uma consequência que poderá sustentar um princípio posterior.
+Ainda deve ser decidido se "Primazia do Caminho Cognitivo" é o nome definitivo e quais frases devem compor o núcleo do princípio. A nova direção é clara: não apenas preservar o caminho junto da norma, mas **tratar o caminho cognitivo como fonte primária e os consolidados como projeções derivadas, preferencialmente capazes de variar conforme a necessidade de informação.**
