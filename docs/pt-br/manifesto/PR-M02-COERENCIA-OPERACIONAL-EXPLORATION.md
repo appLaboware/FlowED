@@ -78,6 +78,24 @@ Essa ponte é importante para evitar uma leitura equivocada do PR-M02. Um produt
 
 A ligação entre os princípios fica assim: o PR-M02 explica por que uma superfície comum pode tornar a identidade organizacional mais coerente e legível; o PR-M01 impede que essa unidade seja confundida com acoplamento às materializações. A mesma identidade intencional pode sobreviver à troca de tecnologias porque a superfície que a expressa está acima delas.
 
+### Candidata G — independência de evolução e de julgamento
+
+> **Quando identidade intencional e materialização permanecem separadas, cada uma pode ser apresentada, avaliada e modificada em seu próprio momento.**
+
+Uma consequência direta dessa separação pode ser expressa assim:
+
+> **Trocar uma tecnologia não precisa significar abandonar a forma de pensar; mudar a forma de pensar não precisa exigir trocar toda tecnologia que ainda a satisfaz.**
+
+Intenção: registrar que intenção e materialização pertencem a domínios decisórios relacionados, mas não idênticos. A organização pode preservar uma identidade intencional e substituir um materializador que se tornou inadequado, vulnerável, caro, obsoleto ou incompatível. De modo inverso, pode revisar seus princípios, políticas ou critérios e continuar usando materializadores existentes quando estes ainda satisfazem a nova intenção e os contratos aplicáveis.
+
+Essa separação também cria momentos distintos de apresentação e avaliação. Um cliente, parceiro, auditor ou equipe interna pode querer avaliar a forma de pensar da organização independentemente de suas escolhas tecnológicas; em outro contexto, pode aceitar a intenção e contestar especificamente um materializador. A troca desse materializador não precisa ser interpretada como abandono da identidade organizacional quando a intenção que o governava permanece válida.
+
+O caso de uma vulnerabilidade em um materializador torna a distinção especialmente clara: a tecnologia pode precisar ser substituída por razões locais sem que a identidade intencional seja alterada. A recíproca também importa: uma mudança de filosofia pode exigir nova política ou nova configuração, mas não obriga a descartar materializações que continuem conformes aos novos contratos.
+
+Esta candidata é uma ponte forte entre PR-M02 e PR-M01. O PR-M02 ganha a capacidade de apresentar a identidade organizacional como algo avaliável por si; o PR-M01 fornece a separação necessária para que evolução da intenção e evolução da materialização não sejam tratadas como a mesma mudança.
+
+Limite importante: a independência não é absoluta. Uma mudança de intenção pode alterar contratos de modo que certos materializadores deixem de ser adequados; uma mudança de materializador pode revelar restrições que obriguem revisar uma intenção ou política. O princípio defende **separabilidade e evolução independente quando compatível com os contratos**, não ausência de dependência semântica entre as camadas.
+
 ## Distinções a preservar
 
 - coerência não é uniformidade;
@@ -86,6 +104,9 @@ A ligação entre os princípios fica assim: o PR-M02 explica por que uma superf
 - transversalidade significa critérios compartilhados atravessando decisões locais, não resultados locais idênticos;
 - uma superfície intencional comum não significa pacote tecnológico obrigatório;
 - unificar a expressão da intenção não significa unificar as materializações;
+- identidade intencional e materialização podem ser avaliadas e alteradas em momentos distintos;
+- trocar materialização não implica necessariamente trocar identidade; mudar identidade não implica necessariamente descartar materializadores ainda conformes;
+- independência entre intenção e materialização é condicionada à compatibilidade contratual, não absoluta;
 - uma implementação integrada pode expressar uma filosofia, mas não possui monopólio sobre ela;
 - autonomia local não significa ausência de invariantes comuns;
 - uma base comum deve tornar diferenças visíveis, não apagá-las;
