@@ -66,13 +66,28 @@ Investigar modelos de certificação que produzam vetores auditáveis e reproduz
 
 Separar componentes determinísticos dos componentes que exigem julgamento humano.
 
-## P07 — Integração academia–indústria por linguagem operacional contínua
+## P07 — Integração academia–indústria e inversão da difusão tecnológica
 
-Investigar se uma linguagem operacional comum, iniciada no ensino e preservada na prática profissional, reduz ruptura entre aprendizagem acadêmica e ambientes industriais.
+Investigar se uma linguagem operacional e um conjunto de ferramentas mantidos de forma contínua entre ensino e prática profissional reduzem ruptura entre aprendizagem acadêmica e ambientes industriais.
 
-Comparar progressão de complexidade por composição/intensidade com abordagens em que o aluno precisa abandonar ferramentas e modelos mentais ao entrar na indústria.
+A hipótese foi ampliada para incluir uma possível **inversão parcial da direção de difusão tecnológica**: em vez de a academia ensinar predominantemente ferramentas já escolhidas pela indústria, versões educacionais gratuitas de ferramentas e contratos comuns podem permitir que estudantes aprendam, experimentem e produzam evidência no ambiente acadêmico; ao entrarem na indústria, esses profissionais carregariam familiaridade e demanda por ferramentas, práticas e modelos mentais previamente amadurecidos na academia.
+
+Ciclo candidato:
+
+**ferramenta/contrato educacional gratuito → adoção acadêmica → aprendizagem + pesquisa + experiência → formação profissional → difusão para a indústria → adoção de capacidades empresariais compatíveis**.
+
+Questões candidatas:
+
+- continuidade de interface, contrato e modelo mental aumenta adoção posterior no ambiente profissional?
+- uso acadêmico em escala produz evidência útil para evolução do produto e das práticas?
+- quais mecanismos de diffusion of innovations, technology transfer e path dependence já explicam esse efeito?
+- versões gratuitas educacionais conseguem influenciar seleção tecnológica empresarial sem lock-in indevido?
+- como distinguir efeito de familiaridade, qualidade real da ferramenta, efeito de rede e estratégia comercial?
+- uma arquitetura contratual e progressiva permite que a mesma experiência atenda estudante e indústria com materializações de escalas diferentes?
 
 EDT/CCC pode ser hipótese explicativa complementar: além de preservar a linguagem operacional, o ensino pode preservar o percurso cognitivo pelo qual práticas, normas e sistemas foram construídos.
+
+Essa linha também serve à estratégia de negócio da LaboWare, mas o efeito alegado precisa de revisão de anterioridade e validação empírica antes de ser tratado como contribuição científica.
 
 ## P08 — Prática industrial como geradora de agenda científica
 
