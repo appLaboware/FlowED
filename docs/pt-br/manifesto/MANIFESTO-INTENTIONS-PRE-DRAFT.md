@@ -48,6 +48,22 @@ Também não se assume que intenção seja imutável. Novas intenções podem su
 
 O produto existe para demonstrar e facilitar a filosofia; não define a filosofia nem recebe privilégio normativo por ter sido produzido pelos autores do FlowED.
 
+## INT-M02 — Preservar conhecimento diante da evolução tecnológica
+
+### Frase nuclear
+
+> **Quando o conhecimento conceitual é acumulado independentemente da ferramenta que o materializa, a evolução tecnológica tende a exigir menos readaptação.**
+
+### O que esta intenção quer fazer o leitor compreender
+
+A mudança de ferramenta pode continuar exigindo adaptação, aprendizado e especialização. O FlowED não propõe eliminar esse efeito. Propõe reduzir quanto dessa mudança precisa atingir quem continua expressando a mesma intenção ou trabalhando com o mesmo conhecimento conceitual.
+
+Quando intenção e materialização são separadas, o aprendizado acumulado sobre objetivos, restrições, decisões e estruturas do problema pode sobreviver melhor à substituição de tecnologias concretas. A parte volátil da mudança pode concentrar-se, tanto quanto o domínio permitir, na fronteira de materialização.
+
+A consequência desejada não é ausência de reaprendizado, mas **menor ruptura**: aquilo que continuou conceitualmente válido não deveria ser descartado apenas porque mudou a ferramenta que o realiza.
+
+Essa formulação também evita uma claim absoluta. O manifesto não afirma que evolução tecnológica deixará de exigir readaptação; afirma que separar conhecimento conceitual de materialização pode reduzir o impacto da mudança sobre o conhecimento já acumulado.
+
 ## Próxima intenção
 
-A próxima intenção ainda não está consolidada. Deve ser discutida separadamente, evitando promover como novo princípio algo que seja apenas consequência, mecanismo ou hipótese derivada de INT-M01.
+A próxima intenção ainda não está consolidada. Deve ser discutida separadamente, evitando promover como novo princípio algo que seja apenas consequência, mecanismo ou hipótese derivada das intenções anteriores.
