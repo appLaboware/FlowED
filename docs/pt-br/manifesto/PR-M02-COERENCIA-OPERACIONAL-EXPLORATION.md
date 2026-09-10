@@ -54,6 +54,22 @@ Intenção: distinguir uma organização que apenas enumera tecnologias, método
 
 Esta candidata não exige que a organização adote um pacote monolítico de ferramentas nem que use qualquer produto específico. A unidade está na superfície intencional compartilhada, não na obrigatoriedade de uma implementação única.
 
+#### Refinamento — uma superfície intencional, muitas materializações
+
+O benefício não está simplesmente em trocar cinquenta ferramentas por uma ferramenta única. Uma ferramenta monolítica poderia apenas concentrar dependências e esconder decisões. O ganho pretendido é concentrar **a expressão da intenção** numa superfície transversal comum, mantendo livres e substituíveis as materializações de cada domínio.
+
+> **Uma superfície intencional comum pode unificar a expressão da forma de pensar da organização sem unificar as ferramentas que a realizam.**
+
+Uma formulação alternativa, mais explícita quanto à relação entre unidade e pluralidade, é:
+
+> **Quando múltiplas decisões de engenharia são expressas por uma mesma superfície intencional, a organização pode apresentar uma linha de pensamento reconhecível sem impor uma única linha de materialização.**
+
+Assim, uma organização pode defender, explicar e discutir de maneira unificada a lógica que orienta suas decisões, enquanto versionamento, banco de dados, construção, testes, implantação ou qualquer outro domínio continuam podendo usar materializadores distintos. A superfície comum funciona como lugar de expressão da identidade; adapters e providers permanecem como escolhas de realização.
+
+Esta estrutura também torna mais claro um tipo de crítica que hoje costuma ficar misturado: alguém pode concordar com a intenção ou com o critério organizacional e discordar da materialização escolhida para realizá-lo. Essa decomposição pertence conceitualmente ao PR-M01, mas fortalece o PR-M02 ao permitir que a identidade intencional da organização permaneça legível mesmo quando uma escolha tecnológica específica é contestada ou substituída.
+
+O mesmo vale para a permanência temporal: se a organização troca Git por outro sistema de versionamento, ou um framework por outro, sua identidade operacional não precisa ser redefinida se a intenção, os critérios e os contratos que governavam aquela capacidade continuam válidos. A mudança pode atingir a materialização sem apagar a personalidade intencional que a precede.
+
 #### Ponte explícita com o PR-M01
 
 > **A unidade operacional não precisa implicar adesão tecnológica monolítica quando a superfície comum expressa intenção e contratos, e não um pacote obrigatório de implementações.**
@@ -69,6 +85,7 @@ A ligação entre os princípios fica assim: o PR-M02 explica por que uma superf
 - identidade técnica percebida não exige uma pessoa centralizadora;
 - transversalidade significa critérios compartilhados atravessando decisões locais, não resultados locais idênticos;
 - uma superfície intencional comum não significa pacote tecnológico obrigatório;
+- unificar a expressão da intenção não significa unificar as materializações;
 - uma implementação integrada pode expressar uma filosofia, mas não possui monopólio sobre ela;
 - autonomia local não significa ausência de invariantes comuns;
 - uma base comum deve tornar diferenças visíveis, não apagá-las;
