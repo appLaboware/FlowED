@@ -55,7 +55,7 @@ Documentos relacionados:
 
 ## Pilar 3 — Sustentação científica e empírica explícita
 
-**Estado para fechamento do manifesto:** em avaliação pelo mesmo gate; horizonte tecnológico inicial já encontrado.
+**Estado para fechamento do manifesto:** realizabilidade técnica fortemente estabelecida; modelo de scoring refinado, ainda não fechado em fórmula única.
 
 A pesquisa inicial identifica uma composição concreta capaz de representar e governar referências, claims, evidências e provenance:
 
@@ -70,11 +70,29 @@ A pesquisa inicial identifica uma composição concreta capaz de representar e g
 - memória operacional do Pilar 2 como fonte de evidência contextual;
 - MyTrues/EDT/CCP como possível camada decisória/cognitiva quando amadurecidos.
 
-A tecnologia necessária para representar, validar, consultar e aplicar políticas sobre evidências já existe por composição. O principal residual aberto é metodológico/científico: como graduar força de evidência, comparar classes heterogêneas de sustentação e definir score/maturidade sem falsa precisão.
+A tecnologia necessária para representar, validar, consultar e aplicar políticas sobre evidências já existe por composição.
 
-Esse residual já está separado nas linhas P02/P03/P06 e não invalida a realizabilidade técnica do pilar.
+A discussão de scoring adotou uma postura mais humilde. Publicação científica, citações e tempo de operação não devem ser chamados de medida de verdade. Eles representam dimensões distintas de sustentação.
 
-Documento de pesquisa: `PILAR-3-FEASIBILITY-RESEARCH-001.md`.
+Direção atual:
+
+- **reconhecimento científico formal** pode ser uma dimensão determinística, preservando o tipo de revisão/publicação;
+- **influência científica** pode usar citações e métricas normalizadas quando disponíveis;
+- **métricas do veículo** podem ser registradas, mas não devem funcionar automaticamente como proxy de qualidade do artigo individual;
+- **evidência operacional** deve considerar tempo, exposição, diversidade de contexto, sucessos/falhas, recência e versões quando esses dados existirem;
+- **rastreabilidade/proveniência** qualifica a confiabilidade dos próprios sinais usados.
+
+A fórmula simples `publicação × score do periódico + citações + tempo` não é aceita ainda porque pode produzir falsa precisão, dupla contagem e vieses de campo/idade. O estado preferido nesta fase é um vetor auditável e determinístico; agregação posterior só deve existir se seus pesos e normalizações forem defensáveis.
+
+Importante: existência de publicação científica não é gate global de Full FlowED. Ela pode ser uma condição de **compliance científico** ou dimensão do perfil de sustentação. Uma organização pode adotar referência não publicada e acumular evidência operacional forte, desde que a situação seja explícita e rastreável.
+
+Formulação candidata mais humilde para o Pilar 3:
+
+> **Toda referência relevante deve tornar explícitos os tipos de sustentação que possui, sua proveniência, sua influência científica quando mensurável, sua evidência operacional e suas lacunas. O FlowED pode calcular indicadores determinísticos a partir de sinais externos e regras versionadas, sem declarar que esses indicadores medem verdade.**
+
+Documento de scoring: `PILAR-3-DETERMINISTIC-EVIDENCE-SCORING-DRAFT.md`.
+
+O residual metodológico/científico permanece em P02/P03/P06/P09 e não invalida a realizabilidade técnica do pilar.
 
 ## Estratégia LaboWare relacionada, mas externa ao manifesto
 
@@ -86,4 +104,4 @@ A hipótese científica correspondente amplia P07: investigar se ferramentas con
 
 ## Próximo passo
 
-Debater a formulação constitutiva do Pilar 3 usando o mesmo critério: demonstrar que a proposição é tecnicamente realizável, explicitar o que já possui prior art e isolar o que continua sendo hipótese científica. Se o gate for satisfeito sem contradição relevante, marcar o Pilar 3 como fechado e avançar ao Pilar 4.
+Debater se a formulação humilde do Pilar 3 é suficiente para fechamento do manifesto. Se sim, marcar o Pilar 3 como suficientemente realizável e avançar ao Pilar 4 — progressividade governada — aplicando o mesmo gate de realizabilidade tecnológica.
