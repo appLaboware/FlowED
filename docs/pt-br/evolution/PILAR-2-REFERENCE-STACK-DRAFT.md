@@ -1,131 +1,108 @@
-# Draft — Pilar 2: stack de referência para memória operacional e autoeducação
+# Draft — Pilar 2: composição de referências para contrato de memória operacional
 
 **Status:** Referência Experimental. Não normativa; usada para demonstrar realizabilidade do Pilar 2 sem acoplar o FlowED a uma implementação única.
 
-## 1. Decisão conceitual
+## 1. Correção conceitual
 
-O Pilar 2 pode ser materializado por uma **composição de padrões e ferramentas maduras**, cada uma usada naquilo que já faz bem, mantendo o FlowED orientado apenas pelo contrato público.
+O objetivo não é escolher agora uma stack de implementação nem decidir que Kafka, OpenTelemetry, AsyncAPI, XES, OpenLineage, PROV, MyTrues ou qualquer outro produto será obrigatório.
 
-A referência preferencial de implementação não deve ser uma tecnologia monolítica nem um requisito obrigatório. Deve existir como **stack de referência substituível por ports/adapters**, de modo que outra implementação possa atender ao mesmo contrato público.
+A proposta é anterior à implementação: **estudar os grandes sistemas, padrões e frameworks que já resolvem partes do problema, extrair deles as boas propriedades e transformar essa composição em um contrato público genérico do FlowED**.
 
-Regra:
+Portanto, a sequência correta é:
 
-> **FlowED governa a semântica e o contrato público da memória operacional; a stack de referência demonstra uma materialização possível; qualquer componente pode ser substituído se preservar o comportamento contratado.**
+**prior art maduro → extração das boas propriedades → composição semântica → contrato público FlowED → projeto/materialização futura**.
 
-## 2. Separação de papéis
+O contrato é desenhado já sabendo que deverá ser realizável por ferramentas reais, mas não pertence a nenhuma delas.
 
-Kafka não deve ser tratado como o contrato semântico do FlowED. Seu papel mais adequado é transporte/event backbone durável. A definição do contrato deve ficar em uma camada protocol-agnostic e machine-readable.
+## 2. Regra de compatibilidade entre pilares
 
-A composição de referência candidata é:
+O Pilar 2 não pode violar o Pilar 1.
 
-- **AsyncAPI** — contrato machine-readable da interface/event API entre produtores e consumidores;
-- **CloudEvents** — envelope interoperável e protocol-agnostic para identidade e metadados fundamentais do evento;
-- **OpenTelemetry** — modelo e instrumentação para logs/events/traces e contexto observável;
-- **Apache Kafka** — backbone/event stream durável, ordenado por partição, com capacidades de idempotência/transações quando necessárias;
-- **OpenLineage** — modelo para ligar execução, job/run, inputs, outputs e lineage operacional;
-- **W3C PROV** — referência geral de proveniência por entidades, atividades e agentes;
-- **IEEE XES + Process Mining** — projeção/análise de event logs para descoberta, conformance, monitoramento e melhoria de processos;
-- **MyTrues + EDT/CCP** — camada candidata de memória decisória/cognitiva: razões, referências, alternativas, evidências, decisões, revisões e projeções.
+Consequências obrigatórias:
 
-Nenhuma dessas tecnologias deve se tornar dependência conceitual obrigatória do FlowED. Elas formam uma implementação de referência composta.
+- toda capability pública é expressa por contrato;
+- implementações permanecem desacopladas;
+- ports/adapters podem materializar o contrato sem se tornarem parte do conceito;
+- nenhuma ferramenta concreta vira dependência conceitual obrigatória;
+- substituição continua possível quando o comportamento público contratado é preservado;
+- desenho e validação do contrato podem seguir a linha test-driven/contract-driven em estudo, sem que esse método precise ser fechado antes do manifesto.
 
-## 3. Fluxo de referência
+Assim, os pilares são cumulativos: um pilar posterior deve respeitar invariantes já estabelecidos pelos anteriores.
 
-Contrato público FlowED
-→ descrição event-driven machine-readable (AsyncAPI ou equivalente)
-→ evento interoperável (CloudEvents ou equivalente)
-→ instrumentação/telemetria estruturada (OpenTelemetry ou equivalente)
-→ stream/broker persistente (Kafka ou equivalente)
-→ lineage/proveniência (OpenLineage/W3C PROV ou equivalentes)
-→ memória operacional consultável
-→ correlação com MyTrues/EDT/CCP
-→ análise/process mining
-→ evidência e possível revisão da referência ou forma de trabalho.
+## 3. Fontes candidatas de propriedades para o contrato
 
-## 4. Contrato público acima da stack
+As tecnologias abaixo são tratadas como **fontes de boas ideias**, não como componentes obrigatórios de uma arquitetura final:
 
-O contrato público FlowED deve definir apenas o que precisa permanecer estável para qualquer materialização:
+- **CloudEvents** — identidade e envelope interoperável de eventos;
+- **OpenTelemetry** — contexto observável, logs/events/traces e correlação;
+- **IEEE XES / Process Mining** — estrutura analisável de event logs e comportamento processual;
+- **W3C PROV** — proveniência entre entidades, atividades e agentes;
+- **OpenLineage** — relações entre execução, run/job, inputs e outputs;
+- **AsyncAPI** — descrição machine-readable de interações assíncronas;
+- **Kafka e outros event-streaming systems** — persistência, replay, consumidores desacoplados, ordenação e garantias de entrega quando necessárias;
+- **Event Sourcing** — histórico temporal reconstruível quando adequado;
+- **MyTrues / EDT / CCP** — memória decisória, racional, referência, evidência, revisão e projeção do conhecimento.
 
-- identidade da operação e da versão de contrato;
-- identidade/correlação/causação do evento;
-- ator/origem/proveniência relevante;
-- alvo/contexto público;
-- estado/result/outcome observável;
-- inputs/outputs públicos relevantes;
-- referências a artefatos/evidências;
-- ligações opcionais/obrigatórias com decisão/referência conforme o contrato;
-- regras mínimas de compatibilidade e evolução;
-- garantias observáveis relevantes de entrega, ordenação, duplicação ou persistência somente quando a capability realmente depender delas.
+A tarefa futura é identificar, de cada família, quais propriedades merecem subir para o contrato genérico FlowED e quais devem permanecer detalhe de implementação.
 
-Detalhes como tópico Kafka, partições, storage engine, collector, schema registry, banco de lineage ou representação interna do MyTrues ficam abaixo do contrato.
+## 4. Contrato genérico como síntese
 
-## 5. O papel específico do Kafka
+O contrato de memória operacional deve ser uma síntese mínima das melhores propriedades encontradas, por exemplo:
 
-Kafka ajuda fortemente como implementação de referência da **memória operacional em fluxo** porque oferece log distribuído persistente, ordenação por partição, replay, consumer groups, idempotent producer e transações.
+- identidade estável do evento;
+- identidade e versão do contrato que originou a execução;
+- actor/origin/context;
+- correlação e causação;
+- estado/outcome observável;
+- entradas e saídas públicas relevantes;
+- referências a artefatos e evidências;
+- proveniência/lineage suficiente;
+- capacidade de persistência e recuperação conforme a necessidade contratual;
+- extensibilidade sem quebrar compatibilidade;
+- ligação possível com decisão/referência/racional;
+- regras de compatibilidade e versionamento.
 
-Isso permite que diferentes consumidores usem o mesmo fato operacional sem acoplamento direto: observabilidade, MyTrues, auditoria, process mining, métricas, scoring e futuras ferramentas podem consumir o stream independentemente.
+A lista é provisória e deve ser validada contra o prior art antes de qualquer consolidação.
 
-Entretanto, usar Kafka como semântica central criaria acoplamento indevido. O FlowED deve poder trocar Kafka por outro broker/log/event store desde que as garantias públicas relevantes sejam preservadas.
+## 5. Projeto futuro dedicado
 
-## 6. AsyncAPI como referência mais adequada para o contrato event-driven
+Depois que o manifesto estiver fechado, deve existir um projeto/capability próprio do ecossistema FlowED para essa área de **memória operacional estruturada**, da mesma forma que outros projetos especializados podem existir para ISO 29110 ou outras capacidades.
 
-AsyncAPI é uma referência particularmente forte porque foi criada para descrever interfaces assíncronas/message-driven de forma machine-readable e protocol-agnostic, podendo descrever canais, operações, mensagens e payloads independentemente de Kafka, MQTT, AMQP, WebSocket ou outros protocolos.
+Esse projeto deverá:
 
-Por isso, no stack de referência, AsyncAPI é candidato mais natural que Kafka para representar o contrato técnico event-driven. O FlowED pode ainda possuir semântica própria acima dele e projetá-la para AsyncAPI.
+- implementar o contrato público definido pelo FlowED;
+- integrar memória operacional e memória decisória sem fundi-las;
+- possuir MyTrues como implementação de referência candidata para a dimensão decisória/cognitiva;
+- poder usar Kafka, OpenTelemetry, XES, PROV, OpenLineage, AsyncAPI ou equivalentes conforme fizer sentido;
+- preservar ports/adapters para substituição;
+- permitir outros providers que implementem o mesmo contrato.
 
-## 7. OpenTelemetry e CloudEvents não são redundantes
+O FlowED conceitual continua conhecendo o contrato, não a implementação.
 
-CloudEvents trata principalmente da portabilidade do evento entre sistemas e protocolos por um envelope comum.
+## 6. Relação entre memória operacional e MyTrues
 
-OpenTelemetry trata principalmente da observabilidade e do modelo de logs/events/traces, incluindo timestamps, resource, instrumentation scope, attributes e trace context.
+O contrato deve permitir que uma execução estruturada seja ligada a:
 
-Uma implementação pode mapear eventos FlowED simultaneamente para CloudEvents e OpenTelemetry sem obrigar que um substitua o outro.
+- decisão que a autorizou ou motivou;
+- referência vigente naquele momento;
+- evidência usada na decisão;
+- racional e alternativas quando disponíveis;
+- revisão posterior decorrente dos resultados observados.
 
-## 8. Lineage e decisão são camadas diferentes
+A memória operacional responde principalmente **o que aconteceu**. MyTrues/EDT/CCP respondem principalmente **por que se decidiu assim e como o conhecimento evoluiu**.
 
-OpenLineage/W3C PROV respondem principalmente a relações como:
+O valor do Pilar 2 surge da capacidade de correlacionar os dois lados sem acoplá-los tecnicamente.
 
-- qual atividade ocorreu;
-- quais inputs foram usados;
-- quais outputs foram produzidos;
-- quem/qual agente participou;
-- de onde uma entidade derivou.
+## 7. Consequência para o manifesto
 
-MyTrues/EDT/CCP respondem a uma dimensão diferente:
+O Pilar 2 não precisa prometer uma ferramenta específica. Precisa afirmar que o FlowED transforma execução em memória estruturada relacionável ao conhecimento decisório, de modo que a organização possa aprender com sua própria prática.
 
-- por que a atividade foi escolhida;
-- qual referência/decisão autorizou ou motivou a ação;
-- que alternativas existiam;
-- que evidência sustentava a decisão naquele momento;
-- o que foi aprendido posteriormente;
-- por que a referência foi mantida, alterada ou substituída.
+Uma formulação candidata é:
 
-O valor do Pilar 2 surge da correlação entre ambas, sem fundi-las.
+> **A execução relevante deve poder produzir memória operacional estruturada e relacionável às decisões, referências, evidências e aprendizados que a contextualizam. O FlowED deve permitir que essa memória seja reutilizada para compreender o que ocorreu e evoluir conscientemente a forma de trabalhar.**
 
-## 9. Consequência para autoeducação
+## 8. Estado
 
-A composição torna tecnicamente plausível um ciclo automatizável:
+**Realizabilidade:** suficientemente plausível para o manifesto, porque cada componente necessário já possui materializações maduras em prior art conhecido; a contribuição específica do FlowED está na composição contratual e na integração com memória decisória.
 
-intenção/contrato → execução → evento → memória operacional → lineage/proveniência → ligação com decisão/racional → análise → evidência → proposta/revisão → nova referência.
-
-O sistema pode automatizar captura, correlação, comparação e preparação de evidência. A autoridade para alterar uma norma/referência continua governada separadamente.
-
-## 10. Critério de substituição
-
-A stack acima é apenas uma **reference implementation architecture**. Um substituto pode trocar um ou vários elementos — por exemplo Kafka por NATS, Pulsar, Redpanda, RabbitMQ, um event store local ou outra tecnologia — sem deixar de ser FlowED, desde que satisfaça o contrato público aplicável.
-
-O mesmo vale para observabilidade, schema, lineage, provenance e memória decisória.
-
-## 11. Sustentação externa preliminar
-
-- AsyncAPI define um contrato machine-readable entre senders e receivers e é protocol-agnostic, inclusive com bindings para Kafka.
-- OpenTelemetry define um modelo estável de logs/events capaz de mapear múltiplas fontes preservando semântica.
-- Kafka oferece capacidades de persistência/streaming e garantias de idempotência/transações úteis para implementações que delas precisem.
-- OpenLineage define uma especificação extensível de lineage para job/run/dataset e pode inclusive transportar eventos via Kafka.
-- CloudEvents, W3C PROV, IEEE XES e Process Mining complementam envelope, proveniência e análise.
-
-## 12. Estado para o manifesto
-
-A realizabilidade do mecanismo de memória operacional estruturada está fortemente sustentada por componentes já maduros. O que permanece aberto é a composição exata, o schema FlowED, as políticas de relevância/retention, a integração concreta com MyTrues e a avaliação empírica do ciclo de autoeducação.
-
-Essas linhas podem continuar após o manifesto sem bloquear o Pilar 2, desde que ainda seja fechado o princípio constitutivo de quais execuções precisam gerar memória e quando essa memória precisa ser correlacionada a decisões/referências.
+**Rota:** ADOPT/COMPOSE. Não inventar mecanismos já existentes. O eventual residual de contribuição deve ser tratado como linha de pesquisa separada e não bloqueia o manifesto.
