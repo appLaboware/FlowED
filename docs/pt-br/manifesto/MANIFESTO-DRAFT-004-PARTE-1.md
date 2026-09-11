@@ -32,31 +32,29 @@
 
 **P2.1** Uma organização não precisa prescrever tecnologias para preservar sua forma de trabalho. Sua identidade operacional pode residir mais nos princípios e contratos e menos nas tecnologias que os materializam.
 
-**P2.2** Uma organização pode preservar uma identidade operacional reconhecível mesmo quando suas ferramentas mudam, quando essa identidade reside nos princípios, intenções e contratos que governam seu uso, e não nas implementações específicas.
+**P2.2** Uma superfície intencional comum pode unificar a expressão da forma de pensar da organização sem unificar as ferramentas que a realizam.
 
-**P2.3** Uma superfície intencional comum pode unificar a expressão da forma de pensar da organização sem unificar as ferramentas que a realizam.
+**P2.3** Quando identidade intencional e materialização permanecem separadas, cada uma pode ser apresentada, avaliada e modificada em seu próprio momento.
 
-**P2.4** Quando identidade intencional e materialização permanecem separadas, cada uma pode ser apresentada, avaliada e modificada em seu próprio momento.
+**P2.4** Trocar uma tecnologia não precisa significar abandonar a forma de pensar; mudar a forma de pensar não precisa exigir trocar toda tecnologia que ainda a satisfaz.
 
-**P2.5** Trocar uma tecnologia não precisa significar abandonar a forma de pensar; mudar a forma de pensar não precisa exigir trocar toda tecnologia que ainda a satisfaz.
+**P2.5** Quando decisões locais permanecem livres dentro de princípios e contratos comuns, a autonomia entre equipes e domínios pode crescer sem necessariamente fragmentar a forma de trabalhar da organização.
 
-**P2.6** Quando decisões locais permanecem livres dentro de princípios e contratos comuns, a autonomia entre equipes e domínios pode crescer sem necessariamente fragmentar a forma de trabalhar da organização.
+**P2.6** Quando decisões de diferentes domínios são expressas sobre uma base comum, divergências entre elas tendem a se tornar mais visíveis, comparáveis e discutíveis.
 
-**P2.7** Quando decisões de diferentes domínios são expressas sobre uma base comum, divergências entre elas tendem a se tornar mais visíveis, comparáveis e discutíveis.
+**P2.7** Quando diferentes capacidades compartilham uma base operacional comum, combiná-las tende a exigir menos tradução entre linguagens, práticas e critérios locais.
 
-**P2.8** Quando diferentes capacidades compartilham uma base operacional comum, combiná-las tende a exigir menos tradução entre linguagens, práticas e critérios locais.
+**P2.8** Quando a identidade operacional reside em princípios e contratos compartilhados, uma mudança local de tecnologia pode permanecer local sem obrigar a organização inteira a redefinir como trabalha.
 
-**P2.9** Quando a identidade operacional reside em princípios e contratos compartilhados, uma mudança local de tecnologia pode permanecer local sem obrigar a organização inteira a redefinir como trabalha.
+**P2.9** Quando escolhas locais de diferentes domínios são orientadas por critérios transversais comuns e seus fundamentos permanecem visíveis, a diversidade tecnológica pode expressar uma mesma identidade operacional, em vez de fragmentá-la.
 
-**P2.10** Quando escolhas locais de diferentes domínios são orientadas por critérios transversais comuns e seus fundamentos permanecem visíveis, a diversidade tecnológica pode expressar uma mesma identidade operacional, em vez de fragmentá-la.
+**P2.10** Quando escolhas de engenharia convergem para uma superfície intencional comum, a identidade técnica da organização tende a ser mais legível do que quando precisa ser inferida da soma das ferramentas que utiliza.
 
-**P2.11** Quando escolhas de engenharia convergem para uma superfície intencional comum, a identidade técnica da organização tende a ser mais legível do que quando precisa ser inferida da soma das ferramentas que utiliza.
+**P2.11** Quando múltiplas decisões de engenharia são expressas por uma mesma superfície intencional, a organização pode apresentar uma linha de pensamento reconhecível sem impor uma única linha de materialização.
 
-**P2.12** Quando múltiplas decisões de engenharia são expressas por uma mesma superfície intencional, a organização pode apresentar uma linha de pensamento reconhecível sem impor uma única linha de materialização.
+**P2.12** A unidade operacional não precisa implicar adesão tecnológica monolítica quando a superfície comum expressa intenção e contratos, e não um pacote obrigatório de implementações.
 
-**P2.13** A unidade operacional não precisa implicar adesão tecnológica monolítica quando a superfície comum expressa intenção e contratos, e não um pacote obrigatório de implementações.
-
-**P2.14** Coerência, nesse sentido, não precisa significar uniformidade. Ela pode permitir diversidade local sem transformar cada domínio, ferramenta ou equipe em uma ilha operacional sem relação perceptível com o restante da organização.
+**P2.13** Coerência, nesse sentido, não precisa significar uniformidade. Ela pode permitir diversidade local sem transformar cada domínio, ferramenta ou equipe em uma ilha operacional sem relação perceptível com o restante da organização.
 
 ## 3. Princípio do Foco no Caminho Cognitivo
 
