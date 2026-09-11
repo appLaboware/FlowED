@@ -32,7 +32,7 @@
 
 **P2.1** Uma organização não precisa prescrever tecnologias para preservar sua forma de trabalho. Sua identidade operacional pode residir mais nos princípios e contratos e menos nas tecnologias que os materializam.
 
-**P2.2** Uma superfície intencional comum pode unificar a expressão da forma de pensar da organização sem unificar as ferramentas que a realizam.
+**P2.2** Uma organização pode expressar uma forma comum de pensar sem impor uma forma comum de realizar.
 
 **P2.3** Quando identidade intencional e materialização permanecem separadas, cada uma pode ser apresentada, avaliada e modificada em seu próprio momento.
 
