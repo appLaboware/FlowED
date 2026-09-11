@@ -186,6 +186,50 @@ The second audit is a valuable list of prior-art candidates, not a reliable fina
 
 **OPEN QUESTION:** whether PO should initiate the claim-level positioning audit now or allow MAN-001 to return to P2.3 while the audit is delegated elsewhere.
 
+## 2026-09-11 — Third external audit received; claim-matrix method improved, but claims still drift from canonical manifesto
+
+**SOURCE:** `HUMAN_CHAT` + attached consultancy response + `SELF_ANALYSIS` + external-source verification
+
+The third consultancy response adopts the requested claim-level matrix and explicitly accepts the rule that a nearby antecedent is not proof of identity. This is a meaningful methodological improvement.
+
+However, the audit still cannot be treated as validated because several of its `P1/P2/P3` theses are stronger or different from the current manifesto:
+
+- P1 is recast as intent being universally primary/invariant/authoritative and code as disposable; the current manifesto only claims separation, relative durability and reduced adaptation cost;
+- P2 is recast as runtime policy/safety-gate governance against stochastic agents; the current manifesto is about organizational operational coherence residing more in principles/contracts than technologies;
+- P3 is recast as cognitive history being the normative source of truth and all projections being non-authoritative; the manifesto intentionally distinguishes epistemic primacy from normative authority and allows frozen consolidated projections to be authoritative for compliance.
+
+Additional verification reinforced that:
+
+- Simonyi 1995 is a strong antecedent for durable meaning independent of notation/implementation and therefore pressures any P1 novelty claim based only on that idea;
+- OMG MDA 2000/2001 is a strong antecedent for stable platform-independent models and regenerated platform-specific implementations; NIST explicitly described a shift to the model being normative and taking precedence over other artifacts;
+- GitHub Spec Kit/SDD is a major omitted contemporary antecedent: its own documentation says specifications become the primary/source-of-truth artifact, code serves specifications, organizational principles constrain generation, multiple implementations can be explored, and production feedback can refine specs;
+- Ports & Adapters should not be caricatured as inherently static; Cockburn's original description explicitly allows multiple adapters per port, though the pattern does not itself define dynamic service discovery;
+- lenses/view-update are genuine formal antecedents, but claiming FlowED `solves` bidirectional consistency merely because projections are disposable is unjustified, especially if projections can receive feedback or some projections are normatively authoritative.
+
+**CURRENT POSITIONING:**
+
+- novelty of isolated ingredients: low;
+- relevance/timing: high;
+- novelty of the exact composition/hierarchy: unresolved;
+- main methodological risk: inventing a stronger version of FlowED in order to manufacture a residual after the fact;
+- candidate residual worth auditing: joint reweighting of durable intent language, contracts as organizational coherence locus, and cognitive rationale as epistemic source with authority separated from epistemic primacy.
+
+**ACTOR RESPONSE / ACTION:**
+
+- issued a consolidated MAN-001 opinion to PO in `DEV/ia-sessions/260911-025000-manifesto/OUTBOX/004-third-prior-art-audit-final-man-opinion.md`;
+- explicitly rejected the consultancy's proposed final identity `epistemological governance for agent-assisted development / code as side effect / LLM containment` as the canonical current FlowED thesis;
+- recommended a future audit that starts from canonical manifesto claims rather than from reconstructed/strengthened claims;
+- did not modify P2.3 or the manifesto.
+
+**FILES / COMMITS:**
+
+- final MAN opinion to PO — commit `521bad191287219fa6eb51c9525234351bdf0b69`;
+- this session resume — current commit.
+
+**DIVERGENCE:** none with PO protocol; this remains a human-initiated exploratory detour and has now been delivered upstream as a consolidated opinion.
+
+**OPEN QUESTION:** return to ordinary P2.3 work unless human/PO explicitly requests the broader claim-by-claim prior-art audit to continue here.
+
 ## Recording rule going forward
 
 For each meaningful human-chat or PO-INBOX interaction, append a new chronological entry containing:
