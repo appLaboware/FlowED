@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "unit_id": "P2.3",
+  "adapter": "markdown-json-v1",
+  "required_invariants": [
+    "state",
+    "base",
+    "causality",
+    "limits"
+  ],
+  "projections": {
+    "REDUCT-MAX": {
+      "axis": "editorial-density",
+      "consumer": "leitor técnico; revisão de candidata",
+      "render": [
+        "reduct"
+      ],
+      "retain": [
+        "state",
+        "base",
+        "causality",
+        "limits",
+        "reduct"
+      ],
+      "allowed_omissions": [
+        "expand",
+        "reduction-1",
+        "reduction-2",
+        "meaning",
+        "shift",
+        "recognition",
+        "intent",
+        "impact",
+        "argument-path"
+      ]
+    },
+    "BASE": {
+      "axis": "editorial-density",
+      "consumer": "leitor técnico; revisão de candidata",
+      "render": [
+        "base"
+      ],
+      "retain": [
+        "state",
+        "base",
+        "causality",
+        "limits"
+      ],
+      "allowed_omissions": [
+        "expand",
+        "reduction-1",
+        "reduction-2",
+        "reduct",
+        "meaning",
+        "shift",
+        "recognition",
+        "intent",
+        "impact",
+        "argument-path"
+      ]
+    },
+    "DEFESA": {
+      "axis": "argumentation",
+      "consumer": "leitor técnico; revisão de candidata",
+      "render": [
+        "meaning",
+        "shift",
+        "causality",
+        "recognition",
+        "intent",
+        "impact",
+        "limits",
+        "argument-path"
+      ],
+      "retain": [
+        "state",
+        "base",
+        "causality",
+        "limits",
+        "meaning",
+        "shift",
+        "recognition",
+        "intent",
+        "impact",
+        "argument-path"
+      ],
+      "allowed_omissions": [
+        "expand",
+        "reduction-1",
+        "reduction-2",
+        "reduct"
+      ]
+    }
+  }
+}
