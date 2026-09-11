@@ -119,8 +119,40 @@ Cada proposição poderá ter até três níveis principais de leitura, com apro
 
 A ordem acima é adequada à intenção reflexiva do manifesto, mas não deve ser generalizada automaticamente para outros tipos de artefato.
 
+### Linhagem existente: Init Approach / InitProj
+
+Esta tarefa **não parte do zero**. Há mecanismos já materializados de forma distribuída no Init Approach, hoje visíveis no InitProj, que devem ser investigados como antecedentes e matéria-prima, e não recriados em paralelo.
+
+A investigação inicial encontrou, entre outros:
+
+- um catálogo de templates Markdown distintos por intenção e tipo de informação, incluindo conceito, roadmap, regras, entendimento, aprovação, entrega, blocker, decisão e fluxos visuais;
+- um template de decisão que separa contexto, decisão, alternativas consideradas, consequências e autoridade, preservando parte do racional da conclusão;
+- um template conceitual que separa o que é, por que existe, arquitetura conceitual, princípios, relações e referências;
+- representações visuais resumidas de fluxo explicitamente tratadas como projeções de referência, e não como fonte normativa;
+- especialização por intenção, inclusive documentação técnica, científica e programação.
+
+O trabalho de B3 deverá mapear esses mecanismos e outros equivalentes no Init Approach, identificar o que já resolve partes do problema, o que está duplicado e o que falta para formar uma arquitetura coerente de projeção cognitiva por tipo de informação.
+
+### Domínio próprio e destino no ISO29110-Lite
+
+O resultado não deve ser tratado apenas como recurso editorial do manifesto nem como detalhe interno do FlowED. Há aqui um **domínio próprio**: definir e produzir layouts Markdown adequados ao tipo de informação, à intenção comunicativa, à autoridade do conteúdo e à profundidade cognitiva requerida.
+
+A direção arquitetural a estudar é consolidar isso futuramente como uma **tool do ISO29110-Lite**, em vez de espalhar novas variações de templates por cada projeto.
+
+Essa direção é coerente com a própria base atual do ISO29110-Lite, que já atribui grande peso à padronização documental, diferencia tipos de documentos e prevê ferramenta para criação e gestão de artefatos. A nova tool deverá ampliar esse princípio: não apenas padronizar documentos, mas escolher e materializar a projeção documental apropriada ao **tipo de informação e à intenção**.
+
+A relação pretendida deve preservar as responsabilidades:
+
+- **FlowED** fornece os princípios sobre intenção, cognição, contratos e materialização;
+- **EDT/CCP** deverão incorporar os contratos e requisitos de tratamento/projeção da cognição;
+- **ISO29110-Lite** deverá receber a capacidade operacional como tool de documentação estruturada e progressiva;
+- **Init Approach / InitProj** deve ser tratado como fonte de mecanismos já experimentados, a consolidar, refatorar ou substituir conforme a análise.
+
+A tool futura não deve nascer como simples coleção de templates. Deve possuir contrato próprio para classificar a informação e selecionar/gerar uma materialização Markdown compatível com sua intenção, autoridade, audiência e profundidade cognitiva.
+
 ### Trabalho previsto
 
+- inventariar primeiro as soluções já existentes no Init Approach / InitProj antes de desenhar novos formatos;
 - estudar padrões de progressive disclosure, documentação em camadas, rationale/design rationale e proveniência de decisões;
 - estudar formas de representar cognição resumida sem confundi-la com simples justificativa posterior;
 - definir como a intenção comunicativa do artefato determina ordem, destaque e profundidade cognitiva;
@@ -134,7 +166,8 @@ A ordem acima é adequada à intenção reflexiva do manifesto, mas não deve se
 - preservar links bidirecionais entre a proposição e seu racional/caminho quando isso favorecer retomada e evolução;
 - permitir aprofundamento progressivo conforme o papel e a necessidade do leitor, do simples cumprimento à auditoria, crítica e evolução;
 - aproveitar, quando útil, as discussões desta revisão frase por frase como matéria-prima do racional e da trilha cognitiva, sem tratar conversa bruta como conhecimento automaticamente durável;
-- transformar os resultados desta tarefa em requisitos ou padrões compatíveis com EDT e CCP.
+- transformar os resultados desta tarefa em requisitos ou padrões compatíveis com EDT e CCP;
+- ao estabilizar o domínio, especificar a migração/consolidação dessa capacidade como tool do ISO29110-Lite, evitando duplicação entre projetos.
 
 ### Critério de sucesso
 
@@ -144,6 +177,8 @@ A arquitetura deve conseguir afirmar simultaneamente duas coisas sem contradiç�
 2. **o leitor não precisa consumir toda essa base para cada finalidade**.
 
 Quem quiser apenas executar deve encontrar uma conclusão clara. Quem precisar compreendê-la deve encontrar uma projeção cognitiva suficiente. Quem quiser criticá-la ou fazê-la evoluir deve conseguir aprofundar-se progressivamente até a cognição e as evidências que a sustentam.
+
+Além disso, o resultado deve demonstrar continuidade com os mecanismos já existentes no Init Approach / InitProj e produzir uma especificação suficientemente independente para posteriormente existir como tool própria do ISO29110-Lite.
 
 ## Ordem sugerida
 
