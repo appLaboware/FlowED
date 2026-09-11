@@ -20,7 +20,7 @@
 
 **P1.5** Uma linguagem comum facilita a comunicação entre diferentes níveis, papéis e especialidades. Como a intenção tende a variar menos que suas materializações, uma linguagem orientada à intenção se apresenta como uma opção especialmente adequada para esse fim.
 
-**P1.6** Quando a primeira linguagem operacional aprendida permanece válida ao longo da evolução profissional, novos conhecimentos tendem a se acumular por extensão e refinamento, reduzindo a necessidade de substituir a base e favorecendo seu aprofundamento.
+**P1.6** Cada troca de linguagem induz adaptação. Quando uma mesma linguagem permanece válida, o esforço exigido pela adaptação fica disponível para aprofundamento.
 
 **P1.7** A intenção tende a ser mais durável que a tecnologia escolhida para realizá-la. Quando isso ocorre, concentrar a volatilidade tecnológica na fronteira de materialização pode reduzir quanto dessa mudança precisa atingir quem continua perseguindo a mesma intenção.
 
