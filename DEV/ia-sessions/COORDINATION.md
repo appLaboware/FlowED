@@ -4,15 +4,27 @@
 **Escopo:** coordenação entre o chat original (PO), a branch paralela de revisão do manifesto e o worker de materialização do CCP.
 **Autoridade filosófica final:** humano.
 
-## 1. Atores
+## 1. Atores e instâncias de sessão
 
-| ID | Papel | Missão principal | Prefixo obrigatório de commit |
+O **Actor ID** representa o cargo/continuidade funcional. O **Session Instance ID** identifica a materialização daquele ator em uma sessão específica de ChatGPT.
+
+Exemplo:
+
+```text
+Actor ID:            PO-001
+Session Instance ID: PO-001-01
+sucessora:           PO-001-02
+```
+
+| Actor ID | Papel | Missão principal | Prefixo de commit enquanto a sessão atual estiver ativa |
 |---|---|---|---|
-| `PO-001` | Chat original / PO | coordenar as duas frentes, observar convergências, orientar CCP/materialização, criticar decisões e integrar aprendizados | `[PO-001]` |
-| `MAN-001` | Branch paralela derivada do chat original | continuar a revisão do Manifesto FlowED e operar o protocolo editorial de projeções cognitivas | `[MAN-001]` |
-| `WRK-001` | Worker CCP/POC | construir a POC vertical do materializador CCP sem redefinir a filosofia nem revisar o manifesto | `[WRK-001]` |
+| `PO-001` | PO / coordenador | coordenar as duas frentes, observar convergências, orientar CCP/materialização, criticar decisões e integrar aprendizados | usar o Session Instance ID, ex. `[PO-001-01]` |
+| `MAN-001` | revisão do manifesto | continuar a revisão do Manifesto FlowED e operar o protocolo editorial de projeções cognitivas | migrar para Session Instance ID quando houver handoff, ex. `[MAN-001-01]` |
+| `WRK-001` | Worker CCP/POC | construir a POC vertical do materializador CCP sem redefinir a filosofia nem revisar o manifesto | migrar para Session Instance ID quando houver handoff, ex. `[WRK-001-01]` |
 
-O fato de todos usarem a mesma conexão GitHub torna o autor Git insuficiente para distinguir agentes. **O prefixo no assunto do commit é obrigatório.**
+Commits históricos que usam apenas `[PO-001]`, `[MAN-001]` ou `[WRK-001]` permanecem válidos. A granularidade por sessão começa com o protocolo de handoff.
+
+O fato de todos usarem a mesma conexão GitHub torna o autor Git insuficiente para distinguir agentes e sessões. **O prefixo no assunto do commit é obrigatório.**
 
 ## 2. Canais de comunicação
 
@@ -44,7 +56,7 @@ Cada ator, antes de iniciar um ciclo:
 5. executa sua missão;
 6. atualiza seu `session_resume.md` quando houver interação ou decisão relevante;
 7. registra entrega, blocker, divergência ou estado útil no repositório;
-8. faz commit com seu prefixo de ator.
+8. faz commit com seu prefixo de sessão vigente.
 
 Mensagens entre atores são arquivos. Não sobrescrever mensagens anteriores de `INBOX/` ou `OUTBOX/`.
 
@@ -134,32 +146,52 @@ Reutilização não significa autoridade automática: cada uso deve verificar se
 
 - `PO-001`: `DEV/ia-sessions/COORDINATION.md`, sua sessão, pool de referências e documentos de coordenação/arquitetura CCP que não pertençam à revisão do manifesto.
 - `MAN-001`: arquivos do manifesto que já vinha revisando e sua própria sessão.
-- `WRK-001`: sua sessão e a futura árvore da POC/materializador.
+- `WRK-001`: sua sessão e a árvore da POC/materializador.
 
 Antes de editar arquivo compartilhado fora dessas fronteiras, consultar o HEAD atual e registrar a necessidade quando houver risco de colisão.
 
-## 10. Tags de commit
+## 10. Handoff entre sessões do mesmo ator
 
-Formato mínimo:
+A continuidade entre chats do mesmo ator segue:
+
+`DEV/ia-sessions/SESSION-HANDOFF-PROTOCOL.md`
+
+Regra central:
 
 ```text
-[ATOR] tipo(escopo): resumo
+Actor ID permanece
+Session Instance ID muda
+```
+
+A sessão sucessora deve reconstruir o estado pelo repositório e passar por teste cognitivo antes de assumir integralmente o papel. Durante a sobreposição, a predecessora é avaliadora e a sucessora é candidata.
+
+## 11. Tags de commit
+
+Formato mínimo novo:
+
+```text
+[SESSION-INSTANCE-ID] tipo(escopo): resumo
 ```
 
 Exemplos:
 
 ```text
-[PO-001] chore(coordination): refine multi-agent protocol
-[MAN-001] docs(manifesto): refine proposition density protocol
-[WRK-001] feat(ccp-poc): add source-to-projection vertical slice
+[PO-001-01] chore(handoff): bootstrap PO successor
+[PO-001-02] chore(handoff): answer cognitive health test
+[MAN-001-01] docs(manifesto): refine proposition density protocol
+[WRK-001-01] feat(ccp-poc): add source-to-projection vertical slice
 ```
 
-## 11. Estado histórico conhecido
+Até cada ator realizar seu primeiro handoff formal, seus prefixos históricos simplificados continuam reconhecidos.
+
+## 12. Estado histórico conhecido
 
 O commit `1a9750491b7db1473190db94027c543e5d815e5e` foi produzido pela frente de revisão do manifesto antes da adoção das tags de ator e é tratado como trabalho de `MAN-001`.
 
 O commit `40990f239712569addf97c5d4f366e564dbe1c71` contém a proposta de `MAN-001` para o fluxo `BASELINE / EXPAND-MAX / REDUCT-MAX / DEFESA` e também antecede sua efetiva adoção do prefixo `[MAN-001]`.
 
-## 12. Fonte de regras
+O commit `73ad98c53bcec3fa4eccb4b0ac636964f512d807` é a primeira entrega vertical observada de `WRK-001`, com a POC em `POC/ccp-materializer/`.
+
+## 13. Fonte de regras
 
 Este protocolo adapta o padrão de sessões do InitProj — sessões rastreáveis, `CONTEXT`, `INBOX`, `OUTBOX`, resumos e handoff por arquivo — ao experimento atual do FlowED. Ele é operacional e deve evoluir com a experiência real de uso no celular e com as descobertas do CCP.
