@@ -73,7 +73,7 @@ Changes made to the working model:
 - `REDUCT-MAX ← BASELINE → EXPAND-MAX` is explicitly the density axis;
 - cognitive monotonicity is treated primarily as a property of that density axis;
 - semantic/epistemic invariance governs the whole projection family, including `DEFESA`;
-- `DEFESA` is explicitly a projection argumentativa do CCP, not the whole CCP;
+- `DEFESA` is explicitly a projeção argumentativa do CCP, not the whole CCP;
 - `Como chegamos aqui` is explicitly future/dynamic and must not be manually reconstructed now;
 - added the internal micro-CCP scaffold `observação → tensão → deslocamento → causalidade → limites` before BASELINE when useful;
 - restricted the expertise/density relation to a local manifesto heuristic and documented task, risk, authority, role and responsibility as possible density drivers in other contexts;
@@ -86,6 +86,43 @@ Changes made to the working model:
 - this session resume — current commit.
 
 **OPEN QUESTIONS:** none blocking ordinary manifesto review. The P2.3 wording/projection work remains the current editorial task unless a new human or PO input changes priority.
+
+## 2026-09-11 — External intent/spec-driven prior art may change FlowED positioning
+
+**SOURCE:** `HUMAN_CHAT` + `SELF_ANALYSIS` + external-source verification
+
+The human supplied a parallel consultancy claiming that 2024–2026 science and market work strongly validates FlowED/Flow Edge and explicitly requested verification of the cited links, assessment of FlowED's relevance, and notification to the PO because the findings may materially affect the project.
+
+The verification produced a mixed but strategically important result:
+
+- Microsoft Research's 2025 `Intent-based System Design and Operation` is real and directly convergent with intent as a high-level abstraction that can drive design, implementation, operation and evolution;
+- intent-driven systems clearly predate 2025, including a 2020 systematic literature review and RFC 9315 (2022), so general novelty claims around intent-driven concepts would be indefensible;
+- Sean Grove/OpenAI's 2025 `The New Code` and GitHub Spec Kit/Spec-Driven Development provide especially close recent convergence around rigorous/versioned specifications as primary/durable source and code as downstream materialization;
+- AUTOSAR Adaptive genuinely supports service-oriented runtime discovery, but the consultancy overstates it as a general intent-driven replacement of static interfaces;
+- the cited polyhedral runtime-mapping paper is from 2013, not 2024, and `polyhedral` refers to a compiler/computation model rather than an architectural successor to Ports & Adapters; using it that way is a category error;
+- the cited Springer result of up to 50% improvement is specific to dynamic load balancing in an adaptive-mesh HPC benchmark, not proof that adaptive software architectures generally outperform static ones;
+- the `TDD → Policy Verification` claim is present in a DEV Community essay and should not be represented as established scientific consensus;
+- Prathap's 2026 LinkedIn whitepaper is useful as evidence of conceptual/market convergence but is not peer-reviewed scientific validation.
+
+**CURRENT INTERPRETATION:** FlowED's timely relevance appears stronger, while the defensible novelty of several surface mechanisms becomes narrower. The project should position itself around its residual composition/reweighting rather than invention of intent, specification-first development, contracts, policies, runtime adaptation or rationale capture in isolation.
+
+Potential residual requiring dedicated prior-art audit includes: intention as stable operational language across materializers; contracts as primary locus of organizational operational coherence; cognitive rationale as epistemic source with authoritative projections; audience/consumer adapters over one structured cognitive unit with invariance; replaceability as a philosophical success criterion; and the traceable intent→contract→materialization→evidence→revision lifecycle.
+
+**ACTOR RESPONSE / ACTION:**
+
+- sent a detailed impact report to PO through `DEV/ia-sessions/260911-025000-manifesto/OUTBOX/002-prior-art-intent-driven-impact.md`;
+- recommended a formal prior-art/positioning audit before freezing novelty claims;
+- recommended that PO curate confirmed sources into the shared reference pool rather than MAN-001 editing the PO-owned pool directly;
+- did not alter P2.3 or consolidated manifesto wording on the basis of this research alone.
+
+**FILES / COMMITS:**
+
+- OUTBOX impact report — commit `9a207e94067e7f048707af4fc708d68b57a39294`;
+- this session resume — current commit.
+
+**DIVERGENCE:** none with existing PO guidance. The new information increases the urgency of prior-art positioning and may later require changes to manifesto DEFESA/novelty framing, but it does not invalidate the current instruction to continue ordinary manifesto review.
+
+**OPEN QUESTION:** PO should decide whether to initiate a cross-cutting prior-art/positioning audit immediately and whether WRK-001 should compare the CCP/FlowED materializer against GitHub Spec Kit and related specification-driven tools.
 
 ## Recording rule going forward
 
