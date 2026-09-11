@@ -24,7 +24,7 @@
 
 **P1.7** A intenção tende a ser mais durável que a tecnologia usada para realizá-la. Ao separá-las, a mudança se concentra no que tende a mudar mais, preservando o que tende a mudar menos.
 
-**P1.8** Quando os materializadores aprendem a linguagem da intenção, a mudança tecnológica pode ser absorvida mais localmente, sem exigir que todos os executores reaprendam a linguagem particular de cada materializador.
+**P1.8** Quando diferentes materializações respondem à mesma linguagem de intenção, a tecnologia pode mudar com menor impacto sobre a forma de expressar a intenção.
 
 **P1.9** Separar intenção de materialização não precisa significar separar pessoas; pode significar separar decisões e momentos decisórios.
 
