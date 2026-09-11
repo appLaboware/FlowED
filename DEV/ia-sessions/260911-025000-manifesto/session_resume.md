@@ -145,6 +145,47 @@ The human also clarified an important evaluation rule: non-academic material suc
 
 **OPEN QUESTION:** after receiving the consultancy's clarifications, issue a final MAN-001 opinion distinguishing scientific support, market/prior-art convergence, errors/overclaims, and implications for FlowED novelty/relevance before any further conceptual change.
 
+## 2026-09-11 — Second external audit received; useful but itself contains errors and overreach
+
+**SOURCE:** `HUMAN_CHAT` + `SELF_ANALYSIS` + external-source verification
+
+The human supplied a second consultancy document framed as a forensic correction of the first. It correctly retracts several inflated or invalid claims, but verification shows that it cannot be accepted as a final audit.
+
+**Critical factual error in the second audit:**
+
+- it states that Microsoft Research's `Intent-based System Design and Operation` is nonexistent/alucinated;
+- this is false: arXiv `2502.05984` and the Microsoft Research publication page both exist; the paper explicitly proposes intent as a high-level abstraction for functional/operational requirements used to automate design, implementation, operation and evolution of cloud systems.
+
+**Other corrections/qualifications:**
+
+- RFC 9315 is an IRTF informational RFC, not an Internet Standards Track standard;
+- the second audit is correct in rejecting the `polyhedral model → Ports & Adapters` association;
+- it is also correct to reject generalization of a specific HPC performance gain and to separate AUTOSAR service discovery from intent-driven architecture;
+- OMG MDA (2000/2001) and Simonyi's Intentional Programming (Microsoft Research, 1995) are stronger/older antecedents for several PR-M01 ideas than the audit recognizes;
+- Ports & Adapters, MAPE-K, MDE/MDA and bidirectional transformations/lenses are relevant antecedents, but the audit repeatedly upgrades analogy into equivalence and therefore overstates the conclusion `sem ineditismo` for broader FlowED compositions;
+- the closing characterization of FlowED as a `neuro-symbolic deterministic-stochastic orchestrator`, a synthesis of `MAPE-K + DDD`, with `DDD imaculado`, audio-channel tolerance, FinOps routing and disposable source code is not derivable from the current FlowED manifesto and appears to mix concepts from elsewhere.
+
+**CURRENT INTERPRETATION:**
+
+The second audit is a valuable list of prior-art candidates, not a reliable final verdict. It narrows some novelty claims but does not establish the proposed final identity of FlowED. The correct next artifact is a claim-by-claim positioning matrix:
+
+`FlowED claim → nearest antecedent → true equivalence / analogy / difference → residual → evidence strength`
+
+**ACTOR RESPONSE / ACTION:**
+
+- sent PO an updated critique via `DEV/ia-sessions/260911-025000-manifesto/OUTBOX/003-second-prior-art-audit-review.md`;
+- did not alter the manifesto or P2.3;
+- preserved this as a human-initiated exploratory detour, not PO-requested ordinary work.
+
+**FILES / COMMITS:**
+
+- OUTBOX review — commit `aadb2d1755bf173264c1e40500ffe21b3b0cd9de`;
+- this session resume — current commit.
+
+**DIVERGENCE:** none with PO rules; the detour remains directly authorized by the human and is being surfaced to PO for review.
+
+**OPEN QUESTION:** whether PO should initiate the claim-level positioning audit now or allow MAN-001 to return to P2.3 while the audit is delegated elsewhere.
+
 ## Recording rule going forward
 
 For each meaningful human-chat or PO-INBOX interaction, append a new chronological entry containing:
