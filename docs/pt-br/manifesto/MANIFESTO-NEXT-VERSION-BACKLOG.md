@@ -40,6 +40,36 @@ A formulação pode ganhar força quando não entrega toda a conclusão de manei
 
 A leitura deve recompensar a compreensão: o leitor percebe algo que parece ter concluído junto com o texto, em vez de apenas receber uma explicação pronta.
 
+## B3 — Arquitetura documental em camadas
+
+Projetar o manifesto de modo que a formulação principal permaneça curta, limpa e imediatamente legível, enquanto explicação, defesa e caminho cognitivo fiquem disponíveis por aprofundamento progressivo, sem competir visualmente com a proposição.
+
+### Hipótese de estrutura
+
+Cada proposição poderá ter até três níveis de leitura:
+
+1. **Proposição** — a frase principal do manifesto, suficiente para leitura contínua e para representar a ideia em sua forma mais concentrada.
+2. **Deixe-me explicar melhor** — camada opcional de defesa e esclarecimento: limites, distinções, exemplos, objeções previsíveis e razões pelas quais a formulação foi escolhida.
+3. **Como chegamos aqui** — trilha cognitiva/proveniência: observações iniciais, alternativas consideradas, críticas, mudanças de entendimento e percurso que levou à conclusão atual.
+
+A camada cognitiva deve vir depois da proposição e da explicação, preservando a separação entre a conclusão que o leitor precisa reconhecer e o percurso que pode consultar para compreendê-la, criticá-la ou fazê-la evoluir.
+
+### Trabalho previsto
+
+- estudar padrões de progressive disclosure, documentação em camadas, rationale/design rationale e proveniência de decisões;
+- definir visualmente e semanticamente a diferença entre texto do manifesto, explicação editorial e histórico cognitivo;
+- impedir que rationale ou histórico sejam confundidos com parte normativa/autoritativa da proposição;
+- decidir se as camadas ficam no mesmo documento, em documentos vinculados ou em uma estrutura navegável própria;
+- avaliar nomes finais para os acessos, usando “Deixe-me explicar melhor” e “Como chegamos aqui” apenas como rótulos provisórios;
+- preservar links bidirecionais entre a proposição e seu racional/caminho quando isso favorecer retomada e evolução;
+- aproveitar, quando útil, as discussões desta revisão frase por frase como matéria-prima do racional e da trilha cognitiva, sem tratar conversa bruta como conhecimento automaticamente durável.
+
+### Critério de sucesso
+
+Quem quiser apenas ler o manifesto encontra uma superfície curta e coerente. Quem quiser compreender uma proposição encontra sua defesa. Quem quiser criticá-la, retomá-la ou fazê-la evoluir encontra o caminho cognitivo que a produziu — sem que uma camada obscureça a função da outra.
+
 ## Ordem sugerida
 
 Executar **B1 antes de B2**. A busca por efeito epifânico deve operar dentro de uma voz já estabilizada; caso contrário, otimizações locais podem aumentar ainda mais a fragmentação estilística.
+
+Depois, executar **B3** sobre o texto já estabilizado em voz e potencial epifânico, para que a arquitetura documental preserve a concisão da superfície principal e ofereça aprofundamento sem obrigar nova reescrita conceitual.
