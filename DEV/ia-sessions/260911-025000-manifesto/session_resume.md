@@ -241,3 +241,37 @@ For each meaningful human-chat or PO-INBOX interaction, append a new chronologic
 - divergence from prior guidance, if any;
 - affected files/commit;
 - open questions.
+
+## 2026-09-11 — Human proposes an explicit epistemic starting point before FlowED's own propositions
+
+**SOURCE:** `HUMAN_CHAT` + `SELF_ANALYSIS`
+
+The human proposed using the prior-art surprise as a preventive architectural improvement: before presenting what FlowED proposes, the consolidated manifesto should explicitly show **where it starts from** — the relevant science, standards, practices and mechanisms already accepted, why they are accepted, their limits, and therefore which knowledge is inherited rather than claimed as FlowED's contribution.
+
+The human suggested an initial/original CCP that reconstructs the accepted path to the point from which FlowED begins, followed by the manifesto's own delta. MAN-001 recommends provisional terminology `CCP DE PARTIDA` or `CCP DE FUNDAÇÃO EPISTÊMICA`, avoiding `original` because it can be confused with novelty claims.
+
+**ACTOR INTERPRETATION / REFINEMENTS:**
+
+- agree with the architecture and consider it strongly aligned with existing A0.2;
+- replace any claim of an absolute `frontier of science` with a **known, audited, versioned frontier** with explicit method/date/coverage;
+- replace literal reconstruction `from zero` with the relevant lineage for each claim, so the scope remains auditable and finite;
+- treat later prior-art discoveries as updates to the starting point followed by recalculation of FlowED's residual/delta rather than as embarrassments to be defended away;
+- keep the main manifesto concise by projecting a short `De onde partimos` section from a deeper CCP artifact;
+- reserve formal integration with CCP/EDT until those documents exist.
+
+MAN-001 also checked review methodology and found the proposal compatible with systematic-review practice in Software Engineering and especially with multivocal literature review when formal literature must be combined with grey literature/state of practice. Candidate methodological references for PO curation: Kitchenham & Charters (2007) and Garousi et al. (2019).
+
+**ACTOR RESPONSE / ACTION:**
+
+- sent the proposal to PO via `DEV/ia-sessions/260911-025000-manifesto/OUTBOX/005-human-proposal-epistemic-starting-point.md`;
+- recommended approval only as a candidate epistemic architecture, without changing the manifesto yet;
+- did not edit P2.3 or the manifesto.
+
+**FILES / COMMITS:**
+
+- proposal to PO — commit `d956926c76e1db7088574d3c339af04a74e30d0a`;
+- this session resume — current commit.
+
+**DIVERGENCE:** none with PO protocol. This remains direct human-authorized work outside the ordinary P2.3 task and is explicitly surfaced to PO.
+
+**OPEN QUESTION:** PO decision on naming, timing of the claim-level audit, review method/coverage, and whether the future consolidated manifesto includes a short `De onde partimos` projection linked to CCP/EDT.
