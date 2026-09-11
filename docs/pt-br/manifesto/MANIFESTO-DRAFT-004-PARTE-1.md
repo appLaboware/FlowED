@@ -14,17 +14,19 @@
 
 **P1.2** Quando o conhecimento conceitual permanece independente da ferramenta que o materializa, a evolução tecnológica tende a exigir menos readaptação.
 
-**P1.3** Quando intenção e materialização são tratadas como competências distintas, cada uma pode ser aprofundada segundo suas próprias demandas de decisão e conhecimento técnico, e suas excelências podem ser combinadas sem pressupor que coexistam na mesma pessoa ou no mesmo momento.
+**P1.3** Quando intenção e materialização são tratadas como competências distintas, cada uma pode ser aprofundada segundo suas próprias demandas.
 
-**P1.4** Quando iniciantes e especialistas compartilham a mesma linguagem de intenção, ensino e aprendizagem podem se tornar mais cumulativos: cresce a profundidade, o vocabulário e a precisão com menor necessidade de substituir a linguagem operacional.
+**P1.4** A separação entre intenção e materialização permite combinar excelências distintas sem exigir que ambas coexistam na mesma pessoa ou no mesmo momento.
 
-**P1.5** Quando a primeira linguagem operacional aprendida permanece válida ao longo da evolução profissional, novos conhecimentos tendem a se acumular por extensão e refinamento, reduzindo a necessidade de substituir a base e favorecendo seu aprofundamento.
+**P1.5** Quando iniciantes e especialistas compartilham a mesma linguagem de intenção, ensino e aprendizagem podem se tornar mais cumulativos: cresce a profundidade, o vocabulário e a precisão com menor necessidade de substituir a linguagem operacional.
 
-**P1.6** A intenção tende a ser mais durável que a tecnologia escolhida para realizá-la. Quando isso ocorre, concentrar a volatilidade tecnológica na fronteira de materialização pode reduzir quanto dessa mudança precisa atingir quem continua perseguindo a mesma intenção.
+**P1.6** Quando a primeira linguagem operacional aprendida permanece válida ao longo da evolução profissional, novos conhecimentos tendem a se acumular por extensão e refinamento, reduzindo a necessidade de substituir a base e favorecendo seu aprofundamento.
 
-**P1.7** Quando os materializadores aprendem a linguagem da intenção, a mudança tecnológica pode ser absorvida mais localmente, sem exigir que todos os executores reaprendam a linguagem particular de cada materializador.
+**P1.7** A intenção tende a ser mais durável que a tecnologia escolhida para realizá-la. Quando isso ocorre, concentrar a volatilidade tecnológica na fronteira de materialização pode reduzir quanto dessa mudança precisa atingir quem continua perseguindo a mesma intenção.
 
-**P1.8** Separar intenção de materialização não precisa significar separar pessoas; pode significar separar decisões e momentos decisórios.
+**P1.8** Quando os materializadores aprendem a linguagem da intenção, a mudança tecnológica pode ser absorvida mais localmente, sem exigir que todos os executores reaprendam a linguagem particular de cada materializador.
+
+**P1.9** Separar intenção de materialização não precisa significar separar pessoas; pode significar separar decisões e momentos decisórios.
 
 ## 2. Princípio da Coerência Operacional
 
