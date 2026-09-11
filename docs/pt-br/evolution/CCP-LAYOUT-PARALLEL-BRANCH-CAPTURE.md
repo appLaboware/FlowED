@@ -264,3 +264,126 @@ Esta frente observa os resultados da outra e pergunta apenas:
 > **o que este caso nos ensina sobre como materializar conhecimento cognitivo estruturado para um consumidor específico sem alterar sua base?**
 
 Essa é a fronteira operacional desta realidade paralela.
+
+## 14. Hipótese de microprojeção e zoom semântico/cognitivo
+
+Um novo caso observado na redação da minha branch mostra que a projeção não precisa variar apenas entre documentos inteiros. Um mesmo fragmento semântico pode admitir **múltiplos níveis de densidade**, preservando um núcleo invariável e acrescentando progressivamente contexto, explicação e causalidade.
+
+Isso sugere um mecanismo de **microprojeção**: o adapter pode atuar sobre uma frase, proposição, regra, passo ou pequeno bloco cognitivo, e não apenas sobre o artefato completo.
+
+Uma interface humana possível é um controle de “zoom” ou slider de profundidade. Ao mover para um lado, o leitor recebe a forma mínima semanticamente suficiente; ao mover para o outro, recebe sucessivamente mais elementos da mesma base cognitiva.
+
+Forma conceitual:
+
+```text
+CCP / unidade cognitiva
+        ↓
+nível mínimo semanticamente suficiente
+        ↔
+nível intermediário
+        ↔
+nível expandido
+        ↔
+CCP/racional mais completo
+```
+
+A metáfora do slider é apenas uma materialização possível. O conceito mais importante é a existência de **níveis de projeção semanticamente compatíveis**.
+
+### 14.1 Não é simples resumo livre
+
+O mecanismo não deve ser tratado como “pedir para uma IA resumir mais ou menos” em tempo de leitura. Cada nível precisa respeitar o mesmo contrato de invariância e manter rastreabilidade até a mesma base cognitiva.
+
+A redução só pode retirar elementos classificados como dispensáveis naquele nível. Não pode alterar conclusão, autoridade, estado epistêmico, restrições obrigatórias ou relações causais necessárias ao sentido.
+
+Assim, o nível mínimo não é “o texto mais curto possível”, mas o **menor texto/projeção que ainda preserva o significado necessário para aquele consumidor e finalidade**.
+
+### 14.2 Granularidade contínua na interface, níveis validados na semântica
+
+Embora a interface possa parecer contínua — como um slider HTML — a implementação semântica pode ser discretizada em níveis previamente validados.
+
+Exemplo:
+
+```text
+L0 — núcleo mínimo
+L1 — núcleo + contexto indispensável
+L2 — + relação causal
+L3 — + justificativa/contraste
+L4 — + racional ampliado
+L5 — + proveniência/evidências
+```
+
+Isso reduz o risco de que uma geração livre a cada posição do slider produza deriva semântica. A interface pode interpolar experiência de uso; o contrato trabalha com projeções controladas.
+
+### 14.3 Relação com a autonomia do leitor
+
+O zoom cognitivo não elimina a regra da cognição mínima obrigatória.
+
+Quem publica define um **piso permitido** para cada combinação de público, papel, risco, autoridade e ação esperada. O leitor pode aumentar a profundidade livremente, mas só pode reduzi-la até esse piso.
+
+Conceitualmente:
+
+```text
+piso de projeção obrigatório ─────────────── profundidade máxima disponível
+              ↑                                  ↑
+       definido pelo contrato               escolhido pelo leitor
+```
+
+Para um texto reflexivo de baixo risco, o piso pode ser extremamente curto. Para uma norma de segurança, treinamento técnico ou decisão de alta consequência, o piso pode obrigar mais cognição antes que a redução seja permitida.
+
+### 14.4 Perfil persistente de leitura
+
+A ferramenta pode aprender ou receber explicitamente a preferência de profundidade de um leitor.
+
+Um leitor experiente poderia escolher “começar sempre no L0” para determinada classe de documento; outro poderia preferir L2 ou L3. Essa preferência é apenas um **default de apresentação** e nunca pode ultrapassar para baixo o piso obrigatório definido pelo contrato daquela projeção.
+
+Assim, a personalização é subordinada à responsabilidade de publicação:
+
+```text
+preferência do leitor + contrato do público/contexto
+                     ↓
+             nível inicial efetivo
+```
+
+### 14.5 Propriedade desejável: monotonicidade cognitiva
+
+Uma hipótese importante para o futuro contrato é exigir **monotonicidade de aprofundamento**: aumentar o nível deve acrescentar informação e explicitação sem contradizer o nível anterior nem trocar sua conclusão.
+
+Idealmente:
+
+```text
+L0 ⊂ L1 ⊂ L2 ⊂ ... ⊂ Ln
+```
+
+A relação não precisa ser inclusão textual literal; deve ser inclusão semântica. Cada nível posterior preserva o núcleo anterior e adiciona conhecimento relevante.
+
+Essa propriedade pode permitir validação automática ou semiautomática de adapters.
+
+### 14.6 Potencial experimental
+
+O mecanismo cria uma hipótese mensurável adicional: para uma mesma unidade cognitiva, qual nível de projeção maximiza compreensão e eficiência para diferentes perfis de consumidor?
+
+Pode-se medir, por exemplo:
+
+- tempo de leitura;
+- compreensão;
+- retenção;
+- taxa de erro;
+- necessidade de expandir manualmente;
+- abandono;
+- percepção de redundância;
+- confiança calibrada;
+- diferença entre nível preferido e nível efetivamente necessário.
+
+Isso permitiria testar se a adaptação de densidade cognitiva reduz leitura desnecessária sem degradar compreensão ou segurança.
+
+### 14.7 Síntese provisória
+
+A hipótese pode ser resumida assim:
+
+> **A projeção pode variar não apenas por público e documento, mas também por profundidade dentro da própria unidade de conhecimento.**
+
+Ou, em linguagem operacional:
+
+> **o mesmo CCP pode admitir zoom semântico, desde que cada redução preserve um núcleo suficiente e cada expansão apenas acrescente compreensão rastreável.**
+
+Os nomes “microprojeção”, “zoom semântico”, “zoom cognitivo” e “densidade cognitiva” são provisórios e deverão ser avaliados antes de qualquer normalização terminológica.
