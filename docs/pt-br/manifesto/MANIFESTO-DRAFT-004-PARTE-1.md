@@ -18,7 +18,7 @@
 
 **P1.4** A separação entre intenção e materialização permite combinar excelências distintas sem exigir que ambas coexistam na mesma pessoa ou no mesmo momento.
 
-**P1.5** Quando iniciantes e especialistas compartilham a mesma linguagem de intenção, ensino e aprendizagem podem se tornar mais cumulativos: cresce a profundidade, o vocabulário e a precisão com menor necessidade de substituir a linguagem operacional.
+**P1.5** Uma linguagem comum facilita a comunicação entre diferentes níveis, papéis e especialidades. Como a intenção tende a variar menos que suas materializações, uma linguagem orientada à intenção se apresenta como uma opção especialmente adequada para esse fim.
 
 **P1.6** Quando a primeira linguagem operacional aprendida permanece válida ao longo da evolução profissional, novos conhecimentos tendem a se acumular por extensão e refinamento, reduzindo a necessidade de substituir a base e favorecendo seu aprofundamento.
 
