@@ -30,7 +30,7 @@
 
 ## 2. Princípio da Coerência Operacional
 
-**P2.1** Quando decisões, práticas e ferramentas de diferentes domínios compartilham princípios e contratos transversais, a forma de trabalhar da organização tende a se tornar mais coerente e reconhecível.
+**P2.1** Uma organização não precisa prescrever tecnologias para preservar sua forma de trabalho. Sua identidade operacional pode residir mais nos princípios e contratos e menos nas tecnologias que os materializam.
 
 **P2.2** Uma organização pode preservar uma identidade operacional reconhecível mesmo quando suas ferramentas mudam, quando essa identidade reside nos princípios, intenções e contratos que governam seu uso, e não nas implementações específicas.
 
