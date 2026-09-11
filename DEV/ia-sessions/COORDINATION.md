@@ -8,63 +8,137 @@
 
 | ID | Papel | Missão principal | Prefixo obrigatório de commit |
 |---|---|---|---|
-| `PO-001` | Chat original / PO | coordenar as duas frentes, observar convergências, orientar CCP/materialização e integrar aprendizados | `[PO-001]` |
-| `MAN-001` | Branch paralela derivada do chat original | continuar a revisão do Manifesto FlowED; incorporar o protocolo BASE/REDUCT-MAX/DEFESA nas novas proposições | `[MAN-001]` |
+| `PO-001` | Chat original / PO | coordenar as duas frentes, observar convergências, orientar CCP/materialização, criticar decisões e integrar aprendizados | `[PO-001]` |
+| `MAN-001` | Branch paralela derivada do chat original | continuar a revisão do Manifesto FlowED e operar o protocolo editorial de projeções cognitivas | `[MAN-001]` |
 | `WRK-001` | Worker CCP/POC | construir a POC vertical do materializador CCP sem redefinir a filosofia nem revisar o manifesto | `[WRK-001]` |
 
-O fato de todos usarem a mesma conexão GitHub torna o autor Git insuficiente para distinguir agentes. **O prefixo no assunto do commit é obrigatório a partir deste bootstrap.**
+O fato de todos usarem a mesma conexão GitHub torna o autor Git insuficiente para distinguir agentes. **O prefixo no assunto do commit é obrigatório.**
 
-## 2. Regra de comunicação
+## 2. Canais de comunicação
 
 A coordenação deve depender do repositório, não de cópia manual de mensagens pelo humano.
 
-Cada ator, antes de iniciar um ciclo de trabalho:
+### MAN-001
 
-1. consulta os commits mais recentes desta branch;
+`MAN-001` possui dois canais legítimos de entrada:
+
+1. **chat com o humano** — instruções, decisões, críticas, novas ideias e mudanças de direção dadas diretamente durante a conversa;
+2. **INBOX da sessão** — orientações e avaliações de `PO-001`.
+
+`MAN-001` não precisa acessar a sessão privada de `PO-001`. A comunicação PO → MAN ocorre por `INBOX/`; MAN → PO ocorre por `OUTBOX/`, commits e arquivos de estado da própria sessão.
+
+As entradas do humano e do PO são ambas autoritativas para o trabalho. Quando houver conflito explícito, a decisão direta do humano prevalece por ser ele a autoridade filosófica final, mas a divergência deve ser registrada para revisão crítica posterior do PO.
+
+### WRK-001
+
+`WRK-001` recebe orientação operacional por sua própria `INBOX/`, lê contratos e artefatos compartilhados e devolve dúvidas, resultados e blockers por `OUTBOX/` e commits.
+
+## 3. Ciclo de trabalho comum
+
+Cada ator, antes de iniciar um ciclo:
+
+1. consulta o HEAD e commits recentes;
 2. identifica commits dos demais atores pelo prefixo;
 3. lê o próprio `INBOX/`;
-4. abre os arquivos alterados por outro ator somente quando tocarem seu domínio;
+4. abre alterações de outros atores somente quando tocarem seu domínio;
 5. executa sua missão;
-6. registra a entrega ou estado no próprio `OUTBOX/` quando houver informação útil aos demais;
-7. faz commit com seu prefixo de ator.
+6. atualiza seu `session_resume.md` quando houver interação ou decisão relevante;
+7. registra entrega, blocker, divergência ou estado útil no repositório;
+8. faz commit com seu prefixo de ator.
 
-Mensagens entre atores são arquivos. Um ator pode criar uma nova mensagem dentro do `INBOX/` de outro ator. Não sobrescrever mensagens anteriores.
+Mensagens entre atores são arquivos. Não sobrescrever mensagens anteriores de `INBOX/` ou `OUTBOX/`.
 
-## 3. Fronteiras de responsabilidade
+## 4. Registro obrigatório de cognição da sessão
+
+Cada sessão deve possuir `session_resume.md` como projeção cronológica estruturada do que ocorreu naquela sessão.
+
+O objetivo não é transcrever todo o chat, mas impedir que decisões, mudanças de entendimento e ideias relevantes existam apenas na interface de conversa.
+
+Para cada interação relevante, registrar pelo menos:
+
+- origem: `HUMAN_CHAT`, `PO_INBOX`, `SELF_ANALYSIS` ou outro ator;
+- o que foi proposto, decidido, criticado ou alterado;
+- resposta/ação do ator;
+- impacto sobre o trabalho em curso;
+- arquivos e commits relacionados;
+- divergências entre orientação anterior e nova decisão, quando existirem;
+- pendências ou incertezas.
+
+Entradas provenientes diretamente do humano merecem atenção especial de registro, pois o PO não vê o chat paralelo e deve conseguir reconstruir pelo repositório o que mudou e por quê.
+
+`session_resume.md` é um resumo cognitivo da sessão, não substitui a fonte bruta quando ela estiver disponível.
+
+## 5. Crítica do PO ao humano
+
+A autoridade final do humano não transforma suas decisões em pressupostos de correção.
+
+`PO-001` atua também como consultor crítico. Ao encontrar decisão, interpretação ou desvio do humano que pareça tecnicamente, cientificamente ou arquiteturalmente frágil, deve apontá-lo explicitamente, explicar o risco e propor alternativa melhor.
+
+Sempre que a crítica depender de conhecimento externo relevante, o PO deve preferir evidência científica, padrões, literatura técnica ou dados verificáveis e registrar as referências reutilizáveis no pool comum.
+
+## 6. Fronteiras de responsabilidade
 
 ### `PO-001`
 
 - coordena o mecanismo de materialização do CCP;
-- observa o trabalho de `MAN-001` apenas pelo ângulo de CCP, projeções, layouts, adapters, cognição mínima, monotonicidade, proveniência e materialização;
-- orienta `WRK-001` e avalia sua POC;
-- não substitui o humano em decisões filosóficas do FlowED;
+- observa `MAN-001` pelo ângulo de CCP, projeções, layouts, adapters, cognição mínima, monotonicidade, proveniência e materialização;
+- orienta e avalia `WRK-001`;
+- critica decisões do humano quando houver fundamento para isso;
+- não substitui o humano em decisões filosóficas finais;
 - não reescreve proposições do manifesto que estão sob trabalho de `MAN-001`, salvo decisão explícita do humano.
 
 ### `MAN-001`
 
-- continua o trabalho já em curso no manifesto;
+- continua a revisão do manifesto;
 - mantém autonomia editorial/conceitual dentro das decisões do humano;
-- para novas proposições, registra o agrupamento `BASE → reduções intermediárias → REDUCT-MAX → DEFESA` quando aplicável;
-- comunica por commit e `OUTBOX/` descobertas que possam interessar ao materializador CCP;
-- não precisa aguardar respostas do PO para continuar a revisão ordinária.
+- usa `BASELINE`, projeções de densidade e `DEFESA` segundo o protocolo vigente;
+- conhece a existência futura de `Como chegamos aqui`, mas **não o produz manualmente nesta fase**;
+- mantém `session_resume.md` atualizado para que decisões de chat, inclusive desvios determinados pelo humano, permaneçam visíveis ao PO;
+- comunica por commit e `OUTBOX/` descobertas relevantes ao materializador CCP.
 
 ### `WRK-001`
 
 - constrói uma POC vertical executável;
 - ponto de partida: `fonte preservada → marcação → CCP estruturado → contrato de projeção → adapter → artefato compilado`;
-- primeira demonstração: múltiplas densidades da mesma unidade cognitiva, incluindo `REDUCT-MAX`, `BASE` e `DEFESA`, com proveniência;
+- deve investigar posteriormente a geração dinâmica de `Como chegamos aqui` a partir de fonte bruta preservada e estruturação rastreável;
 - prioriza execução mínima ponta a ponta antes de generalizar POP, DOC ou outros adapters;
 - não altera o manifesto nem redefine o CCP por conta própria; dúvidas conceituais vão para o `INBOX/` do PO.
 
-## 4. Propriedade de caminhos para reduzir conflitos
+## 7. `Como chegamos aqui`
 
-- `PO-001`: `DEV/ia-sessions/COORDINATION.md`, sua sessão e documentos de coordenação/arquitetura CCP que não pertençam à revisão do manifesto.
+`Como chegamos aqui` é uma projeção prevista do CCP, mas não faz parte do trabalho manual corrente de `MAN-001`.
+
+A hipótese de implementação é mais determinística:
+
+```text
+chat/log bruto preservado
+→ marcação/indexação rastreável
+→ estrutura cognitiva em armazenamento consultável
+→ seleção atômica por assunto/unidade
+→ projeção dinâmica "Como chegamos aqui"
+```
+
+O objetivo é evitar que um autor reconstrua retrospectivamente a história por memória ou narrativa livre. A POC de `WRK-001` deverá testar se o caminho pode ser derivado de registros preservados, mantendo proveniência e permitindo aprofundamento progressivo.
+
+Até essa capacidade existir, `MAN-001` produz `DEFESA` e demais artefatos editoriais necessários, mas não simula manualmente uma história completa da criação.
+
+## 8. Pool compartilhado de referências
+
+Todo ator deve consultar `docs/research/REFERENCE-POOL.md` antes de iniciar pesquisa externa sobre tema já investigado.
+
+Se o pool já contiver referência adequada e suficientemente atual para a alegação, ela pode ser reutilizada após conferência de pertinência. Se houver lacuna, o ator pesquisa novas fontes e acrescenta ao pool somente aquelas efetivamente consultadas.
+
+Reutilização não significa autoridade automática: cada uso deve verificar se a referência realmente sustenta a nova alegação e se continua atual quando atualidade for relevante.
+
+## 9. Propriedade de caminhos para reduzir conflitos
+
+- `PO-001`: `DEV/ia-sessions/COORDINATION.md`, sua sessão, pool de referências e documentos de coordenação/arquitetura CCP que não pertençam à revisão do manifesto.
 - `MAN-001`: arquivos do manifesto que já vinha revisando e sua própria sessão.
 - `WRK-001`: sua sessão e a futura árvore da POC/materializador.
 
-Antes de editar arquivo compartilhado fora dessas fronteiras, consultar o HEAD atual e registrar a necessidade no repositório quando houver risco de colisão.
+Antes de editar arquivo compartilhado fora dessas fronteiras, consultar o HEAD atual e registrar a necessidade quando houver risco de colisão.
 
-## 5. Tags de commit
+## 10. Tags de commit
 
 Formato mínimo:
 
@@ -75,17 +149,17 @@ Formato mínimo:
 Exemplos:
 
 ```text
-[PO-001] chore(coordination): bootstrap multi-agent sessions
-[MAN-001] docs(manifesto): register P2.x cognitive projections
+[PO-001] chore(coordination): refine multi-agent protocol
+[MAN-001] docs(manifesto): refine proposition density protocol
 [WRK-001] feat(ccp-poc): add source-to-projection vertical slice
 ```
 
-Commits anteriores a este protocolo podem não possuir tag. A obrigatoriedade começa no commit de bootstrap que introduz este arquivo.
+## 11. Estado histórico conhecido
 
-## 6. Estado inicial conhecido
+O commit `1a9750491b7db1473190db94027c543e5d815e5e` foi produzido pela frente de revisão do manifesto antes da adoção das tags de ator e é tratado como trabalho de `MAN-001`.
 
-O commit imediatamente anterior ao bootstrap é `1a9750491b7db1473190db94027c543e5d815e5e`, produzido pela frente de revisão do manifesto antes da adoção das tags de ator. Ele deve ser tratado como trabalho de `MAN-001` para fins de rastreabilidade histórica.
+O commit `40990f239712569addf97c5d4f366e564dbe1c71` contém a proposta de `MAN-001` para o fluxo `BASELINE / EXPAND-MAX / REDUCT-MAX / DEFESA` e também antecede sua efetiva adoção do prefixo `[MAN-001]`.
 
-## 7. Fonte de regras
+## 12. Fonte de regras
 
-Este protocolo adapta o padrão de sessões do InitProj — sessões rastreáveis, `CONTEXT`, `INBOX`, `OUTBOX` e handoff por arquivo — ao experimento atual do FlowED. Ele é operacional e pode evoluir a partir da experiência dos três atores.
+Este protocolo adapta o padrão de sessões do InitProj — sessões rastreáveis, `CONTEXT`, `INBOX`, `OUTBOX`, resumos e handoff por arquivo — ao experimento atual do FlowED. Ele é operacional e deve evoluir com a experiência real de uso no celular e com as descobertas do CCP.
