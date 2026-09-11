@@ -12,7 +12,7 @@
 
 **P1.1** Separar intenção de materialização tende a tornar mais clara a avaliação do que foi decidido e de como foi realizado.
 
-**P1.2** Quando o conhecimento conceitual pode ser acumulado independentemente da ferramenta que o materializa, a evolução tecnológica tende a exigir menos readaptação.
+**P1.2** Quando o conhecimento conceitual permanece independente da ferramenta que o materializa, a evolução tecnológica tende a exigir menos readaptação.
 
 **P1.3** Quando intenção e materialização são tratadas como competências distintas, cada uma pode ser aprofundada segundo suas próprias demandas de decisão e conhecimento técnico, e suas excelências podem ser combinadas sem pressupor que coexistam na mesma pessoa ou no mesmo momento.
 
