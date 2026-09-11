@@ -89,6 +89,38 @@ Essa projeção não substitui a cognição completa. Ela é uma síntese deriva
 
 Um leitor que apenas precisa cumprir a norma pode consumir a conclusão e, quando útil, sua cognição mínima. Um leitor responsável por avaliar, auditar, criticar, ensinar ou evoluir a norma deve conseguir aprofundar-se sucessivamente até o caminho cognitivo completo.
 
+### Autonomia do leitor e responsabilidade de quem publica
+
+A progressividade não deve transferir ao leitor toda a responsabilidade por escolher quanta cognição precisa consumir. **Autonomia de aprofundamento não implica autonomia irrestrita para ignorar o mínimo necessário à função que o documento pretende cumprir.**
+
+Hipótese orientadora a investigar:
+
+**O leitor pode escolher até onde aprofundar; quem publica deve decidir de onde ele pode começar.**
+
+Quem produz ou publica um artefato deve definir, a partir do público-alvo e da finalidade daquele artefato, uma **cognição mínima obrigatória**: o menor conjunto de relações, razões, restrições ou consequências que aquele leitor precisa receber para que a informação faça sentido no nível de responsabilidade esperado dele.
+
+Essa decisão não pode depender apenas do tipo abstrato de conteúdo. A mesma base cognitiva pode exigir projeções obrigatórias distintas conforme:
+
+- o público e seu conhecimento presumido;
+- o papel e a responsabilidade do leitor;
+- a ação que se espera que ele execute;
+- a autoridade ou força normativa do conteúdo;
+- o risco e as consequências de interpretação ou execução inadequadas;
+- o canal e o tempo disponível para consumo;
+- a necessidade de compreender, apenas executar, ensinar, auditar, criticar ou evoluir.
+
+Assim, uma mesma regra pode ter projeções diferentes sem constituir verdades diferentes. Uma instrução relacionada à posição de uma poltrona de avião, por exemplo, pode aparecer de forma extremamente concentrada numa placa destinada ao passageiro, receber explicação adicional num site, e exigir uma cadeia cognitiva muito mais ampla em treinamento de piloto, tripulação ou equipe de emergência. O que varia é a **projeção obrigatória adequada ao leitor**, não a base cognitiva que sustenta a regra.
+
+No manifesto, por sua natureza reflexiva e pelo público presumido, pode ser apropriado apresentar primeiro a proposição e permitir que o leitor escolha aprofundar-se em “Deixe-me explicar melhor” ou “Como chegamos aqui”. Em documentação normativa, operacional ou de segurança, essa liberdade pode começar somente **depois** de uma camada cognitiva que o autor tenha definido como obrigatória para aquele público.
+
+EDT e CCP deverão, portanto, estudar contratos que permitam declarar pelo menos:
+
+`público-alvo + intenção + ação esperada + autoridade + risco → cognição mínima obrigatória + ordem de apresentação + profundidade opcional`
+
+A futura tool de documentação deverá usar esses contratos não apenas para oferecer camadas, mas para impedir que uma projeção destinada a certo leitor omita uma camada cognitiva classificada como obrigatória para aquele contexto.
+
+Essa hipótese precisa de investigação acadêmica própria antes de ser transformada em regra, incluindo comunicação técnica, fatores humanos, carga cognitiva, comunicação de risco, instruções de segurança, expertise do leitor e progressive disclosure.
+
 ### Cognição mínima e profundidade progressiva
 
 A arquitetura deve explorar a possibilidade de uma representação cognitiva resumida, capaz de produzir compreensão rápida sem transformar o consolidado em fonte primária.
@@ -156,6 +188,9 @@ A tool futura não deve nascer como simples coleção de templates. Deve possuir
 - estudar padrões de progressive disclosure, documentação em camadas, rationale/design rationale e proveniência de decisões;
 - estudar formas de representar cognição resumida sem confundi-la com simples justificativa posterior;
 - definir como a intenção comunicativa do artefato determina ordem, destaque e profundidade cognitiva;
+- definir como público-alvo, responsabilidade, ação esperada, autoridade e risco determinam uma **cognição mínima obrigatória**;
+- estudar até que ponto o leitor pode escolher profundidade sem que a publicação delegue indevidamente a ele a responsabilidade por conhecer razões essenciais;
+- pesquisar comunicação técnica, fatores humanos, carga cognitiva, comunicação de risco, instruções de segurança e diferenças de expertise como base para essa decisão;
 - distinguir formalmente **primazia epistemológica** de **primazia visual/operacional**;
 - definir visualmente e semanticamente a diferença entre texto consolidado, projeção cognitiva mínima, explicação editorial e caminho cognitivo completo;
 - estudar representações visuais mínimas para cadeias de raciocínio, inclusive setas e pequenos fluxos causais;
@@ -177,6 +212,8 @@ A arquitetura deve conseguir afirmar simultaneamente duas coisas sem contradiç�
 2. **o leitor não precisa consumir toda essa base para cada finalidade**.
 
 Quem quiser apenas executar deve encontrar uma conclusão clara. Quem precisar compreendê-la deve encontrar uma projeção cognitiva suficiente. Quem quiser criticá-la ou fazê-la evoluir deve conseguir aprofundar-se progressivamente até a cognição e as evidências que a sustentam.
+
+A autonomia de aprofundamento deve existir **acima de um mínimo cognitivo adequado ao público e à responsabilidade do leitor**, e esse mínimo deve ser responsabilidade explícita de quem projeta/publica o artefato, não uma escolha casual de quem o consome.
 
 Além disso, o resultado deve demonstrar continuidade com os mecanismos já existentes no Init Approach / InitProj e produzir uma especificação suficientemente independente para posteriormente existir como tool própria do ISO29110-Lite.
 
