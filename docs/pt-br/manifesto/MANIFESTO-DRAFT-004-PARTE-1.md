@@ -26,7 +26,7 @@
 
 **P1.8** Quando diferentes materializações respondem à mesma linguagem de intenção, a tecnologia pode mudar com menor impacto sobre a forma de expressar a intenção.
 
-**P1.9** Separar intenção de materialização não precisa significar separar pessoas; pode significar separar decisões e momentos decisórios.
+**P1.9** Separar intenção de materialização é separar decisões, não pessoas: a mesma pessoa pode formular a intenção e, em outro momento, escolher como realizá-la.
 
 ## 2. Princípio da Coerência Operacional
 
