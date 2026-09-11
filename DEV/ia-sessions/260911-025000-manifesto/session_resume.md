@@ -124,6 +124,27 @@ Potential residual requiring dedicated prior-art audit includes: intention as st
 
 **OPEN QUESTION:** PO should decide whether to initiate a cross-cutting prior-art/positioning audit immediately and whether WRK-001 should compare the CCP/FlowED materializer against GitHub Spec Kit and related specification-driven tools.
 
+## 2026-09-11 — Human clarifies status of prior-art review as out-of-scope exploratory interaction
+
+**SOURCE:** `HUMAN_CHAT`
+
+The human clarified that the external prior-art/consultancy review was not requested by PO-001 and must be treated as a direct human-initiated exploratory interaction that temporarily crosses the ordinary manifesto task. The purpose is to assess whether newly surfaced prior art materially changes FlowED's positioning before delivering a final conclusion upstream.
+
+The human also clarified an important evaluation rule: non-academic material such as YouTube talks, blog posts, conference videos, product documentation or practitioner publications may be weak or inappropriate as scientific evidence, but they can still be highly relevant to novelty/prior-art analysis because an external reviewer, practitioner or competitor may legitimately point to them as evidence that an idea, framing or mechanism was already publicly articulated or implemented.
+
+**ACTOR INTERPRETATION / ACTION:**
+
+- agree with the distinction between evidentiary weight and prior-art relevance;
+- will not discard a source from novelty analysis merely because it is non-peer-reviewed;
+- will classify sources separately by `scientific evidentiary strength` and `prior-art / public-disclosure relevance`;
+- will request missing bibliographic, transcript, timestamp and provenance details from the external consultancy before issuing a final opinion;
+- the prior OUTBOX report to PO is to be understood as an early risk/impact notification, not the final consolidated assessment;
+- ordinary P2.3 work remains paused only while this human-authorized exploratory check is active.
+
+**DIVERGENCE:** none with PO rules because direct human input is authoritative, but this work is explicitly outside the PO-requested ordinary manifesto task and should remain traceable as such.
+
+**OPEN QUESTION:** after receiving the consultancy's clarifications, issue a final MAN-001 opinion distinguishing scientific support, market/prior-art convergence, errors/overclaims, and implications for FlowED novelty/relevance before any further conceptual change.
+
 ## Recording rule going forward
 
 For each meaningful human-chat or PO-INBOX interaction, append a new chronological entry containing:
