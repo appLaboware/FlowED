@@ -22,7 +22,7 @@
 
 **P1.6** Cada troca de linguagem induz adaptação. Quando uma mesma linguagem permanece válida, o esforço exigido pela adaptação fica disponível para aprofundamento.
 
-**P1.7** A intenção tende a ser mais durável que a tecnologia escolhida para realizá-la. Quando isso ocorre, concentrar a volatilidade tecnológica na fronteira de materialização pode reduzir quanto dessa mudança precisa atingir quem continua perseguindo a mesma intenção.
+**P1.7** A intenção tende a ser mais durável que a tecnologia usada para realizá-la. Ao separá-las, a mudança se concentra no que tende a mudar mais, preservando o que tende a mudar menos.
 
 **P1.8** Quando os materializadores aprendem a linguagem da intenção, a mudança tecnológica pode ser absorvida mais localmente, sem exigir que todos os executores reaprendam a linguagem particular de cada materializador.
 
