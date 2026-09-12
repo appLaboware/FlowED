@@ -275,3 +275,43 @@ MAN-001 also checked review methodology and found the proposal compatible with s
 **DIVERGENCE:** none with PO protocol. This remains direct human-authorized work outside the ordinary P2.3 task and is explicitly surfaced to PO.
 
 **OPEN QUESTION:** PO decision on naming, timing of the claim-level audit, review method/coverage, and whether the future consolidated manifesto includes a short `De onde partimos` projection linked to CCP/EDT.
+
+## 2026-09-11 — Human refines `De onde partimos` into atomic manifesto voice and closes the exploratory sprint
+
+**SOURCE:** `HUMAN_CHAT` + `SELF_ANALYSIS`
+
+The human rejected the previous explanatory/defensive tone for the proposed `De onde partimos` section and asked that it use the same atomic, average-reader-first voice being developed for the manifesto.
+
+The refinement removed candidate sentences that overexplained novelty/anteriority and retained four propositions with distinct functions:
+
+- `D0.1`: conscious selection among consolidated Software Engineering ideas;
+- `D0.2`: formal Software Engineering literature as primary support, with standards and consolidated practice when pertinent;
+- `D0.3`: manifesto contribution located in bringing consolidated concepts under one line of thought and proposing a different **level of importance** for them in the engineering chain;
+- `D0.4`: a common conceptual language should be able to cross domains, experience levels and education/practice contexts without requiring uniform realization.
+
+The human emphasized that the posture should be humble only to the degree needed for epistemic honesty, not self-diminishing or apologetic. The manifesto should show that it knows the value and provenance of what it adopts, while locating its own contribution in **reweighting** and **cross-domain language continuity**.
+
+**BASELINE CANDIDATE:**
+
+- `D0.1` Partimos de ideias já consolidadas na Engenharia de Software e, entre elas, escolhemos aquelas que consideramos mais relevantes para os problemas que queremos enfrentar.
+- `D0.2` Esse ponto de partida se apoia primeiro na literatura da Engenharia de Software e, quando pertinente, também em padrões e práticas que a experiência consolidou.
+- `D0.3` A contribuição deste manifesto está em reunir, sob uma mesma linha de pensamento, conceitos já consolidados e propor um nível diferente de importância para cada um deles na cadeia da engenharia.
+- `D0.4` Uma mesma linguagem conceitual pode atravessar domínios, níveis de experiência e contextos de formação e prática sem exigir que todos realizem seu trabalho da mesma forma.
+
+**LAYOUT PROPOSAL:** place `De onde partimos` after `Antes de começar` (`A0.1/A0.2`) and before `PR-M01`, so A0 states posture and D0 materializes the inherited starting point and the manifesto's intended contribution.
+
+**ACTOR RESPONSE / ACTION:**
+
+- consolidated the full rationale, placement, candidate wording and limits into `DEV/ia-sessions/260911-025000-manifesto/OUTBOX/006-human-proposal-de-onde-partimos-sprint-close.md`;
+- explicitly closed the human-initiated prior-art/positioning detour as a sprint;
+- did not modify the canonical manifesto or P2.3;
+- recommended that, if PO approves, the four D0 propositions enter the normal editorial protocol with density projections and DEFESA.
+
+**FILES / COMMITS:**
+
+- sprint-close proposal to PO — commit `6bb55bea7a461437de29ef00732ecc2435f2f62f`;
+- this session resume — current commit.
+
+**DIVERGENCE:** none with PO protocol. This closes a direct human-authorized detour and returns decision authority to PO for integration/critique.
+
+**OPEN QUESTION:** PO approval/critique of `D0.1–D0.4`, their placement, and whether the next MAN-001 cycle should integrate them or resume P2.3 first.
