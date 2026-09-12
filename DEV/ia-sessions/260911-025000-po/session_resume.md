@@ -1,21 +1,15 @@
-# SESSION RESUME — PO-001
+# SESSION RESUME — PO-001-01
 
-**Session:** `260911-025000-po`
-**Actor:** `PO-001`
-**Role:** coordinator / CCP materialization PO / critical consultant
+**Actor ID:** `PO-001`
+**Session Instance ID:** `PO-001-01`
+**Session folder:** `260911-025000-po`
+**Final operational state:** `HANDOFF_COMPLETE`
 
-## Current mission
+## Mission completed in this session
 
-Coordinate two parallel continuities:
+This session acted as coordinator / CCP materialization PO / critical consultant while establishing the multi-actor protocol, validating MAN coordination, bootstrapping WRK, and designing the first session-succession experiment.
 
-- `MAN-001`: manifesto revision and human-facing cognitive projection experiments;
-- `WRK-001`: future executable CCP materializer POC.
-
-The human remains final philosophical authority. PO-001 is expected to criticize human decisions when evidence or architecture suggests a better path rather than merely agree.
-
-## Current architecture
-
-Working pipeline:
+## Core architecture retained
 
 ```text
 preserved source/log
@@ -26,54 +20,19 @@ preserved source/log
 → structured/compiled projection
 ```
 
-Current concepts under investigation include:
+Important retained distinctions include:
 
-- primacy of cognition without mandatory visual primacy;
-- cognitive minimum by audience/task/risk/authority;
-- density zoom / microprojection;
-- semantic invariance across projections;
-- density monotonicity;
-- human and AI adapters;
-- dynamic projection of `Como chegamos aqui` from preserved raw sources.
+- cognitive primacy does not imply visual primacy;
+- mandatory cognitive minimum depends on consumer/task/risk/authority/context;
+- density monotonicity is primarily a hypothesis for the REDUCT/BASELINE/EXPAND axis;
+- broader semantic/epistemic invariance applies across projections;
+- `DEFESA` is not the whole CCP and is not `Como chegamos aqui`;
+- `Como chegamos aqui` is intended as a future dynamic projection from preserved source/event evidence, not manual retrospective storytelling;
+- `session_resume.md` is a structured cognitive projection, not equivalent to raw source.
 
-## MAN-001 state
+## First coordination validation
 
-MAN-001 proposed a density workflow in commit `40990f239712569addf97c5d4f366e564dbe1c71` using:
-
-```text
-REDUCT-MAX ← ... ← BASELINE → ... → EXPAND-MAX
-                         │
-                         ↓
-                      DEFESA
-```
-
-PO review accepts the core model with refinements:
-
-- `BASELINE` accepted as preferable to `BASE`;
-- monotonicity applies primarily to density axis;
-- invariance is broader rule across all projections;
-- `DEFESA` is not whole CCP;
-- `Como chegamos aqui` is future dynamic projection and must not be manually authored now;
-- optional micro-CCP can be used as temporary authoring scaffold, not as the historical path;
-- expertise alone must not become universal density rule.
-
-MAN-001 must maintain chronological `session_resume.md`, especially capturing direct human-chat changes, rationale and divergences from PO guidance.
-
-### First protocol validation cycle
-
-The first real sync cycle completed successfully.
-
-The human did not merely paste the PO bootstrap command into MAN-001. Before it, the human added an explanation of why the conversation had been derived, why work was being split, and why repository-based coordination should reduce manual transport of context.
-
-MAN-001 correctly preserved this as a separate `HUMAN_CHAT` event in `session_resume.md`, including the human rationale, then recorded the `PO_INBOX` alignment as a distinct event. It explicitly declared `DIVERGENCE: none` because the two inputs were compatible.
-
-Relevant commits:
-
-- `f5c62b0d487c1ff3a76b51f4f72dffda334f7349` — MAN OUTBOX confirming PO input consumption;
-- `e94b6784d99632d6b18203d86f63bf3cb6485918` — density protocol aligned with PO refinements;
-- `091f5767607555798b87d26609f29979eff1c054` — MAN session resume preserving the human-chat rationale and the PO-input execution separately.
-
-This validates an important part of the operating model:
+MAN-001 successfully recorded direct `HUMAN_CHAT` rationale separately from `PO_INBOX`, including explicit divergence state. This validated the repository pattern:
 
 ```text
 raw human interaction
@@ -82,43 +41,77 @@ raw human interaction
 → OUTBOX / document update / commit
 ```
 
-The human can therefore alter or enrich work directly in a parallel chat without manually relaying the entire interaction to PO, as long as the actor records the cognitive delta, provenance and divergence state in its session resume.
+## WRK first vertical slice
 
-### Candidate InitProj learning from this cycle
+WRK-001 delivered its first executable vertical POC in commit:
 
-Do not open a PR yet. Accumulate more real cycles first.
+`73ad98c53bcec3fa4eccb4b0ac636964f512d807`
 
-Current candidate deltas for InitProj/mobile multi-chat operation:
+Path:
 
-- stable Actor IDs and commit prefixes;
-- explicit source attribution such as `HUMAN_CHAT`, `PO_INBOX`, `SELF_ANALYSIS`;
-- chronological cognitive `session_resume.md` rather than only task status;
-- mandatory divergence recording when direct human instruction changes or conflicts with upstream guidance;
-- human as physical scheduler of chats, not information bus;
-- a minimal wake/sync command after bootstrap;
-- repository as shared coordination surface across ChatGPT branches/sessions.
+`POC/ccp-materializer/`
 
-These are observations from use, not yet canonical InitProj rules.
+The POC supports traceable structural materialization of P2.3 projections, but does not prove semantic equivalence, cognitive monotonicity, comprehension benefit, automatic extraction or historical reconstruction.
 
-## Communication model
+## Session succession experiment
 
-- Human talks directly with each ChatGPT session.
-- PO communicates to MAN/WRK through their `INBOX/`.
-- MAN/WRK communicate to PO through `OUTBOX/`, commits and session state.
-- Human should not have to copy full conversations among sessions.
-- `NOVO INPUT` is the minimal wake/sync command after bootstrap.
+The handoff package and cognitive test were frozen at canonical snapshot:
 
-Inputs from human chat and PO INBOX are both valid operational inputs. When they conflict explicitly, the direct human decision prevails because the human is final philosophical authority, but the divergence must be recorded so PO can critically review it afterward.
+`ac939f7ba4aad9cc9fe957a8821a3d5feceb2c32`
 
-## Scientific reference reuse
+Two isolated candidate branches were created from that same snapshot:
 
-A shared pool is established at `docs/research/REFERENCE-POOL.md`.
+- `exp/po-handoff-a`;
+- `exp/po-handoff-b`.
 
-Actors should check it before new research, reuse only when pertinent, and record newly consulted references with explicit support/limits to avoid both repeated research and citation laundering.
+After both candidates completed, the predecessor evaluated their committed answers before the human revealed which materialization produced which response.
 
-## Next expected events
+Results:
 
-1. MAN-001 continues ordinary manifesto review under the aligned density protocol.
-2. Human later creates/starts WRK-001 (potentially via ChatGPT Work) and gives only repository bootstrap.
-3. PO monitors repository on each human return; there is no background monitoring.
-4. After several successful MAN/WRK cycles, PO evaluates whether the observed mobile multi-chat practices are mature enough to propose a PR back to InitProj.
+- `f06e8a54841e9ff18ae876a931abbd7b9925cec7` — 100/100, no critical errors;
+- `f19b2aff9a781edcbf2fb76b83f35ecbbd29e28c` — 100/100, no critical errors.
+
+The human then revealed:
+
+- `f06e8a...` = chat ramificado da sessão predecessora;
+- `f19b2a...` = novo chat sem ramificação explícita da transcrição.
+
+Important methodological qualification: the new chat still reported legitimately available conversational/account context. Therefore the experiment does **not** establish `Git-only reconstruction` or `memoryless new chat`. It establishes only that explicit transcript branching did not produce a measurable advantage under this rubric and account environment.
+
+Qualitative difference observed: the branched candidate was more investigative/detailed; the new-chat candidate was more compact while preserving all scored distinctions. Neither difference justified score reduction.
+
+## Predecessor control limitation
+
+This predecessor declared a 100/100 control and reported SHA-256:
+
+`10e1d27d789de31108d53c1c233f43e14c3edc89943c89b337d4d247b2fe48f8`
+
+However, the full control body was not externally frozen before candidate responses were inspected. Therefore this control is not reproducible evidence and must be treated as a methodological limitation, not as an equivalent third committed sample.
+
+## Succession decision
+
+Because the two candidates tied at 100/100 with no critical error, the tie-breaker favored the **new-chat** materialization: it achieved the same observed operational health with lower explicit dependency on inherited transcript history.
+
+Selected successor:
+
+- Actor ID: `PO-001`
+- Session Instance ID: `PO-001-02`
+- Experimental response commit: `f19b2aff9a781edcbf2fb76b83f35ecbbd29e28c`
+
+This is an architectural/operational selection, **not** a claim that new-chat materialization is intrinsically superior to branching.
+
+## Canonical catch-up requirement
+
+The canonical branch advanced while the A/B test was running. Before issuing any real PO coordination, `PO-001-02` must:
+
+1. switch from its experimental branch to `docs/flowed-concept-evolution-2026-09-08`;
+2. read the canonical PASS message in its INBOX;
+3. inspect the delta from `ac939f7ba4aad9cc9fe957a8821a3d5feceb2c32` to current canonical HEAD;
+4. refresh MAN/WRK state from repository evidence;
+5. update its own `session_resume.md` and commit the assumption of active PO duty with `[PO-001-02]`.
+
+Only after that resynchronization is the succession operationally complete.
+
+## Final state
+
+`PO-001-01` no longer acts as the ordinary active materialization of Actor ID `PO-001` after successor catch-up. It remains available only for explicit retrospective audit requested by the human.

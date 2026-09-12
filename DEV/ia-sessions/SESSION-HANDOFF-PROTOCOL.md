@@ -31,10 +31,12 @@ Commits anteriores que usam apenas `[PO-001]`, `[MAN-001]` ou `[WRK-001]` perman
 
 Uma nova sessão não herda autoridade por semelhança de nome nem por memória presumida. Ela deve reconstruir o estado operacional a partir do repositório e provar saúde cognitiva antes de assumir integralmente o papel.
 
+A tecnologia usada para materializar a nova sessão não é fixada pelo protocolo. Pode ser, por exemplo, um novo chat, uma ramificação de conversa ou outro mecanismo que venha a existir. O método deve ser identificado e, quando houver dúvida sobre sua qualidade cognitiva, pode ser comparado experimentalmente.
+
 ```text
 sessão predecessora
 → checkpoint / handoff package
-→ sessão sucessora limpa
+→ uma ou mais materializações candidatas
 → reconstrução pelo repositório
 → teste cognitivo
 → avaliação pela predecessora
@@ -44,6 +46,8 @@ sessão predecessora
 ```
 
 Durante a sobreposição, a predecessora permanece avaliadora e a sucessora permanece **candidata à continuidade**, sem emitir novas decisões operacionais fora do teste salvo autorização explícita.
+
+**Importante:** `novo chat` não deve ser chamado de `sem memória` ou `limpo` como fato técnico. Ele pode não herdar a transcrição explícita da conversa predecessora e ainda assim receber memória/contexto por outros mecanismos do produto ou da conta. O protocolo deve registrar a condição observável, não presumir amnésia.
 
 ## 3. Pacote mínimo de handoff
 
@@ -117,6 +121,8 @@ A predecessora deve registrar uma avaliação no repositório com:
 
 Após `PASS`, a predecessora deixa de tomar novas decisões operacionais do ator, salvo solicitação explícita do humano para auditoria retrospectiva.
 
+Se o repositório canônico avançou durante o experimento, a sessão aprovada deve primeiro sincronizar o delta entre o snapshot usado no teste e o HEAD canônico atual antes de coordenar outros atores.
+
 Sinal humano de conclusão:
 
 ```text
@@ -136,6 +142,56 @@ O humano atua como scheduler físico:
 
 O humano não deve copiar manualmente todo o contexto entre chats.
 
-## 8. Aprendizado para o protocolo
+## 8. Modo experimental A/B de materialização
+
+Quando houver mais de um mecanismo plausível para criar a sessão sucessora, pode-se comparar candidatos sobre o mesmo estado congelado.
+
+Regras mínimas:
+
+1. congelar um único snapshot `H0` antes de iniciar qualquer candidato;
+2. criar uma branch experimental independente por candidato a partir de `H0`;
+3. fornecer a mesma bateria e o mesmo estado de repositório;
+4. proibir cada candidato de consultar outras branches, outros candidatos ou o HEAD canônico posterior;
+5. manter respostas isoladas até todos concluírem;
+6. não revelar ao avaliador qual mecanismo gerou qual resposta até a avaliação cega terminar, quando isso for operacionalmente possível;
+7. registrar como variável experimental apenas diferenças reais entre as materializações;
+8. após escolher a sucessora, fazê-la sincronizar `H0 → HEAD canônico` antes de assumir trabalho real.
+
+Uma ramificação de chat pode carregar a transcrição histórica explícita. Um novo chat pode não carregar essa transcrição e ainda assim receber memória/contexto da conta. Portanto, a comparação correta é entre **mecanismos observados de materialização**, e não necessariamente entre `com memória` e `sem memória`.
+
+## 9. Controle da predecessora
+
+Quando a sessão predecessora também responder ao teste como referência, sua resposta deve ser congelada **antes** de qualquer resposta candidata ser inspecionada.
+
+O congelamento ideal contém:
+
+- corpo integral da resposta;
+- hash criptográfico;
+- timestamp ou commit identificável;
+- armazenamento separado das branches dos candidatos durante o período cego.
+
+Somente registrar um hash sem preservar/revelar posteriormente o corpo correspondente não oferece auditabilidade suficiente. Esse caso pode ser usado como observação, mas não deve ser tratado como controle reproduzível.
+
+## 10. Primeiro experimento registrado — 2026-09-11
+
+Snapshot comum: `ac939f7ba4aad9cc9fe957a8821a3d5feceb2c32`.
+
+Condições:
+
+- `exp/po-handoff-a`: chat ramificado da conversa predecessora;
+- `exp/po-handoff-b`: novo chat sem transcrição explicitamente ramificada, mas com possíveis mecanismos de memória/contexto da conta.
+
+Resultados:
+
+- ramificação: commit `f06e8a54841e9ff18ae876a931abbd7b9925cec7` — 100/100, nenhum erro crítico;
+- novo chat: commit `f19b2aff9a781edcbf2fb76b83f35ecbbd29e28c` — 100/100, nenhum erro crítico.
+
+Conclusão limitada: neste teste e nesta rubrica, a ramificação explícita não apresentou vantagem mensurável de saúde operacional sobre o novo chat. Isso **não** prova equivalência geral dos mecanismos nem reconstrução puramente a partir do Git, porque o novo chat declarou contexto conversacional legitimamente disponível por mecanismos da conta.
+
+Critério de desempate adotado: escolher o novo chat como `PO-001-02`, por atingir o mesmo resultado com menor dependência explícita da transcrição predecessora. A escolha é arquitetural/operacional, não evidência de superioridade intrínseca do novo chat.
+
+O controle da predecessora foi declarado como 100/100 com SHA-256 `10e1d27d789de31108d53c1c233f43e14c3edc89943c89b337d4d247b2fe48f8`, mas o corpo não foi congelado externamente antes da inspeção dos candidatos. Portanto ele é registrado como limitação metodológica e não como controle reproduzível.
+
+## 11. Aprendizado para o protocolo
 
 Cada transição é também um experimento. Registrar falhas de reconstrução, perguntas que não discriminam saúde real, informações que ficaram implícitas demais e passos manuais desnecessários. Só após ciclos suficientes essas observações devem ser propostas de volta ao InitProj como regra geral.
