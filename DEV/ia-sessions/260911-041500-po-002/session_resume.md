@@ -117,3 +117,54 @@ Protocol adopted with these invariants:
 **Generational responsibility accepted:** when `PO-001-02` needs replacement, this session itself will execute `PREPARE_HANDOFF`, freeze the authorized state, test one or more uniquely identified candidates, evaluate cognitive health, select the successor, conduct canonical catch-up/activation, and then become `RETIRED_AUDITOR`. This responsibility does not depend on `PO-001-01` remaining available.
 
 No new domain work was issued to MAN-001 or WRK-001 as part of this adoption. No domain architecture, manifesto or POC artifact was changed.
+
+## 2026-09-12 — Critical review of WRK vertical POC and MAN `De onde partimos`
+
+**SOURCE:** `PROMPT PO-001-02 — 001` / `HUMAN_CHAT` + WRK/MAN OUTBOX + concrete POC contracts/code/evidence + `SELF_ANALYSIS`
+
+Canonical HEAD at review start: `8f6a98f31212763e6b1a213c5918ffa6ae564260`.
+
+### WRK decision
+
+Reviewed `DEV/ia-sessions/260911-025000-worker/OUTBOX/003-vertical-slice-delivery.md`, commit `73ad98c53bcec3fa4eccb4b0ac636964f512d807`, and concrete `POC/ccp-materializer/` artifacts including `projection-contract.json`, `source-origin.json`, `materialize.py`, tests and versioned build evidence.
+
+Decision: **ACCEPT first vertical milestone; HOLD expansion.**
+
+Accepted as demonstrated: deterministic structural materialization of the P2.3 slice, source integrity/provenance, curated exact annotations, typed CCP JSON, explicit projection contract, required-invariant retention, reproducible MD/JSON outputs and executable failure checks for defined structural violations.
+
+Not demonstrated: automatic cognitive extraction, semantic equivalence, cognitive monotonicity, comprehension benefit, editorial generation/revision, approval, raw-chat reconstruction, historical chronology or a general CCP ontology. The current adapter is intentionally narrow and hard-coded to this first recorte; no speculative generalization is requested.
+
+`Como chegamos aqui` remains on HOLD until an appropriate event/history source and dedicated projection contract exist.
+
+### MAN decision
+
+Reviewed MAN `OUTBOX/004`, `005`, `006`, MAN session state and the current reference pool.
+
+Decision: **APPROVE the epistemic-starting-point architecture as a strong candidate; HOLD editorial consolidation of D0.1–D0.4.**
+
+The prior-art cycle correctly established that isolated FlowED ingredients have strong antecedents, that external formulations must not strengthen canonical P1/P2/P3 to manufacture novelty, and that exact composition/hierarchy novelty remains unresolved. The human proposal to make inherited knowledge/evidence/limits/delta explicit is compatible with FlowED/CCP, but its exact name, formal CCP status, manifesto insertion and D0 text are not yet approved.
+
+Two corrections are required before consolidation:
+
+1. MAN consulted material references during the sprint but `docs/research/REFERENCE-POOL.md` was not updated. This violates the current reuse/provenance rule. The consulting actor must normalize the sources it actually verified, including what each supports/does not support and separating scientific evidentiary strength from prior-art/public-disclosure relevance.
+2. `D0.4` may be mislocated: it reads as a transversal aspiration/proposition about common conceptual language rather than a statement of epistemic starting point. Its placement must be re-evaluated after the evidence matrix. `D0.1` also must not use "consolidated" as an indiscriminate consensus label without traceable support.
+
+Issued MAN task in `DEV/ia-sessions/260911-025000-manifesto/INBOX/002-po-epistemic-foundation-evidence-matrix.md`: build a claim-first matrix from the real canonical manifesto, normalize actually consulted references, preserve unresolved residuals, and then reassess D0.1–D0.4 without altering the manifesto/P2.3 yet.
+
+### Cross-front ordering
+
+A useful dependency emerged: the MAN epistemic matrix can become the second real source model for the WRK materializer.
+
+Preferred order:
+
+1. MAN produces a traceable structure `claim → antecedent → evidence → limit → adoption/reweighting → delta` and closes reference provenance.
+2. PO reviews and freezes a valid subset.
+3. WRK uses that subset as the second vertical slice before any attempt at `Como chegamos aqui`.
+
+This is preferable to immediate history reconstruction because it exercises richer source/provenance relations without requiring invented chronology. It also gives WRK a second real requirement instead of asking for abstract generalization.
+
+### Records/commits
+
+- PO assessment record: `DEV/ia-sessions/260911-041500-po-002/OUTBOX/001-review-wrk-man-next-order.md` — commit `751a579263c9b15323d36ddf497a99f055ee6453`.
+- MAN input: `DEV/ia-sessions/260911-025000-manifesto/INBOX/002-po-epistemic-foundation-evidence-matrix.md` — commit `b5448f6247cbdd2a7e199171c228357028083b6f`.
+- No WRK input was issued; WRK is intentionally waiting for a justified second real source.
