@@ -134,3 +134,22 @@ Actions prepared:
 - prepared an INBOX message for `PO-001-02` to adopt the new protocol explicitly.
 
 No MAN/WRK work was coordinated by `PO-001-01` in this task.
+
+## 2026-09-12 — Session-flow executor normalization
+
+**SOURCE:** `HUMAN_CHAT` + `SELF_ANALYSIS`
+
+The human identified that even the transition/adoption prompt itself must be normalized and reusable, so future active sessions can execute succession without depending on the founding predecessor.
+
+Actions:
+
+- created `DEV/ia-sessions/SESSION-FLOW-RUNBOOK.md` as the parameterized operational executor of the central protocol;
+- created `DEV/ia-sessions/SESSION-FLOW-COGNITIVE-TEST-TEMPLATE.md` by generalizing the 15-question test used in the first PO handoff;
+- defined canonical variables for actor/session identity, H0, candidates, branches, materialization mode, test paths, scoring, PASS, catch-up and activation;
+- normalized actions `ADOPT_PROTOCOL`, `PREPARE_HANDOFF`, `CANDIDATE_LAUNCH`, `EVALUATE_CANDIDATES`, `REMEDIATE_CANDIDATE`, `PROMOTE_SUCCESSOR`, `ASSUME_ACTIVE` and `SHADOW_AUDIT_PROMPT`;
+- required unique experimental candidate IDs so multiple candidates do not share the final Session Instance ID before selection;
+- formalized the recursive rule that every new `ACTIVE` session becomes responsible for preparing, testing, selecting and promoting its own future successor.
+
+This change is intended to make the protocol generational: `PO-001-02` can later create and qualify `PO-001-03` without needing `PO-001-01` to remain available.
+
+No domain work was coordinated by `PO-001-01` in this task.
