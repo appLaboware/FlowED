@@ -1,6 +1,9 @@
 # FlowED — Protocolo de Passagem de Sessão entre Instâncias de um Mesmo Ator
 
-**Status:** protocolo operacional experimental.
+**Status:** protocolo operacional experimental especializado.
+**Protocolo central:** `DEV/ia-sessions/SESSION-FLOW-PROTOCOL.md`.
+
+Este documento detalha a **qualificação/handoff** dentro do ciclo de vida maior definido em `SESSION-FLOW-PROTOCOL.md`. Para bootstrap, operação normal, promoção, aposentadoria e SHADOW AUDIT, consultar primeiro o protocolo central. Este arquivo continua sendo a referência específica para teste cognitivo, A/B e histórico do primeiro experimento.
 
 ## 1. Identidade em dois níveis
 

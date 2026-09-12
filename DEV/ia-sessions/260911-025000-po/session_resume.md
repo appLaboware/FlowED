@@ -3,7 +3,7 @@
 **Actor ID:** `PO-001`
 **Session Instance ID:** `PO-001-01`
 **Session folder:** `260911-025000-po`
-**Final operational state:** `HANDOFF_COMPLETE`
+**Final operational state:** `HANDOFF_COMPLETE / RETIRED_AUDITOR`
 
 ## Mission completed in this session
 
@@ -115,3 +115,22 @@ Only after that resynchronization is the succession operationally complete.
 ## Final state
 
 `PO-001-01` no longer acts as the ordinary active materialization of Actor ID `PO-001` after successor catch-up. It remains available only for explicit retrospective audit requested by the human.
+
+## 2026-09-12 — Auditor protocol consolidation
+
+**SOURCE:** `HUMAN_CHAT` + `SELF_ANALYSIS`
+
+After `PO-001-02` completed canonical catch-up and became `ACTIVE`, the human explicitly asked this retired predecessor to consolidate the accumulated session-succession experience into a centralized session-flow protocol before the new PO proceeds further.
+
+This is an authorized **protocol/audit task**, not a return to ordinary PO coordination.
+
+Actions prepared:
+
+- created `DEV/ia-sessions/SESSION-FLOW-PROTOCOL.md` as the central lifecycle protocol;
+- made `SESSION-HANDOFF-PROTOCOL.md` a specialized qualification/handoff reference under the central protocol;
+- linked `MOBILE-LOOP.md` and `COORDINATION.md` to the new central lifecycle;
+- formalized lifecycle states, uniform bootstrap for cloned/new sessions, A/B isolation, predecessor-control rules, canonical catch-up, single-ACTIVE invariant, retired-auditor role and post-handoff `SHADOW AUDIT`;
+- formalized prompt lineage during the optional observation window so the predecessor can know exactly what the human sent to the successor without becoming a second operational authority;
+- prepared an INBOX message for `PO-001-02` to adopt the new protocol explicitly.
+
+No MAN/WRK work was coordinated by `PO-001-01` in this task.

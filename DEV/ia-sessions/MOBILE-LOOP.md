@@ -1,6 +1,7 @@
 # FlowED — Mobile Human Orchestration Loop
 
 **Status:** protocolo operacional experimental para coordenação de múltiplas sessões de ChatGPT a partir de celular.
+**Ciclo de vida das sessões:** `DEV/ia-sessions/SESSION-FLOW-PROTOCOL.md`.
 
 ## Objetivo
 
@@ -39,8 +40,10 @@ O humano não deve precisar copiar instruções entre sessões.
 Uma sessão que ainda não conheça este protocolo deve receber uma única instrução humana:
 
 ```text
-Sincronize pelo repositório: leia DEV/ia-sessions/MOBILE-LOOP.md, DEV/ia-sessions/COORDINATION.md, seu CONTEXT.md e seu INBOX. Adote seu Actor ID. Depois disso, trate “NOVO INPUT” como comando para sincronizar, executar o trabalho pendente do seu papel, atualizar seu session_resume.md e registrar tudo no Git.
+Sincronize pelo repositório: leia DEV/ia-sessions/SESSION-FLOW-PROTOCOL.md, DEV/ia-sessions/MOBILE-LOOP.md, DEV/ia-sessions/COORDINATION.md, seu CONTEXT.md e seu INBOX. Adote seu Actor ID e respeite o estado da sua Session Instance ID. Depois disso, trate “NOVO INPUT” como comando para sincronizar, executar o trabalho pendente autorizado do seu papel, atualizar seu session_resume.md e registrar tudo no Git.
 ```
+
+Esse bootstrap vale para sessão clonada, novo chat ou outro mecanismo de materialização. Contexto conversacional herdado é auxiliar; o estado operacional vem da fonte autorizada pelo protocolo.
 
 Depois desse bootstrap, usar somente `NOVO INPUT` nos ciclos ordinários, salvo quando o humano quiser deliberadamente conversar ou mudar uma decisão naquele chat.
 

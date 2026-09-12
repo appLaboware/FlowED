@@ -3,6 +3,7 @@
 **Status:** protocolo operacional experimental inspirado no InitProj.
 **Escopo:** coordenação entre o chat original (PO), a branch paralela de revisão do manifesto e o worker de materialização do CCP.
 **Autoridade filosófica final:** humano.
+**Ciclo de vida das sessões:** `DEV/ia-sessions/SESSION-FLOW-PROTOCOL.md`.
 
 ## 1. Atores e instâncias de sessão
 
@@ -150,9 +151,13 @@ Reutilização não significa autoridade automática: cada uso deve verificar se
 
 Antes de editar arquivo compartilhado fora dessas fronteiras, consultar o HEAD atual e registrar a necessidade quando houver risco de colisão.
 
-## 10. Handoff entre sessões do mesmo ator
+## 10. Fluxo e handoff entre sessões do mesmo ator
 
-A continuidade entre chats do mesmo ator segue:
+O ciclo completo de uma sessão segue:
+
+`DEV/ia-sessions/SESSION-FLOW-PROTOCOL.md`
+
+A qualificação específica da passagem entre instâncias segue:
 
 `DEV/ia-sessions/SESSION-HANDOFF-PROTOCOL.md`
 
@@ -161,9 +166,10 @@ Regra central:
 ```text
 Actor ID permanece
 Session Instance ID muda
+uma única sessão fica ACTIVE por Actor ID
 ```
 
-A sessão sucessora deve reconstruir o estado pelo repositório e passar por teste cognitivo antes de assumir integralmente o papel. Durante a sobreposição, a predecessora é avaliadora e a sucessora é candidata.
+A sessão sucessora deve reconstruir o estado pelo repositório e passar por teste cognitivo antes de assumir integralmente o papel. Durante a sobreposição, a predecessora é avaliadora e a sucessora é candidata. Depois da promoção, a predecessora pode permanecer como `RETIRED_AUDITOR`, mas não como segunda autoridade operacional.
 
 ## 11. Tags de commit
 
@@ -194,4 +200,6 @@ O commit `73ad98c53bcec3fa4eccb4b0ac636964f512d807` é a primeira entrega vertic
 
 ## 13. Fonte de regras
 
-Este protocolo adapta o padrão de sessões do InitProj — sessões rastreáveis, `CONTEXT`, `INBOX`, `OUTBOX`, resumos e handoff por arquivo — ao experimento atual do FlowED. Ele é operacional e deve evoluir com a experiência real de uso no celular e com as descobertas do CCP.
+Este protocolo adapta o padrão de sessões do InitProj — sessões rastreáveis, `CONTEXT`, `INBOX`, `OUTBOX`, resumos e handoff por arquivo — ao experimento atual do FlowED.
+
+`SESSION-FLOW-PROTOCOL.md` é a referência central para ciclo de vida de sessões; este arquivo permanece responsável por coordenação e fronteiras entre atores. Ambos são operacionais e devem evoluir com experiência real, sem transformar observações locais em regra geral antes de evidência suficiente.
