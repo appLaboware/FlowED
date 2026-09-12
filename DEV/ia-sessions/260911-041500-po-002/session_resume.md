@@ -89,3 +89,31 @@ Canonical synchronization completed through HEAD `6397fd6cf5b3533d39890fed49a76a
 `PO-001-02` now assumes ordinary active duty as the current materialization of stable Actor ID `PO-001`.
 
 No new MAN/WRK work was coordinated before completion of this catch-up.
+
+## 2026-09-12 — Adoption of recursive Session Flow Protocol
+
+**SOURCE:** `HUMAN_CHAT` (`SESSION FLOW ACTION: ADOPT_PROTOCOL`) + `INBOX/003-session-flow-protocol-adoption.md` + canonical protocol/runbook + `SELF_ANALYSIS`
+
+Synchronized canonical branch `docs/flowed-concept-evolution-2026-09-08` at observed HEAD `896becd8601bc8e44f746c01b15490e6b6c4ce42` and read `SESSION-FLOW-PROTOCOL.md`, `SESSION-FLOW-RUNBOOK.md`, `COORDINATION.md`, `MOBILE-LOOP.md` and the pending adoption input.
+
+Operational identity is confirmed from canonical session state:
+
+- stable Actor ID: `PO-001`;
+- sole active Session Instance ID: `PO-001-02`;
+- predecessor `PO-001-01`: `HANDOFF_COMPLETE / RETIRED_AUDITOR`;
+- commit prefix for this session: `[PO-001-02]`;
+- `SHADOW_AUDIT=ON` does not create a second active authority; the predecessor may audit only when requested by the human.
+
+Protocol adopted with these invariants:
+
+- future succession is mechanism-neutral: branch, new chat, project context or another materialization mode receives the same lifecycle discipline;
+- inherited conversation is auxiliary context and never overrides authorized repository state;
+- A/B tests freeze one `H0`, isolate candidate branches/IDs and preserve blind evaluation when feasible;
+- a predecessor control is reproducible only if full body, hash and timestamp/commit are frozen before candidate inspection;
+- PASS does not eliminate canonical catch-up when HEAD advanced;
+- prompt lineage may be numbered during shadow audit to preserve the chain `human intent → exact prompt → interpretation → action`;
+- the purpose of shadow audit is to establish confidence and end dependence on the predecessor, not perpetuate it.
+
+**Generational responsibility accepted:** when `PO-001-02` needs replacement, this session itself will execute `PREPARE_HANDOFF`, freeze the authorized state, test one or more uniquely identified candidates, evaluate cognitive health, select the successor, conduct canonical catch-up/activation, and then become `RETIRED_AUDITOR`. This responsibility does not depend on `PO-001-01` remaining available.
+
+No new domain work was issued to MAN-001 or WRK-001 as part of this adoption. No domain architecture, manifesto or POC artifact was changed.
