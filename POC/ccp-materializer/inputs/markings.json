@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "unit_id": "P2.3",
+  "title": "Coerência Operacional",
+  "source": {
+    "repository": "appLaboware/FlowED",
+    "commit": "a22a6ad841f3ab6e87eb89ffef43e9bfcd45e4ba",
+    "path": "docs/pt-br/manifesto/P2.3-COERENCIA-OPERACIONAL-PROJECTIONS.md",
+    "git_blob_sha": "5795a43dda572638b19abe6c9492540a1f5599a1",
+    "kind": "preserved-editorial-document",
+    "authority": "candidata editorial da frente MAN-001; aprovação final não registrada nesta fonte",
+    "file": "source.md",
+    "sha256": "f87b90d724056e94e9dd73e28880dd0ed67132cc30be9c0672ce4aacefafefcb"
+  },
+  "annotation": {
+    "actor": "WRK-001",
+    "method": "curated exact line spans; no automatic semantic extraction",
+    "semantic_equivalence": "not automatically verified"
+  },
+  "canonical": "base",
+  "invariants": [
+    "state",
+    "base",
+    "causality",
+    "limits"
+  ],
+  "marks": [
+    {
+      "id": "state",
+      "kind": "epistemic-status",
+      "start_line": 3,
+      "end_line": 3,
+      "quote": "**Status:** candidata em revisão. Não substitui a redação consolidada do manifesto até aprovação explícita."
+    },
+    {
+      "id": "expand",
+      "kind": "editorial-rendering",
+      "start_line": 11,
+      "end_line": 11,
+      "quote": "Contratos — por exemplo, interfaces, esquemas, políticas ou declarações de configuração que explicitam condições a serem respeitadas — já são amplamente utilizados na Engenharia de Software, em diferentes níveis da arquitetura e da operação. Nossa proposta, porém, é que lhes seja atribuída a responsabilidade primária pela preservação da coerência operacional — aquilo que deve continuar reconhecível na forma de pensar e operar mesmo quando a tecnologia usada para realizá-la muda. Concentrar essa responsabilidade nos contratos significa manter neles a intenção e os invariantes que devem sobreviver às trocas de materialização. Portanto, quanto mais essa coerência reside nos contratos, menos depende da permanência das tecnologias que os materializam e maior tende a ser a liberdade para experimentá-las, substituí-las e fazê-las evoluir sem reconstruir o que continua válido. Ao deslocar a estabilidade para aquilo que se pretende preservar, a organização pode deixar mais livre para mudar justamente aquilo que mais tende a mudar."
+    },
+    {
+      "id": "base",
+      "kind": "editorial-rendering",
+      "start_line": 15,
+      "end_line": 15,
+      "quote": "Contratos já são amplamente utilizados na Engenharia de Software. Nossa proposta, porém, é que lhes seja atribuída a responsabilidade primária pela preservação da coerência operacional, concentrando nos contratos aquilo que deve permanecer reconhecível mesmo quando as tecnologias mudam. Quanto mais essa coerência reside nos contratos, menos depende da permanência das tecnologias que os materializam e maior tende a ser a liberdade para experimentá-las, substituí-las e fazê-las evoluir. Ao deslocar a estabilidade para aquilo que se pretende preservar, a organização pode deixar mais livre para mudar justamente aquilo que mais tende a mudar."
+    },
+    {
+      "id": "reduction-1",
+      "kind": "editorial-rendering",
+      "start_line": 19,
+      "end_line": 19,
+      "quote": "Contratos já são amplamente utilizados na Engenharia de Software. Propomos que lhes seja atribuída a responsabilidade primária pela coerência operacional. Quanto mais essa coerência reside nos contratos, menos depende da permanência das tecnologias que os materializam e mais livres elas ficam para mudar."
+    },
+    {
+      "id": "reduction-2",
+      "kind": "editorial-rendering",
+      "start_line": 23,
+      "end_line": 23,
+      "quote": "Propomos atribuir aos contratos a responsabilidade primária pela coerência operacional. Quanto mais essa coerência reside neles, mais livre a tecnologia fica para mudar."
+    },
+    {
+      "id": "reduct",
+      "kind": "editorial-rendering",
+      "start_line": 27,
+      "end_line": 27,
+      "quote": "Propomos fazer dos contratos a base primária da coerência operacional para que a tecnologia permaneça livre para mudar."
+    },
+    {
+      "id": "meaning",
+      "kind": "argument",
+      "start_line": 33,
+      "end_line": 35,
+      "quote": "A proposição não afirma que contratos sejam novidade nem que já não possuam papel central em diversas práticas de Engenharia de Software. O ponto de partida é justamente reconhecer esse domínio conhecido e deslocar a discussão para outro nível: não apenas usar contratos para interfaces, responsabilidades ou integrações, mas fazer deles o principal lugar de preservação da coerência operacional que deve sobreviver às mudanças de materialização.\n\nA camada EXPAND-MAX não é uma defesa adicional. Ela apenas explicita pré-requisitos de compreensão que leitores mais experientes podem inferir sozinhos: exemplos do que pode funcionar como contrato, uma glosa curta de coerência operacional e o sentido de concentrar nos contratos aquilo que deve sobreviver às trocas de materialização. Essas explicações podem ser removidas em projeções menos densas sem alterar a conclusão."
+    },
+    {
+      "id": "shift",
+      "kind": "argument",
+      "start_line": 39,
+      "end_line": 41,
+      "quote": "O deslocamento é de centralidade. Em vez de deixar que identidade operacional, continuidade de práticas e invariantes relevantes fiquem excessivamente incorporados às tecnologias concretas usadas em cada momento, propõe-se concentrar essa responsabilidade nos princípios e contratos que definem como a organização pretende operar.\n\nA tecnologia continua importante, especializada e sujeita a requisitos próprios de confiabilidade. Ela apenas deixa de ser o lugar primário onde a coerência organizacional precisa residir."
+    },
+    {
+      "id": "causality",
+      "kind": "causality",
+      "start_line": 45,
+      "end_line": 49,
+      "quote": "O encadeamento preservado pela proposição é:\n\n`coerência operacional concentrada em contratos → menor dependência da permanência de tecnologias específicas → maior liberdade para experimentar, substituir e evoluir materializações`\n\nA conclusão não é que tecnologia deixe de precisar de estabilidade operacional. O que se reduz é a necessidade de transformar uma tecnologia específica no suporte principal da identidade operacional da organização."
+    },
+    {
+      "id": "recognition",
+      "kind": "argument",
+      "start_line": 53,
+      "end_line": 53,
+      "quote": "A primeira frase reconhece explicitamente que contratos já são amplamente utilizados. Isso evita reivindicar como novidade algo já conhecido pelo público técnico e estabelece o ponto exato de partida do raciocínio. A proposta começa depois desse reconhecimento: no grau de responsabilidade atribuído aos contratos pela coerência operacional."
+    },
+    {
+      "id": "intent",
+      "kind": "argument",
+      "start_line": 57,
+      "end_line": 59,
+      "quote": "A proposição depende da separação entre intenção e materialização. Se tecnologias tendem a mudar em ritmos diferentes da intenção que realizam, concentrar a coerência em uma superfície mais estável permite que a mudança tecnológica permaneça mais localizada na borda de materialização.\n\nEssa relação não significa que toda intenção permaneça imutável. Princípios e contratos também evoluem. A hipótese é apenas que, quando aquilo que deve permanecer é explicitado separadamente daquilo que o materializa, mudanças de implementação tendem a exigir menos reconstrução conceitual."
+    },
+    {
+      "id": "impact",
+      "kind": "argument",
+      "start_line": 63,
+      "end_line": 65,
+      "quote": "O efeito estratégico pretendido é aumentar a capacidade de evolução tecnológica sem exigir que cada troca de ferramenta, framework, plataforma ou provider redefina a forma de trabalho que continua válida.\n\nA materialização é frequentemente a parte mais visível da evolução de um sistema: novos frameworks, bibliotecas, plataformas e padrões alteram diretamente o artefato produzido. Quando a coerência operacional não depende da permanência dessas tecnologias, a organização tende a poder experimentar e substituí-las com menor impacto sobre sua identidade operacional."
+    },
+    {
+      "id": "limits",
+      "kind": "limits",
+      "start_line": 69,
+      "end_line": 78,
+      "quote": "Esta proposição não afirma que:\n\n- contratos devam conter toda decisão da organização;\n- tecnologias concretas não precisem ser estabilizadas, governadas ou padronizadas;\n- toda substituição tecnológica se torne barata ou simples;\n- princípios e contratos sejam imutáveis;\n- diversidade tecnológica seja sempre desejável;\n- contratos eliminem conhecimento especializado sobre materializações.\n\nA proposição trata apenas de onde se busca preservar prioritariamente a coerência operacional e da consequência esperada dessa escolha sobre a liberdade de evolução das materializações."
+    },
+    {
+      "id": "argument-path",
+      "kind": "argument",
+      "start_line": 82,
+      "end_line": 98,
+      "quote": "`tecnologias mudam e deixam marcas visíveis no artefato`\n\n`↓`\n\n`se a coerência operacional estiver incorporada à tecnologia, a mudança tecnológica arrasta parte da forma de trabalhar`\n\n`↓`\n\n`princípios e contratos podem carregar invariantes e intenção de forma separada da materialização`\n\n`↓`\n\n`deslocar para eles a responsabilidade primária pela coerência reduz a dependência da permanência tecnológica`\n\n`↓`\n\n`a estabilidade passa a proteger a liberdade de mudar`"
+    }
+  ]
+}
