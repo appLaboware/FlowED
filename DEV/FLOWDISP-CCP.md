@@ -2,12 +2,12 @@
 
 **Status:** candidate architecture for review by `PO-001-02`; not canon, not product approval, not novelty claim.
 
-This CCP is split into small auditable parts:
+This CCP is split into auditable parts:
 
 1. `DEV/flowdisp-discovery-ccp/01-problem-and-lineage.md`
 2. `DEV/flowdisp-discovery-ccp/02-pmfn-and-flowdisp.md`
-3. `DEV/flowdisp-discovery-ccp/03-atomic-research-and-protocol-learning.md`
-4. `DEV/flowdisp-discovery-ccp/04-po-handoff.md`
+3. `DEV/flowdisp-discovery-ccp/03-researcher.md`
+4. `DEV/flowdisp-discovery-ccp/04-pilot-observation.md`
 
 Cognitive chain:
 
@@ -23,3 +23,5 @@ prior-art overclaim risk
 → protocol observations from real executions
 → PO-001-02 orchestrates; human + PO-001-01 validate
 ```
+
+Operational review and actor dispatch remain the responsibility of the active PO.
