@@ -1,0 +1,12 @@
+{
+  "name": "FlowDisP",
+  "full_name": "FlowED Discovery Protocol",
+  "version": "0.1.0-poc",
+  "status": "experimental",
+  "cli_candidate": "FLDP",
+  "research_actor": "ABR",
+  "research_actor_full_name": "Atomic Boundary Researcher",
+  "portable": true,
+  "python": ">=3.10",
+  "external_dependencies": []
+}
