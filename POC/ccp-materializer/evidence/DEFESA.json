@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "unit_id": "P2.3",
+  "projection": "DEFESA",
+  "axis": "argumentation",
+  "consumer": "leitor técnico; revisão de candidata",
+  "source": {
+    "repository": "appLaboware/FlowED",
+    "commit": "a22a6ad841f3ab6e87eb89ffef43e9bfcd45e4ba",
+    "path": "docs/pt-br/manifesto/P2.3-COERENCIA-OPERACIONAL-PROJECTIONS.md",
+    "git_blob_sha": "5795a43dda572638b19abe6c9492540a1f5599a1",
+    "kind": "preserved-editorial-document",
+    "authority": "candidata editorial da frente MAN-001; aprovação final não registrada nesta fonte",
+    "file": "source.md",
+    "sha256": "f87b90d724056e94e9dd73e28880dd0ed67132cc30be9c0672ce4aacefafefcb"
+  },
+  "annotation": {
+    "actor": "WRK-001",
+    "method": "curated exact line spans; no automatic semantic extraction",
+    "semantic_equivalence": "not automatically verified"
+  },
+  "canonical": "base",
+  "required_invariants": [
+    "state",
+    "base",
+    "causality",
+    "limits"
+  ],
+  "render_order": [
+    "meaning",
+    "shift",
+    "causality",
+    "recognition",
+    "intent",
+    "impact",
+    "limits",
+    "argument-path"
+  ],
+  "allowed_omissions": [
+    "expand",
+    "reduction-1",
+    "reduction-2",
+    "reduct"
+  ],
+  "nodes": {
+    "state": {
+      "id": "state",
+      "kind": "epistemic-status",
+      "text": "**Status:** candidata em revisão. Não substitui a redação consolidada do manifesto até aprovação explícita.",
+      "provenance": {
+        "source_sha256": "f87b90d724056e94e9dd73e28880dd0ed67132cc30be9c0672ce4aacefafefcb",
+        "start_line": 3,
+        "end_line": 3,
+        "url": "https://github.com/appLaboware/FlowED/blob/a22a6ad841f3ab6e87eb89ffef43e9bfcd45e4ba/docs/pt-br/manifesto/P2.3-COERENCIA-OPERACIONAL-PROJECTIONS.md#L3-L3"
+      }
+    },
+    "base": {
+      "id": "base",
+      "kind": "editorial-rendering",
+      "text": "Contratos já são amplamente utilizados na Engenharia de Software. Nossa proposta, porém, é que lhes seja atribuída a responsabilidade primária pela preservação da coerência operacional, concentrando nos contratos aquilo que deve permanecer reconhecível mesmo quando as tecnologias mudam. Quanto mais essa coerência reside nos contratos, menos depende da permanência das tecnologias que os materializam e maior tende a ser a liberdade para experimentá-las, substituí-las e fazê-las evoluir. Ao deslocar a estabilidade para aquilo que se pretende preservar, a organização pode deixar mais livre para mudar justamente aquilo que mais tende a mudar.",
+      "provenance": {
+        "source_sha256": "f87b90d724056e94e9dd73e28880dd0ed67132cc30be9c0672ce4aacefafefcb",
+        "start_line": 15,
+        "end_line": 15,
+        "url": "https://github.com/appLaboware/FlowED/blob/a22a6ad841f3ab6e87eb89ffef43e9bfcd45e4ba/docs/pt-br/manifesto/P2.3-COERENCIA-OPERACIONAL-PROJECTIONS.md#L15-L15"
+      }
+    },
+    "causality": {
+      "id": "causality",
+      "kind": "causality",
+      "text": "O encadeamento preservado pela proposição é:\n\n`coerência operacional concentrada em contratos → menor dependência da permanência de tecnologias específicas → maior liberdade para experimentar, substituir e evoluir materializações`\n\nA conclusão não é que tecnologia deixe de precisar de estabilidade operacional. O que se reduz é a necessidade de transformar uma tecnologia específica no suporte principal da identidade operacional da organização.",
+      "provenance": {
+        "source_sha256": "f87b90d724056e94e9dd73e28880dd0ed67132cc30be9c0672ce4aacefafefcb",
+        "start_line": 45,
+        "end_line": 49,
+        "url": "https://github.com/appLaboware/FlowED/blob/a22a6ad841f3ab6e87eb89ffef43e9bfcd45e4ba/docs/pt-br/manifesto/P2.3-COERENCIA-OPERACIONAL-PROJECTIONS.md#L45-L49"
+      }
+    },
+    "limits": {
+      "id": "limits",
+      "kind": "limits",
+      "text": "Esta proposição não afirma que:\n\n- contratos devam conter toda decisão da organização;\n- tecnologias concretas não precisem ser estabilizadas, governadas ou padronizadas;\n- toda substituição tecnológica se torne barata ou simples;\n- princípios e contratos sejam imutáveis;\n- diversidade tecnológica seja sempre desejável;\n- contratos eliminem conhecimento especializado sobre materializações.\n\nA proposição trata apenas de onde se busca preservar prioritariamente a coerência operacional e da consequência esperada dessa escolha sobre a liberdade de evolução das materializações.",
+      "provenance": {
+        "source_sha256": "f87b90d724056e94e9dd73e28880dd0ed67132cc30be9c0672ce4aacefafefcb",
+        "start_line": 69,
+        "end_line": 78,
+        "url": "https://github.com/appLaboware/FlowED/blob/a22a6ad841f3ab6e87eb89ffef43e9bfcd45e4ba/docs/pt-br/manifesto/P2.3-COERENCIA-OPERACIONAL-PROJECTIONS.md#L69-L78"
+      }
+    },
+    "meaning": {
+      "id": "meaning",
+      "kind": "argument",
+      "text": "A proposição não afirma que contratos sejam novidade nem que já não possuam papel central em diversas práticas de Engenharia de Software. O ponto de partida é justamente reconhecer esse domínio conhecido e deslocar a discussão para outro nível: não apenas usar contratos para interfaces, responsabilidades ou integrações, mas fazer deles o principal lugar de preservação da coerência operacional que deve sobreviver às mudanças de materialização.\n\nA camada EXPAND-MAX não é uma defesa adicional. Ela apenas explicita pré-requisitos de compreensão que leitores mais experientes podem inferir sozinhos: exemplos do que pode funcionar como contrato, uma glosa curta de coerência operacional e o sentido de concentrar nos contratos aquilo que deve sobreviver às trocas de materialização. Essas explicações podem ser removidas em projeções menos densas sem alterar a conclusão.",
+      "provenance": {
+        "source_sha256": "f87b90d724056e94e9dd73e28880dd0ed67132cc30be9c0672ce4aacefafefcb",
+        "start_line": 33,
+        "end_line": 35,
+        "url": "https://github.com/appLaboware/FlowED/blob/a22a6ad841f3ab6e87eb89ffef43e9bfcd45e4ba/docs/pt-br/manifesto/P2.3-COERENCIA-OPERACIONAL-PROJECTIONS.md#L33-L35"
+      }
+    },
+    "shift": {
+      "id": "shift",
+      "kind": "argument",
+      "text": "O deslocamento é de centralidade. Em vez de deixar que identidade operacional, continuidade de práticas e invariantes relevantes fiquem excessivamente incorporados às tecnologias concretas usadas em cada momento, propõe-se concentrar essa responsabilidade nos princípios e contratos que definem como a organização pretende operar.\n\nA tecnologia continua importante, especializada e sujeita a requisitos próprios de confiabilidade. Ela apenas deixa de ser o lugar primário onde a coerência organizacional precisa residir.",
+      "provenance": {
+        "source_sha256": "f87b90d724056e94e9dd73e28880dd0ed67132cc30be9c0672ce4aacefafefcb",
+        "start_line": 39,
+        "end_line": 41,
+        "url": "https://github.com/appLaboware/FlowED/blob/a22a6ad841f3ab6e87eb89ffef43e9bfcd45e4ba/docs/pt-br/manifesto/P2.3-COERENCIA-OPERACIONAL-PROJECTIONS.md#L39-L41"
+      }
+    },
+    "recognition": {
+      "id": "recognition",
+      "kind": "argument",
+      "text": "A primeira frase reconhece explicitamente que contratos já são amplamente utilizados. Isso evita reivindicar como novidade algo já conhecido pelo público técnico e estabelece o ponto exato de partida do raciocínio. A proposta começa depois desse reconhecimento: no grau de responsabilidade atribuído aos contratos pela coerência operacional.",
+      "provenance": {
+        "source_sha256": "f87b90d724056e94e9dd73e28880dd0ed67132cc30be9c0672ce4aacefafefcb",
+        "start_line": 53,
+        "end_line": 53,
+        "url": "https://github.com/appLaboware/FlowED/blob/a22a6ad841f3ab6e87eb89ffef43e9bfcd45e4ba/docs/pt-br/manifesto/P2.3-COERENCIA-OPERACIONAL-PROJECTIONS.md#L53-L53"
+      }
+    },
+    "intent": {
+      "id": "intent",
+      "kind": "argument",
+      "text": "A proposição depende da separação entre intenção e materialização. Se tecnologias tendem a mudar em ritmos diferentes da intenção que realizam, concentrar a coerência em uma superfície mais estável permite que a mudança tecnológica permaneça mais localizada na borda de materialização.\n\nEssa relação não significa que toda intenção permaneça imutável. Princípios e contratos também evoluem. A hipótese é apenas que, quando aquilo que deve permanecer é explicitado separadamente daquilo que o materializa, mudanças de implementação tendem a exigir menos reconstrução conceitual.",
+      "provenance": {
+        "source_sha256": "f87b90d724056e94e9dd73e28880dd0ed67132cc30be9c0672ce4aacefafefcb",
+        "start_line": 57,
+        "end_line": 59,
+        "url": "https://github.com/appLaboware/FlowED/blob/a22a6ad841f3ab6e87eb89ffef43e9bfcd45e4ba/docs/pt-br/manifesto/P2.3-COERENCIA-OPERACIONAL-PROJECTIONS.md#L57-L59"
+      }
+    },
+    "impact": {
+      "id": "impact",
+      "kind": "argument",
+      "text": "O efeito estratégico pretendido é aumentar a capacidade de evolução tecnológica sem exigir que cada troca de ferramenta, framework, plataforma ou provider redefina a forma de trabalho que continua válida.\n\nA materialização é frequentemente a parte mais visível da evolução de um sistema: novos frameworks, bibliotecas, plataformas e padrões alteram diretamente o artefato produzido. Quando a coerência operacional não depende da permanência dessas tecnologias, a organização tende a poder experimentar e substituí-las com menor impacto sobre sua identidade operacional.",
+      "provenance": {
+        "source_sha256": "f87b90d724056e94e9dd73e28880dd0ed67132cc30be9c0672ce4aacefafefcb",
+        "start_line": 63,
+        "end_line": 65,
+        "url": "https://github.com/appLaboware/FlowED/blob/a22a6ad841f3ab6e87eb89ffef43e9bfcd45e4ba/docs/pt-br/manifesto/P2.3-COERENCIA-OPERACIONAL-PROJECTIONS.md#L63-L65"
+      }
+    },
+    "argument-path": {
+      "id": "argument-path",
+      "kind": "argument",
+      "text": "`tecnologias mudam e deixam marcas visíveis no artefato`\n\n`↓`\n\n`se a coerência operacional estiver incorporada à tecnologia, a mudança tecnológica arrasta parte da forma de trabalhar`\n\n`↓`\n\n`princípios e contratos podem carregar invariantes e intenção de forma separada da materialização`\n\n`↓`\n\n`deslocar para eles a responsabilidade primária pela coerência reduz a dependência da permanência tecnológica`\n\n`↓`\n\n`a estabilidade passa a proteger a liberdade de mudar`",
+      "provenance": {
+        "source_sha256": "f87b90d724056e94e9dd73e28880dd0ed67132cc30be9c0672ce4aacefafefcb",
+        "start_line": 82,
+        "end_line": 98,
+        "url": "https://github.com/appLaboware/FlowED/blob/a22a6ad841f3ab6e87eb89ffef43e9bfcd45e4ba/docs/pt-br/manifesto/P2.3-COERENCIA-OPERACIONAL-PROJECTIONS.md#L82-L98"
+      }
+    }
+  }
+}

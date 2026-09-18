@@ -1,0 +1,27 @@
+{
+  "unit_id": "P2.3",
+  "projections": [
+    "REDUCT-MAX",
+    "BASE",
+    "DEFESA"
+  ],
+  "checks": [
+    "source SHA-256",
+    "Git blob",
+    "exact spans",
+    "contract coverage",
+    "required invariants"
+  ],
+  "semantic_equivalence": "not automatically verified",
+  "artifacts": {
+    "ccp.json": "67665a93e8f8951f875e92c8ab364f853597fc5284f305b51345ddcb1b760301",
+    "contract.json": "462a762ecf3d01ecb02eea9bf8b114615125f5ff7e16fcd2868154bca2339c2b",
+    "source.md": "f87b90d724056e94e9dd73e28880dd0ed67132cc30be9c0672ce4aacefafefcb",
+    "REDUCT-MAX.json": "d983f6aa18154619c55508e8285739454548b5038a009303e1f527e1c96e223e",
+    "REDUCT-MAX.md": "b14edae5c9534d3652ae8b3164b7179d65247f70b26cb0db747480205349516c",
+    "BASE.json": "6319fc50b3687983d6bab6880846f0f038a32dd06e547678d9188a4a5eaaec17",
+    "BASE.md": "fd37b23381a94303cd04d103b4bc140f19d4fb452877391b2a5bb2642aeef0c4",
+    "DEFESA.json": "bf9f10c4731fdac2162712a5fde57ca374b037c859c4942e95f1f8dc7d199004",
+    "DEFESA.md": "133116a03fb32bab3191d1d1144569d14413a1bf34c0344e7946f22bf53b57aa"
+  }
+}

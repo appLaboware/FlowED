@@ -1,0 +1,186 @@
+# Agenda de pesquisa derivada do FlowED
+
+**Status:** candidatos de pesquisa — nenhum item deve ser apresentado como contribuição inédita antes de revisão de anterioridade.
+
+## Regra
+
+O FlowED deve separar claramente:
+
+- conceitos já estabelecidos e adotáveis;
+- combinações/sínteses de conceitos existentes;
+- lacunas ainda não sustentadas;
+- hipóteses novas que merecem pesquisa.
+
+Os candidatos abaixo nasceram da modelagem do FlowED, mas ainda precisam de pesquisa sistemática.
+
+## R00 — EDT já existe como ativo de pesquisa avançado
+
+O **Education-Driven Thinking (EDT)** não deve ser tratado como mero candidato recém-inventado nesta agenda. Já existe um rascunho de projeto/paper anterior, com problema, resumo, objetivo, revisão inicial, metodologia e resultados esperados.
+
+Sua proposição central é registrar e estruturar o processo cognitivo do criador como base da documentação, rastreabilidade e evolução do conhecimento técnico e normativo.
+
+No contexto FlowED, EDT passa a ser uma das principais referências internas de origem para os eixos de autoeducação, documentação, rastreabilidade, memória organizacional e continuidade academia–indústria.
+
+Isso não significa afirmar que EDT é, desde já, o pai científico completo do FlowED. Seu estado é diferente dos Pxx: trata-se de uma linha de pesquisa já iniciada que precisa ser retomada, atualizada e confrontada com a literatura e com o animal atual do FlowED.
+
+Nome de trabalho para o conceito central em português: **Caminho Cognitivo do Criador (CCC)**. Tradução inglesa provisória: **Creator's Cognitive Path (CCP)**. Naming permanece aberto à pesquisa terminológica.
+
+## P01 — Artigo-pai do FlowED
+
+Pergunta central de trabalho: existe uma teoria única que sustente linguagem operacional comum de Engenharia de Software, separação entre intenção e materialização, composição horizontal de domínios, implementações substituíveis, intensidade contextual, soberania de artefatos e autoeducação rastreável?
+
+Se existir, adotar. Se não existir, produzir artigo de síntese a partir dos antecedentes científicos e normativos adequados. Esse trabalho deve tornar-se o pai conceitual direto do FlowED.
+
+EDT deverá ser avaliado como uma das referências principais desse estudo, especialmente para autoeducação, rastreabilidade do conhecimento e documentação baseada na trajetória de criação.
+
+## P02 — Força epistemológica de referências de Engenharia de Software
+
+Investigar como avaliar gradualmente a sustentação de uma referência técnica sem confundir sustentação, influência, uso e verdade.
+
+Direção atual: preferir um **vetor auditável** antes de qualquer score escalar universal. Dimensões candidatas incluem reconhecimento científico formal, influência científica por citações/indicadores normalizados, contexto do veículo, evidência operacional e rastreabilidade/proveniência.
+
+Questões candidatas:
+
+- o que conta como reconhecimento científico formal e como preservar diferenças entre artigo revisado por pares, conferência, tese e outros produtos?
+- como usar citações como sinal de influência sem tratá-las como confirmação de verdade?
+- quais normalizações por campo, idade, tipo de documento e cobertura de base são defensáveis?
+- qual papel métricas de periódico/venue podem ter sem funcionar como proxy indevido da qualidade de um artigo individual?
+- como tratar evidências conflitantes, retratações, autocitações e citações críticas/negativas?
+- como separar qualidade metodológica, influência e adequação contextual?
+- como registrar score científico zero sem invalidar uma decisão operacional sustentada por outras evidências?
+
+## P03 — Maturidade epistemológica organizacional
+
+Investigar se é possível definir um constructo válido de maturidade epistemológica para organizações de software.
+
+Possíveis componentes: rastreabilidade, força da sustentação, tratamento explícito de incerteza, qualidade das referências, transparência das divergências, capacidade de revisão e evolução.
+
+## P04 — Melhoria contínua orientada por fragilidade epistemológica
+
+Investigar se relatórios de pontos fracos baseados em referências e evidências melhoram a priorização de ações de consultoria, qualidade e melhoria contínua.
+
+## P05 — Avaliação de fornecedores por sustentação de práticas
+
+Investigar se um perfil verificável de maturidade epistemológica, compliance e evidência pode fornecer informação útil para clientes avaliarem fornecedores de software.
+
+Validar relação com resultados observáveis antes de qualquer alegação de qualidade absoluta.
+
+## P06 — Certificação determinística não binária
+
+Investigar modelos de certificação que produzam vetores auditáveis e reproduzíveis em vez de somente conforme/não conforme ou um único número opaco.
+
+Separar componentes determinísticos dos componentes que exigem julgamento humano. Investigar também quando uma agregação escalar é legítima e quais condições devem impedir soma/multiplicação de dimensões heterogêneas que possam gerar falsa precisão ou dupla contagem.
+
+## P07 — Integração academia–indústria e inversão da difusão tecnológica
+
+Investigar se uma linguagem operacional e um conjunto de ferramentas mantidos de forma contínua entre ensino e prática profissional reduzem ruptura entre aprendizagem acadêmica e ambientes industriais.
+
+A hipótese foi ampliada para incluir uma possível **inversão parcial da direção de difusão tecnológica**: em vez de a academia ensinar predominantemente ferramentas já escolhidas pela indústria, versões educacionais gratuitas de ferramentas e contratos comuns podem permitir que estudantes aprendam, experimentem e produzam evidência no ambiente acadêmico; ao entrarem na indústria, esses profissionais carregariam familiaridade e demanda por ferramentas, práticas e modelos mentais previamente amadurecidos na academia.
+
+Ciclo candidato:
+
+**ferramenta/contrato educacional gratuito → adoção acadêmica → aprendizagem + pesquisa + experiência → formação profissional → difusão para a indústria → adoção de capacidades empresariais compatíveis**.
+
+Questões candidatas:
+
+- continuidade de interface, contrato e modelo mental aumenta adoção posterior no ambiente profissional?
+- uso acadêmico em escala produz evidência útil para evolução do produto e das práticas?
+- quais mecanismos de diffusion of innovations, technology transfer e path dependence já explicam esse efeito?
+- versões gratuitas educacionais conseguem influenciar seleção tecnológica empresarial sem lock-in indevido?
+- como distinguir efeito de familiaridade, qualidade real da ferramenta, efeito de rede e estratégia comercial?
+- uma arquitetura contratual e progressiva permite que a mesma experiência atenda estudante e indústria com materializações de escalas diferentes?
+
+EDT/CCC pode ser hipótese explicativa complementar: além de preservar a linguagem operacional, o ensino pode preservar o percurso cognitivo pelo qual práticas, normas e sistemas foram construídos.
+
+Essa linha também serve à estratégia de negócio da LaboWare, mas o efeito alegado precisa de revisão de anterioridade e validação empírica antes de ser tratado como contribuição científica.
+
+## P08 — Prática industrial como geradora de agenda científica
+
+Investigar mecanismo pelo qual divergências recorrentes e referências de baixa sustentação em organizações possam revelar lacunas relevantes de pesquisa e retroalimentar a academia.
+
+Ciclo candidato: ciência → baseline → prática → divergência → hipótese → investigação → nova evidência → novo baseline.
+
+## P09 — Evidência longitudinal operacional
+
+Investigar como uma referência pode acumular sustentação operacional de maneira determinística e auditável ao longo do tempo.
+
+Tempo em uso permanece relevante, mas não deve ser tratado isoladamente como prova. A pesquisa deve combinar, quando disponível, tempo, volume de execuções/exposição, diversidade de contextos, quantidade de projetos/organizações, falhas e sucessos observados, recência e mudanças de versão.
+
+Hipótese importante a falsificar: mera longevidade não deve ser confundida com veracidade nem com alta exposição empírica.
+
+## P10 — Perfil de risco de evolução organizacional
+
+Investigar um índice ou fingerprint de risco associado ao comportamento evolutivo da cultura técnica de uma organização.
+
+Dimensões candidatas: frequência, amplitude, velocidade, força de evidência prévia, reversibilidade, recuperação e exposição simultânea a mudanças.
+
+Nome de trabalho de produto: Risco-FlowED.
+
+## P11 — Queda epistemológica deliberada para inovação
+
+Investigar quando uma organização deve poder adotar temporariamente uma referência de sustentação inferior para experimentar e aprender, sem ser penalizada como simples deterioração.
+
+Possível relação com experimentação controlada, real options, exploration/exploitation, technical debt e gestão de risco deve ser pesquisada antes de criar terminologia própria.
+
+## P12 — Evolução relativa ao baseline
+
+Investigar métricas que distingam afinidade com uma versão do baseline, qualidade absoluta/relativa das referências e velocidade de evolução.
+
+Uma organização pode divergir mais do baseline e ainda possuir referências mais bem sustentadas. O modelo deve evitar transformar conformidade em obediência.
+
+## P13 — Autossuperação do sistema de referência
+
+Investigar mecanismos de governança em que um framework de referência é explicitamente projetado para aceitar evidência que invalide ou substitua seu próprio baseline.
+
+Pesquisar anterioridade em sistemas autocorretivos, falsificacionismo, learning organizations, quality management, adaptive governance e áreas correlatas.
+
+## P14 — Políticas organizacionais de piso epistemológico
+
+Investigar políticas como "não reduzir score", "não ficar abaixo do baseline" ou "divergir apenas com sustentação igual ou superior", incluindo efeitos sobre qualidade, risco, inovação e conservadorismo.
+
+## P15 — Ensino com referências de score zero
+
+Investigar o valor pedagógico de permitir que estudantes adotem hipóteses/práticas sem sustentação inicial e construam evidência ao longo do processo, em vez de apenas reproduzir baseline pronto.
+
+Relacionar com aprendizagem baseada em investigação, aprendizagem experiencial, problem-based learning e epistemologia da educação antes de propor novidade.
+
+## P16 — Documentação normativa orientada pelo caminho cognitivo do criador
+
+Investigar se a documentação normativa e metodológica melhora em compreensão, implantação, ensino, manutenção e evolução quando preserva, além do artefato consolidado, a trajetória cognitiva e decisória que o produziu.
+
+Questões candidatas:
+
+- como representar problemas, alternativas, critérios, decisões, rejeições e racional sem transformar conversa bruta em norma?
+- qual é a relação entre a camada normativa consolidada e sua linhagem cognitiva?
+- em que medida a linhagem melhora aprendizagem, auditabilidade, atualização e interpretação de normas?
+- como preservar fonte, extração, inferência, confirmação, evidência e projeção sem promoção epistemológica silenciosa?
+- como lidar com conteúdo rejeitado/superado e com reprocessamento de interpretações ao longo do tempo?
+
+Este paper pode ser evolução direta do EDT existente, não necessariamente um paper totalmente separado. A decisão deverá ser **CONTINUE EDT / SPLIT / MERGE / ADOPT / DON'T GO** após revisão do rascunho atual e pesquisa de anterioridade.
+
+## P18 — Linha aberta: composição test-driven de contratos públicos
+
+**Nome e conceito final em aberto.** O identificador P17 permanece alocado à linha sobre conhecimento cognitivo estruturado para IA registrada em `EDT-CCP-FLOWED-LINEAGE.md`.
+
+Existe uma composição operacional candidata reunindo TDD, Consumer-Driven Contract Testing, contract/conformance testing, Design by Contract, behavioral substitutability e mocks/fakes em um ciclo no qual o contrato público executável é definido antes da implementação e passa a orientar consumidor, mock inicial, verificação de providers reais e substituição entre implementações.
+
+Ciclo observado:
+
+**comportamento desejado → exemplos executáveis → contrato público → consumidor contra mock → provider contra o mesmo contrato → substituição/conformidade → evolução versionada do contrato**.
+
+A linha permanece deliberadamente aberta: ainda não há decisão de que essa composição constitua um conceito autônomo, nem nome próprio aprovado. O rótulo anterior `Contract-Test-Driven Development (CTDD)` fica preservado apenas como parte da linhagem histórica e não deve ser tratado como nomenclatura consolidada.
+
+O ponto de partida experimental é o `flwd`, mas a linha deve ser estudada como hipótese metodológica geral. A revisão de anterioridade decidirá entre **GO / MERGE / ADOPT / DON'T GO** e, somente se houver residual real, se merece nomenclatura própria.
+
+Estado atual: **CANDIDATE / OPEN CONCEPT / GO FOR PRIOR-ART REVIEW**. Documento próprio: `P18-CONTRACT-TEST-DRIVEN-DEVELOPMENT.md` (path legado preservado por rastreabilidade).
+
+## Critério de promoção
+
+Nenhum Pxx vira "paper do FlowED" apenas porque parece interessante. Cada um deve passar por:
+
+1. busca de anterioridade;
+2. revisão do constructo;
+3. definição de pergunta de pesquisa;
+4. avaliação de contribuição residual;
+5. desenho metodológico;
+6. decisão GO / MERGE / ADOPT / DON'T GO.
