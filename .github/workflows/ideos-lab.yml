@@ -36,7 +36,6 @@ jobs:
           Tools/IDEOS/runtime/ideos porter version
           Tools/IDEOS/runtime/ideos docker version
           Tools/IDEOS/runtime/ideos porter mixins list
-          Tools/IDEOS/runtime/ideos porter plugins list
 
       - name: Build PHP application image from controller
         run: |
