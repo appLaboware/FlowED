@@ -1,0 +1,56 @@
+schemaType: Bundle
+schemaVersion: 1.0.1
+name: porter-lab-php-mysql
+version: 0.1.0
+description: "Generic PHP + MySQL application lifecycle"
+
+mixins:
+  - docker
+  - docker-compose
+
+required:
+  - docker:
+      privileged: false
+
+install:
+  - docker:
+      description: "Build generic PHP application image"
+      build:
+        tag: porter-lab-php-app:local
+        file: runtime/Dockerfile
+        path: .
+
+  - docker-compose:
+      description: "Materialize application and database"
+      flags:
+        file: docker-compose.yml
+      up:
+        flags:
+          detach:
+
+upgrade:
+  - docker:
+      description: "Rebuild generic PHP application image"
+      build:
+        tag: porter-lab-php-app:local
+        file: runtime/Dockerfile
+        path: .
+
+  - docker-compose:
+      description: "Recreate application"
+      flags:
+        file: docker-compose.yml
+      up:
+        flags:
+          detach:
+          force-recreate:
+
+uninstall:
+  - docker-compose:
+      description: "Remove application, database, network and volume"
+      flags:
+        file: docker-compose.yml
+      down:
+        flags:
+          remove-orphans:
+          volumes:
