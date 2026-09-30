@@ -1,10 +1,1 @@
-default-storage: ideos-mongo
-
-storage:
-  - name: ideos-mongo
-    plugin: mongodb
-    config:
-      url: mongodb://mongo:27017/porter
-
-default-secrets-plugin: host
 allow-docker-host-access: true
