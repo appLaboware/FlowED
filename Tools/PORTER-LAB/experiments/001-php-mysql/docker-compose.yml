@@ -1,0 +1,33 @@
+services:
+  web:
+    image: porter-lab-php-app:local
+    container_name: porter-lab-web
+    ports:
+      - "18081:80"
+    environment:
+      DB_HOST: db
+      DB_NAME: app
+      DB_USER: app
+      DB_PASSWORD: app
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.4
+    container_name: porter-lab-db
+    environment:
+      MYSQL_DATABASE: app
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app
+      MYSQL_ROOT_PASSWORD: root
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  db-data:
