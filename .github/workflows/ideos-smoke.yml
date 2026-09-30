@@ -1,0 +1,17 @@
+name: IDEOS Actions smoke
+
+on:
+  push:
+    branches:
+      - tools/ideos-lab
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Smoke
+        run: |
+          echo "IDEOS GitHub Actions runner is alive"
+          uname -a
+          docker version
