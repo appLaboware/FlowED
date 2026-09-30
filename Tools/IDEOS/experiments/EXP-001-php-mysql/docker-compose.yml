@@ -12,7 +12,8 @@ services:
       DB_USER: ideos
       DB_PASSWORD: ideos
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     image: mysql:8.4
