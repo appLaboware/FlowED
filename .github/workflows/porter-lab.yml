@@ -1,0 +1,99 @@
+name: Porter pure laboratory
+
+on:
+  push:
+    branches:
+      - tools/porter-lab
+    paths:
+      - "Tools/PORTER-LAB/**"
+      - ".github/workflows/porter-lab.yml"
+  workflow_dispatch:
+
+jobs:
+  php-mysql:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Clone repository
+        run: |
+          git clone --depth 1 --branch tools/porter-lab https://github.com/appLaboware/FlowED.git repo
+
+      - name: Install Porter exactly as a user would
+        run: |
+          curl -fsSL https://cdn.porter.sh/latest/install-linux.sh | bash
+          echo "$HOME/.porter" >> "$GITHUB_PATH"
+
+      - name: Install official mixins
+        run: |
+          "$HOME/.porter/porter" mixin install docker
+          "$HOME/.porter/porter" mixin install docker-compose
+          "$HOME/.porter/porter" version
+          "$HOME/.porter/porter" mixins list
+
+      - name: Allow invocation image to reach host Docker
+        run: |
+          docker run --rm             -v /var/run/docker.sock:/var/run/docker.sock             alpine:3.21             chmod 666 /var/run/docker.sock
+
+      - name: Build bundle
+        run: |
+          cd repo/Tools/PORTER-LAB/experiments/001-php-mysql
+          "$HOME/.porter/porter" build
+
+      - name: Install application through Porter
+        run: |
+          cd repo/Tools/PORTER-LAB/experiments/001-php-mysql
+          "$HOME/.porter/porter" install porter-lab-app             --allow-docker-host-access
+
+      - name: Prove HTTP and database persistence
+        run: |
+          first=""
+          for i in $(seq 1 60); do
+            if body="$(curl -fsS http://127.0.0.1:18081 2>/dev/null)"; then
+              if echo "$body" | grep -q "Aplicação PHP genérica"; then
+                first="$body"
+                break
+              fi
+            fi
+            sleep 2
+          done
+
+          test -n "$first"
+          echo "$first" | grep -q "Visitas persistidas: 1"
+
+          second="$(curl -fsS http://127.0.0.1:18081)"
+          echo "$second" | grep -q "Visitas persistidas: 2"
+
+      - name: Upgrade through Porter
+        run: |
+          cd repo/Tools/PORTER-LAB/experiments/001-php-mysql
+          "$HOME/.porter/porter" upgrade porter-lab-app             --allow-docker-host-access
+
+      - name: Prove application after upgrade
+        run: |
+          for i in $(seq 1 60); do
+            if body="$(curl -fsS http://127.0.0.1:18081 2>/dev/null)"; then
+              if echo "$body" | grep -q "Aplicação PHP genérica"; then
+                echo "$body"
+                exit 0
+              fi
+            fi
+            sleep 2
+          done
+          exit 1
+
+      - name: Uninstall through Porter
+        run: |
+          cd repo/Tools/PORTER-LAB/experiments/001-php-mysql
+          "$HOME/.porter/porter" uninstall porter-lab-app             --allow-docker-host-access             --delete
+
+      - name: Prove removal
+        run: |
+          ! docker ps -a --format '{{.Names}}' | grep -qx porter-lab-web
+          ! docker ps -a --format '{{.Names}}' | grep -qx porter-lab-db
+
+      - name: Diagnostics
+        if: always()
+        run: |
+          docker ps -a
+          docker images
