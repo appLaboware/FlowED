@@ -47,6 +47,13 @@ jobs:
           cd repo
           Tools/IDEOS/runtime/ideos porter build             --dir experiments/EXP-001-php-mysql
 
+      - name: Grant invocation container access to Docker socket
+        run: |
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            alpine:3.21 \
+            chmod 666 /var/run/docker.sock
+
       - name: Install bundle
         run: |
           cd repo
