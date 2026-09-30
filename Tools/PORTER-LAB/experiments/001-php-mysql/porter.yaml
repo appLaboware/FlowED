@@ -3,6 +3,7 @@ schemaVersion: 1.0.1
 name: porter-lab-php-mysql
 version: 0.1.0
 description: "Generic PHP + MySQL application lifecycle"
+registry: localhost:5000
 
 mixins:
   - docker
