@@ -1,0 +1,36 @@
+schemaType: Bundle
+schemaVersion: 1.0.1
+name: ideos-exp003-azure-compose
+version: 0.1.0
+description: "IDEOS EXP-003: test Docker Compose materialization on Azure"
+
+mixins:
+  - az
+
+credentials:
+  - name: azure-profile
+    path: /home/nonroot/.azure/azureProfile.json
+  - name: azure-token-cache
+    path: /home/nonroot/.azure/msal_token_cache.json
+
+install:
+  - az:
+      description: "Show authenticated Azure account"
+      arguments:
+        - account
+        - show
+      flags:
+        output: json
+
+  - az:
+      description: "List available subscriptions"
+      arguments:
+        - account
+        - list
+      flags:
+        output: table
+
+uninstall:
+  - exec:
+      description: "No Azure resources are created by the authentication probe"
+      command: /bin/true
