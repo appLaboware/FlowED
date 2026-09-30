@@ -64,10 +64,10 @@ jobs:
           cd repo
           for i in $(seq 1 60); do
             if body="$(curl -fsS http://127.0.0.1:18080 2>/dev/null)"; then
-              echo "$body"
-              echo "$body" | grep -q "IDEOS EXP-001"
-              echo "$body" | grep -q "Visitas persistidas:"
-              exit 0
+              if echo "$body" | grep -q "IDEOS EXP-001" && echo "$body" | grep -q "Visitas persistidas:"; then
+                echo "$body"
+                exit 0
+              fi
             fi
             sleep 2
           done
