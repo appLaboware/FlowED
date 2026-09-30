@@ -1,0 +1,75 @@
+name: IDEOS same Application on Docker and Azure
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - tools/ideos-lab
+    paths:
+      - "Tools/IDEOS/experiments/EXP-004-dual-target/**"
+      - ".github/workflows/ideos-dual-target.yml"
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  EXP_DIR: Tools/IDEOS/experiments/EXP-004-dual-target
+  RESOURCE_GROUP: rg-flowed-ideos-lab
+  LOCATION: brazilsouth
+
+jobs:
+  docker:
+    name: Materialize on Docker
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy the Application
+        run: bash "$EXP_DIR/materialize.sh" deploy docker
+
+      - name: Verify the Application
+        run: |
+          OUTPUT="$(bash "$EXP_DIR/materialize.sh" verify docker)"
+          echo "$OUTPUT"
+          grep -F "A mesma aplicacao foi materializada pelo mesmo contrato." <<<"$OUTPUT"
+
+      - name: Show endpoint
+        run: bash "$EXP_DIR/materialize.sh" endpoint docker
+
+      - name: Destroy
+        if: always()
+        run: bash "$EXP_DIR/materialize.sh" destroy docker
+
+  azure:
+    name: Materialize on Azure
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Azure with GitHub OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy the same Application
+        run: bash "$EXP_DIR/materialize.sh" deploy azure
+
+      - name: Verify the same Application
+        run: |
+          OUTPUT="$(bash "$EXP_DIR/materialize.sh" verify azure)"
+          echo "$OUTPUT"
+          grep -F "A mesma aplicacao foi materializada pelo mesmo contrato." <<<"$OUTPUT"
+
+      - name: Show endpoint
+        run: bash "$EXP_DIR/materialize.sh" endpoint azure
+
+      - name: Destroy
+        if: always()
+        run: bash "$EXP_DIR/materialize.sh" destroy azure
