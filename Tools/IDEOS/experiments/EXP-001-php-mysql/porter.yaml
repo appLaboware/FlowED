@@ -18,7 +18,7 @@ install:
       description: "Start PHP + MySQL locally"
       arguments:
         - -f
-        - /cnab/app/docker-compose.yml
+        - /cnab/app/experiments/EXP-001-php-mysql/docker-compose.yml
         - up
         - -d
 
@@ -27,7 +27,7 @@ upgrade:
       description: "Recreate PHP + MySQL locally"
       arguments:
         - -f
-        - /cnab/app/docker-compose.yml
+        - /cnab/app/experiments/EXP-001-php-mysql/docker-compose.yml
         - up
         - -d
         - --force-recreate
@@ -37,7 +37,7 @@ uninstall:
       description: "Stop PHP + MySQL locally"
       arguments:
         - -f
-        - /cnab/app/docker-compose.yml
+        - /cnab/app/experiments/EXP-001-php-mysql/docker-compose.yml
         - down
         - --remove-orphans
         - --volumes
