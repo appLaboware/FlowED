@@ -1,9 +1,9 @@
 <?php
 
 $host = getenv('DB_HOST') ?: 'db';
-$name = getenv('DB_NAME') ?: 'iteos';
-$user = getenv('DB_USER') ?: 'iteos';
-$pass = getenv('DB_PASSWORD') ?: 'iteos';
+$name = getenv('DB_NAME') ?: 'ideos';
+$user = getenv('DB_USER') ?: 'ideos';
+$pass = getenv('DB_PASSWORD') ?: 'ideos';
 
 $dsn = "mysql:host={$host};dbname={$name};charset=utf8mb4";
 $pdo = new PDO($dsn, $user, $pass, [
@@ -27,10 +27,10 @@ header('Content-Type: text/html; charset=utf-8');
 <html lang="pt-BR">
 <head>
     <meta charset="utf-8">
-    <title>ITEOS EXP-001</title>
+    <title>IDEOS EXP-001</title>
 </head>
 <body>
-    <h1>ITEOS EXP-001</h1>
+    <h1>IDEOS EXP-001</h1>
     <p>Aplicação PHP + MySQL ativa.</p>
     <p>Visitas persistidas: <?= $count ?></p>
 </body>

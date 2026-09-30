@@ -1,0 +1,43 @@
+schemaType: Bundle
+schemaVersion: 1.0.1
+name: ideos-exp001-php-mysql
+version: 0.1.0
+description: "IDEOS EXP-001: PHP + MySQL local baseline"
+registry: localhost:5000
+
+mixins:
+  - docker
+  - docker-compose
+
+required:
+  - docker:
+      privileged: false
+
+install:
+  - docker-compose:
+      description: "Start PHP + MySQL locally"
+      arguments:
+        - -f
+        - /cnab/app/docker-compose.yml
+        - up
+        - -d
+
+upgrade:
+  - docker-compose:
+      description: "Recreate PHP + MySQL locally"
+      arguments:
+        - -f
+        - /cnab/app/docker-compose.yml
+        - up
+        - -d
+        - --force-recreate
+
+uninstall:
+  - docker-compose:
+      description: "Stop PHP + MySQL locally"
+      arguments:
+        - -f
+        - /cnab/app/docker-compose.yml
+        - down
+        - --remove-orphans
+        - --volumes
