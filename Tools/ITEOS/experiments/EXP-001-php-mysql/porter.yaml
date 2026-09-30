@@ -1,0 +1,43 @@
+schemaType: Bundle
+schemaVersion: 1.0.1
+name: iteos-exp001-php-mysql
+version: 0.1.0
+description: "ITEOS EXP-001: PHP + MySQL local baseline"
+registry: localhost:5000
+
+mixins:
+  - docker
+  - docker-compose
+
+required:
+  - docker:
+      privileged: false
+
+install:
+  - docker-compose:
+      description: "Start PHP + MySQL locally"
+      flags:
+        file: docker-compose.yml
+      up:
+        flags:
+          detach:
+
+upgrade:
+  - docker-compose:
+      description: "Recreate PHP + MySQL locally"
+      flags:
+        file: docker-compose.yml
+      up:
+        flags:
+          detach:
+          force-recreate:
+
+uninstall:
+  - docker-compose:
+      description: "Stop PHP + MySQL locally"
+      flags:
+        file: docker-compose.yml
+      down:
+        flags:
+          remove-orphans:
+          volumes:
