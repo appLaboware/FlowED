@@ -59,3 +59,29 @@ Depois do probe OIDC, a próxima entrega é materialização real e reversível:
 5. repetir com a mesma Application em outro target.
 
 Nenhuma etapa repetível deve depender do portal.
+
+
+## Bootstrap completo via Azure CLI
+
+A configuração Azure não deve exigir navegação repetitiva pelo portal. O bootstrap completo está em:
+
+`bootstrap-rbac.sh`
+
+Apesar do nome histórico, o script agora converge todo o lado Azure:
+
+- resolve assinatura e tenant ativos;
+- cria `rg-flowed-ideos-lab` se necessário;
+- cria o App Registration `FlowED-GitHub-Actions` se necessário;
+- cria o Service Principal correspondente se necessário;
+- cria a credencial federada GitHub OIDC para `appLaboware/FlowED` na branch `tools/ideos-lab` se necessário;
+- atribui a built-in role `Contributor` somente no Resource Group do laboratório;
+- verifica o estado final;
+- imprime os três identificadores necessários pelo GitHub Actions.
+
+Execução em Azure Cloud Shell:
+
+`git clone --depth 1 --branch tools/ideos-lab https://github.com/appLaboware/FlowED.git && cd FlowED && bash Tools/IDEOS/experiments/EXP-003-azure-compose/bootstrap-rbac.sh`
+
+O script é idempotente. Rodá-lo novamente deve convergir para o mesmo estado em vez de duplicar recursos.
+
+Se o GitHub CLI (`gh`) também estiver autenticado, o próprio script fornece os comandos `gh secret set` para eliminar inclusive a configuração manual dos três secrets do repositório.
