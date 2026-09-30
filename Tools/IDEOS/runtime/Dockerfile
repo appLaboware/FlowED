@@ -3,22 +3,24 @@ FROM docker:27-cli
 ARG PORTER_VERSION=v1.6.1
 ARG DOCKER_MIXIN_VERSION=v1.0.6
 ARG DOCKER_COMPOSE_MIXIN_VERSION=v1.0.6
-ARG TARGETARCH
 
 RUN apk add --no-cache \
     bash \
     ca-certificates \
     curl \
     git \
-    jq
+    jq \
+    tar \
+    gzip
 
 ENV PORTER_HOME=/root/.porter
 ENV PATH="/root/.porter:${PATH}"
 
-RUN test -n "${TARGETARCH}" \
-    && curl -fsSL "https://github.com/getporter/porter/releases/download/${PORTER_VERSION}/porter-linux-${TARGETARCH}" -o /usr/local/bin/porter \
-    && chmod +x /usr/local/bin/porter \
+RUN curl -fsSL "https://cdn.porter.sh/${PORTER_VERSION}/install-linux.sh" -o /tmp/install-porter.sh \
+    && bash /tmp/install-porter.sh \
+    && rm /tmp/install-porter.sh \
     && porter version \
+    && test -d "${PORTER_HOME}/runtimes" \
     && porter mixin install docker --version "${DOCKER_MIXIN_VERSION}" \
     && porter mixin install docker-compose --version "${DOCKER_COMPOSE_MIXIN_VERSION}"
 
