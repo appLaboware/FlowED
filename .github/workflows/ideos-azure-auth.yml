@@ -1,0 +1,46 @@
+name: IDEOS Azure authentication probe
+
+on:
+  push:
+    branches:
+      - tools/ideos-lab
+    paths:
+      - "Tools/IDEOS/experiments/EXP-003-azure-compose/**"
+      - ".github/workflows/ideos-azure-auth.yml"
+  workflow_dispatch:
+
+jobs:
+  azure-device-login:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Clone repository
+        run: |
+          git clone --depth 1 --branch tools/ideos-lab https://github.com/appLaboware/FlowED.git repo
+
+      - name: Prepare Azure CLI cache
+        run: |
+          mkdir -p "$HOME/.azure"
+          chmod 700 "$HOME/.azure"
+
+      - name: Azure login by device code
+        run: |
+          docker run --rm \
+            -v "$HOME/.azure:/root/.azure" \
+            mcr.microsoft.com/azure-cli:latest \
+            az login --use-device-code
+
+      - name: Show authenticated Azure account
+        run: |
+          docker run --rm \
+            -v "$HOME/.azure:/root/.azure" \
+            mcr.microsoft.com/azure-cli:latest \
+            az account show --output table
+
+      - name: Show subscriptions
+        run: |
+          docker run --rm \
+            -v "$HOME/.azure:/root/.azure" \
+            mcr.microsoft.com/azure-cli:latest \
+            az account list --output table
