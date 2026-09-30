@@ -1,4 +1,4 @@
-name: IDEOS Azure authentication probe
+name: IDEOS Azure OIDC probe
 
 on:
   push:
@@ -9,38 +9,40 @@ on:
       - ".github/workflows/ideos-azure-auth.yml"
   workflow_dispatch:
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
-  azure-device-login:
+  azure-oidc:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
 
     steps:
-      - name: Clone repository
-        run: |
-          git clone --depth 1 --branch tools/ideos-lab https://github.com/appLaboware/FlowED.git repo
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Prepare Azure CLI cache
-        run: |
-          mkdir -p "$HOME/.azure"
-          chmod 700 "$HOME/.azure"
+      - name: Login to Azure with GitHub OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Azure login by device code
+      - name: Verify Azure identity
         run: |
-          docker run --rm \
-            -v "$HOME/.azure:/root/.azure" \
-            mcr.microsoft.com/azure-cli:latest \
-            az login --use-device-code
+          set -euo pipefail
+          az account show --output table
 
-      - name: Show authenticated Azure account
+      - name: Verify laboratory resource group
         run: |
-          docker run --rm \
-            -v "$HOME/.azure:/root/.azure" \
-            mcr.microsoft.com/azure-cli:latest \
-            az account show --output table
+          set -euo pipefail
+          az group show             --name rg-flowed-ideos-lab             --query "{name:name,location:location,id:id}"             --output table
 
-      - name: Show subscriptions
+      - name: Verify Contributor assignment
         run: |
-          docker run --rm \
-            -v "$HOME/.azure:/root/.azure" \
-            mcr.microsoft.com/azure-cli:latest \
-            az account list --output table
+          set -euo pipefail
+          SCOPE="$(az group show --name rg-flowed-ideos-lab --query id -o tsv)"
+          COUNT="$(az role assignment list             --assignee "${{ secrets.AZURE_CLIENT_ID }}"             --scope "$SCOPE"             --query "[?roleDefinitionName=='Contributor'] | length(@)"             -o tsv)"
+          test "$COUNT" -ge 1
+          echo "OIDC authentication and scoped Contributor RBAC are operational."
