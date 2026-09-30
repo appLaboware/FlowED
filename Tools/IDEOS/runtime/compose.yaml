@@ -1,19 +1,9 @@
 services:
-  mongo:
-    image: mongo:8.0-noble
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
-      interval: 2s
-      timeout: 5s
-      retries: 30
-    volumes:
-      - porter-data:/data/db
-
   ideos:
     build:
       context: .
       dockerfile: Dockerfile
+    network_mode: host
     working_dir: /workspace/IDEOS
     environment:
       DOCKER_HOST: unix:///var/run/docker.sock
@@ -22,11 +12,5 @@ services:
     volumes:
       - ..:/workspace/IDEOS
       - /var/run/docker.sock:/var/run/docker.sock
-    depends_on:
-      mongo:
-        condition: service_healthy
     stdin_open: true
     tty: true
-
-volumes:
-  porter-data:
