@@ -431,16 +431,22 @@ Global status:
 
 **OPEN FORENSIC QUESTION — do not promote or reject globally yet.**
 
-### H21. EDT expansion remains unresolved
+### H21. EDT expansion conflict — RESOLVED BY CURRENT RESEARCHER ORIENTATION
 
-Two incompatible source claims now exist:
+The uploaded historical source pack and the researcher's current clarification
+converge on:
 
-1. a chat-local EDT extraction says `Education-Driven Things` was promoted by
-   PM/PO;
-2. a later mixed reconstruction says it came from a wrong workstream and should
-   not replace `Education-Driven Thinking`.
+`EDT = Education-Driven Thinking`.
 
-Do not freeze the expansion until original-chat authority is established.
+Historical 2025 material already uses this expansion and frames EDT as a
+conceptual paradigm centered on the creator cognitive process.
+
+Therefore `Education-Driven Things` must be treated as a non-canonical branch /
+workstream artifact unless future primary evidence proves an explicit later
+human-researcher rename.
+
+No additional forensic chat interrogation is required merely to choose the
+current expansion.
 
 ---
 
@@ -474,12 +480,50 @@ genealogy:
      continuity was explicitly approved or assistant synthesis.
 
 2. `VRMP-EDT 260901 01`
-   - resolve who literally authored the MyTrues subject-history boundary;
-   - resolve whether `Education-Driven Things` was explicitly approved by the
-     human PO or only by an agent/artifact.
+   - original-chat forensics are no longer required for EDT naming;
+   - the current authoritative research orientation is
+     `Education-Driven Thinking`;
+   - the chat may still be audited later only if exact authorship of the
+     subject-history versus Thing-history boundary matters academically.
 
-A third chat (`VRAMPP-003-new - D3`) is only needed if the EDT forensic result
-confirms `Education-Driven Things` was once explicitly approved and we must
-prove whether it was later revoked.
+The only high-value unresolved forensic item from this batch is now
+`VRMP-MYTRUES 260901 01`, if/when the project needs to decide whether
+`Experience` is the canonical primary MyTrues entity.
 
 All other files in batch 003 require no further interrogation.
+
+
+## Current researcher clarification — EDT / CCP / MyTrues
+
+The researcher supplied a direct current clarification plus historical source
+pack.
+
+Current boundary:
+
+```text
+EDT
+= Education-Driven Thinking
+= conceptual/philosophical doctoral thesis in engineering
+
+CCP
+= Caminho Cognitivo do Criador / Creator Cognitive Path
+= central concept/object the thesis seeks to investigate
+
+MyTrues
+= technical tool/reference implementation
+= instrument used to operationalize and indirectly test the value/feasibility of CCP
+= independent source of possible technical papers/product opportunities
+```
+
+Important:
+
+- EDT is not a technology thesis merely because MyTrues is software;
+- MyTrues technical novelty is not required for EDT conceptual novelty;
+- MyTrues may be built mostly by adoption/composition and still be a valid CCP
+  experimental instrument;
+- technical findings discovered while building MyTrues may become independent
+  publications without redefining the thesis.
+
+Historical source pack is indexed at:
+
+`EDT-HISTORICAL-SOURCES-001.md`.
