@@ -5,7 +5,6 @@ on:
 
 permissions:
   contents: read
-  id-token: write
 
 env:
   RESOURCE_GROUP: rg-flowed-ideos-lab
@@ -19,12 +18,10 @@ jobs:
     timeout-minutes: 20
 
     steps:
-      - name: Login to Azure with GitHub OIDC
+      - name: Login to Azure using repository secret AZURE
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          creds: ${{ secrets.AZURE }}
 
       - name: Verify identity and scope
         run: |
@@ -36,12 +33,8 @@ jobs:
         id: deploy
         run: |
           set -euo pipefail
-
-          # A DNS label must be globally unique. GitHub run id gives us a
-          # deterministic label for this execution without human naming.
           DNS_LABEL="ideos-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           CONTAINER_NAME="${APP_NAME}-${GITHUB_RUN_ID}"
-
           echo "container_name=$CONTAINER_NAME" >> "$GITHUB_OUTPUT"
 
           az container create             --resource-group "$RESOURCE_GROUP"             --name "$CONTAINER_NAME"             --location "$LOCATION"             --image "$CONTAINER_IMAGE"             --os-type Linux             --cpu 1             --memory 1             --ports 80             --ip-address Public             --dns-name-label "$DNS_LABEL"             --restart-policy Never             --output none
