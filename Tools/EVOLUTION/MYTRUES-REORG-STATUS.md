@@ -69,7 +69,7 @@ independent DevOps intent client.
 
 History-preserving canonical subtree import uses FlowED commit:
 
-`d67d3e18ec0ac1f8bb363b25a9081b5239162ec4`
+`b2fd952acc88e252c1c71c7827786e8cb111ad11`
 
 This commit contains the complete product staging surface including the physical
 IDEOS `DecisionMemory` adapter boundary.
@@ -102,7 +102,7 @@ The frozen migration SHA above includes this recovered material.
 The migration manifest and `reorganize-org.sh` now both point to the same
 authoritative frozen source SHA:
 
-`d67d3e18ec0ac1f8bb363b25a9081b5239162ec4`
+`b2fd952acc88e252c1c71c7827786e8cb111ad11`
 
 No known SHA drift remains between those two migration records.
 
@@ -313,3 +313,21 @@ Current boundary:
 
 Only the separate global MyTrues `Experience as primary unit` forensic question
 remains if product ontology needs to be frozen.
+
+## Final VRMP forensic closure
+
+The two remaining batch-003 original-chat audits are complete.
+
+Resolved:
+
+- EDT current canonical name: Education-Driven Thinking;
+- Education-Driven Things: temporary historical human naming branch;
+- Experience: important but not established as canonical primary MyTrues unit;
+- subject-history vs Thing-history: PM/PO working boundary, not direct human
+  thesis wording;
+- MyTrues = Minhas Verdades: direct human naming evidence;
+- white-box/upstream-first product direction: direct human decision.
+
+No remaining batch-003 forensic question blocks the current genealogy.
+
+The authoritative frozen SHA above includes this closure.
