@@ -1,77 +1,60 @@
 # MyTrues
 
-MyTrues é um ensaio de um produto geral de **memória decisória de um fornecedor humano**.
+MyTrues is an experiment in **provider-owned operational decision memory**.
 
-## Unidade de confiança
+A MyTrues belongs to a technician, team, or solution provider.
 
-Um MyTrues pertence a um técnico, equipe ou fornecedor.
+The client chooses which provider's MyTrues to consult. Different providers can
+legitimately resolve the same incident in different ways because each has its own
+approved knowledge and experience.
 
-O cliente escolhe **qual MyTrues consultar**. Essa escolha pode mudar o processo e o
-resultado materializado porque cada fornecedor mantém:
+## Current rule
 
-- sua própria memória de casos;
-- suas próprias decisões aprovadas;
-- sua própria experiência acumulada;
-- seu próprio algoritmo de recuperação/ranking;
-- seu próprio histórico de outcomes.
+Known case:
 
-Dois MyTrues podem falar o mesmo protocolo e decidir de formas diferentes.
+`request -> provider MyTrues -> approved decision -> resume`
 
-## Regra central
+Unknown case:
 
-MyTrues NÃO inventa uma decisão quando não possui uma solução aprovada.
+`request -> PAUSE -> anonymize -> provider senior -> synthetic sandbox -> explicit resolution -> retain in that provider's memory -> resume`
 
-Fluxo:
+MyTrues does **not** invent a new operational truth just to avoid stopping.
 
-```
-intent
-  -> execution
-  -> known problem?
-       yes -> provider MyTrues decides -> resume
-       no  -> PAUSE
-              -> sanitize/generalize case
-              -> awaiting-provider-decision
-              -> senior solves synthetic sandbox case
-              -> decision is stored in THAT provider's MyTrues
-              -> pending request becomes decided
-              -> execution resumes
-```
+## Open-first boundary
 
-O protagonismo é do humano sênior. LLMs podem pesquisar, organizar ou sugerir,
-mas uma sugestão não vira automaticamente verdade operacional.
+Everything already known publicly stays open:
 
-## Protocolo aberto; inteligência privada
+- standards;
+- public algorithms;
+- protocols;
+- reference memory models;
+- reference implementations;
+- conformance tests;
+- baseline heuristics.
 
-Aberto:
+`core/` is intentionally empty of proprietary logic today.
 
-- HTTP/OpenAPI;
-- request/response;
-- estado pending/decided;
-- pacote de caso anonimizado;
-- submissão de resolução;
-- tracing;
-- eventos;
-- conformance.
+Only additional behavior that later proves genuinely ours and measurably better
+than the open baseline should move into MyTrues Core.
 
-Privado por provedor:
+## What works now
 
-- memória;
-- casos;
-- ranking;
-- pesos;
-- embeddings;
-- grafo físico;
-- heurísticas;
-- aprendizagem;
-- algoritmo que escolhe entre decisões aprovadas.
+The reference implementation already proves:
 
-## Padrões adotados
+- two independent provider MyTrues;
+- same protocol, different known decisions;
+- unknown case returns `202 awaiting-provider-decision`;
+- case packet removes real customer identifiers;
+- a provider can resolve the synthetic case;
+- only that provider learns the resolution;
+- the paused request becomes resumable;
+- provider memory survives service restart.
 
-- OMG DMN 1.5: vocabulário de decisão;
-- BPMN 2.0.2: semântica de pausa/espera por mensagem humana;
-- OpenAPI 3.1: API síncrona;
-- RFC 9457: problemas HTTP;
-- W3C Trace Context: correlação;
-- CloudEvents + AsyncAPI: notificação assíncrona opcional.
+## Structure
 
-O protocolo compõe padrões existentes; não tenta substituí-los.
+- `protocol/` — open interoperability contract;
+- `reference/` — open reference service;
+- `memory/` — open reference memory adapters;
+- `conformance/` — protocol/behavior tests;
+- `open/` — statement of the open surface;
+- `core/` — reserved for future demonstrably proprietary added value.

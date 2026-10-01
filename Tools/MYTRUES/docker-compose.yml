@@ -5,7 +5,10 @@ services:
     environment:
       MYTRUES_PROVIDER_ID: senior-a
       MYTRUES_PROVIDER_PROFILE: fqdn
+      MYTRUES_DB_PATH: /data/mytrues.db
       PORT: "8080"
+    volumes:
+      - senior-a-memory:/data
     ports:
       - "18081:8080"
 
@@ -15,6 +18,13 @@ services:
     environment:
       MYTRUES_PROVIDER_ID: senior-b
       MYTRUES_PROVIDER_PROFILE: ip
+      MYTRUES_DB_PATH: /data/mytrues.db
       PORT: "8080"
+    volumes:
+      - senior-b-memory:/data
     ports:
       - "18082:8080"
+
+volumes:
+  senior-a-memory:
+  senior-b-memory:

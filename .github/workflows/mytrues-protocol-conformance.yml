@@ -1,4 +1,5 @@
-name: MyTrues provider-scoped protocol conformance
+name: MyTrues open MVP conformance
+
 on:
   push:
     branches: [tools/ideos-lab]
@@ -6,33 +7,44 @@ on:
       - "Tools/MYTRUES/**"
       - ".github/workflows/mytrues-protocol-conformance.yml"
   workflow_dispatch:
+
 permissions:
   contents: read
+
 jobs:
   protocol:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+
     steps:
       - name: Clone repository
         run: git clone --depth 1 --branch tools/ideos-lab https://github.com/appLaboware/FlowED.git repo
+
       - name: Start two independent provider MyTrues
         working-directory: repo/Tools/MYTRUES
         run: docker compose up -d --build
-      - name: Prove provider isolation and human pause-resume
+
+      - name: Prove open MVP behavior
         working-directory: repo/Tools/MYTRUES
         run: python3 conformance/test_protocol.py | tee /tmp/result.json
-      - name: Assert corrected model
+
+      - name: Assert product baseline
         run: |
           python3 - <<'PY'
           import json
           x=json.load(open("/tmp/result.json"))
           assert x["protocol"]=="PASS"
           assert x["anonymization"]=="PASS"
+          assert x["persistent_provider_memory"]=="PASS"
           print("TWO INDEPENDENT PROVIDER MYTRUES: PASS")
-          print("HUMAN PAUSE -> TEACH -> RESUME: PASS")
+          print("UNKNOWN CASE PAUSES: PASS")
+          print("HUMAN TEACH -> RESUME: PASS")
           print("PROVIDER-SCOPED LEARNING: PASS")
+          print("MEMORY SURVIVES RESTART: PASS")
           print("ANONYMIZED CASE PACKET: PASS")
+          print("PROPRIETARY CORE REQUIRED: NO")
           PY
+
       - name: Shutdown
         if: always()
         working-directory: repo/Tools/MYTRUES
