@@ -1,0 +1,106 @@
+name: MyTrues WordPress live debug
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths:
+      - ".github/workflows/mytrues-wp-debug.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AZURE_BUNDLE: ${{ secrets.AZURE }}
+  AZURE_CLIENT_ID_SECRET: ${{ secrets.AZURE_CLIENT_ID }}
+  AZURE_TENANT_ID_SECRET: ${{ secrets.AZURE_TENANT_ID }}
+  AZURE_SUBSCRIPTION_ID_SECRET: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  RESOURCE_GROUP: rg-flowed-ideos-lab
+  RESOURCE_NAME: mytrues-wp-36814844984
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Resolve Azure credentials
+        id: az
+        shell: bash
+        run: |
+          set -euo pipefail
+          get_value() {
+            local key="$1"
+            printf '%s\n' "$AZURE_BUNDLE" |
+              sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*=[[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\2/p" |
+              tail -n1
+          }
+          CLIENT_ID="$AZURE_CLIENT_ID_SECRET"
+          TENANT_ID="$AZURE_TENANT_ID_SECRET"
+          SUBSCRIPTION_ID="$AZURE_SUBSCRIPTION_ID_SECRET"
+          CLIENT_ID="${CLIENT_ID:-$(get_value AZURE_CLIENT_ID)}"
+          TENANT_ID="${TENANT_ID:-$(get_value AZURE_TENANT_ID)}"
+          SUBSCRIPTION_ID="${SUBSCRIPTION_ID:-$(get_value AZURE_SUBSCRIPTION_ID)}"
+          test -n "$CLIENT_ID"
+          test -n "$TENANT_ID"
+          test -n "$SUBSCRIPTION_ID"
+          for value in "$CLIENT_ID" "$TENANT_ID" "$SUBSCRIPTION_ID"; do echo "::add-mask::$value"; done
+          {
+            echo "client_id=$CLIENT_ID"
+            echo "tenant_id=$TENANT_ID"
+            echo "subscription_id=$SUBSCRIPTION_ID"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Request OIDC
+        id: oidc
+        shell: bash
+        run: |
+          RESPONSE="$(curl -fsS             -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN"             "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange")"
+          TOKEN="$(jq -r '.value' <<<"$RESPONSE")"
+          echo "::add-mask::$TOKEN"
+          {
+            echo "token<<EOF"
+            echo "$TOKEN"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Inspect live WordPress ACI
+        env:
+          AZURE_CLIENT_ID: ${{ steps.az.outputs.client_id }}
+          AZURE_TENANT_ID: ${{ steps.az.outputs.tenant_id }}
+          AZURE_SUBSCRIPTION_ID: ${{ steps.az.outputs.subscription_id }}
+          AZURE_FEDERATED_TOKEN: ${{ steps.oidc.outputs.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          az login             --service-principal             --username "$AZURE_CLIENT_ID"             --tenant "$AZURE_TENANT_ID"             --federated-token "$AZURE_FEDERATED_TOKEN"             --output none
+          az account set --subscription "$AZURE_SUBSCRIPTION_ID"
+
+          az container show             --resource-group "$RESOURCE_GROUP"             --name "$RESOURCE_NAME"             --query '{
+              name:name,
+              location:location,
+              state:provisioningState,
+              fqdn:ipAddress.fqdn,
+              ip:ipAddress.ip,
+              ports:ipAddress.ports,
+              containers:containers[].{
+                name:name,
+                image:image,
+                current:instanceView.currentState,
+                previous:instanceView.previousState
+              }
+            }' -o json
+
+          FQDN="$(az container show -g "$RESOURCE_GROUP" -n "$RESOURCE_NAME" --query ipAddress.fqdn -o tsv)"
+
+          echo "=== HTTP root ==="
+          curl -sS -i --max-time 15 "http://$FQDN:8080/" | head -c 5000 || true
+          echo
+          echo "=== HTTP installer ==="
+          curl -sS -i --max-time 15 "http://$FQDN:8080/wp-admin/install.php" | head -c 5000 || true
+          echo
+          echo "=== WEB LOGS ==="
+          az container logs -g "$RESOURCE_GROUP" -n "$RESOURCE_NAME" --container-name web 2>&1 | tail -n 200 || true
+          echo
+          echo "=== DB LOGS ==="
+          az container logs -g "$RESOURCE_GROUP" -n "$RESOURCE_NAME" --container-name db 2>&1 | tail -n 200 || true
