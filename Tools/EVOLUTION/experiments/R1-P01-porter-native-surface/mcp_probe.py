@@ -61,7 +61,14 @@ class MCPClient:
                 if self.proc.poll() is not None:
                     raise RuntimeError(f"MCP server exited with {self.proc.returncode}")
                 continue
-            msg = json.loads(line)
+            try:
+                msg = json.loads(line)
+            except json.JSONDecodeError:
+                # MCP stdio is required to be newline-delimited JSON only.
+                # Keep the probe alive so we can determine whether Porter eventually
+                # returns a valid tool response, while recording any protocol pollution.
+                print("MCP_NON_JSON_STDOUT=" + line.rstrip(), file=sys.stderr)
+                continue
             if msg.get("id") == req_id:
                 if "error" in msg:
                     raise RuntimeError(json.dumps(msg["error"]))
