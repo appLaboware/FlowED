@@ -11,7 +11,7 @@ set -euo pipefail
 
 ORG="MyTrues"
 FLOWED_REPO="appLaboware/FlowED"
-FLOWED_SOURCE_SHA="b6ced84179ef5b33e17af3b176b7a6a7cc90c513"
+FLOWED_SOURCE_SHA="ef07118f8f4b3cee5f9c2bcd110d1ab9e50753f7"
 LEGACY_CCP_REPO="InitProj-260119/MyTrues"
 LEGACY_CCP_SHA="dc891f1d354b85c6f11666d62cb1e59dde839b2e"
 SUFFIX="_arquived_261001"
@@ -66,6 +66,12 @@ git branch -D import-ideos 2>/dev/null || true
 
 git subtree split --prefix=Tools/MYTRUES "$FLOWED_SOURCE_SHA" -b import-mytrues
 git subtree split --prefix=Tools/IDEOS "$FLOWED_SOURCE_SHA" -b import-ideos
+
+# Migration evidence belongs to FlowED, not to the new canonical MyTrues product.
+git checkout import-mytrues
+git rm -r ORG-INVENTORY.md MIGRATION-MANIFEST.md migration
+git commit -m "chore(migration): keep FlowED migration evidence outside canonical MyTrues"
+git checkout "$FLOWED_SOURCE_SHA"
 
 git push --force-with-lease="refs/heads/main:"   "https://github.com/${ORG}/mytrues.git" "import-mytrues:main" || git push "https://github.com/${ORG}/mytrues.git" "import-mytrues:main"
 
