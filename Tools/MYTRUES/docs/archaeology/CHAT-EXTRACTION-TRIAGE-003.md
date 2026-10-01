@@ -408,45 +408,70 @@ This should be preserved as a boundary hypothesis.
 Do not yet make it the global formal definition until speaker/authority
 forensics are complete.
 
-### H20. The global Experience-first question is reopened by a different source
+### H20. Global Experience-first question — FORENSICALLY CLOSED FOR CURRENT CORPUS
 
-The prior forensic result remains valid:
+The follow-up forensic audit of `VRMP-MYTRUES 260901 01` finds:
 
-`the audited InterMembers/VRMP chat did NOT prove Experience-first identity`.
+- chronology/consideration of experience is directly important to the user's
+  MyTrues concept;
+- `Experience = canonical primary MyTrues entity` was not explicitly decided
+  by the human user;
+- `Experience != Belief != Position != Decision != Value` was assistant/PM-PO
+  modeling, not direct human approval;
+- the broader shift from decision memory to experience-grounded epistemic memory
+  is **INCONCLUSIVE**, not proven;
+- persistent epistemic identity / user-owned memory / replaceable AI as an
+  epistemic principle were not directly approved.
 
-Batch 003 adds different evidence:
+Therefore the safe current conclusion is:
 
-the user explicitly said MyTrues should register **experience that consequently
-generates opinion**.
+```text
+Experience is important to decision formation
+= SUPPORTED
 
-That supports:
+Experience is the canonical primary MyTrues unit
+= NOT ESTABLISHED
 
-`Experience is an important source of cognition`.
+Decision-memory identity globally superseded
+= NOT ESTABLISHED
+```
 
-It does not yet prove:
+No further Experience-first forensic follow-up is required for the currently
+reviewed corpus.
 
-`Experience is the canonical primary MyTrues entity`.
+### H21. EDT expansion conflict — FORENSICALLY RESOLVED
 
-Global status:
+The follow-up audit of `VRMP-EDT 260901 01` proves that the human user did
+explicitly write:
 
-**OPEN FORENSIC QUESTION — do not promote or reject globally yet.**
+`chamarei de EDT (Education-Driven Things)`
 
-### H21. EDT expansion conflict — RESOLVED BY CURRENT RESEARCHER ORIENTATION
+in that chat.
 
-The uploaded historical source pack and the researcher's current clarification
-converge on:
+Therefore `Education-Driven Things` was a real temporary human-created naming
+branch, not merely a C2 invention or wrong-workstream hallucination.
 
-`EDT = Education-Driven Thinking`.
+However the current researcher clarification plus older 2025 primary research
+materials establish:
 
-Historical 2025 material already uses this expansion and frames EDT as a
-conceptual paradigm centered on the creator cognitive process.
+`EDT = Education-Driven Thinking`
 
-Therefore `Education-Driven Things` must be treated as a non-canonical branch /
-workstream artifact unless future primary evidence proves an explicit later
-human-researcher rename.
+as the current canonical thesis identity.
 
-No additional forensic chat interrogation is required merely to choose the
-current expansion.
+Correct historical sequence:
+
+```text
+Education-Driven Thinking
+-> original thesis identity
+
+Education-Driven Things
+-> later temporary human naming branch in one workstream/chat
+
+current canonical identity
+-> Education-Driven Thinking
+```
+
+Do not erase the temporary branch; do not present it as current.
 
 ---
 
@@ -467,30 +492,17 @@ current expansion.
 Hashes identify exact secondary reports reviewed. They do not promote those
 reports to primary turn-level evidence.
 
-## Required forensic follow-up
+## Forensic follow-up status — COMPLETE
 
-Two original chats are high-value enough to query before freezing global
-genealogy:
+Both requested original-chat audits were completed.
 
-1. `VRMP-MYTRUES 260901 01`
-   - resolve whether Experience was explicitly promoted by the human user as the
-     primary MyTrues conceptual unit or only as an important source of opinion/
-     cognition;
-   - resolve whether "persistent epistemic identity" / user-owned cross-model
-     continuity was explicitly approved or assistant synthesis.
+Preserved results:
 
-2. `VRMP-EDT 260901 01`
-   - original-chat forensics are no longer required for EDT naming;
-   - the current authoritative research orientation is
-     `Education-Driven Thinking`;
-   - the chat may still be audited later only if exact authorship of the
-     subject-history versus Thing-history boundary matters academically.
+- `forensics/VRMP-EDT-260901-01-FORENSIC.md`;
+- `forensics/VRMP-MYTRUES-260901-01-FORENSIC.md`.
 
-The only high-value unresolved forensic item from this batch is now
-`VRMP-MYTRUES 260901 01`, if/when the project needs to decide whether
-`Experience` is the canonical primary MyTrues entity.
-
-All other files in batch 003 require no further interrogation.
+No remaining batch-003 forensic question is required before freezing the current
+genealogy.
 
 
 ## Current researcher clarification — EDT / CCP / MyTrues
