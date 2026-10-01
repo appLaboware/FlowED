@@ -6,7 +6,7 @@ Status: **STAGED — repository-admin operations pending target-org access/tooli
 
 Frozen FlowED migration source SHA:
 
-`d67d3e18ec0ac1f8bb363b25a9081b5239162ec4`
+`6e10ce30c92d4611e86f4b84c0ebbd0b4c80c47f`
 
 The canonical subtree import MUST use this SHA, not a later moving branch head.
 
@@ -69,8 +69,8 @@ License: MIT.
 Preferred method for the FlowED subtrees:
 
 ```text
-git subtree split --prefix=Tools/MYTRUES d67d3e18ec0ac1f8bb363b25a9081b5239162ec4 -b import/mytrues
-git subtree split --prefix=Tools/IDEOS d67d3e18ec0ac1f8bb363b25a9081b5239162ec4 -b import/ideos
+git subtree split --prefix=Tools/MYTRUES 6e10ce30c92d4611e86f4b84c0ebbd0b4c80c47f -b import/mytrues
+git subtree split --prefix=Tools/IDEOS 6e10ce30c92d4611e86f4b84c0ebbd0b4c80c47f -b import/ideos
 ```
 
 The resulting filtered branches preserve relevant FlowED commit history and are
@@ -281,3 +281,29 @@ Education-Driven Things is non-canonical under current researcher orientation.
 
 The historical source pack is indexed without rewriting its earlier academic
 stage.
+
+## EDT-001 conceptual reinforcement assessment
+
+The frozen source includes an assessment of the EDT-001 tree archive.
+
+Promoted conceptual reinforcement:
+
+- creator cognition as a primary object;
+- consolidated artifact as consequence/projection rather than the whole epistemic object;
+- SOURCE != EXTRACTED != INFERRED != CONFIRMED != EVIDENCED != PROJECTION;
+- provenance distinct from rationale;
+- rejected alternatives/failures as useful cognitive-path material;
+- SOURCE -> CCP -> PROJECTION as a useful theoretical decomposition.
+
+Explicitly not promoted into EDT identity:
+
+- Education-Driven Things;
+- Experiential Decision Theory;
+- neural/synaptic/emotional metaphors;
+- marketplace/federation hypotheses;
+- graph/vector architecture;
+- claims that final documentation should disappear.
+
+See:
+- Tools/MYTRUES/docs/archaeology/EDT-001-TREE-ASSESSMENT.md
+- Tools/MYTRUES/docs/EDT-CCP-MYTRUES-BOUNDARY.md
