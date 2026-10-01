@@ -561,20 +561,14 @@ This batch does not authorize:
 - equating MyTools and MyTrues;
 - changing v0.2 wire behavior.
 
-## Forensic follow-up required
+## Forensic follow-up status
 
-One original chat is important enough to revisit before any v0.3/domain
-redefinition:
+The required Experience-first forensic follow-up has been completed.
 
-`mytrues- INTERMEMBERS.DEV_001-VRMP-DEMO-POO-01-DV4-02`
+Result: **Experience-first was not established as a PO-approved identity pivot.**
 
-Goal:
-
-determine whether the Experience-first pivot was an explicit PO decision or an
-assistant/research synthesis.
-
-Other chats in this batch do not need interrogation before the next archaeology
-batch.
+No further chat interrogation from batch 002 is currently required before the
+next archaeology batch.
 
 
 ## Uploaded-byte identities
@@ -595,3 +589,62 @@ The exact uploaded byte streams reviewed in this batch were:
 
 The hashes identify the exact secondary reports reviewed. They do not convert the
 reports into primary turn-level evidence.
+
+
+## Forensic resolution of the critical mixed source
+
+The original chat
+`mytrues- INTERMEMBERS.DEV_001-VRMP-DEMO-POO-01-DV4-02`
+was re-queried with a strict chat-local forensic prompt.
+
+The returned audit is preserved at:
+
+`forensics/EXPERIENCE-FIRST-CHAT-FORENSIC-001.md`
+
+Exact uploaded-byte identity of the forensic response:
+
+- bytes: `20273`
+- SHA-256: `eed92e493d199121c9f8e50546bd1339b489554ca03a207c992b2b09d739d99b`
+
+### Resolved findings
+
+The original chat does **not** prove that the PO approved:
+
+- `Experience` replacing Decision as the MyTrues conceptual center;
+- `MyTrues = SQL of experience` as product definition;
+- user-owned/provider-replaceable memory replacing provider-scoped memory;
+- de-centering PAUSE/SANITIZE/RESOLVE.
+
+Those were assistant formulations/syntheses in that chat.
+
+The chat **does** prove explicit PO approval of an experimental/metaobjective
+direction containing:
+
+- organized memories;
+- deterministic "Systematic Agent";
+- a registration/linking component;
+- LLM(s) may propose links;
+- LLM natural-language capability separated from deterministic answer logic;
+- test mechanisms rather than select by plausibility;
+- SQLDAVELHA as recurring experimental reference.
+
+The assistant formalized the idea as a Memory Mesh/Systematic Agent architecture
+and the PO replied `e-x-a-t-a-m-e-n-t-e`.
+
+Immediately afterward the PO said:
+
+`nao é demanda, é registro previo para colcoar como metaobjetivo.`
+
+Therefore:
+
+```text
+Memory Mesh / deterministic agent direction
+= PO-approved METAOBJECTIVE / experiment
+
+Experience-first identity
+= NOT PO-approved
+```
+
+This resolves the primary uncertainty recorded earlier in batch 002.
+
+No additional forensic interrogation of this chat is currently required.
