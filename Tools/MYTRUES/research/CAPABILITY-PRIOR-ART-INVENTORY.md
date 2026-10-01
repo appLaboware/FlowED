@@ -34,8 +34,8 @@ Legend:
 | Graph retrieval | retrieval adapter | KG/graph traversal | **ADOPT optional** |
 | Hybrid retrieval | retrieval adapter | agent memory / IR systems | **ADOPT optional** |
 | Cognition extraction from conversation | CognitionProposal port | agent-memory extraction + LLM IE | **PRODUCT + RESEARCH S4** |
-| Decision policy/profile | DecisionProfile port | MCDA/PL + personalized agents + ODRL constraints | **RESEARCH S1/S3** |
-| Portable profile across engines | protocol/profile | no complete match identified in current pass | **RESEARCH S1** |
+| Decision policy/profile | DecisionProfile port | PPX + MCDA/PL + personalized agents + ODRL constraints | **ADOPT/RESEARCH S1/S3** |
+| Portable preference/profile exchange | profile/interchange | PPX 0.1 draft; historical W3C CC/PP | **ADOPT/COMPARE** |
 | Replayable personalized decision | protocol/audit | provenance + decision models exist separately | **RESEARCH S2** |
 | No Retroactive Cognition | temporal profile/CCP semantics | temporal memory/provenance partly overlap | **RESEARCH S3** |
 | Candidate vs canonical memory | authority port | HITL/governance patterns; memory systems vary | **RESEARCH S6 / PRODUCT** |
@@ -131,12 +131,10 @@ Recommended separate badges/status:
 
 Highest-priority unresolved questions:
 
-1. Is there an existing general standard for a **portable versioned decision
-   preference/profile** across heterogeneous engines?
+1. Can **PPX or an existing profile vocabulary** cover the portable preference layer without a MyTrues-specific competing format?
 2. Is there an existing protocol that joins **decision memory + profile + engine
    invocation + evidence/provenance + outcome/revision**?
-3. How should profile semantics be divided among existing standards such as
-   ODRL/DMN/MCDA/CP-nets rather than encoded in a proprietary schema?
+3. How should PPX/profile claims map into ODRL/DMN/MCDA/CP-nets and other engines, and how should mapping loss/divergence be represented?
 4. Can profile behavior be replayed consistently across multiple engine families?
 5. Can candidate cognition extraction be useful without contaminating canonical
    memory?
@@ -148,3 +146,26 @@ See:
 - `../docs/OPEN-EXTENSION-ECOSYSTEM.md`;
 - `SCIENCE-PRODUCT-OPPORTUNITY-001.md`;
 - `SCIENCE-FRONTIER-DISCOVERY-GATE.md`.
+
+
+## Prior-art correction — PPX
+
+PPX (Preference Profile Exchange) 0.1.0-draft, dated 2026-04-23, is direct
+prior art for portable, user-owned preference profiles.
+
+It includes provenance, confidence, context modifiers, consent, lifecycle,
+extensions, derived views, JSON Schema and bindings including MCP/A2A/HTTP.
+
+Therefore:
+
+- do not define a competing MyTrues portable profile format by default;
+- prefer a `DecisionProfile` adapter backed by PPX;
+- consider a decision-specific PPX namespace/extension only after proving that
+  core/domain extensions cannot express the required semantics;
+- distinguish PPX conformance from MyTrues decision-engine conformance.
+
+Historical W3C CC/PP further proves that portable/extensible user preference
+profiles are longstanding prior art.
+
+The remaining candidate gap is cross-engine **decision semantic preservation**,
+not preference-profile interchange itself.
