@@ -75,6 +75,22 @@ This list is a floor, not a claim that every family is relevant to every task.
 A portable decision-preference/profile layer is allowed as an OPEN protocol
 candidate, but its semantics must be separated from any specific engine.
 
+**Prior-art requirement:** PPX (Preference Profile Exchange) 0.1-draft is direct
+prior art and MUST be evaluated before MyTrues defines any portable preference
+profile format.
+
+Historical W3C CC/PP and related portable-profile work must also be included in
+the lineage review.
+
+The default research hypothesis is now:
+
+`adopt PPX/profile prior art -> map to DecisionEngine semantics -> measure
+semantic preservation/loss`
+
+not:
+
+`invent a new DecisionPolicyProfile interchange format`.
+
 The discovery must distinguish at least:
 
 - case-specific criteria;
@@ -189,3 +205,44 @@ No implementation is authorized until the PO explicitly promotes it.
 If promoted later, it should remain an experimental measurement instrument and
 must not be treated as the final ontology, final storage architecture, or proof
 of novelty.
+
+
+## Cross-engine profile semantics gate
+
+A possible scientific residual remains only if portable preference/profile prior
+art does not already solve the **execution semantics** across heterogeneous
+decision engines.
+
+Any claim here MUST compare at least multiple engine families, for example:
+
+- rule/DMN;
+- policy/OPA;
+- MCDA/value models;
+- CBR;
+- preference/conditional-preference engines;
+- learned or hybrid engines.
+
+The experiment must record:
+
+- portable source profile/version;
+- engine + adapter version;
+- mapping/transformation rules;
+- unsupported profile claims;
+- decision context/evidence;
+- result;
+- provenance;
+- divergence from other engines;
+- replay result.
+
+Candidate metrics include:
+
+- semantic coverage;
+- mapping loss;
+- constraint violations;
+- preference adherence;
+- cross-engine behavioral agreement where equivalence is expected;
+- explainable divergence where engine semantics differ;
+- temporal replay accuracy.
+
+A useful result may be that no universal cross-engine semantic mapping is
+possible. Negative results are valid frontier evidence.
