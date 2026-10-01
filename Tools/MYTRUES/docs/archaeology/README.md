@@ -130,3 +130,25 @@ Important additions surfaced in batch 001:
 
 These reports remain secondary evidence unless the original chat turns are
 forensically recovered.
+
+
+### Chat extraction triage — batch 002
+
+- `CHAT-EXTRACTION-TRIAGE-002.md`
+- `EARLY-TECHNICAL-LINEAGE.md`
+- `../../research/branches/EXPERIENCE-FIRST-MYTRUES.md`
+
+Key additions:
+
+- strict negative FlowDisP evidence;
+- explicit warning that `MyTools` is not a proven MyTrues alias;
+- historical Datalog/Prolog/facts/rules/query branch;
+- current OpenAPI/conformance version clarification;
+- Experience-first / "SQL of experience" research divergence;
+- defeated-path memory, Cognitive Pre-flight/Cartridge and compiled-cognition
+  hypotheses;
+- retrieval/activation versus epistemic-authority boundary;
+- unresolved provider-scoped versus user-owned memory tension.
+
+The Experience-first branch requires original-chat forensic confirmation before
+any product/domain promotion.
