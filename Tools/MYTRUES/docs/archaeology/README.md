@@ -75,3 +75,30 @@ Value:
 - preserves the 2026 scientific design-space discovery contract.
 
 Literal `MyTools` searches did not reveal a separate relevant lineage.
+
+
+### Conversation reconstructions — secondary historical sources
+
+Reviewed uploads:
+
+- `conversation-reconstructions/AGENTES-VSCODE-CODEX.md`;
+- `conversation-reconstructions/VRAMPP-001.md`;
+- `conversation-reconstructions/VRAMPP-002-043b-D2b.md`;
+- `conversation-reconstructions/BRANCH-AGENTES-VSCODE-CODEX.md`.
+
+These files are provenance/index records for exact uploaded byte streams.
+
+They are secondary reconstructions of prior conversations. They strengthen or
+surface historical branches, but claims such as DOI/authorship, product approval,
+licensing policy or commercial approval require primary evidence before
+canonical promotion.
+
+Important additions recovered from this source family:
+
+- No Retroactive Cognition;
+- CCP-as-source -> Views-as-build;
+- NORM/WHY/TRACE/ADR derived-view family;
+- AKU/digital-neuron representation hypothesis;
+- MyTrues Discovery historical product branch;
+- MCP-as-adapter rule;
+- EDT expansion / CCP DOI claims requiring verification.
