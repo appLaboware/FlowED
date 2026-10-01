@@ -1,0 +1,127 @@
+name: MyTrues E2E Azure inventory
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths:
+      - ".github/workflows/mytrues-e2e-inventory.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AZURE_BUNDLE: ${{ secrets.AZURE }}
+  AZURE_CLIENT_ID_SECRET: ${{ secrets.AZURE_CLIENT_ID }}
+  AZURE_TENANT_ID_SECRET: ${{ secrets.AZURE_TENANT_ID }}
+  AZURE_SUBSCRIPTION_ID_SECRET: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  RESOURCE_GROUP: rg-flowed-ideos-lab
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Resolve Azure credentials
+        id: az
+        shell: bash
+        run: |
+          set -euo pipefail
+          get_value() {
+            local key="$1"
+            printf '%s\n' "$AZURE_BUNDLE" |
+              sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*=[[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\2/p" |
+              tail -n1
+          }
+
+          CLIENT_ID="$AZURE_CLIENT_ID_SECRET"
+          TENANT_ID="$AZURE_TENANT_ID_SECRET"
+          SUBSCRIPTION_ID="$AZURE_SUBSCRIPTION_ID_SECRET"
+
+          CLIENT_ID="${CLIENT_ID:-$(get_value AZURE_CLIENT_ID)}"
+          TENANT_ID="${TENANT_ID:-$(get_value AZURE_TENANT_ID)}"
+          SUBSCRIPTION_ID="${SUBSCRIPTION_ID:-$(get_value AZURE_SUBSCRIPTION_ID)}"
+
+          test -n "$CLIENT_ID"
+          test -n "$TENANT_ID"
+          test -n "$SUBSCRIPTION_ID"
+
+          echo "::add-mask::$CLIENT_ID"
+          echo "::add-mask::$TENANT_ID"
+          echo "::add-mask::$SUBSCRIPTION_ID"
+
+          {
+            echo "client_id=$CLIENT_ID"
+            echo "tenant_id=$TENANT_ID"
+            echo "subscription_id=$SUBSCRIPTION_ID"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Request OIDC
+        id: oidc
+        shell: bash
+        run: |
+          set -euo pipefail
+          RESPONSE="$(curl -fsS             -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN"             "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange")"
+          TOKEN="$(jq -r '.value' <<<"$RESPONSE")"
+          test -n "$TOKEN"
+          echo "::add-mask::$TOKEN"
+          {
+            echo "token<<EOF"
+            echo "$TOKEN"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Login and inventory MyTrues ACI resources
+        env:
+          AZURE_CLIENT_ID: ${{ steps.az.outputs.client_id }}
+          AZURE_TENANT_ID: ${{ steps.az.outputs.tenant_id }}
+          AZURE_SUBSCRIPTION_ID: ${{ steps.az.outputs.subscription_id }}
+          AZURE_FEDERATED_TOKEN: ${{ steps.oidc.outputs.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          az login             --service-principal             --username "$AZURE_CLIENT_ID"             --tenant "$AZURE_TENANT_ID"             --federated-token "$AZURE_FEDERATED_TOKEN"             --output none
+          az account set --subscription "$AZURE_SUBSCRIPTION_ID"
+
+          az container list             --resource-group "$RESOURCE_GROUP"             --query "[?starts_with(name, 'mytrues-phpmysql-')].{
+              name:name,
+              location:location,
+              provisioningState:provisioningState,
+              fqdn:ipAddress.fqdn,
+              ip:ipAddress.ip,
+              ports:ipAddress.ports,
+              containers:containers[].{
+                name:name,
+                image:image,
+                state:instanceView.currentState.state,
+                detail:instanceView.currentState.detailStatus
+              }
+            }" -o json | tee /tmp/inventory.json
+
+          COUNT="$(jq 'length' /tmp/inventory.json)"
+          echo "MYTRUES ACI COUNT: $COUNT"
+
+          jq -r '.[].name' /tmp/inventory.json | while read -r NAME; do
+            echo
+            echo "===== $NAME ====="
+            FQDN="$(az container show -g "$RESOURCE_GROUP" -n "$NAME" --query ipAddress.fqdn -o tsv)"
+            LOCATION="$(az container show -g "$RESOURCE_GROUP" -n "$NAME" --query location -o tsv)"
+            echo "LOCATION=$LOCATION"
+            echo "FQDN=$FQDN"
+
+            for PORT in 80 8080; do
+              echo "--- HTTP $PORT ---"
+              set +e
+              curl -sS --max-time 8 -i "http://$FQDN:$PORT" | head -c 1200
+              RC=${PIPESTATUS[0]}
+              set -e
+              echo
+              echo "CURL_RC=$RC"
+            done
+
+            for CONTAINER in web db; do
+              echo "--- LOGS $CONTAINER ---"
+              az container logs                 -g "$RESOURCE_GROUP"                 -n "$NAME"                 --container-name "$CONTAINER" 2>&1 | tail -n 80 || true
+            done
+          done
