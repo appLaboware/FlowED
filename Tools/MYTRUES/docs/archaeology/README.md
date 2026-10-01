@@ -199,3 +199,33 @@ is frozen:
 
 - `VRMP-MYTRUES 260901 01`;
 - `VRMP-EDT 260901 01`.
+
+
+### EDT historical source pack and research boundary
+
+- `EDT-HISTORICAL-SOURCES-001.md`
+- `../EDT-CCP-MYTRUES-BOUNDARY.md`
+
+Current orientation:
+
+```text
+EDT = Education-Driven Thinking
+    = conceptual/philosophical engineering thesis
+
+CCP = Caminho Cognitivo do Criador / Creator Cognitive Path
+    = central concept/object under investigation
+
+MyTrues = technical instrument/reference implementation
+        = used to operationalize/test CCP
+        = independent source of possible technical/product research
+```
+
+Historical January/February-2025 material confirms that EDT and creator-cognitive
+path work predate the current MyTrues protocol/tool architecture.
+
+The old `Education-Driven Things` branch is non-canonical under current
+researcher orientation.
+
+The only remaining high-value batch-003 forensic question is whether another
+MyTrues chat explicitly promoted `Experience` as the canonical primary MyTrues
+entity.
