@@ -32,6 +32,34 @@ def connect():
     return db
 
 
+def load_seed_manifest(db):
+    path = os.environ.get("MYTRUES_SEED_MANIFEST", "").strip()
+    if not path:
+        return
+
+    with open(path, "r", encoding="utf-8") as handle:
+        manifest = json.load(handle)
+
+    seed_name = manifest.get("seed", "unnamed-seed")
+    for case in manifest.get("cases", []):
+        failure_code = case.get("failure_code")
+        decision = (case.get("decisions") or {}).get(PROVIDER_ID)
+        if not failure_code or not decision:
+            continue
+
+        db.execute(
+            """
+            INSERT OR IGNORE INTO decisions(failure_code,decision_json,source)
+            VALUES(?,?,?)
+            """,
+            (
+                failure_code,
+                json.dumps(decision),
+                f"seed:{seed_name}:{PROVIDER_ID}",
+            ),
+        )
+
+
 def init_db():
     os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     with connect() as db:
@@ -169,6 +197,8 @@ def init_db():
                 "open-known-case",
             ),
         )
+
+        load_seed_manifest(db)
 
 
 def knowledge_revision():

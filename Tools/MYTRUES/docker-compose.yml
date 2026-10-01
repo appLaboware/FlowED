@@ -6,9 +6,11 @@ services:
       MYTRUES_PROVIDER_ID: senior-a
       MYTRUES_PROVIDER_PROFILE: fqdn
       MYTRUES_DB_PATH: /data/mytrues.db
+      MYTRUES_SEED_MANIFEST: /seeds/seed-004/manifest.json
       PORT: "8080"
     volumes:
       - senior-a-memory:/data
+      - ./seeds:/seeds:ro
     ports:
       - "18081:8080"
 
@@ -19,9 +21,11 @@ services:
       MYTRUES_PROVIDER_ID: senior-b
       MYTRUES_PROVIDER_PROFILE: ip
       MYTRUES_DB_PATH: /data/mytrues.db
+      MYTRUES_SEED_MANIFEST: /seeds/seed-004/manifest.json
       PORT: "8080"
     volumes:
       - senior-b-memory:/data
+      - ./seeds:/seeds:ro
     ports:
       - "18082:8080"
 
