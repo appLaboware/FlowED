@@ -69,7 +69,7 @@ independent DevOps intent client.
 
 History-preserving canonical subtree import uses FlowED commit:
 
-`65ea6ab7e81d0b4f8d664a6c4dfe663f2570777a`
+`4e6353a2611ae00f4da4b05c35de32a322b2753f`
 
 This commit contains the complete product staging surface including the physical
 IDEOS `DecisionMemory` adapter boundary.
@@ -189,3 +189,20 @@ Current Science Frontier status:
   temporal replay/provenance, authority gating and memory-reuse behavior.
 
 The authoritative frozen product SHA above includes these additions.
+
+## Chat extraction archaeology batch 001
+
+Twelve conversation-derived MyTrues reports were triaged by evidentiary
+strength.
+
+Added:
+
+- `Tools/MYTRUES/docs/archaeology/CHAT-EXTRACTION-TRIAGE-001.md`;
+- source-confidence distinction between chat-local extraction, mixed
+  reconstruction and consolidation/index;
+- corresponding additions to `ARCHAEOLOGY-SYNTHESIS.md`.
+
+No additional original-chat interrogation is required before continuing with
+the next archaeology batch.
+
+The authoritative frozen SHA above includes this batch.
