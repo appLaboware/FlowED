@@ -229,3 +229,27 @@ researcher orientation.
 The only remaining high-value batch-003 forensic question is whether another
 MyTrues chat explicitly promoted `Experience` as the canonical primary MyTrues
 entity.
+
+
+### Final forensic closure — VRMP EDT and MyTrues
+
+- `forensics/VRMP-EDT-260901-01-FORENSIC.md`
+- `forensics/VRMP-MYTRUES-260901-01-FORENSIC.md`
+
+Resolved:
+
+- Education-Driven Things was a real temporary human-created naming branch;
+- current canonical EDT remains Education-Driven Thinking;
+- the subject-history vs Thing-history boundary came from PM/PO operational
+  direction, not proven direct human wording;
+- Experience matters to MyTrues decision formation, but was not directly
+  promoted by the human user as the canonical primary MyTrues entity;
+- MyTrues = Minhas Verdades is directly user-authored;
+- white-box/upstream composition preference is directly user-approved.
+
+Source-provenance rule reinforced:
+
+distinguish human user, PM/PO agent/operational authority, assistant/C2 and
+generated artifact authorship.
+
+Batch-003 forensic backlog is closed.
