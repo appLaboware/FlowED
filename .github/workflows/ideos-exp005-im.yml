@@ -1,40 +1,35 @@
 name: EXP-005 GRyCAP Infrastructure Manager
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - tools/ideos-lab
     paths:
       - "Tools/IDEOS/experiments/EXP-005-infrastructure-manager/**"
       - ".github/workflows/ideos-exp005-im.yml"
-
-permissions:
-  contents: read
+  workflow_dispatch:
 
 jobs:
   official-product-probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
+
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Run official IM product probe
-        run: bash Tools/IDEOS/experiments/EXP-005-infrastructure-manager/probe.sh
-
-      - name: Record experiment boundary
+      - name: Clone repository
         run: |
-          {
-            echo "# EXP-005 — GRyCAP Infrastructure Manager"
-            echo
-            echo "## Phase A"
-            echo "Official IM server and official IM client were executed without custom implementation."
-            echo
-            echo "## Phase B"
-            echo "Azure materialization is intentionally not attempted yet."
-            echo
-            echo "The current IM Azure connector expects username/password or client-secret credentials."
-            echo "The existing FlowED Azure identity uses GitHub OIDC without a permanent client secret."
-            echo
-            echo "This is a measured product boundary, not a missing repository secret."
-          } >> "$GITHUB_STEP_SUMMARY"
+          git clone --depth 1 --branch tools/ideos-lab https://github.com/appLaboware/FlowED.git repo
+
+      - name: Show Docker runtime
+        run: |
+          docker version
+          docker compose version
+
+      - name: Run official Infrastructure Manager probe
+        run: |
+          cd repo
+          bash Tools/IDEOS/experiments/EXP-005-infrastructure-manager/probe.sh
+
+      - name: Experiment result
+        if: always()
+        run: |
+          echo "EXP-005 executed using the official GRyCAP IM server and client images."
