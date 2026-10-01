@@ -1,60 +1,90 @@
 # MyTrues
 
-MyTrues is an experiment in **provider-owned operational decision memory**.
+> Migration target: `MyTrues/mytrues`
 
-A MyTrues belongs to a technician, team, or solution provider.
+MyTrues is a **domain-generic decision protocol**.
 
-The client chooses which provider's MyTrues to consult. Different providers can
-legitimately resolve the same incident in different ways because each has its own
-approved knowledge and experience.
+It lets a client consult a selected decision provider without embedding that
+provider's memory, storage or decision process in the client.
 
-## Current rule
+IDEOS is one client of MyTrues. MyTrues itself is not DevOps-specific.
 
-Known case:
+## Reference interaction
+
+Known decision:
 
 `request -> provider MyTrues -> approved decision -> resume`
 
-Unknown case:
+Unknown decision:
 
-`request -> PAUSE -> anonymize -> provider senior -> synthetic sandbox -> explicit resolution -> retain in that provider's memory -> resume`
+`request -> pending -> sanitized context -> authorized provider/human -> explicit resolution -> retain in that provider -> resume`
 
-MyTrues does **not** invent a new operational truth just to avoid stopping.
+Different providers may legitimately resolve the same case differently.
+
+## Current executable profile — v0.2
+
+The current reference implementation was first exercised for operational failure
+resolution and therefore exposes a `failure_code`-oriented v0.2 profile.
+
+That profile remains the accepted executable reference until a versioned generic
+schema supersedes it. The repository reorganization does not silently rewrite
+the already-proved v0.2 contract.
+
+See:
+
+- `protocol/`;
+- `reference/provider_server.py`;
+- `conformance/test_protocol.py`;
+- `docs/GENERIC-PROTOCOL.md`;
+- `docs/ALGORITHM-BOUNDARY.md`.
+
+## CCP documentary layer
+
+A registered decision may be associated with a **CCP Record** — the documentary
+record of the Caminho Cognitivo do Criador that led to the decision.
+
+CCP preserves provenance/context; it is not the decision algorithm.
+
+See `docs/CCP-RECORD.md` and `docs/legacy-ccp/`.
 
 ## Open-first boundary
 
-Everything already known publicly stays open:
+Everything already public remains open:
 
+- protocols and schemas;
 - standards;
-- public algorithms;
-- protocols;
-- reference memory models;
+- published algorithms;
 - reference implementations;
 - conformance tests;
-- baseline heuristics.
+- baseline heuristics;
+- generic adapters.
 
-`core/` is intentionally empty of proprietary logic today.
+Provider data may remain private.
 
-Only additional behavior that later proves genuinely ours and measurably better
-than the open baseline should move into MyTrues Core.
+`core/` remains empty of proprietary decision logic until the Science Frontier
+Gate is passed.
 
-## What works now
+## Current proved behavior
 
 The reference implementation already proves:
 
-- two independent provider MyTrues;
+- two independent provider MyTrues instances;
 - same protocol, different known decisions;
-- unknown case returns `202 awaiting-provider-decision`;
-- case packet removes real customer identifiers;
-- a provider can resolve the synthetic case;
-- only that provider learns the resolution;
-- the paused request becomes resumable;
-- provider memory survives service restart.
+- unknown case -> `202 awaiting-provider-decision`;
+- sanitized case packet;
+- explicit provider resolution;
+- provider-scoped learning;
+- paused request -> resumable;
+- SQLite memory survives restart.
 
-## Structure
+`seed-004` remains a **conformance fixture, not a scientific benchmark**.
+
+## Repository structure
 
 - `protocol/` — open interoperability contract;
 - `reference/` — open reference service;
-- `memory/` — open reference memory adapters;
+- `memory/` — reference/historical memory material;
 - `conformance/` — protocol/behavior tests;
-- `open/` — statement of the open surface;
-- `core/` — reserved for future demonstrably proprietary added value.
+- `docs/` — generic protocol, algorithm boundary and CCP documentary lineage;
+- `open/` — open-surface statement;
+- `core/` — reserved for future demonstrably original added value.
