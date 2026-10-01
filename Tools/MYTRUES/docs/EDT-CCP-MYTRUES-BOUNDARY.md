@@ -279,3 +279,31 @@ MyTrues
 
 This relationship should guide future archaeology, science-frontier research and
 product architecture.
+
+
+## Additional reinforcement from EDT-001 tree
+
+A later historical archive reinforces the thesis/tool boundary and adds a useful epistemic decomposition.
+
+Strong conceptual reinforcement:
+
+- creator cognition as a primary object;
+- the final consolidated artifact as consequence/projection rather than the complete epistemic object;
+- source, extraction, inference, confirmation, evidence and projection as distinct states;
+- provenance distinct from rationale;
+- rejected alternatives and failed paths as useful parts of the creator cognitive path;
+- projection non-authority: a readable derived document does not replace its source.
+
+A useful theoretical model emerging from this material is:
+
+SOURCE -> CCP -> PROJECTION
+
+where:
+
+- SOURCE is what was actually said, done or observed;
+- CCP is the structured creator-cognitive path;
+- PROJECTION is a derived NORM/ADR/explanation/learning/timeline view.
+
+This does not make that pipeline the only valid CCP representation.
+
+The archive also contains speculative product/implementation material that is explicitly excluded from thesis identity, including neural metaphors, experiential synaptic weights, federated marketplaces and alternate EDT expansions.
