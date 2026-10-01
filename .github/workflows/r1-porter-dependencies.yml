@@ -97,6 +97,11 @@ jobs:
           "$PORTER_HOME/porter" uninstall parent-exact
           "$PORTER_HOME/porter" uninstall parent-maxpatch
 
+          "$PORTER_HOME/porter" show parent-exact-child | tee /tmp/child-exact-final.txt
+          "$PORTER_HOME/porter" show parent-maxpatch-child | tee /tmp/child-maxpatch-final.txt
+          grep -qi 'uninstall' /tmp/child-exact-final.txt
+          grep -qi 'uninstall' /tmp/child-maxpatch-final.txt
+
       - name: Evidence summary
         run: |
           {
@@ -104,11 +109,16 @@ jobs:
             echo
             echo "- Direct dependency execution: PASS"
             echo "- Dependency parameter override: PASS"
-            echo "- Dependency output wiring: PASS"
+            echo "- Dependency output capture on child installation: PASS"
             echo "- Exact strategy pinned version: PASS"
             echo "- max-patch semver resolution: PASS"
             echo "- inspect --show-dependencies: PASS"
             echo "- dependency lifecycle on uninstall: PASS"
+            if [ ! -s /tmp/legacy-parent-exact.txt ] && [ ! -s /tmp/legacy-parent-maxpatch.txt ]; then
+              echo "- Legacy direct dependency output interpolation into root action: OBSERVED EMPTY (investigation required)"
+            else
+              echo "- Legacy direct dependency output interpolation into root action: VALUE PRESENT"
+            fi
           } | tee /tmp/evidence.md
           cat /tmp/evidence.md >> "$GITHUB_STEP_SUMMARY"
 
