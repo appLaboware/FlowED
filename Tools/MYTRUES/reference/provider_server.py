@@ -108,6 +108,38 @@ def init_db():
             ),
         )
 
+        azure_credentials_seed = {
+            "id": "decision.azure.parse_legacy_bundle",
+            "action": "credentials.use_legacy_bundle",
+            "result": {
+                "strategy": "parse-key-value-bundle",
+                "keys": [
+                    "AZURE_CLIENT_ID",
+                    "AZURE_TENANT_ID",
+                    "AZURE_SUBSCRIPTION_ID",
+                ],
+            },
+            "guards": [
+                {"key": "legacy_azure_bundle_present", "satisfied": True}
+            ],
+            "notice": (
+                "Split Azure identifiers are unavailable; this provider approved "
+                "the compatible legacy AZURE key-value bundle for this execution."
+            ),
+        }
+
+        db.execute(
+            """
+            INSERT OR IGNORE INTO decisions(failure_code,decision_json,source)
+            VALUES(?,?,?)
+            """,
+            (
+                "azure.credentials.separate_missing",
+                json.dumps(azure_credentials_seed),
+                "open-known-case",
+            ),
+        )
+
 
 def knowledge_revision():
     with connect() as db:

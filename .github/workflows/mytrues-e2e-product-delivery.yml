@@ -1,0 +1,381 @@
+name: MyTrues E2E product delivery
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths:
+      - "Tools/MYTRUES/integrations/porter-azure-php-mysql/**"
+      - "Tools/MYTRUES/reference/provider_server.py"
+      - ".github/workflows/mytrues-e2e-product-delivery.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AZURE_BUNDLE: ${{ secrets.AZURE }}
+  AZURE_CLIENT_ID_SECRET: ${{ secrets.AZURE_CLIENT_ID }}
+  AZURE_TENANT_ID_SECRET: ${{ secrets.AZURE_TENANT_ID }}
+  AZURE_SUBSCRIPTION_ID_SECRET: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  CLOUDFLARE_BUNDLE: ${{ secrets.CLOUDFLARE }}
+  CF_DNS_EDIT_SECRET: ${{ secrets.CF_DNS_EDIT }}
+  CF_ZONE_READ_SECRET: ${{ secrets.CF_ZONE_READ }}
+  RESOURCE_GROUP: rg-flowed-ideos-lab
+  REQUESTED_DOMAIN: porter-lab.me.dev.br
+  DECISION_PROVIDER: senior-a
+
+jobs:
+  delivery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Clone repository
+        run: git clone --depth 1 --branch tools/ideos-lab https://github.com/appLaboware/FlowED.git repo
+
+      - name: Start selected MyTrues provider
+        working-directory: repo/Tools/MYTRUES
+        run: |
+          docker compose up -d --build mytrues-senior-a
+          for attempt in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:18081/healthz >/tmp/mytrues-health.json; then
+              cat /tmp/mytrues-health.json
+              exit 0
+            fi
+            sleep 1
+          done
+          exit 1
+
+      - name: Resolve Azure credential incident through MyTrues
+        id: azure
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          get_bundle_value() {
+            local key="$1"
+            printf '%s\n' "$AZURE_BUNDLE" |
+              sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*=[[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\2/p" |
+              tail -n 1
+          }
+
+          CLIENT_ID="$AZURE_CLIENT_ID_SECRET"
+          TENANT_ID="$AZURE_TENANT_ID_SECRET"
+          SUBSCRIPTION_ID="$AZURE_SUBSCRIPTION_ID_SECRET"
+          DECISION_ID="none"
+          NOTICE="Azure split repository secrets were available; no fallback decision was required."
+
+          if [ -z "$CLIENT_ID" ] || [ -z "$TENANT_ID" ] || [ -z "$SUBSCRIPTION_ID" ]; then
+            LEGACY_PRESENT=false
+            [ -n "$AZURE_BUNDLE" ] && LEGACY_PRESENT=true
+
+            jq -n               --arg requestId "azure-${GITHUB_RUN_ID}"               --argjson legacy "$LEGACY_PRESENT"               '{
+                protocol:"mytrues.decision/v1",
+                requestId:$requestId,
+                subject:{kind:"failure",code:"azure.credentials.separate_missing"},
+                context:{legacy_azure_bundle_present:$legacy},
+                constraints:{automation:"automatic",maxRisk:"low"}
+              }' >/tmp/azure-decision-request.json
+
+            HTTP="$(curl -sS -o /tmp/azure-decision.json -w '%{http_code}'               -H 'Content-Type: application/json'               --data @/tmp/azure-decision-request.json               http://127.0.0.1:18081/v1/decisions/resolve.failure)"
+
+            cat /tmp/azure-decision.json
+            test "$HTTP" = "200"
+
+            DECISION_ID="$(jq -r '.decision.id' /tmp/azure-decision.json)"
+            STRATEGY="$(jq -r '.selected.result.strategy' /tmp/azure-decision.json)"
+            NOTICE="$(jq -r '.notice' /tmp/azure-decision.json)"
+
+            test "$DECISION_ID" = "decision.azure.parse_legacy_bundle"
+            test "$STRATEGY" = "parse-key-value-bundle"
+
+            CLIENT_ID="$(get_bundle_value AZURE_CLIENT_ID)"
+            TENANT_ID="$(get_bundle_value AZURE_TENANT_ID)"
+            SUBSCRIPTION_ID="$(get_bundle_value AZURE_SUBSCRIPTION_ID)"
+          fi
+
+          test -n "$CLIENT_ID"
+          test -n "$TENANT_ID"
+          test -n "$SUBSCRIPTION_ID"
+
+          echo "::add-mask::$CLIENT_ID"
+          echo "::add-mask::$TENANT_ID"
+          echo "::add-mask::$SUBSCRIPTION_ID"
+
+          SITE_NAME="mytrues-phpmysql-${GITHUB_RUN_ID}"
+          SITE_NAME="${SITE_NAME:0:50}"
+
+          {
+            echo "client_id=$CLIENT_ID"
+            echo "tenant_id=$TENANT_ID"
+            echo "subscription_id=$SUBSCRIPTION_ID"
+            echo "decision_id=$DECISION_ID"
+            echo "notice=$NOTICE"
+            echo "site_name=$SITE_NAME"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Request GitHub OIDC token
+        id: oidc
+        shell: bash
+        run: |
+          set -euo pipefail
+          RESPONSE="$(curl --fail --silent --show-error             -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN"             "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange")"
+          TOKEN="$(jq -r '.value' <<<"$RESPONSE")"
+          test -n "$TOKEN"
+          test "$TOKEN" != "null"
+          echo "::add-mask::$TOKEN"
+          {
+            echo "token<<EOF"
+            echo "$TOKEN"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Install Porter and open mixins
+        run: |
+          curl -fsSL https://cdn.porter.sh/latest/install-linux.sh | bash
+          "$HOME/.porter/porter" mixin install az
+          "$HOME/.porter/porter" mixin install exec
+          "$HOME/.porter/porter" version
+          "$HOME/.porter/porter" mixins list
+
+      - name: Validate generic PHP runtime image capability
+        run: |
+          docker run --rm webdevops/php:8.3-alpine php -m |
+            tee /tmp/php-modules.txt
+          grep -qx 'PDO' /tmp/php-modules.txt
+          grep -qx 'pdo_mysql' /tmp/php-modules.txt
+
+      - name: Package generic application artifact
+        run: |
+          tar -C repo/Tools/MYTRUES/integrations/porter-azure-php-mysql/app             -czf /tmp/site.tar.gz .
+
+      - name: Configure Porter Azure credentials
+        env:
+          AZURE_CLIENT_ID: ${{ steps.azure.outputs.client_id }}
+          AZURE_TENANT_ID: ${{ steps.azure.outputs.tenant_id }}
+          AZURE_SUBSCRIPTION_ID: ${{ steps.azure.outputs.subscription_id }}
+          AZURE_FEDERATED_TOKEN: ${{ steps.oidc.outputs.token }}
+        run: |
+          cat >/tmp/azure-oidc.yaml <<'YAML'
+          schemaType: CredentialSet
+          schemaVersion: 1.0.1
+          name: azure-oidc
+          credentials:
+            - name: azure-client-id
+              source: { env: AZURE_CLIENT_ID }
+            - name: azure-tenant-id
+              source: { env: AZURE_TENANT_ID }
+            - name: azure-subscription-id
+              source: { env: AZURE_SUBSCRIPTION_ID }
+            - name: azure-federated-token
+              source: { env: AZURE_FEDERATED_TOKEN }
+          YAML
+          "$HOME/.porter/porter" credentials apply /tmp/azure-oidc.yaml
+
+      - name: Materialize PHP plus MySQL through Porter
+        env:
+          AZURE_CLIENT_ID: ${{ steps.azure.outputs.client_id }}
+          AZURE_TENANT_ID: ${{ steps.azure.outputs.tenant_id }}
+          AZURE_SUBSCRIPTION_ID: ${{ steps.azure.outputs.subscription_id }}
+          AZURE_FEDERATED_TOKEN: ${{ steps.oidc.outputs.token }}
+        run: |
+          set -euo pipefail
+          cd repo/Tools/MYTRUES/integrations/porter-azure-php-mysql
+
+          echo "USER INTENT:"
+          echo "deploy ./app --target azure --database mysql --domain $REQUESTED_DOMAIN --decision-provider $DECISION_PROVIDER"
+          echo
+          echo "PORTER MATERIALIZATION COMMAND:"
+          echo "porter install site -c azure-oidc --param app=/tmp/site.tar.gz --param site_name=${{ steps.azure.outputs.site_name }}"
+
+          "$HOME/.porter/porter" install site             -c azure-oidc             --param app=/tmp/site.tar.gz             --param site_name="${{ steps.azure.outputs.site_name }}"
+
+      - name: Discover Azure materialization
+        id: endpoint
+        env:
+          AZURE_CLIENT_ID: ${{ steps.azure.outputs.client_id }}
+          AZURE_TENANT_ID: ${{ steps.azure.outputs.tenant_id }}
+          AZURE_SUBSCRIPTION_ID: ${{ steps.azure.outputs.subscription_id }}
+          AZURE_FEDERATED_TOKEN: ${{ steps.oidc.outputs.token }}
+        run: |
+          set -euo pipefail
+          az login             --service-principal             --username "$AZURE_CLIENT_ID"             --tenant "$AZURE_TENANT_ID"             --federated-token "$AZURE_FEDERATED_TOKEN"             --output none
+          az account set --subscription "$AZURE_SUBSCRIPTION_ID"
+
+          FQDN="$(az container show             --resource-group "$RESOURCE_GROUP"             --name "${{ steps.azure.outputs.site_name }}"             --query ipAddress.fqdn -o tsv)"
+          IP="$(az container show             --resource-group "$RESOURCE_GROUP"             --name "${{ steps.azure.outputs.site_name }}"             --query ipAddress.ip -o tsv)"
+
+          test -n "$FQDN"
+          test -n "$IP"
+
+          echo "fqdn=$FQDN" >> "$GITHUB_OUTPUT"
+          echo "ip=$IP" >> "$GITHUB_OUTPUT"
+
+      - name: Resolve requested DNS incident through selected MyTrues
+        id: dns
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          get_cf_value() {
+            local key="$1"
+            printf '%s\n' "$CLOUDFLARE_BUNDLE" |
+              sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*=[[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\2/p" |
+              tail -n 1
+          }
+
+          CF_DNS_EDIT="$CF_DNS_EDIT_SECRET"
+          CF_ZONE_READ="$CF_ZONE_READ_SECRET"
+          CF_DNS_EDIT="${CF_DNS_EDIT:-$(get_cf_value CF_DNS_EDIT)}"
+          CF_ZONE_READ="${CF_ZONE_READ:-$(get_cf_value CF_ZONE_READ)}"
+
+          if [ -n "$CF_DNS_EDIT" ] && [ -n "$CF_ZONE_READ" ]; then
+            echo "This experiment expects the intentionally missing DNS-provider bootstrap." >&2
+            exit 1
+          fi
+
+          jq -n             --arg requestId "dns-${GITHUB_RUN_ID}"             --arg domain "$REQUESTED_DOMAIN"             --arg fqdn "${{ steps.endpoint.outputs.fqdn }}"             --arg ip "${{ steps.endpoint.outputs.ip }}"             '{
+              protocol:"mytrues.decision/v1",
+              requestId:$requestId,
+              subject:{kind:"failure",code:"dns.requested_provider_credentials_missing"},
+              context:{
+                requested_domain:$domain,
+                azure_provider_fqdn_available:true,
+                azure_provider_fqdn:$fqdn,
+                azure_public_ip_available:true,
+                azure_public_ip:$ip
+              },
+              constraints:{automation:"automatic",maxRisk:"low"}
+            }' >/tmp/dns-decision-request.json
+
+          HTTP="$(curl -sS -o /tmp/dns-decision.json -w '%{http_code}'             -H 'Content-Type: application/json'             --data @/tmp/dns-decision-request.json             http://127.0.0.1:18081/v1/decisions/resolve.failure)"
+
+          cat /tmp/dns-decision.json
+          test "$HTTP" = "200"
+
+          DECISION_ID="$(jq -r '.decision.id' /tmp/dns-decision.json)"
+          ENDPOINT_TYPE="$(jq -r '.selected.result.endpoint.type' /tmp/dns-decision.json)"
+          ENDPOINT_VALUE="$(jq -r '.selected.result.endpoint.value' /tmp/dns-decision.json)"
+          SCHEME="$(jq -r '.selected.result.endpoint.scheme' /tmp/dns-decision.json)"
+          NOTICE="$(jq -r '.notice' /tmp/dns-decision.json)"
+
+          test "$DECISION_ID" = "decision.dns.use_azure_provider_fqdn"
+          test "$ENDPOINT_TYPE" = "hostname"
+
+          {
+            echo "decision_id=$DECISION_ID"
+            echo "endpoint_type=$ENDPOINT_TYPE"
+            echo "endpoint_value=$ENDPOINT_VALUE"
+            echo "url=$SCHEME://$ENDPOINT_VALUE"
+            echo "notice=$NOTICE"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Verify delivered product and PHP to MySQL persistence
+        id: verify
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="${{ steps.dns.outputs.url }}"
+
+          READY=false
+          for attempt in $(seq 1 60); do
+            if curl -fsS --max-time 10 "$URL" >/tmp/first.html 2>/tmp/curl.err; then
+              if grep -q 'PHP + MySQL materializados no Azure' /tmp/first.html; then
+                READY=true
+                break
+              fi
+            fi
+            sleep 5
+          done
+
+          if [ "$READY" != "true" ]; then
+            cat /tmp/curl.err || true
+            cat /tmp/first.html || true
+            exit 1
+          fi
+
+          FIRST="$(sed -nE 's/.*Visitas persistidas nesta instância: ([0-9]+).*/\1/p' /tmp/first.html | head -n1)"
+          sleep 1
+          curl -fsS --max-time 10 "$URL" >/tmp/second.html
+          SECOND="$(sed -nE 's/.*Visitas persistidas nesta instância: ([0-9]+).*/\1/p' /tmp/second.html | head -n1)"
+
+          test -n "$FIRST"
+          test -n "$SECOND"
+          test "$SECOND" -gt "$FIRST"
+
+          echo "first_visits=$FIRST" >> "$GITHUB_OUTPUT"
+          echo "second_visits=$SECOND" >> "$GITHUB_OUTPUT"
+          echo "PRODUCT VERIFIED: $URL"
+          echo "MYSQL STATE VERIFIED: $FIRST -> $SECOND"
+
+      - name: Return human delivery report
+        id: report
+        shell: bash
+        run: |
+          set -euo pipefail
+          FINAL_URL="${{ steps.dns.outputs.url }}"
+          REPORT="/tmp/mytrues-delivery-report.md"
+
+          cat >"$REPORT" <<EOF
+          # MyTrues — relatório de devolução ao humano
+
+          **Status:** ENTREGUE COM FALLBACK CONSCIENTE
+
+          **Intenção original**
+          - Aplicação: artefato PHP genérico
+          - Dependência: MySQL
+          - Target: Azure
+          - Domínio solicitado: `$REQUESTED_DOMAIN`
+          - Fornecedor decisório escolhido: `$DECISION_PROVIDER`
+
+          **Resultado materializado**
+          - Resource Group: `$RESOURCE_GROUP`
+          - Azure Container Group: `${{ steps.azure.outputs.site_name }}`
+          - FQDN Azure: `${{ steps.endpoint.outputs.fqdn }}`
+          - IP público Azure: `${{ steps.endpoint.outputs.ip }}`
+          - URL entregue: **$FINAL_URL**
+          - Recurso Azure mantido ativo após o teste: **sim**
+
+          **Decisões do MyTrues**
+          1. `${{ steps.azure.outputs.decision_id }}`
+             - ${{ steps.azure.outputs.notice }}
+          2. `${{ steps.dns.outputs.decision_id }}`
+             - ${{ steps.dns.outputs.notice }}
+
+          **Desvio em relação à intenção**
+          - O domínio customizado `$REQUESTED_DOMAIN` não foi configurado porque o bootstrap do provedor DNS não está disponível.
+          - O processo não foi abortado nem fingiu sucesso no domínio solicitado.
+          - O MyTrues do `$DECISION_PROVIDER` escolheu devolver o hostname fornecido pela Azure.
+
+          **Provas**
+          - HTTP da aplicação: **OK**
+          - PHP executado: **OK**
+          - PHP -> MySQL: **OK**
+          - Estado MySQL entre duas requisições: **${{ steps.verify.outputs.first_visits }} -> ${{ steps.verify.outputs.second_visits }}**
+          - OIDC GitHub -> Azure: **OK**
+          - Materialização via Porter/CNAB: **OK**
+
+          **Ação humana pendente**
+          - Nenhuma para visualizar/testar o produto.
+          - Para cumprir futuramente o domínio solicitado, fornecer o bootstrap DNS correspondente.
+
+          **Run:** `$GITHUB_RUN_ID`
+          EOF
+
+          sed 's/^          //' "$REPORT" > /tmp/report-clean.md
+          cat /tmp/report-clean.md
+          cat /tmp/report-clean.md >> "$GITHUB_STEP_SUMMARY"
+
+          echo "final_url=$FINAL_URL" >> "$GITHUB_OUTPUT"
+
+      - name: Stop local MyTrues provider only
+        if: always()
+        working-directory: repo/Tools/MYTRUES
+        run: docker compose down
+
+      - name: Keep Azure product for human inspection
+        if: success()
+        run: |
+          echo "AZURE RESOURCE INTENTIONALLY PRESERVED"
+          echo "FINAL PRODUCT URL: ${{ steps.report.outputs.final_url }}"
