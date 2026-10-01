@@ -90,3 +90,44 @@ context is necessary.
 
 A client must not require hidden chain-of-thought. The CCP Record contains
 explicitly recorded rationale/evidence/provenance chosen for preservation.
+
+## No Retroactive Cognition
+
+A CCP Record MUST preserve the decision-relevant state that existed when the
+recorded cognition/decision occurred.
+
+Later knowledge MUST NOT silently rewrite an earlier cognitive state as if that
+knowledge had already been available.
+
+When later evidence changes the position, the preferred representation is:
+
+`old recorded state -> new evidence/cognition -> reevaluation -> superseding/new state`
+
+rather than destructive reinterpretation of the historical record.
+
+This does not prohibit correcting transcription or metadata errors. Such
+corrections should themselves remain attributable when they materially affect
+meaning.
+
+The purpose is temporal epistemic honesty: a future reader must be able to ask
+both "what is believed/decided now?" and "what was believed/decided then, using
+the evidence available then?"
+
+## Canonical promotion boundary
+
+A generated proposal, agent OUTBOX, candidate relation, draft decision or
+external-model output is not canonical merely because it exists.
+
+Promotion into canonical decision memory requires the authority/process defined
+by the selected provider or deployment policy.
+
+For an unknown operational case in the current reference behavior, that means an
+explicit provider resolution before retention.
+
+The generic invariant is:
+
+`proposal/staging -> authority decision -> canonical retention`
+
+not:
+
+`proposal/staging -> automatic truth`
