@@ -69,7 +69,7 @@ independent DevOps intent client.
 
 History-preserving canonical subtree import uses FlowED commit:
 
-`0c8098169123b7d0f48105f1f249c3a8681e3ec6`
+`3ea0364ab2092e1863bf8ce8444fd1a8733dda78`
 
 This commit contains the complete product staging surface including the physical
 IDEOS `DecisionMemory` adapter boundary.
@@ -101,7 +101,7 @@ The frozen migration SHA above includes this recovered material.
 
 The authoritative frozen product snapshot is now:
 
-`0c8098169123b7d0f48105f1f249c3a8681e3ec6`
+`3ea0364ab2092e1863bf8ce8444fd1a8733dda78`
 
 `Tools/MYTRUES/migration/reorganize-org.sh` currently contains an earlier frozen
 SHA and MUST NOT be executed until its `FLOWED_SOURCE_SHA` is updated to the
@@ -121,5 +121,22 @@ Added:
 - `Tools/MYTRUES/research/SCIENCE-FRONTIER-DISCOVERY-GATE.md`.
 
 Literal `MyTools` search produced no distinct relevant project lineage.
+
+The authoritative frozen product SHA above includes these additions.
+
+## Additional uploaded research
+
+The current staging also preserves and classifies:
+
+- `MTR-METAOBJECTIVE-001 — MYTRUES APPLIED TO MYTRUES` as RECORD ONLY;
+- `MYTRUES-META-PROPOSAL-001` as proposal awaiting explicit PO decision;
+- `GROK-MYTRUES-COGNITIVE-DISCOVERY-001` as external candidate research with
+  an independent qualification record.
+
+No Microbrain implementation is authorized by these artifacts.
+
+The Grok package is not promoted to qualified Discovery because its received
+payload contains required JSON parse failures and manifest/payload count
+inconsistencies.
 
 The authoritative frozen product SHA above includes these additions.
