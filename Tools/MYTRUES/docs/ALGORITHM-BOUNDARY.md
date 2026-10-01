@@ -135,3 +135,46 @@ This is **data initialization**, not decision algorithm behavior:
 - absence of a decision still follows the normal unknown-case `202` path;
 - the seed cannot manufacture a decision for the control case;
 - seed-004 conformance run `36874885444` proves this behavior.
+
+
+## DecisionEngine port boundary
+
+The open boundary includes the contract that invokes a decision engine.
+
+A provider may implement that port using a public, private, commercial, human or
+hybrid engine without changing the MyTrues protocol.
+
+A proprietary implementation is therefore allowed **behind** the port, but
+MyTrues itself does not call that implementation scientifically superior unless
+it passes the Science Frontier Gate.
+
+Engine identity/version and the applied DecisionPolicyProfile version should be
+available to the resulting DecisionRecord when necessary for replay/audit.
+
+## Plugin ecosystem is not Core IP
+
+Ports, adapter contracts, plugin manifests, registry semantics and conformance
+should remain open interoperability surfaces.
+
+A marketplace may distribute both open-source and commercial implementations.
+
+The fact that MyTrues has a plugin marketplace is not a scientific contribution
+and must not be used to justify a proprietary Core.
+
+## LLM cognition adapter boundary
+
+An LLM or other probabilistic component may inspect a conversation/document and
+propose candidate cognition:
+
+- issue;
+- alternatives;
+- criteria;
+- evidence links;
+- DecisionRecord draft;
+- CCP keyframes;
+- profile-update proposal.
+
+Such output remains candidate/staging material.
+
+It crosses into canonical memory only through the configured authority/promotion
+policy.
