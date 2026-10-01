@@ -449,3 +449,60 @@ Preserve this document as a research-hypothesis catalog.
 Do not use it to redefine the MyTrues Open Decision Protocol v0.2.
 
 `PRESERVE AS METAOBJECTIVE / DO NOT PROMOTE AS IDENTITY`.
+
+
+## Batch-003 evidence — global question reopened
+
+The prior forensic audit resolved only one specific chat:
+
+`mytrues- INTERMEMBERS.DEV_001-VRMP-DEMO-POO-01-DV4-02`.
+
+That chat did **not** prove an Experience-first identity pivot.
+
+A different source, `VRMP-MYTRUES 260901 01.MD`, preserves a direct user quote:
+
+`é uma fonte de argumentação que cresce com a experiência. é mais do que registrar opinião mas registrar experiência que por consequência gera opinião`.
+
+This is stronger evidence that Experience was intentionally important to the
+MyTrues concept.
+
+However, the extraction itself is mixed and the stronger statements:
+
+- `Experience is the primary unit`;
+- decision became secondary/derived;
+- MyTrues became `experience-grounded cognitive memory`;
+- MyTrues is persistent epistemic identity;
+
+may still be assistant synthesis.
+
+A second strict source, `VRMP-EDT 260901 01.MD`, records a boundary attributed
+to PM/PO:
+
+```text
+MyTrues
+-> epistemic evolution of a subject
+-> Experience -> Belief -> Position -> Decision
+
+EDT
+-> cognitive/causal evolution of a Thing
+```
+
+Exact human/agent authorship still needs forensic confirmation.
+
+Therefore the global status is now:
+
+```text
+Experience is explicitly important
+= SUPPORTED
+
+Experience is the canonical primary MyTrues unit
+= UNRESOLVED
+
+Decision-memory identity globally superseded
+= NOT PROVEN
+```
+
+Do not reverse the previous forensic result.
+
+Instead treat this as evidence from a **different chat lineage** that must be
+audited independently.
