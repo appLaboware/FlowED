@@ -1,0 +1,86 @@
+name: R0 durable evidence branch probe
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths:
+      - ".github/workflows/r0-evidence-branch-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  retain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      EVIDENCE_BRANCH: evidence
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - name: Materialize evidence payload
+        run: |
+          mkdir -p /tmp/evidence-payload
+          python3 - <<'PY'
+          import json, os, datetime
+          payload = {
+              "schema": "flowed-evidence-v1",
+              "run_id": os.environ["GITHUB_RUN_ID"],
+              "run_url": f"https://github.com/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}",
+              "workflow": os.environ["GITHUB_WORKFLOW"],
+              "sha": os.environ["GITHUB_SHA"],
+              "ref": os.environ["GITHUB_REF"],
+              "created_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              "retention": "git-orphan-branch"
+          }
+          path = f"/tmp/evidence-payload/{os.environ['GITHUB_RUN_ID']}.json"
+          with open(path, "w", encoding="utf-8") as f:
+              json.dump(payload, f, indent=2, sort_keys=True)
+              f.write("\n")
+          print(path)
+          PY
+          cat "/tmp/evidence-payload/$GITHUB_RUN_ID.json"
+          {
+            echo "# R0 durable evidence branch probe"
+            echo
+            echo "- run: https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo "- retained path: runs/$GITHUB_RUN_ID.json on branch $EVIDENCE_BRANCH"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Persist on orphan evidence branch
+        run: |
+          set -euo pipefail
+          WORK=/tmp/evidence-repo
+          mkdir -p "$WORK"
+          cd "$WORK"
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+
+          if git ls-remote --exit-code --heads origin "$EVIDENCE_BRANCH" >/dev/null 2>&1; then
+            git fetch --depth 1 origin "$EVIDENCE_BRANCH"
+            git checkout -B "$EVIDENCE_BRANCH" FETCH_HEAD
+          else
+            git checkout --orphan "$EVIDENCE_BRANCH"
+          fi
+
+          mkdir -p runs
+          cp "/tmp/evidence-payload/$GITHUB_RUN_ID.json" "runs/$GITHUB_RUN_ID.json"
+          git add "runs/$GITHUB_RUN_ID.json"
+          git commit -m "evidence: retain run $GITHUB_RUN_ID"
+          git push origin "HEAD:$EVIDENCE_BRANCH"
+
+      - name: Verify remote object is readable
+        run: |
+          set -euo pipefail
+          URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${EVIDENCE_BRANCH}/runs/${GITHUB_RUN_ID}.json"
+          for i in $(seq 1 10); do
+            if curl -fsSL "$URL" | tee /tmp/retained.json; then
+              grep -q "\"run_id\": \"$GITHUB_RUN_ID\"" /tmp/retained.json
+              exit 0
+            fi
+            sleep 2
+          done
+          exit 1
