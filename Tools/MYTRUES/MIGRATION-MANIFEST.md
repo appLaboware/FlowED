@@ -6,7 +6,7 @@ Status: **STAGED — repository-admin operations pending target-org access/tooli
 
 Frozen FlowED migration source SHA:
 
-`b6ced84179ef5b33e17af3b176b7a6a7cc90c513`
+`ef07118f8f4b3cee5f9c2bcd110d1ab9e50753f7`
 
 The canonical subtree import MUST use this SHA, not a later moving branch head.
 
@@ -69,8 +69,8 @@ License: MIT.
 Preferred method for the FlowED subtrees:
 
 ```text
-git subtree split --prefix=Tools/MYTRUES b6ced84179ef5b33e17af3b176b7a6a7cc90c513 -b import/mytrues
-git subtree split --prefix=Tools/IDEOS b6ced84179ef5b33e17af3b176b7a6a7cc90c513 -b import/ideos
+git subtree split --prefix=Tools/MYTRUES ef07118f8f4b3cee5f9c2bcd110d1ab9e50753f7 -b import/mytrues
+git subtree split --prefix=Tools/IDEOS ef07118f8f4b3cee5f9c2bcd110d1ab9e50753f7 -b import/ideos
 ```
 
 The resulting filtered branches preserve relevant FlowED commit history and are
@@ -108,3 +108,19 @@ The migration is complete only when the record contains:
 - MIT license in both repositories;
 - real IDEOS -> MyTrues lock SHA;
 - adapter compatibility run URL.
+
+## Migration-only files
+
+The history-preserving split starts from the frozen FlowED SHA above, but the
+canonical product repositories must not retain FlowED reorganization machinery.
+
+Before the first canonical push, remove from the MyTrues import branch:
+
+- `ORG-INVENTORY.md`;
+- `MIGRATION-MANIFEST.md`;
+- `migration/`.
+
+These remain in FlowED as migration evidence.
+
+The canonical IDEOS import similarly does not receive FlowED-level
+`Tools/EVOLUTION/` documents; only the IDEOS subtree is imported.
