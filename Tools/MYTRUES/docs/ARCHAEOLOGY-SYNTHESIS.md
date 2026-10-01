@@ -1050,3 +1050,136 @@ No PO decision in this chat removed:
 from the current v0.2 behavior.
 
 Broader experiments may study other flows without altering that baseline.
+
+
+## Chat-extraction batch 003 additions
+
+The final uploaded chat-extraction batch was reviewed on 2026-10-01.
+
+Per-chat source confidence and exact uploaded-byte hashes are recorded at:
+
+`docs/archaeology/CHAT-EXTRACTION-TRIAGE-003.md`
+
+### 53. Cognit.me is upstream/separate from MyTrues
+
+A mixed reconstruction preserves direct PO quotes:
+
+`num segundo passo eu uso mytrues para inserir estas cognicoes: assim nao deixamos acoplado o mytrues (que é mais amplo) com o initproj`
+
+and:
+
+`a gente gera com a ferramenta de initproj os cortes e cognições em artefatos MD que podem depois ser usados para fazer memória mytrue`.
+
+Therefore the useful boundary is:
+
+```text
+raw session/source
+-> Cognit.me / extraction/atomization
+-> cognition artifacts
+-> optional MyTrues ingestion/promotion
+```
+
+MyTrues must not be defined by session cutting/deduplication.
+
+This boundary is consistent with the current Source/CognitionProposal adapter
+direction.
+
+### 54. MyTrues is not established as a RAG repository
+
+A strict unrelated chat mentions:
+
+`Integração com repositórios RAG (como MyTrues)`.
+
+The same extraction explicitly says the characterization was ungrounded and
+never developed.
+
+Therefore this is negative/incidental evidence only.
+
+Retrieval/RAG may be used by adapters without defining the MyTrues domain.
+
+### 55. CCP de Partida / Fundação Epistêmica
+
+A strict CCP-local source introduces a useful research-governance construct:
+
+```text
+prior art / predecessors
+-> what we accept/adopt
+-> evidence/reasons
+-> limitations/differences
+-> versioned epistemic starting point
+-> project propositions
+-> delta
+```
+
+Provisional names:
+
+- `CCP de Partida`;
+- `CCP de Fundação Epistêmica`;
+- `De onde partimos`.
+
+Important discipline:
+
+prefer `known, audited, versioned frontier` over claims of an absolute
+scientific frontier.
+
+This is not a current MyTrues protocol entity, but it is useful to the Science
+Frontier method.
+
+### 56. Subject-history versus Thing-history boundary
+
+A strict EDT-local extraction records a candidate boundary:
+
+```text
+MyTrues
+-> evolution of the subject's epistemic state
+-> Experience -> Belief -> Position -> Decision
+-> "what do I think and why?"
+
+EDT
+-> cognitive/causal evolution of a Thing
+-> Interaction/Experience -> Rationale -> Decision -> Requirement -> Work
+   -> Artifact -> Evidence
+-> "how did this arise/evolve and why?"
+```
+
+The report attributes this to PM/PO.
+
+Exact human/agent authorship is not yet established.
+
+Preserve as a high-value boundary hypothesis pending forensic attribution.
+
+### 57. New evidence reopens the global Experience-first question
+
+The earlier forensic result remains valid for the InterMembers/VRMP chat:
+that chat did **not** prove that Experience replaced Decision as the MyTrues
+identity.
+
+A different mixed source now preserves a direct user quote:
+
+`é uma fonte de argumentação que cresce com a experiência. é mais do que registrar opinião mas registrar experiência que por consequência gera opinião`.
+
+This proves:
+
+`Experience is explicitly important to the user's MyTrues concept`.
+
+It does not yet prove:
+
+`Experience is the canonical primary MyTrues entity`.
+
+Therefore the **global** question remains open even though the previously audited
+chat is resolved.
+
+### 58. EDT expansion conflict must remain explicit
+
+Batch 003 reveals two incompatible claims:
+
+- a strict EDT-local extraction says `Education-Driven Things` was promoted by
+  PM/PO;
+- a later mixed reconstruction says that naming came from a wrong
+  `C2_RECOMMENDATION` workstream and should not replace historical
+  `Education-Driven Thinking`.
+
+Do not silently choose one.
+
+The expansion remains a forensic naming issue until original authority is
+verified.
