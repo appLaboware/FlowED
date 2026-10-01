@@ -8,6 +8,10 @@ on:
       - ".github/workflows/mytrues-protocol-conformance.yml"
   workflow_dispatch:
 
+concurrency:
+  group: mytrues-protocol-conformance
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -20,22 +24,29 @@ jobs:
       - name: Clone repository
         run: git clone --depth 1 --branch tools/ideos-lab https://github.com/appLaboware/FlowED.git repo
 
+      - name: Install schema validator
+        run: python3 -m pip install --disable-pip-version-check jsonschema==4.25.1
+
       - name: Start two independent provider MyTrues
         working-directory: repo/Tools/MYTRUES
         run: docker compose up -d --build
 
-      - name: Prove open MVP behavior
+      - name: Prove v0.2 schema and behavior conformance
         working-directory: repo/Tools/MYTRUES
-        run: python3 conformance/test_protocol.py | tee /tmp/result.json
+        run: |
+          python3 conformance/test_protocol.py | tee /tmp/mytrues-conformance-v0.2.json
 
       - name: Assert product baseline
         run: |
           python3 - <<'PY'
           import json
-          x=json.load(open("/tmp/result.json"))
+          x=json.load(open("/tmp/mytrues-conformance-v0.2.json"))
           assert x["protocol"]=="PASS"
+          assert x["schema_version"]=="0.2"
+          assert all(v=="PASS" for v in x["schema_conformance"].values())
           assert x["anonymization"]=="PASS"
           assert x["persistent_provider_memory"]=="PASS"
+          print("MYTRUES V0.2 SCHEMAS: PASS")
           print("TWO INDEPENDENT PROVIDER MYTRUES: PASS")
           print("UNKNOWN CASE PAUSES: PASS")
           print("HUMAN TEACH -> RESUME: PASS")
@@ -44,6 +55,13 @@ jobs:
           print("ANONYMIZED CASE PACKET: PASS")
           print("PROPRIETARY CORE REQUIRED: NO")
           PY
+
+      - name: Upload conformance evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: mytrues-conformance-v0.2
+          path: /tmp/mytrues-conformance-v0.2.json
+          if-no-files-found: error
 
       - name: Shutdown
         if: always()
