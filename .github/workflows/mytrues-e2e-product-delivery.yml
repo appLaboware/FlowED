@@ -139,10 +139,16 @@ jobs:
           "$HOME/.porter/porter" version
           "$HOME/.porter/porter" mixins list
 
-      - name: Validate generic PHP runtime image capability
+      - name: Validate public Quay PHP and MySQL runtime images
         run: |
-          docker run --rm webdevops/php:8.3-alpine php -m |
-            tee /tmp/php-modules.txt
+          docker pull quay.io/sclorg/php-83-c9s
+          docker pull quay.io/sclorg/mysql-84-c9s
+          docker run --rm quay.io/sclorg/php-83-c9s sh -c '
+            command -v php
+            command -v base64
+            command -v tar
+            php -m
+          ' | tee /tmp/php-modules.txt
           grep -qx 'PDO' /tmp/php-modules.txt
           grep -qx 'pdo_mysql' /tmp/php-modules.txt
 
@@ -334,7 +340,8 @@ jobs:
             exit 1
           fi
 
-          jq -n             --arg requestId "dns-${GITHUB_RUN_ID}"             --arg domain "$REQUESTED_DOMAIN"             --arg fqdn "${{ steps.endpoint.outputs.fqdn }}"             --arg ip "${{ steps.endpoint.outputs.ip }}"             '{
+          jq -n             --arg requestId "dns-${GITHUB_RUN_ID}"             --arg domain "$REQUESTED_DOMAIN"             --arg fqdn "${{ steps.endpoint.outputs.fqdn }}"             --arg ip "${{ steps.endpoint.outputs.ip }}" \
+            --argjson port 8080             '{
               protocol:"mytrues.decision/v1",
               requestId:$requestId,
               subject:{kind:"failure",code:"dns.requested_provider_credentials_missing"},
@@ -343,7 +350,8 @@ jobs:
                 azure_provider_fqdn_available:true,
                 azure_provider_fqdn:$fqdn,
                 azure_public_ip_available:true,
-                azure_public_ip:$ip
+                azure_public_ip:$ip,
+                azure_provider_port:$port
               },
               constraints:{automation:"automatic",maxRisk:"low"}
             }' >/tmp/dns-decision-request.json
@@ -357,6 +365,7 @@ jobs:
           ENDPOINT_TYPE="$(jq -r '.selected.result.endpoint.type' /tmp/dns-decision.json)"
           ENDPOINT_VALUE="$(jq -r '.selected.result.endpoint.value' /tmp/dns-decision.json)"
           SCHEME="$(jq -r '.selected.result.endpoint.scheme' /tmp/dns-decision.json)"
+          PORT="$(jq -r '.selected.result.endpoint.port // 80' /tmp/dns-decision.json)"
           NOTICE="$(jq -r '.notice' /tmp/dns-decision.json)"
 
           test "$DECISION_ID" = "decision.dns.use_azure_provider_fqdn"
@@ -366,7 +375,12 @@ jobs:
             echo "decision_id=$DECISION_ID"
             echo "endpoint_type=$ENDPOINT_TYPE"
             echo "endpoint_value=$ENDPOINT_VALUE"
-            echo "url=$SCHEME://$ENDPOINT_VALUE"
+            echo "endpoint_port=$PORT"
+            if [ "$PORT" = "80" ]; then
+              echo "url=$SCHEME://$ENDPOINT_VALUE"
+            else
+              echo "url=$SCHEME://$ENDPOINT_VALUE:$PORT"
+            fi
             echo "notice=$NOTICE"
           } >> "$GITHUB_OUTPUT"
 
