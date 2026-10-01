@@ -506,3 +506,38 @@ Do not reverse the previous forensic result.
 
 Instead treat this as evidence from a **different chat lineage** that must be
 audited independently.
+
+
+## Final cross-chat forensic status
+
+A second original chat, `VRMP-MYTRUES 260901 01`, was audited after this branch
+had been reopened by batch-003 evidence.
+
+Result:
+
+- direct human evidence supports the importance of chronology/consideration of
+  experience in decision formation;
+- `Experience = primary conceptual unit` is still not directly human-approved;
+- Experience/Belief/Position/Decision/Value separation is assistant/PM-PO
+  modeling, not a direct human ontology decision;
+- transition from decision memory to experience-grounded epistemic memory is
+  **inconclusive**, not proven;
+- persistent epistemic identity, user-owned memory and replaceable AI as
+  epistemic principles were assistant proposals, not direct human decisions.
+
+Therefore the reviewed-corpus conclusion is now stable:
+
+```text
+Experience is important
+= supported
+
+Experience is canonical primary MyTrues entity
+= not established
+
+Experience-first replaces decision-memory identity
+= not established
+```
+
+This branch remains a research-hypothesis catalog only.
+
+No further Experience-first forensic follow-up is currently required.
