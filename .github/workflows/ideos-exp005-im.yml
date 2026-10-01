@@ -29,6 +29,11 @@ jobs:
           cd repo
           bash Tools/IDEOS/experiments/EXP-005-infrastructure-manager/probe.sh
 
+      - name: Materialize baseline through IM Docker connector
+        run: |
+          cd repo
+          bash Tools/IDEOS/experiments/EXP-005-infrastructure-manager/materialize-docker.sh
+
       - name: Experiment result
         if: always()
         run: |
