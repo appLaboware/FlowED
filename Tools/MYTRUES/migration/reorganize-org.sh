@@ -82,22 +82,22 @@ for r in MyTrues MyTrues_p cli kernel paper replication site spec; do
 done
 
 # ---------------------------------------------------------------------------
-# 2. Create definitive topology.
+# 2. Create definitive topology — PRIVATE-FIRST. Publication happens only through a later explicit release gate.
 # ---------------------------------------------------------------------------
 
-create_repo_if_missing "mytrues" "public"   "Open decision-memory protocol, ports, conformance and reference implementation"
+create_repo_if_missing "mytrues" "private"   "Open decision-memory protocol, ports, conformance and reference implementation"
 
-create_repo_if_missing "ccp" "public"   "Creator Cognitive Path (CCP): open conceptual model, provenance and projections"
+create_repo_if_missing "ccp" "private"   "Creator Cognitive Path (CCP): open conceptual model, provenance and projections"
 
 create_repo_if_missing "edt" "private"   "Education-Driven Thinking doctoral research workspace"
 
-create_repo_if_missing "research" "public"   "Reproducible frontier research, benchmarks, experiments and replication"
+create_repo_if_missing "research" "private"   "Reproducible frontier research, benchmarks, experiments and replication"
 
-create_repo_if_missing "registry" "public"   "Open MyTrues plugin/engine/adapter registry and conformance metadata"
+create_repo_if_missing "registry" "private"   "Open MyTrues plugin/engine/adapter registry and conformance metadata"
 
-create_repo_if_missing "ideos" "public"   "Open DevOps intent product and reference MyTrues client"
+create_repo_if_missing "ideos" "private"   "Open DevOps intent product and reference MyTrues client"
 
-create_repo_if_missing "site" "public"   "Public MyTrues/CCP/EDT documentation and site"
+create_repo_if_missing "site" "private"   "Public MyTrues/CCP/EDT documentation and site"
 
 create_repo_if_missing "mytrues-enterprise" "private"   "Closed commercial extensions implementing the open MyTrues contracts"
 
@@ -254,13 +254,13 @@ cat > "$WORKDIR/migration-evidence.json" <<JSON
   "flowed_source_sha": "$FLOWED_SOURCE_SHA",
   "archive_suffix": "$SUFFIX",
   "canonical": {
-    "mytrues": {"visibility":"public","sha":"$MYTRUES_SHA"},
-    "ccp": {"visibility":"public","sha":"$CCP_SHA"},
+    "mytrues": {"visibility":"private","sha":"$MYTRUES_SHA"},
+    "ccp": {"visibility":"private","sha":"$CCP_SHA"},
     "edt": {"visibility":"private","sha":"$EDT_SHA"},
-    "research": {"visibility":"public","sha":"$RESEARCH_SHA"},
-    "registry": {"visibility":"public"},
-    "ideos": {"visibility":"public","sha":"$IDEOS_SHA"},
-    "site": {"visibility":"public"},
+    "research": {"visibility":"private","sha":"$RESEARCH_SHA"},
+    "registry": {"visibility":"private"},
+    "ideos": {"visibility":"private","sha":"$IDEOS_SHA"},
+    "site": {"visibility":"private"},
     "mytrues-enterprise": {"visibility":"private"}
   }
 }
