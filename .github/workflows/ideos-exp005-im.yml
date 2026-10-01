@@ -1,4 +1,5 @@
 name: EXP-005 GRyCAP Infrastructure Manager
+# trigger: async materialization wait
 
 on:
   push:
