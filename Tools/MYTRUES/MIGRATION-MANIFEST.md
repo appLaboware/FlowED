@@ -4,6 +4,12 @@ Date: 2026-10-01
 
 Status: **STAGED — repository-admin operations pending target-org access/tooling**
 
+Frozen FlowED migration source SHA:
+
+`b6ced84179ef5b33e17af3b176b7a6a7cc90c513`
+
+The canonical subtree import MUST use this SHA, not a later moving branch head.
+
 ## Rename map
 
 No repository is deleted.
@@ -63,8 +69,8 @@ License: MIT.
 Preferred method for the FlowED subtrees:
 
 ```text
-git subtree split --prefix=Tools/MYTRUES <FLOWED_SOURCE_SHA> -b import/mytrues
-git subtree split --prefix=Tools/IDEOS <FLOWED_SOURCE_SHA> -b import/ideos
+git subtree split --prefix=Tools/MYTRUES b6ced84179ef5b33e17af3b176b7a6a7cc90c513 -b import/mytrues
+git subtree split --prefix=Tools/IDEOS b6ced84179ef5b33e17af3b176b7a6a7cc90c513 -b import/ideos
 ```
 
 The resulting filtered branches preserve relevant FlowED commit history and are
