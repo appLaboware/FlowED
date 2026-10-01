@@ -69,7 +69,7 @@ independent DevOps intent client.
 
 History-preserving canonical subtree import uses FlowED commit:
 
-`0352d0013aefcd7edf45dfaa0b61ef640f0f59fa`
+`b493a8883ae3cf0ec09c3997c2b39299a664376d`
 
 This commit contains the complete product staging surface including the physical
 IDEOS `DecisionMemory` adapter boundary.
@@ -102,7 +102,7 @@ The frozen migration SHA above includes this recovered material.
 The migration manifest and `reorganize-org.sh` now both point to the same
 authoritative frozen source SHA:
 
-`0352d0013aefcd7edf45dfaa0b61ef640f0f59fa`
+`b493a8883ae3cf0ec09c3997c2b39299a664376d`
 
 No known SHA drift remains between those two migration records.
 
@@ -246,3 +246,31 @@ Conclusion:
 - PAUSE/SANITIZE/RESOLVE remains unrepealed.
 
 No further forensic follow-up from batch 002 is currently required.
+
+## Chat extraction archaeology batch 003
+
+The final uploaded batch has been triaged and indexed.
+
+Added:
+
+- `Tools/MYTRUES/docs/archaeology/CHAT-EXTRACTION-TRIAGE-003.md`;
+- Cognit.me/MyTrues boundary in the extension-ecosystem documentation;
+- CCP de Partida / versioned epistemic starting-point discipline in the Science
+  Frontier gate;
+- batch-003 additions in `ARCHAEOLOGY-SYNTHESIS.md`;
+- new evidence annotation in the Experience-first research branch.
+
+Current unresolved historical items:
+
+1. whether `VRMP-MYTRUES 260901 01` contains explicit human-PO promotion of
+   Experience as the canonical primary MyTrues unit;
+2. who/what authority authored the `MyTrues = epistemic history of the subject`
+   boundary in `VRMP-EDT 260901 01`;
+3. whether `Education-Driven Things` was explicitly human-PO approved there.
+
+These are genealogy/naming questions only.
+
+They do not modify the current MyTrues Open Decision Protocol v0.2 executable
+baseline.
+
+The authoritative frozen SHA above includes the final uploaded batch.
