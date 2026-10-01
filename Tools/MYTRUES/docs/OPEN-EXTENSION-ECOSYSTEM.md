@@ -118,6 +118,43 @@ Loads and versions portable decision-policy/preference profiles.
 This port intentionally separates reusable provider/person preferences from
 criteria that belong only to one decision case.
 
+**ADOPT-FIRST correction:** PPX (Preference Profile Exchange) 0.1-draft is
+direct prior art for portable user-owned preference/context profiles, including
+provenance, confidence, consent, context modifiers, lifecycle, extensions and
+MCP/A2A/HTTP bindings.
+
+Therefore the preferred exploration path is:
+
+`PPX -> DecisionProfile adapter -> engine-specific semantic mapping`
+
+rather than inventing a competing MyTrues preference-profile format.
+
+A MyTrues-specific PPX extension/namespace should exist only if the decision
+semantics cannot be represented by PPX core/domain extensions plus adopted
+decision models.
+
+Historical W3C CC/PP is additional evidence that extensible user preference
+profiles are longstanding prior art.
+
+### Profile semantic mapper
+
+This is a candidate adapter responsibility, not necessarily a new normative
+port.
+
+It translates portable preference/profile claims into the representation a
+specific DecisionEngine can consume, for example:
+
+- PPX -> MCDA weights/constraints;
+- PPX -> DMN input/context;
+- PPX -> OPA input/policy context;
+- PPX -> CBR retrieval/selection features;
+- PPX -> learned/hybrid engine prompt/features.
+
+The mapper SHOULD make unsupported/unmapped semantics explicit rather than
+silently dropping them.
+
+Cross-engine semantic preservation is a research target.
+
 ### Evidence
 
 Obtains or resolves evidence referenced by a decision process.
