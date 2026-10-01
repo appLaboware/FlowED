@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
-      PORTER_HOME: ${{ runner.temp }}/porter
+      PORTER_HOME: /tmp/porter-r1
       LAB_TOKEN: synthetic-r1-credential-value
       BUNDLE_REF: localhost:5000/r1-native-surface:v0.1.0
 
