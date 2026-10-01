@@ -21,7 +21,7 @@ Legenda:
 | Indexar recursos externos criados por run | PARTIAL | alguns workflows/relatórios; não canônico | A parcial |
 | Cleanup idempotente por experimento | PARTIAL | alguns uninstall/delete; outros preservaram recursos | A/B parcial |
 | Custos, duração e quota por experimento | NOT DONE | — | D |
-| Artefatos de evidência retidos por workflow | NOT DONE de forma uniforme | — | D |
+| Artefatos de evidência retidos por workflow | **not executable in actions** via `actions/upload-artifact@v4` in current repo configuration: run `36870956574` failed at startup with zero jobs; GitHub exposed no narrower cause | startup-failure run + successful same workflow after removal | D + execution-limit observation |
 
 **Gate R0:** OPEN. Falta ownership/cleanup/cost/artifact discipline uniforme.
 
@@ -82,8 +82,8 @@ Legenda:
 | provider resolve -> resume | PASS | `36810420973` | B |
 | provider memory survives restart | PASS | `36810420973` | B |
 | two providers can decide differently | PASS | `36809927549` / `36810420973` | B |
-| JSON Schemas v0.2 | EXISTS, NOT CURRENTLY VALIDATED | repo | D |
-| OpenAPI 3.1 document | EXISTS, NOT CURRENTLY VALIDATED | repo | D |
+| JSON Schemas v0.2 | PASS: Draft 2020-12 meta-schema + concrete request/response/pending/resolution | `36871180992` | B |
+| OpenAPI 3.1 document | EXISTS, NOT CURRENTLY VALIDATED as OpenAPI document | repo | D |
 | OpenAPI 3.2.1 migration | NOT RUN | — | D |
 | RFC 9457 complete conformance | NOT RUN | — | D |
 | Trace Context current v0.2 cycle | NOT ASSERTED | historical B only | B historical |
@@ -93,9 +93,9 @@ Legenda:
 | idempotency policy | PARTIAL implementation behavior, no protocol proof | — | D |
 | version/compatibility policy | NOT DONE | — | D |
 
-**Immediate R3 task:** schema-validating conformance is required before this row can close.
+**Immediate R3 schema task:** DONE for JSON messages in run `36871180992`.
 
-**Gate R3:** OPEN.
+**Gate R3:** OPEN because OpenAPI/RFC9457/current trace/events/provenance/versioning remain incomplete.
 
 ## R4 — Baseline de ciência decisória
 
