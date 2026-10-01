@@ -153,58 +153,57 @@ jobs:
           set -euo pipefail
           URL="${{ steps.decisions.outputs.url }}"
 
-          cat >/tmp/report.md <<EOF
-          # MyTrues — relatório de devolução ao humano
+          {
+            echo "# MyTrues — relatório de devolução ao humano"
+            echo
+            echo "**Status:** ENTREGUE E VERIFICADO"
+            echo
+            echo "## Intenção original"
+            echo "- Aplicação: site PHP genérico"
+            echo "- Dependência: MySQL"
+            echo "- Target: Azure"
+            echo "- Domínio solicitado: $REQUESTED_DOMAIN"
+            echo "- Fornecedor decisório: $DECISION_PROVIDER"
+            echo
+            echo "## Produto entregue"
+            echo "- Azure Container Group: $RESOURCE_NAME"
+            echo "- Região: $RESOURCE_LOCATION"
+            echo "- FQDN: $RESOURCE_FQDN"
+            echo "- Porta: $RESOURCE_PORT"
+            echo "- URL final: **$URL**"
+            echo
+            echo "## Decisões do MyTrues"
+            echo "1. ${{ steps.decisions.outputs.credential_decision }}"
+            echo "   - ${{ steps.decisions.outputs.credential_notice }}"
+            echo "2. ${{ steps.decisions.outputs.quota_decision }}"
+            echo "   - ${{ steps.decisions.outputs.quota_notice }}"
+            echo "3. ${{ steps.decisions.outputs.dns_decision }}"
+            echo "   - ${{ steps.decisions.outputs.dns_notice }}"
+            echo
+            echo "## Desvios tratados"
+            echo "- Os identificadores Azure estavam no formato legado agregado."
+            echo "- A região inicial brazilsouth estava sem quota ACI; o Senior A decidiu por eastus."
+            echo "- O domínio solicitado não pôde ser configurado sem o bootstrap DNS."
+            echo "- Em vez de declarar sucesso falso, o Senior A devolveu o hostname Azure funcional."
+            echo
+            echo "## Provas"
+            echo "- HTTP: **OK**"
+            echo "- PHP: **OK**"
+            echo "- MySQL: **OK**"
+            echo "- PHP -> MySQL: **OK**"
+            echo "- Estado persistido entre duas requisições: **${{ steps.verify.outputs.first }} -> ${{ steps.verify.outputs.second }}**"
+            echo "- Endpoint escolhido pelo MyTrues: **OK**"
+            echo
+            echo "## Devolução"
+            echo "- O produto permanece ativo para inspeção."
+            echo "- Nenhuma ação humana é necessária para abrir a URL."
+            echo "- Para cumprir o domínio originalmente solicitado, ainda falta o bootstrap DNS."
+            echo
+            echo "**Run:** $GITHUB_RUN_ID"
+          } >/tmp/report.md
 
-          **Status:** ENTREGUE E VERIFICADO
-
-          ## Intenção original
-          - Aplicação: site PHP genérico
-          - Dependência: MySQL
-          - Target: Azure
-          - Domínio solicitado: `$REQUESTED_DOMAIN`
-          - Fornecedor decisório: `$DECISION_PROVIDER`
-
-          ## Produto entregue
-          - Azure Container Group: `$RESOURCE_NAME`
-          - Região: `$RESOURCE_LOCATION`
-          - FQDN: `$RESOURCE_FQDN`
-          - Porta: `$RESOURCE_PORT`
-          - URL final: **$URL**
-
-          ## Decisões do MyTrues
-          1. `${{ steps.decisions.outputs.credential_decision }}`
-             - ${{ steps.decisions.outputs.credential_notice }}
-          2. `${{ steps.decisions.outputs.quota_decision }}`
-             - ${{ steps.decisions.outputs.quota_notice }}
-          3. `${{ steps.decisions.outputs.dns_decision }}`
-             - ${{ steps.decisions.outputs.dns_notice }}
-
-          ## Desvios tratados
-          - Os identificadores Azure estavam no formato legado agregado.
-          - A região inicial `brazilsouth` estava sem quota ACI; o Senior A decidiu por `eastus`.
-          - O domínio solicitado não pôde ser configurado sem o bootstrap DNS.
-          - Em vez de declarar sucesso falso, o Senior A devolveu o hostname Azure funcional.
-
-          ## Provas
-          - HTTP: **OK**
-          - PHP: **OK**
-          - MySQL: **OK**
-          - PHP -> MySQL: **OK**
-          - Estado persistido entre duas requisições: **${{ steps.verify.outputs.first }} -> ${{ steps.verify.outputs.second }}**
-          - Endpoint escolhido pelo MyTrues: **OK**
-
-          ## Devolução
-          - O produto permanece ativo para inspeção.
-          - Nenhuma ação humana é necessária para abrir a URL.
-          - Para cumprir o domínio originalmente solicitado, ainda falta o bootstrap DNS.
-
-          **Run:** `$GITHUB_RUN_ID`
-          EOF
-
-          sed 's/^          //' /tmp/report.md >/tmp/report-clean.md
-          cat /tmp/report-clean.md
-          cat /tmp/report-clean.md >> "$GITHUB_STEP_SUMMARY"
+          cat /tmp/report.md
+          cat /tmp/report.md >> "$GITHUB_STEP_SUMMARY"
 
           echo "url=$URL" >> "$GITHUB_OUTPUT"
 
