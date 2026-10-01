@@ -6,7 +6,7 @@ Status: **STAGED — repository-admin operations pending target-org access/tooli
 
 Frozen FlowED migration source SHA:
 
-`4e6353a2611ae00f4da4b05c35de32a322b2753f`
+`2513281273f44495c702907948d6a856f9d6474f`
 
 The canonical subtree import MUST use this SHA, not a later moving branch head.
 
@@ -69,8 +69,8 @@ License: MIT.
 Preferred method for the FlowED subtrees:
 
 ```text
-git subtree split --prefix=Tools/MYTRUES 4e6353a2611ae00f4da4b05c35de32a322b2753f -b import/mytrues
-git subtree split --prefix=Tools/IDEOS 4e6353a2611ae00f4da4b05c35de32a322b2753f -b import/ideos
+git subtree split --prefix=Tools/MYTRUES 2513281273f44495c702907948d6a856f9d6474f -b import/mytrues
+git subtree split --prefix=Tools/IDEOS 2513281273f44495c702907948d6a856f9d6474f -b import/ideos
 ```
 
 The resulting filtered branches preserve relevant FlowED commit history and are
@@ -206,3 +206,19 @@ The frozen source also includes the first chat-extraction provenance triage:
 
 These findings are archaeology/research inputs. They do not modify v0.2
 conformance or authorize new runtime behavior.
+
+## Chat extraction archaeology batch 002
+
+The frozen source also includes:
+
+- source-confidence triage for nine additional chat-derived reports;
+- exact SHA-256 identities of the reviewed uploads;
+- strict negative evidence from a FlowDisP-only chat;
+- explicit `MyTools`/MyTrues ambiguity handling;
+- preservation of the historical Datalog/Prolog/Cozo logic/rules branch;
+- correction that current OpenAPI staging is 0.2.0;
+- the Experience-first MyTrues research branch;
+- a Science Frontier gate requiring forensic PO-intent verification before any
+  Experience-first domain promotion.
+
+The Experience-first branch is research only and does not redefine v0.2.
