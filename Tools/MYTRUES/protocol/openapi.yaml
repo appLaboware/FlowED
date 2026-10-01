@@ -1,0 +1,47 @@
+openapi: 3.1.0
+info:
+  title: MyTrues Open Decision Protocol
+  version: 0.1.0
+  description: Open protocol for requesting operational decisions from interchangeable decision engines.
+paths:
+  /v1/decisions/{decisionKey}:
+    post:
+      operationId: decide
+      parameters:
+        - name: decisionKey
+          in: path
+          required: true
+          schema:
+            type: string
+            const: resolve.failure
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./schemas/decision-request.schema.json
+      responses:
+        "200":
+          description: Decision produced
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/decision-response.schema.json
+        "400":
+          description: Invalid request
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./schemas/problem.schema.json
+        "404":
+          description: No matching decision
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./schemas/problem.schema.json
+        "409":
+          description: Matching decision exists but execution constraints/guards reject it
+          content:
+            application/problem+json:
+              schema:
+                $ref: ./schemas/problem.schema.json
