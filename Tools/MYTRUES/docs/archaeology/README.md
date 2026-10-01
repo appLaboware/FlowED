@@ -102,3 +102,31 @@ Important additions recovered from this source family:
 - MyTrues Discovery historical product branch;
 - MCP-as-adapter rule;
 - EDT expansion / CCP DOI claims requiring verification.
+
+
+### Chat extraction triage — source-confidence layer
+
+- `CHAT-EXTRACTION-TRIAGE-001.md`
+
+This layer classifies chat-generated MyTrues extraction reports by evidentiary
+strength:
+
+- chat-local extraction;
+- mixed reconstruction;
+- consolidation/index.
+
+Important additions surfaced in batch 001:
+
+- OMGDiary/MyTrues two-axis origin;
+- historical `TrueEngine` nomenclature;
+- early project-local decision authority before generic LLM knowledge;
+- `Raw log is not CCP`;
+- CCP projection POC lineage;
+- multi-time epistemic model candidate;
+- chronology != causality;
+- defeated-path memory hypothesis;
+- `MyTrues = KNOWING / LLM = SAYING`;
+- reinforcement that MyTrues Discovery is a separate historical branch.
+
+These reports remain secondary evidence unless the original chat turns are
+forensically recovered.
