@@ -15,6 +15,9 @@ permissions:
 env:
   RESOURCE_GROUP: rg-flowed-ideos-lab
   AZURE_BUNDLE: ${{ secrets.AZURE }}
+  AZURE_CLIENT_ID_SECRET: ${{ secrets.AZURE_CLIENT_ID }}
+  AZURE_TENANT_ID_SECRET: ${{ secrets.AZURE_TENANT_ID }}
+  AZURE_SUBSCRIPTION_ID_SECRET: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
 jobs:
   prove-oidc:
@@ -22,31 +25,34 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - name: Parse AZURE repository secret
+      - name: Resolve Azure repository credentials
         id: azure
         shell: bash
         run: |
           set -euo pipefail
 
-          test -n "$AZURE_BUNDLE" || {
-            echo "Repository secret AZURE is empty or unavailable." >&2
-            exit 1
-          }
-
-          get_value() {
+          get_bundle_value() {
             local key="$1"
             printf '%s\n' "$AZURE_BUNDLE" |
               sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*=[[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\2/p" |
               tail -n 1
           }
 
-          CLIENT_ID="$(get_value AZURE_CLIENT_ID)"
-          TENANT_ID="$(get_value AZURE_TENANT_ID)"
-          SUBSCRIPTION_ID="$(get_value AZURE_SUBSCRIPTION_ID)"
+          CLIENT_ID="$AZURE_CLIENT_ID_SECRET"
+          TENANT_ID="$AZURE_TENANT_ID_SECRET"
+          SUBSCRIPTION_ID="$AZURE_SUBSCRIPTION_ID_SECRET"
+          SOURCE="separate repository secrets"
 
-          test -n "$CLIENT_ID" || { echo "AZURE_CLIENT_ID not found inside secret AZURE." >&2; exit 1; }
-          test -n "$TENANT_ID" || { echo "AZURE_TENANT_ID not found inside secret AZURE." >&2; exit 1; }
-          test -n "$SUBSCRIPTION_ID" || { echo "AZURE_SUBSCRIPTION_ID not found inside secret AZURE." >&2; exit 1; }
+          if [ -z "$CLIENT_ID" ] || [ -z "$TENANT_ID" ] || [ -z "$SUBSCRIPTION_ID" ]; then
+            SOURCE="legacy AZURE bundle secret"
+            CLIENT_ID="${CLIENT_ID:-$(get_bundle_value AZURE_CLIENT_ID)}"
+            TENANT_ID="${TENANT_ID:-$(get_bundle_value AZURE_TENANT_ID)}"
+            SUBSCRIPTION_ID="${SUBSCRIPTION_ID:-$(get_bundle_value AZURE_SUBSCRIPTION_ID)}"
+          fi
+
+          test -n "$CLIENT_ID" || { echo "AZURE_CLIENT_ID is unavailable." >&2; exit 1; }
+          test -n "$TENANT_ID" || { echo "AZURE_TENANT_ID is unavailable." >&2; exit 1; }
+          test -n "$SUBSCRIPTION_ID" || { echo "AZURE_SUBSCRIPTION_ID is unavailable." >&2; exit 1; }
 
           echo "::add-mask::$CLIENT_ID"
           echo "::add-mask::$TENANT_ID"
@@ -58,7 +64,8 @@ jobs:
             echo "subscription_id=$SUBSCRIPTION_ID"
           } >> "$GITHUB_OUTPUT"
 
-          echo "Single AZURE secret parsed successfully."
+          echo "Azure credentials resolved from: $SOURCE"
+          echo "Preferred format: three separate repository secrets."
 
       - name: Request GitHub OIDC token
         id: oidc
