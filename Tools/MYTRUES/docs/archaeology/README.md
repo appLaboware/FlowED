@@ -54,3 +54,24 @@ Each copied file contains its original repository, path and blob SHA in a header
 
 Do not edit archaeology copies to make them look current. New conclusions belong
 in canonical design documents, not in historical source copies.
+
+### Google Drive — pre-repository lineage and working corpus
+
+- `DRIVE-INVENTORY.md`
+- `drive/2025-02-ccw.md`
+- `drive/2025-06-ccc.md`
+- `drive/2025-06-omgdiary-guide.md`
+- `drive/2025-06-true-structure.md`
+- `drive/2025-06-cognitive-capture-template.md`
+- `drive/2025-08-framework-choice-decision.md`
+- `drive/2025-08-framework-choice-cognition.md`
+- `drive/2026-09-mytrues-discovery-001.md`
+
+Value:
+
+- predates the stabilized GitHub MyTrues lineage;
+- preserves CCW/cognitive-keyframe origins;
+- preserves concrete decision + cognition examples;
+- preserves the 2026 scientific design-space discovery contract.
+
+Literal `MyTools` searches did not reveal a separate relevant lineage.
