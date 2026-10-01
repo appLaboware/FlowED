@@ -6,7 +6,7 @@ Status: **STAGED — repository-admin operations pending target-org access/tooli
 
 Frozen FlowED migration source SHA:
 
-`ef07118f8f4b3cee5f9c2bcd110d1ab9e50753f7`
+`0982911b09dc7738686db2f1ff953a7ce0c1fb8b`
 
 The canonical subtree import MUST use this SHA, not a later moving branch head.
 
@@ -69,8 +69,8 @@ License: MIT.
 Preferred method for the FlowED subtrees:
 
 ```text
-git subtree split --prefix=Tools/MYTRUES ef07118f8f4b3cee5f9c2bcd110d1ab9e50753f7 -b import/mytrues
-git subtree split --prefix=Tools/IDEOS ef07118f8f4b3cee5f9c2bcd110d1ab9e50753f7 -b import/ideos
+git subtree split --prefix=Tools/MYTRUES 0982911b09dc7738686db2f1ff953a7ce0c1fb8b -b import/mytrues
+git subtree split --prefix=Tools/IDEOS 0982911b09dc7738686db2f1ff953a7ce0c1fb8b -b import/ideos
 ```
 
 The resulting filtered branches preserve relevant FlowED commit history and are
