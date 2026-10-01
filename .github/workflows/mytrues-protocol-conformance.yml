@@ -1,0 +1,60 @@
+name: MyTrues open protocol conformance
+
+on:
+  push:
+    branches:
+      - tools/ideos-lab
+    paths:
+      - "Tools/MYTRUES/**"
+      - ".github/workflows/mytrues-protocol-conformance.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  protocol:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Clone repository
+        run: |
+          git clone --depth 1 --branch tools/ideos-lab https://github.com/appLaboware/FlowED.git repo
+
+      - name: Install conformance validator
+        run: |
+          python3 -m pip install --disable-pip-version-check jsonschema
+
+      - name: Start two protocol-compatible MyTrues instances
+        working-directory: repo/Tools/MYTRUES
+        run: |
+          docker compose up -d --build
+          docker compose ps
+
+      - name: Same request, different engines, same protocol
+        working-directory: repo/Tools/MYTRUES
+        run: |
+          python3 conformance/test_protocol.py | tee /tmp/mytrues-conformance.json
+
+      - name: Assert decision difference is algorithm-side only
+        run: |
+          python3 - <<'PY'
+          import json
+          data=json.load(open("/tmp/mytrues-conformance.json"))
+          assert data["protocol"] == "PASS"
+          fqdn=data["mytrues_fqdn"]["selected"]["result"]["endpoint"]
+          ip=data["mytrues_ip"]["selected"]["result"]["endpoint"]
+          assert fqdn["type"] == "hostname"
+          assert ip["type"] == "ip"
+          print("OPEN PROTOCOL: PASS")
+          print("SAME REQUEST: PASS")
+          print("INTERCHANGEABLE ENGINE: PASS")
+          print("FQDN ENGINE:", fqdn["value"])
+          print("IP ENGINE:", ip["value"])
+          PY
+
+      - name: Shutdown
+        if: always()
+        working-directory: repo/Tools/MYTRUES
+        run: docker compose down -v
