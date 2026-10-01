@@ -69,7 +69,7 @@ independent DevOps intent client.
 
 History-preserving canonical subtree import uses FlowED commit:
 
-`ef07118f8f4b3cee5f9c2bcd110d1ab9e50753f7`
+`0982911b09dc7738686db2f1ff953a7ce0c1fb8b`
 
 This commit contains the complete product staging surface including the physical
 IDEOS `DecisionMemory` adapter boundary.
@@ -82,3 +82,17 @@ product subtree source.
 Resume SESSION-006 at the exact R0 -> R1 point recorded in `NEXT.md`.
 
 Do not create InFabric in this session.
+
+## Archaeology consolidation
+
+A complete accessible-repository scan was performed before canonical migration.
+
+Canonical references:
+
+- `Tools/MYTRUES/docs/archaeology/ECOSYSTEM-INVENTORY.md`;
+- `Tools/MYTRUES/docs/ARCHAEOLOGY-SYNTHESIS.md`;
+- preserved source copies under `Tools/MYTRUES/docs/archaeology/`;
+- executable historical candidates under
+  `Tools/MYTRUES/research/legacy-candidates/`.
+
+The frozen migration SHA above includes this recovered material.
