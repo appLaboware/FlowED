@@ -20,6 +20,9 @@ permissions:
 
 env:
   AZURE_BUNDLE: ${{ secrets.AZURE }}
+  AZURE_CLIENT_ID_SECRET: ${{ secrets.AZURE_CLIENT_ID }}
+  AZURE_TENANT_ID_SECRET: ${{ secrets.AZURE_TENANT_ID }}
+  AZURE_SUBSCRIPTION_ID_SECRET: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
 jobs:
   one-command:
@@ -37,20 +40,28 @@ jobs:
         run: |
           set -euo pipefail
 
-          get_value() {
+          get_bundle_value() {
             local key="$1"
             printf '%s\n' "$AZURE_BUNDLE" |
               sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*=[[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\2/p" |
               tail -n 1
           }
 
-          CLIENT_ID="$(get_value AZURE_CLIENT_ID)"
-          TENANT_ID="$(get_value AZURE_TENANT_ID)"
-          SUBSCRIPTION_ID="$(get_value AZURE_SUBSCRIPTION_ID)"
+          CLIENT_ID="$AZURE_CLIENT_ID_SECRET"
+          TENANT_ID="$AZURE_TENANT_ID_SECRET"
+          SUBSCRIPTION_ID="$AZURE_SUBSCRIPTION_ID_SECRET"
+          SOURCE="separate repository secrets"
 
-          test -n "$CLIENT_ID"
-          test -n "$TENANT_ID"
-          test -n "$SUBSCRIPTION_ID"
+          if [ -z "$CLIENT_ID" ] || [ -z "$TENANT_ID" ] || [ -z "$SUBSCRIPTION_ID" ]; then
+            SOURCE="legacy AZURE bundle secret"
+            CLIENT_ID="${CLIENT_ID:-$(get_bundle_value AZURE_CLIENT_ID)}"
+            TENANT_ID="${TENANT_ID:-$(get_bundle_value AZURE_TENANT_ID)}"
+            SUBSCRIPTION_ID="${SUBSCRIPTION_ID:-$(get_bundle_value AZURE_SUBSCRIPTION_ID)}"
+          fi
+
+          test -n "$CLIENT_ID" || { echo "AZURE_CLIENT_ID is unavailable." >&2; exit 1; }
+          test -n "$TENANT_ID" || { echo "AZURE_TENANT_ID is unavailable." >&2; exit 1; }
+          test -n "$SUBSCRIPTION_ID" || { echo "AZURE_SUBSCRIPTION_ID is unavailable." >&2; exit 1; }
 
           echo "::add-mask::$CLIENT_ID"
           echo "::add-mask::$TENANT_ID"
@@ -73,6 +84,7 @@ jobs:
             echo "site_name=$SITE_NAME"
           } >> "$GITHUB_OUTPUT"
 
+          echo "Azure credentials resolved from: $SOURCE"
           echo "Intent: materialize a public site named $SITE_NAME on Azure."
 
       - name: Request GitHub OIDC token
