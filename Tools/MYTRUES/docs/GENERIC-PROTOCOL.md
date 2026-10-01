@@ -73,3 +73,63 @@ and conformance remain open.
 Provider data may be private.
 
 No proprietary MyTrues Core is authorized by this reorganization.
+
+
+## Target engine-extension boundary
+
+The target open design extends through a versioned port used to attach a
+`DecisionEngine`.
+
+MyTrues does not define one mandatory decision algorithm.
+
+Conceptually:
+
+`client -> MyTrues protocol/lifecycle -> DecisionEngine port -> selected engine`
+
+The selected engine may be:
+
+- a reference/public algorithm;
+- DMN/rule based;
+- policy based;
+- MCDA/CBR/preference based;
+- LLM-assisted/hybrid;
+- human/team backed;
+- provider-specific OSS;
+- provider-specific commercial/proprietary.
+
+The interoperability contract remains open even when an engine implementation is
+private.
+
+Other candidate open ports include decision memory, decision profile, evidence,
+provenance, authority, cognition proposal, retrieval, observed outcome, views and
+source connectors.
+
+The detailed target taxonomy is maintained in:
+
+`OPEN-EXTENSION-ECOSYSTEM.md`
+
+This section is a target design north. It does not silently modify the v0.2 wire
+profile.
+
+## Extension ecosystem
+
+Ports and adapters are intended to permit an independently developed ecosystem.
+
+A distributable plugin may implement one or more adapters.
+
+Examples include:
+
+- decision engines;
+- DecisionPolicyProfile providers/learners;
+- conversation/document cognition extractors;
+- storage/retrieval adapters;
+- evidence/provenance adapters;
+- authority/escalation workflows;
+- view/export adapters;
+- MCP/CLI/SDK/integration adapters.
+
+An LLM-based cognition extractor produces **candidate** cognition/decision
+artifacts. It does not obtain canonical authority merely by being an adapter.
+
+A future registry/marketplace is an ecosystem/distribution concern, not part of
+the semantic definition of a decision.
