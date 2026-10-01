@@ -15,13 +15,13 @@ Legenda:
 | Item | Estado | Evidência | Classe |
 |---|---|---|---|
 | Auditar EXP-001..007 sem herança de claims | DONE | `Tools/IDEOS/experiments/AUDIT.md` + referenced Actions runs | A+D |
-| Garantir RESULTS.md honesto para EXP-001..007 | DONE, incluindo dois EXP-005 históricos | repo docs | D grounded in A/B |
+| Garantir RESULTS.md honesto para EXP-001..007 | DONE, incluindo dois EXP-005 históricos | repo docs | D |
 | Classificar INVENTORY por A/B/C/D | DONE | este documento + INVENTORY | D |
-| Registrar versões exatas em todos os experimentos | PARTIAL | vários RESULTS registram Porter/host; não todos | A/B parcial |
-| Indexar recursos externos criados por run | PARTIAL | alguns workflows/relatórios; não canônico | A parcial |
-| Cleanup idempotente por experimento | PARTIAL | alguns uninstall/delete; outros preservaram recursos | A/B parcial |
+| Registrar versões exatas em todos os experimentos | PARTIAL | vários RESULTS registram Porter/host; não todos | A+B |
+| Indexar recursos externos criados por run | PARTIAL | alguns workflows/relatórios; não canônico | A |
+| Cleanup idempotente por experimento | PARTIAL | alguns uninstall/delete; outros preservaram recursos | A+B |
 | Custos, duração e quota por experimento | NOT DONE | — | D |
-| Artefatos de evidência retidos por workflow | **not executable in actions** via `actions/upload-artifact@v4` in current repo configuration: run `36870956574` failed at startup with zero jobs; GitHub exposed no narrower cause | startup-failure run + successful same workflow after removal | D + execution-limit observation |
+| Artefatos de evidência retidos por workflow | **not executable in actions** via `actions/upload-artifact@v4` in current repo configuration: run `36870956574` failed at startup with zero jobs; GitHub exposed no narrower cause | startup-failure run + successful same workflow after removal | D |
 
 **Gate R0:** OPEN. Falta ownership/cleanup/cost/artifact discipline uniforme.
 
@@ -40,10 +40,10 @@ Legenda:
 | MCP read-only/write opt-in | PASS with stdout interoperability defect | R1-P01 `36818953832` | B |
 | dependency v1 direct lifecycle | PASS | R1-P02 `36819797057` | B |
 | dependency version strategy exact/max-patch | PASS | R1-P02 `36819797057` | B |
-| dependency output wiring | UNRESOLVED | R1-P02 output exists but root interpolation empty | B-failure observation |
-| dependencies v2/shared | NOT PROVEN | R1-P03 `36820579778` fails before sharing behavior | B-failure |
+| dependency output wiring | UNRESOLVED | R1-P02 output exists but root interpolation empty | B |
+| dependencies v2/shared | NOT PROVEN | R1-P03 `36820579778` fails before sharing behavior | B |
 | signing/verification | NOT RUN | — | D |
-| storage plugins beyond lab default | NOT EXHAUSTED; MongoDB 8.0/default path is **not accepted for product baseline** after SSPL transitivo RED decision | EXP-002 observed admin Mongo path; replacement not run | A observation + D policy |
+| storage plugins beyond lab default | NOT EXHAUSTED; MongoDB 8.0/default path is **not accepted for product baseline** after SSPL transitivo RED decision | EXP-002 observed admin Mongo path; replacement not run | A+D |
 | secrets plugins | NOT RUN | — | D |
 | signing plugins | NOT RUN | — | D |
 | experimental file sources | NOT RUN | — | D |
@@ -87,7 +87,7 @@ Legenda:
 | OpenAPI 3.1 document | EXISTS, NOT CURRENTLY VALIDATED as OpenAPI document | repo | D |
 | OpenAPI 3.2.1 migration | NOT RUN | — | D |
 | RFC 9457 complete conformance | NOT RUN | — | D |
-| Trace Context current v0.2 cycle | NOT ASSERTED | historical B only | B historical |
+| Trace Context current v0.2 cycle | NOT ASSERTED | historical B only | B |
 | CloudEvents | NOT RUN | — | D |
 | AsyncAPI 3.1 | NOT RUN | — | D |
 | W3C PROV mapping | NOT RUN | — | D |
@@ -142,7 +142,7 @@ Legenda:
 
 | Item | Estado | Evidência | Classe |
 |---|---|---|---|
-| benchmark corpus | NOT BUILT; seed-004 exists only as conformance fixture and is explicitly not promoted to benchmark | seed-004 `36874885444` proves fixture behavior, not benchmark quality | D for benchmark / B for fixture |
+| benchmark corpus | NOT BUILT; seed-004 exists only as conformance fixture and is explicitly not promoted to benchmark | seed-004 `36874885444` proves fixture behavior, not benchmark quality | D |
 | top-1 utility/accuracy | NOT MEASURED | — | D |
 | regret/cost | NOT MEASURED | — | D |
 | abstention rate | NOT MEASURED | — | D |
