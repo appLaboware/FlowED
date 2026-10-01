@@ -6,7 +6,7 @@ Status: **STAGED — repository-admin operations pending target-org access/tooli
 
 Frozen FlowED migration source SHA:
 
-`2122ed8b6ebfd58fc905faa5d9bc45bfe1fd208d`
+`0c8098169123b7d0f48105f1f249c3a8681e3ec6`
 
 The canonical subtree import MUST use this SHA, not a later moving branch head.
 
@@ -69,8 +69,8 @@ License: MIT.
 Preferred method for the FlowED subtrees:
 
 ```text
-git subtree split --prefix=Tools/MYTRUES 2122ed8b6ebfd58fc905faa5d9bc45bfe1fd208d -b import/mytrues
-git subtree split --prefix=Tools/IDEOS 2122ed8b6ebfd58fc905faa5d9bc45bfe1fd208d -b import/ideos
+git subtree split --prefix=Tools/MYTRUES 0c8098169123b7d0f48105f1f249c3a8681e3ec6 -b import/mytrues
+git subtree split --prefix=Tools/IDEOS 0c8098169123b7d0f48105f1f249c3a8681e3ec6 -b import/ideos
 ```
 
 The resulting filtered branches preserve relevant FlowED commit history and are
@@ -124,3 +124,16 @@ These remain in FlowED as migration evidence.
 
 The canonical IDEOS import similarly does not receive FlowED-level
 `Tools/EVOLUTION/` documents; only the IDEOS subtree is imported.
+
+## Google Drive archaeology
+
+The frozen source above includes the Drive archaeology consolidation:
+
+- pre-repository CCW/CCC/OMGDiary/TRUE lineage;
+- concrete decision/cognition pair fixtures;
+- Drive inventory;
+- recovered 2026 Science Frontier discovery contract;
+- `research/SCIENCE-FRONTIER-DISCOVERY-GATE.md`.
+
+These are documentary/research inputs unless separately promoted by versioned
+protocol work.
