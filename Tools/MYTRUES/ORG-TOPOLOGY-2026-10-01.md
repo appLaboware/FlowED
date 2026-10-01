@@ -2,7 +2,7 @@
 
 Date: 2026-10-01
 
-Status: **APPROVED MIGRATION TARGET / EXECUTION PENDING REPOSITORY-ADMIN SURFACE**
+Status: **APPROVED PRIVATE-FIRST MIGRATION TARGET / PUBLICATION REQUIRES EXPLICIT RELEASE GATE**
 
 ## Design principles
 
@@ -69,7 +69,7 @@ Historical ancestor:
 
 - `paper_arquived_261001`.
 
-#### `MyTrues/ccp` — PUBLIC
+#### `MyTrues/ccp` — PRIVATE PRE-RELEASE / PLANNED PUBLIC
 
 Purpose:
 
@@ -103,7 +103,7 @@ Historical ancestor:
 
 - `spec_arquived_261001`.
 
-#### `MyTrues/research` — PUBLIC
+#### `MyTrues/research` — PRIVATE PRE-RELEASE / PLANNED PUBLIC
 
 Purpose:
 
@@ -142,7 +142,7 @@ Historical ancestor:
 
 ### PRODUCT — OPEN COMMON LAYER
 
-#### `MyTrues/mytrues` — PUBLIC / MIT
+#### `MyTrues/mytrues` — PRIVATE PRE-RELEASE / PLANNED PUBLIC
 
 Purpose:
 
@@ -192,7 +192,7 @@ Must NOT contain by default:
 License: MIT for code/protocol reference implementation unless a specific
 adopted dependency imposes another compatible requirement.
 
-#### `MyTrues/registry` — PUBLIC
+#### `MyTrues/registry` — PRIVATE PRE-RELEASE / PLANNED PUBLIC
 
 Purpose:
 
@@ -219,7 +219,7 @@ interoperability protocol.
 License: MIT for tooling/schema; registry metadata under an explicit open data
 policy.
 
-#### `MyTrues/ideos` — PUBLIC / MIT
+#### `MyTrues/ideos` — PRIVATE PRE-RELEASE / PLANNED PUBLIC
 
 Purpose:
 
@@ -230,7 +230,7 @@ lock.
 
 IDEOS does not define MyTrues semantics.
 
-#### `MyTrues/site` — PUBLIC
+#### `MyTrues/site` — PRIVATE PRE-RELEASE / PLANNED PUBLIC
 
 Purpose:
 
@@ -363,16 +363,39 @@ metadata to interoperate safely.
 
 ## Visibility target
 
-| Repository | Visibility |
-|---|---|
-| `mytrues` | public |
-| `ccp` | public |
-| `edt` | private initially |
-| `research` | public |
-| `registry` | public |
-| `ideos` | public |
-| `site` | public |
-| `mytrues-enterprise` | private |
+All definitive repositories remain PRIVATE until an explicit release review.
+
+| Repository | Current visibility | Intended release posture |
+|---|---|---|
+| `mytrues` | private | planned public after release gate |
+| `ccp` | private | planned public after publication/review gate |
+| `edt` | private | private working thesis; selective publication only |
+| `research` | private | planned public after reproducibility/licensing review |
+| `registry` | private | planned public after schema/conformance review |
+| `ideos` | private | planned public after product/release review |
+| `site` | private | planned public when public content is ready |
+| `mytrues-enterprise` | private | remains private/commercial |
+
+Private-first means no future open-source or scholarly license is implied merely by planned-public status.
+
+Before publication, each planned-public repo must pass:
+- secret/privacy scan;
+- third-party license review;
+- content/IP review;
+- reproducibility/conformance checks where applicable;
+- explicit license selection;
+- explicit visibility change approved by the owner.
+
+## Pre-publication licensing
+
+For private pre-release material, use a restricted/all-rights-reserved notice for original unpublished content.
+
+Do not overwrite or revoke:
+- third-party licenses;
+- rights previously granted under an earlier open license;
+- licenses on imported upstream components.
+
+At the public-release gate, replace the pre-release notice with the intended repository/file-family licenses (for example MIT for eligible code and CC BY 4.0 for eligible authored research prose).
 
 ## Gate before adding another canonical repo
 
