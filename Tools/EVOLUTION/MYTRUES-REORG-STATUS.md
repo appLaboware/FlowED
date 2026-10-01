@@ -69,7 +69,7 @@ independent DevOps intent client.
 
 History-preserving canonical subtree import uses FlowED commit:
 
-`2122ed8b6ebfd58fc905faa5d9bc45bfe1fd208d`
+`0c8098169123b7d0f48105f1f249c3a8681e3ec6`
 
 This commit contains the complete product staging surface including the physical
 IDEOS `DecisionMemory` adapter boundary.
@@ -101,8 +101,25 @@ The frozen migration SHA above includes this recovered material.
 
 The authoritative frozen product snapshot is now:
 
-`2122ed8b6ebfd58fc905faa5d9bc45bfe1fd208d`
+`0c8098169123b7d0f48105f1f249c3a8681e3ec6`
 
 `Tools/MYTRUES/migration/reorganize-org.sh` currently contains an earlier frozen
 SHA and MUST NOT be executed until its `FLOWED_SOURCE_SHA` is updated to the
 authoritative value above. The migration manifest is authoritative.
+
+## Google Drive archaeology
+
+Google Drive archaeology was also completed for the current accessible Drive
+surface.
+
+Added:
+
+- `Tools/MYTRUES/docs/archaeology/DRIVE-INVENTORY.md`;
+- selected pre-repository source copies under
+  `Tools/MYTRUES/docs/archaeology/drive/`;
+- Drive-derived additions to `ARCHAEOLOGY-SYNTHESIS.md`;
+- `Tools/MYTRUES/research/SCIENCE-FRONTIER-DISCOVERY-GATE.md`.
+
+Literal `MyTools` search produced no distinct relevant project lineage.
+
+The authoritative frozen product SHA above includes these additions.
