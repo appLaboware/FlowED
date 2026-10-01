@@ -575,3 +575,23 @@ assistant/research synthesis.
 
 Other chats in this batch do not need interrogation before the next archaeology
 batch.
+
+
+## Uploaded-byte identities
+
+The exact uploaded byte streams reviewed in this batch were:
+
+| File | Bytes | SHA-256 |
+|---|---:|---|
+| `FLOWED2-001LBWARE-POi-001_001 — ChatGPT Operating Architecture..MD` | 33322 | `e879b5ccf04c57db19f561ef03e87721f269b30c07d69deb05f2c382b14e7807` |
+| `FLWD002(n)-- FLWD001.MD` | 12794 | `b60c2c9da9e13968233cefafc7f7cb13f6d43863dd16a9ff368711f6b7cf05f7` |
+| `INB-C3_001.MD` | 21711 | `14e55a4e3ea053dcdcccfe1ed5561a527e83af97f9f71e4ffb78e2886df54d62` |
+| `LBWARE-POi-001_001 — ChatGPT Operating Architecture..MD` | 9920 | `a2c67ce2aa433113cdf9a0dd1ee24c996ebcb2918eafe26e07d79f4836513cae` |
+| `linguagens a apreder e mytrues - tica_01.MD` | 24862 | `0ad6f01fc8961af75ea4728eb7d22cb9a068bbe6edd75fad28651485f86320bc` |
+| `MAN-001-Branch · Branch · FLOWED2-001-LBWARE-POi-001_001 — ChatGPT Operating Architecture..MD` | 35263 | `3c91ef65e9c5f360d96aff9937b4556ddf847a234dae25a39f3c4ff60ea788bf` |
+| `MSOMCP_POC_001.MD` | 23086 | `7cbe330d2a547822c9fddb849120ad15c590aba8e21880b1af9b696bb786ac8f` |
+| `mytrues- INTERMEMBERS.DEV_001-VRMP-DEMO-POO-01-DV4-02.MD` | 41984 | `43c26f6eb98c1f22247f2ef3cfa00ffd2938631ec3130a77f93df6b57127aea3` |
+| `OCONSOANTE_ORACLE_FREETIER_CLOUDFLARE.MD` | 32161 | `7e0766ca75137d626e98c6d6d5de693ad6082d62e99f84d92c464b6e00fc0739` |
+
+The hashes identify the exact secondary reports reviewed. They do not convert the
+reports into primary turn-level evidence.
