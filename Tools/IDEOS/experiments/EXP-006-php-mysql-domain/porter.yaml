@@ -1,0 +1,227 @@
+schemaType: Bundle
+schemaVersion: 1.0.1
+name: generic-php-mysql-domain
+version: 0.1.0
+description: "Generic PHP application with MySQL dependency and public domain"
+registry: localhost:5000
+dockerfile: template.Dockerfile
+
+mixins:
+  - az
+  - exec
+
+credentials:
+  - name: azure-client-id
+    env: AZURE_CLIENT_ID
+  - name: azure-tenant-id
+    env: AZURE_TENANT_ID
+  - name: azure-subscription-id
+    env: AZURE_SUBSCRIPTION_ID
+  - name: azure-federated-token
+    env: AZURE_FEDERATED_TOKEN
+  - name: cloudflare-zone-read
+    env: CF_ZONE_READ
+  - name: cloudflare-dns-edit
+    env: CF_DNS_EDIT
+
+parameters:
+  - name: app
+    type: file
+    path: /cnab/app/input/app.tar.gz
+  - name: site_name
+    type: string
+  - name: domain
+    type: string
+  - name: zone
+    type: string
+    default: me.dev.br
+  - name: resource_group
+    type: string
+    default: rg-flowed-ideos-lab
+  - name: location
+    type: string
+    default: brazilsouth
+
+install:
+  - az:
+      description: "Authenticate to Azure using federated identity"
+      arguments:
+        - login
+      flags:
+        service-principal:
+        username: ${ bundle.credentials.azure-client-id }
+        tenant: ${ bundle.credentials.azure-tenant-id }
+        federated-token: ${ bundle.credentials.azure-federated-token }
+        allow-no-subscriptions:
+      suppress-output: true
+
+  - az:
+      description: "Select Azure subscription"
+      arguments:
+        - account
+        - set
+      flags:
+        subscription: ${ bundle.credentials.azure-subscription-id }
+
+  - exec:
+      description: "Translate the generic PHP artifact into an Azure multi-container declaration"
+      command: /bin/bash
+      arguments:
+        - -c
+        - |
+          set -euo pipefail
+          APP_B64="$(base64 -w0 /cnab/app/input/app.tar.gz)"
+
+          cat >/tmp/application.yaml <<YAML
+          name: ${ bundle.parameters.site_name }
+          apiVersion: '2021-10-01'
+          location: ${ bundle.parameters.location }
+          properties:
+            containers:
+              - name: web
+                properties:
+                  image: webdevops/php:8.3-alpine
+                  command:
+                    - /bin/sh
+                    - -c
+                    - 'mkdir -p /app && printf "%s" "$APP_B64" | base64 -d | tar -xzf - -C /app && exec php -S 0.0.0.0:80 -t /app'
+                  ports:
+                    - protocol: TCP
+                      port: 80
+                  environmentVariables:
+                    - name: APP_B64
+                      secureValue: '$APP_B64'
+                  resources:
+                    requests:
+                      cpu: 0.5
+                      memoryInGB: 0.5
+              - name: db
+                properties:
+                  image: mysql:8.4
+                  environmentVariables:
+                    - name: MYSQL_ALLOW_EMPTY_PASSWORD
+                      value: 'yes'
+                    - name: MYSQL_ROOT_HOST
+                      value: '%'
+                    - name: MYSQL_DATABASE
+                      value: 'app'
+                  resources:
+                    requests:
+                      cpu: 0.5
+                      memoryInGB: 1.0
+            restartPolicy: Always
+            ipAddress:
+              ports:
+                - protocol: TCP
+                  port: 80
+              type: Public
+              dnsNameLabel: ${ bundle.parameters.site_name }
+            osType: Linux
+          YAML
+
+  - az:
+      description: "Materialize PHP and MySQL as one Azure container group"
+      arguments:
+        - container
+        - create
+      flags:
+        resource-group: ${ bundle.parameters.resource_group }
+        file: /tmp/application.yaml
+
+  - exec:
+      description: "Publish the Azure endpoint in Cloudflare DNS and verify the requested domain"
+      command: /bin/bash
+      arguments:
+        - -c
+        - |
+          set -euo pipefail
+
+          FQDN="$(az container show             --resource-group "${ bundle.parameters.resource_group }"             --name "${ bundle.parameters.site_name }"             --query ipAddress.fqdn             --output tsv)"
+
+          test -n "$FQDN"
+
+          ZONE_RESPONSE="$(curl -fsS             -H "Authorization: Bearer $CF_ZONE_READ"             -H "Content-Type: application/json"             "https://api.cloudflare.com/client/v4/zones?name=${ bundle.parameters.zone }")"
+
+          ZONE_ID="$(jq -r '.result[0].id // empty' <<<"$ZONE_RESPONSE")"
+          test -n "$ZONE_ID"
+
+          RECORD_RESPONSE="$(curl -fsS             -H "Authorization: Bearer $CF_DNS_EDIT"             -H "Content-Type: application/json"             "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records?type=CNAME&name=${ bundle.parameters.domain }")"
+
+          RECORD_ID="$(jq -r '.result[0].id // empty' <<<"$RECORD_RESPONSE")"
+
+          BODY="$(jq -cn             --arg name "${ bundle.parameters.domain }"             --arg content "$FQDN"             '{type:"CNAME",name:$name,content:$content,ttl:60,proxied:false}')"
+
+          if [ -n "$RECORD_ID" ]; then
+            RESULT="$(curl -fsS -X PUT               -H "Authorization: Bearer $CF_DNS_EDIT"               -H "Content-Type: application/json"               --data "$BODY"               "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records/$RECORD_ID")"
+          else
+            RESULT="$(curl -fsS -X POST               -H "Authorization: Bearer $CF_DNS_EDIT"               -H "Content-Type: application/json"               --data "$BODY"               "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records")"
+          fi
+
+          test "$(jq -r '.success' <<<"$RESULT")" = "true"
+
+          echo "Azure endpoint: http://$FQDN"
+          echo "Requested domain: http://${ bundle.parameters.domain }"
+
+          for attempt in $(seq 1 60); do
+            if BODY="$(curl -fsS --max-time 10 "http://${ bundle.parameters.domain }" 2>/dev/null)"; then
+              if grep -q "PHP + MySQL materializados no Azure" <<<"$BODY"; then
+                echo "$BODY"
+                echo "SITE READY: http://${ bundle.parameters.domain }"
+                exit 0
+              fi
+            fi
+            sleep 5
+          done
+
+          echo "Domain did not become ready in time." >&2
+          exit 1
+
+uninstall:
+  - az:
+      description: "Authenticate to Azure using federated identity"
+      arguments:
+        - login
+      flags:
+        service-principal:
+        username: ${ bundle.credentials.azure-client-id }
+        tenant: ${ bundle.credentials.azure-tenant-id }
+        federated-token: ${ bundle.credentials.azure-federated-token }
+        allow-no-subscriptions:
+      suppress-output: true
+
+  - az:
+      description: "Select Azure subscription"
+      arguments:
+        - account
+        - set
+      flags:
+        subscription: ${ bundle.credentials.azure-subscription-id }
+
+  - exec:
+      description: "Remove Cloudflare record"
+      command: /bin/bash
+      arguments:
+        - -c
+        - |
+          set -euo pipefail
+          ZONE_ID="$(curl -fsS             -H "Authorization: Bearer $CF_ZONE_READ"             "https://api.cloudflare.com/client/v4/zones?name=${ bundle.parameters.zone }" |
+            jq -r '.result[0].id // empty')"
+
+          if [ -n "$ZONE_ID" ]; then
+            RECORD_ID="$(curl -fsS               -H "Authorization: Bearer $CF_DNS_EDIT"               "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records?type=CNAME&name=${ bundle.parameters.domain }" |
+              jq -r '.result[0].id // empty')"
+
+            if [ -n "$RECORD_ID" ]; then
+              curl -fsS -X DELETE                 -H "Authorization: Bearer $CF_DNS_EDIT"                 "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records/$RECORD_ID" >/dev/null
+            fi
+          fi
+
+  - az:
+      description: "Destroy Azure application"
+      arguments:
+        - container
+        - delete
+      flags:
+        resource-group: ${ bundle.parameters.resource_group }
+        name: ${ bundle.parameters.site_name }
+        yes:
