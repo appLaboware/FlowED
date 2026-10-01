@@ -4,8 +4,14 @@ import time
 import urllib.request
 from pathlib import Path
 
+from jsonschema import validate
+
 ROOT = Path(__file__).resolve().parents[1]
 REQUEST = json.loads((ROOT / "protocol/examples/dns-failure.request.json").read_text())
+REQUEST_SCHEMA = json.loads((ROOT / "protocol/schemas/decision-request.schema.json").read_text())
+RESPONSE_SCHEMA = json.loads((ROOT / "protocol/schemas/decision-response.schema.json").read_text())
+
+validate(REQUEST, REQUEST_SCHEMA)
 
 
 def wait(url):
@@ -34,7 +40,9 @@ def decide(url):
     with urllib.request.urlopen(req, timeout=5) as r:
         assert r.status == 200
         assert r.headers.get("traceparent")
-        return json.load(r)
+        payload = json.load(r)
+        validate(payload, RESPONSE_SCHEMA)
+        return payload
 
 
 def assert_common(x):
