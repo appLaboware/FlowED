@@ -51,10 +51,16 @@ SET a1.kind='adapter',
 MERGE (g1:Guard {id:'guard.legacy_azure_bundle_present'})
 SET g1.key='legacy_azure_bundle_present', g1.value='true';
 
-MERGE (f1)-[:RESOLVED_BY]->(d1);
-MERGE (d1)-[:EXECUTES]->(a1);
-MERGE (d1)-[:REQUIRES]->(g1);
-MERGE (d1)-[:SUPPORTED_BY]->(s1);
+MATCH (f1:Failure {code:'azure.credentials.separate_missing'}),
+      (d1:Decision {id:'decision.azure.parse_legacy_bundle'}),
+      (a1:Action {id:'azure.credentials.parse_legacy_bundle'}),
+      (g1:Guard {id:'guard.legacy_azure_bundle_present'}),
+      (s1:Evidence {id:'cbr-4r-2005'}),
+      (s2:Evidence {id:'ms-decision-theoretic-cbr-1996'})
+MERGE (f1)-[:RESOLVED_BY]->(d1)
+MERGE (d1)-[:EXECUTES]->(a1)
+MERGE (d1)-[:REQUIRES]->(g1)
+MERGE (d1)-[:SUPPORTED_BY]->(s1)
 MERGE (d1)-[:SUPPORTED_BY]->(s2);
 
 MERGE (f2:Failure {code:'dns.requested_provider_credentials_missing'})
@@ -77,9 +83,16 @@ SET a2.kind='fallback',
 MERGE (g2:Guard {id:'guard.azure_provider_fqdn_available'})
 SET g2.key='azure_provider_fqdn_available', g2.value='true';
 
-MERGE (f2)-[:RESOLVED_BY]->(d2);
-MERGE (d2)-[:EXECUTES]->(a2);
-MERGE (d2)-[:REQUIRES]->(g2);
-MERGE (d2)-[:SUPPORTED_BY]->(s1);
-MERGE (d2)-[:SUPPORTED_BY]->(s2);
+MATCH (f2:Failure {code:'dns.requested_provider_credentials_missing'}),
+      (d2:Decision {id:'decision.dns.use_azure_provider_fqdn'}),
+      (a2:Action {id:'delivery.use_azure_provider_fqdn'}),
+      (g2:Guard {id:'guard.azure_provider_fqdn_available'}),
+      (s1:Evidence {id:'cbr-4r-2005'}),
+      (s2:Evidence {id:'ms-decision-theoretic-cbr-1996'}),
+      (s3:Evidence {id:'ms-graphrag'})
+MERGE (f2)-[:RESOLVED_BY]->(d2)
+MERGE (d2)-[:EXECUTES]->(a2)
+MERGE (d2)-[:REQUIRES]->(g2)
+MERGE (d2)-[:SUPPORTED_BY]->(s1)
+MERGE (d2)-[:SUPPORTED_BY]->(s2)
 MERGE (d2)-[:SUPPORTED_BY]->(s3);
