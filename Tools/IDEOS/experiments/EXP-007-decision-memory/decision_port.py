@@ -48,9 +48,57 @@ def query(statement, parameters=None):
 
     return body.get("data", {})
 
+def split_cypher_statements(text):
+    """Split on semicolons only when they are outside quoted string literals."""
+    statements = []
+    current = []
+    quote = None
+    escaped = False
+
+    for ch in text:
+        if escaped:
+            current.append(ch)
+            escaped = False
+            continue
+
+        if ch == "\\":
+            current.append(ch)
+            escaped = True
+            continue
+
+        if quote:
+            current.append(ch)
+            if ch == quote:
+                quote = None
+            continue
+
+        if ch in {"'", '"'}:
+            current.append(ch)
+            quote = ch
+            continue
+
+        if ch == ";":
+            statement = "".join(current).strip()
+            if statement:
+                statements.append(statement)
+            current = []
+            continue
+
+        current.append(ch)
+
+    tail = "".join(current).strip()
+    if tail:
+        statements.append(tail)
+
+    if quote:
+        raise ValueError("Unterminated quoted string in Cypher seed")
+
+    return statements
+
+
 def seed(path):
     text = open(path, "r", encoding="utf-8").read()
-    statements = [x.strip() for x in text.split(";") if x.strip()]
+    statements = split_cypher_statements(text)
     for statement in statements:
         query(statement)
     print(json.dumps({"seeded": len(statements), "status": "ok"}))
