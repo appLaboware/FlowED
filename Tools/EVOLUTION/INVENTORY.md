@@ -4,8 +4,9 @@ Data-base desta fotografia: 2026-10-01.
 
 | Domínio | Ferramenta/padrão | Papel atual | Estágio | Evidência atual | Próxima fronteira |
 |---|---|---|---|---|---|
-| Lifecycle | Porter | executor CNAB e lifecycle | E2 | Azure e Docker reais | dependencies, signing, OCI distribution, parameter/credential sets, outputs, namespaces |
-| Packaging | CNAB | contrato de bundle distribuído | E1 | bundles reais | segurança/attestation, interfaces/dependencies, distribuição OCI |
+| Lifecycle | Porter 1.6.1 | executor CNAB e lifecycle | E2 | lifecycle, sets, outputs, actions, OCI, archive e MCP nativos; run 36818953832 | dependencies, signing, plugins, file sources, failure analysis |
+| Agent interface | Porter MCP | interface first-party de agente para Porter | E1–E2 | read-only + write opt-in + lifecycle reais; run 36818953832 | corrigir/confirmar poluição stdout; Azure real; analyze_failure |
+| Packaging | CNAB | contrato de bundle distribuído | E1 | bundles reais + OCI publish/archive | dependencies/spec boundaries, signing/attestation |
 | Decision protocol | MyTrues Open Protocol | request/pause/resolve/resume | E3 | conformance + E2E | formalizar provenance, events e compatibilidade |
 | Decision science | CBR/DMN/MCDA/etc. | baseline futura do decisor | E0–E1 | CBR mínimo + regras | reproduzir famílias de métodos antes de Core |
 | Process semantics | BPMN 2.0.2 | modelo de pause/wait/resume | E0 | conceito aplicado | mapear estados MyTrues para BPMN formal |

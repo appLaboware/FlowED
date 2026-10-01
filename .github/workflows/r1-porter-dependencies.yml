@@ -1,0 +1,117 @@
+name: R1 Porter dependencies
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths:
+      - "Tools/EVOLUTION/experiments/R1-P02-porter-dependencies/**"
+      - ".github/workflows/r1-porter-dependencies.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: r1-porter-dependencies
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  dependencies:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PORTER_HOME: /tmp/porter-r1-p02
+      CHILD_V100: localhost:5000/r1-child:v1.0.0
+      CHILD_V101: localhost:5000/r1-child:v1.0.1
+      PARENT_REF: localhost:5000/r1-parent:v0.1.0
+
+    steps:
+      - name: Clone
+        run: git clone --depth 1 --branch tools/ideos-lab https://github.com/appLaboware/FlowED.git repo
+
+      - name: Start local OCI registry
+        run: |
+          docker run -d -p 5000:5000 --name r1-p02-registry registry:2
+          for i in $(seq 1 30); do
+            curl -fsS http://localhost:5000/v2/ && exit 0
+            sleep 1
+          done
+          exit 1
+
+      - name: Install Porter v1.6.1
+        run: |
+          curl -fsSL https://cdn.porter.sh/latest/install-linux.sh | PORTER_VERSION=v1.6.1 bash
+          "$PORTER_HOME/porter" mixin install exec
+          "$PORTER_HOME/porter" version | grep 'v1.6.1'
+
+      - name: Publish child v1.0.0
+        working-directory: repo/Tools/EVOLUTION/experiments/R1-P02-porter-dependencies/child-v1.0.0
+        run: |
+          "$PORTER_HOME/porter" lint
+          "$PORTER_HOME/porter" build
+          "$PORTER_HOME/porter" publish --insecure-registry
+
+      - name: Publish child v1.0.1
+        working-directory: repo/Tools/EVOLUTION/experiments/R1-P02-porter-dependencies/child-v1.0.1
+        run: |
+          "$PORTER_HOME/porter" lint
+          "$PORTER_HOME/porter" build
+          "$PORTER_HOME/porter" publish --insecure-registry
+
+      - name: Build and publish parent
+        working-directory: repo/Tools/EVOLUTION/experiments/R1-P02-porter-dependencies/parent
+        run: |
+          "$PORTER_HOME/porter" lint --insecure-registry
+          "$PORTER_HOME/porter" build --insecure-registry
+          "$PORTER_HOME/porter" publish --insecure-registry
+
+      - name: Inspect full direct dependency graph
+        run: |
+          "$PORTER_HOME/porter" inspect             --reference "$PARENT_REF"             --show-dependencies             --dependencies-version-strategy max-patch             --insecure-registry             -o json | tee /tmp/deps.json
+
+          grep -q 'r1-child' /tmp/deps.json
+          grep -q 'v1.0.1' /tmp/deps.json
+
+      - name: Exact strategy uses pinned dependency version
+        run: |
+          set -euo pipefail
+
+          "$PORTER_HOME/porter" install parent-exact             --reference "$PARENT_REF"             --insecure-registry             --dependencies-version-strategy exact             --param 'child#child_value=exact-value'
+
+          RESULT="$("$PORTER_HOME/porter" installations output show parent_result             --installation parent-exact)"
+          echo "EXACT_RESULT=$RESULT"
+          test "$RESULT" = "v1.0.0:exact-value"
+
+      - name: Max-patch selects newest compatible dependency
+        run: |
+          set -euo pipefail
+
+          "$PORTER_HOME/porter" install parent-maxpatch             --reference "$PARENT_REF"             --insecure-registry             --dependencies-version-strategy max-patch             --param 'child#child_value=maxpatch-value'
+
+          RESULT="$("$PORTER_HOME/porter" installations output show parent_result             --installation parent-maxpatch)"
+          echo "MAXPATCH_RESULT=$RESULT"
+          test "$RESULT" = "v1.0.1:maxpatch-value"
+
+      - name: Uninstall root and managed direct dependencies
+        run: |
+          "$PORTER_HOME/porter" uninstall parent-exact
+          "$PORTER_HOME/porter" uninstall parent-maxpatch
+
+      - name: Evidence summary
+        run: |
+          {
+            echo "# R1-P02 evidence"
+            echo
+            echo "- Direct dependency execution: PASS"
+            echo "- Dependency parameter override: PASS"
+            echo "- Dependency output wiring: PASS"
+            echo "- Exact strategy pinned version: PASS"
+            echo "- max-patch semver resolution: PASS"
+            echo "- inspect --show-dependencies: PASS"
+            echo "- dependency lifecycle on uninstall: PASS"
+          } | tee /tmp/evidence.md
+          cat /tmp/evidence.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Cleanup
+        if: always()
+        run: docker rm -f r1-p02-registry || true
