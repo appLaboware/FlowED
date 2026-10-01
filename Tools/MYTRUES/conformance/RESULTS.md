@@ -16,6 +16,8 @@ Successful run:
 
 Evidence class: **EVIDENCE-B**.
 
+The latest revalidation preserved all v0.2 schema and behavioral assertions.
+
 ## v0.2 schema validation proved
 
 The conformance workflow loaded every JSON Schema under the v0.2 protocol surface and
