@@ -11,21 +11,18 @@ The declared current set is:
 
 | Repository | Required archival name | Last push | GitHub size | Content inventory | Current evidence |
 |---|---|---:|---:|---|---|
-| `MyTrues/MyTrues` | `MyTrues_archived_261001` | unavailable | unavailable | unavailable | current connection returns 404 |
-| `MyTrues/MyTrues_p` | `MyTrues_p_archived_261001` | unavailable | unavailable | unavailable | current connection returns 404 |
-| `MyTrues/cli` | `cli_archived_261001` | unavailable | unavailable | unavailable | current connection returns 404 |
-| `MyTrues/kernel` | `kernel_archived_261001` | unavailable | unavailable | unavailable | current connection returns 404 |
-| `MyTrues/paper` | `paper_archived_261001` | unavailable | unavailable | unavailable | current connection returns 404 |
-| `MyTrues/replication` | `replication_archived_261001` | unavailable | unavailable | unavailable | current connection returns 404 |
-| `MyTrues/site` | `site_archived_261001` | unavailable | unavailable | unavailable | current connection returns 404 |
-| `MyTrues/spec` | `spec_archived_261001` | unavailable | unavailable | unavailable | current connection returns 404 |
+| `MyTrues/MyTrues` | `MyTrues_arquived_261001` | unavailable | unavailable | unavailable | current connection returns 404 |
+| `MyTrues/MyTrues_p` | `MyTrues_p_arquived_261001` | unavailable | unavailable | unavailable | current connection returns 404 |
+| `MyTrues/cli` | `cli_arquived_261001` | unavailable | unavailable | unavailable | current connection returns 404 |
+| `MyTrues/kernel` | `kernel_arquived_261001` | unavailable | unavailable | unavailable | current connection returns 404 |
+| `MyTrues/paper` | `paper_arquived_261001` | unavailable | unavailable | unavailable | current connection returns 404 |
+| `MyTrues/replication` | `replication_arquived_261001` | unavailable | unavailable | unavailable | current connection returns 404 |
+| `MyTrues/site` | `site_arquived_261001` | unavailable | unavailable | unavailable | current connection returns 404 |
+| `MyTrues/spec` | `spec_arquived_261001` | unavailable | unavailable | unavailable | current connection returns 404 |
 
 Required suffix from the authorized north is exactly:
 
 `_arquived_261001`
-
-The table above uses a corrected English spelling only as a visual placeholder.
-**Execution must use the exact user-authorized suffix `_arquived_261001`.**
 
 Exact execution rename map:
 
