@@ -255,3 +255,109 @@ Interoperability
 
 This shape is a research/design candidate only. v0.2 conformance remains the
 executable protocol baseline until a versioned successor is specified and proved.
+
+
+## Drive archaeology additions
+
+The Google Drive archaeology added earlier conceptual artifacts and working
+decision examples that were not preserved as clearly in Git history.
+
+### 11. Cognitive keyframes instead of exhaustive thought capture
+
+The February 2025 CCW material proposed **cognitive keyframes**: selected
+decision/reflection moments along a creator path.
+
+This is better aligned with the current MyTrues boundary than an attempt to
+capture every internal thought.
+
+Candidate invariant:
+
+- CCP SHOULD preserve explicit, intentionally recorded decision-relevant
+  milestones;
+- CCP MUST NOT require hidden chain-of-thought;
+- a current decision remains independently consumable without traversing its
+  full provenance path.
+
+This reinforces the current-decision-first rule already promoted to
+`CCP-RECORD.md`.
+
+### 12. Case criteria are not decision-profile preferences
+
+The August 2025 Drive pair:
+
+- current decision: `framework-choice-decision`;
+- cognition path: `framework-choice-cognition`;
+
+shows explicit criteria such as performance, package size, DOM control, state
+management and complexity.
+
+Those criteria explain **that decision case**.
+
+They are not yet a reusable model of the chooser's recurring preferences.
+
+This distinction should remain explicit in future design:
+
+```text
+DecisionContext / DecisionRecord
+  -> criteria relevant to this case
+
+DecisionPolicyProfile
+  -> reusable preferences/trade-offs of a provider/authority
+```
+
+A future decision engine may combine both, but the protocol should not silently
+infer a durable preference from one case.
+
+### 13. Intent / decision / execution-state provenance
+
+The March 2025 FlowED Line Interface material separated:
+
+- cognitive backlog / intent before implementation;
+- cognitive changelog / actual attempts and decision evolution;
+- environment/state changes.
+
+The exact FlowED representation is not a MyTrues protocol requirement.
+
+The reusable lesson is that **intent, decision and observed outcome/state are
+different provenance objects** and should not be collapsed into a single
+DecisionRecord field.
+
+### 14. Science Frontier design-space method predates the current gate
+
+The September 2026 `MYTRUES-DISCOVERY-001` Drive artifact already formalized
+the methodological core of the current Science Frontier Gate:
+
+- high-recall discovery before architecture selection;
+- historical and contemporary coverage;
+- evidence-class separation;
+- primary-source preference;
+- contradiction preservation;
+- no winner selection during discovery;
+- variables/parameters as machine-readable experiment dimensions;
+- explicit compatibilities/incompatibilities;
+- benchmark and open-question registries;
+- GO/DONT_GO gates;
+- provenance and numeric-range honesty.
+
+This should be retained as a **research-method ancestor** and reused when
+evaluating any proposed proprietary/original MyTrues Decision Engine.
+
+It is not evidence that a new algorithm is scientifically novel; it defines how
+we must investigate that question.
+
+## Drive legacy corpus
+
+Concrete TRUEs recovered from Drive (routing, rendering, naming, framework
+choice and related examples) should be treated as a **legacy decision corpus
+candidate**, not protocol specification.
+
+Potential future uses:
+
+- old-TRUE -> DecisionRecord migration tests;
+- CCP extraction/conversion fixtures;
+- preference-profile elicitation experiments;
+- re-decision tests using changed context/evidence;
+- comparison of current decision versus recorded cognitive path.
+
+Do not use this corpus as a scientific benchmark until it has a frozen sampling
+protocol, labels, task definition and scoring methodology.
