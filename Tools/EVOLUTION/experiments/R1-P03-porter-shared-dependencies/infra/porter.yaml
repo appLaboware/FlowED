@@ -1,5 +1,5 @@
 schemaType: Bundle
-schemaVersion: 1.1.0
+schemaVersion: 1.0.1
 name: r1-shared-infra
 version: 1.0.0
 description: "Shared dependency infra fixture"
