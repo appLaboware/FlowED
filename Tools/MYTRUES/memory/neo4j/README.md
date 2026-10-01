@@ -1,26 +1,28 @@
-# Neo4j decision-memory adapter
+# Neo4j decision-memory — referência histórica/modelagem
 
-Esta pasta contém a promoção da memória experimentada no
+**STATUS: NOT A PRODUCT RUNTIME DEPENDENCY.**
+
+Esta pasta preserva o material utilizado no
 `Tools/IDEOS/experiments/EXP-007-decision-memory`.
 
-Ela é uma implementação de armazenamento/retrieval, não o algoritmo MyTrues.
+A banca de 2026-10-01 classificou Neo4j Community/GPLv3 como **VERMELHO** para a
+baseline de produto. Portanto:
 
-O grafo guarda:
+- MyTrues de referência continua usando SQLite;
+- nenhum cliente/protocolo MyTrues depende de Neo4j;
+- este diretório serve para reconstruir o experimento e estudar o modelo de grafo;
+- o `docker-compose.yml` daqui não é recomendação de runtime;
+- trabalho futuro de graph/vector retrieval deve usar implementação com licença
+  aprovada ou permanecer documental.
+
+O schema conceitual experimentado continua útil:
 
 - Failure;
 - Decision;
 - Action;
 - Guard;
-- Execution/outcome.
+- Evidence;
+- Execution / Outcome.
 
-O índice vetorial existe para recuperação de candidatos. A seleção/ranking entre
-candidatos pertence ao `DecisionEngine` e pode ser substituída por uma implementação
-proprietária.
-
-O seed contém, para a mesma falha de DNS, duas decisões aprovadas:
-
-- usar FQDN Azure;
-- expor IP público.
-
-Isto permite que dois engines conformes escolham decisões diferentes sem mudar o
-protocolo externo.
+EXP-007 também experimentou índice vetorial para candidate retrieval, mas similaridade
+nunca foi autoridade de execução. Essa regra independe do backend.
