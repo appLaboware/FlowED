@@ -69,7 +69,7 @@ independent DevOps intent client.
 
 History-preserving canonical subtree import uses FlowED commit:
 
-`2513281273f44495c702907948d6a856f9d6474f`
+`0352d0013aefcd7edf45dfaa0b61ef640f0f59fa`
 
 This commit contains the complete product staging surface including the physical
 IDEOS `DecisionMemory` adapter boundary.
@@ -102,7 +102,7 @@ The frozen migration SHA above includes this recovered material.
 The migration manifest and `reorganize-org.sh` now both point to the same
 authoritative frozen source SHA:
 
-`65ea6ab7e81d0b4f8d664a6c4dfe663f2570777a`
+`0352d0013aefcd7edf45dfaa0b61ef640f0f59fa`
 
 No known SHA drift remains between those two migration records.
 
@@ -218,11 +218,31 @@ Added:
 - `research/branches/EXPERIENCE-FIRST-MYTRUES.md`;
 - Experience-first Science Frontier gate.
 
-Important unresolved item:
+The previously unresolved Experience-first item is now **resolved** by a
+chat-local forensic audit:
 
-the original chat
-`mytrues- INTERMEMBERS.DEV_001-VRMP-DEMO-POO-01-DV4-02`
-must be forensically queried before any claim that MyTrues was explicitly
-redefined from decision memory to Experience-first memory.
+- Experience-first was not explicitly PO-approved as the MyTrues identity;
+- Memory Mesh/Systematic Agent was approved only as an experimental
+  metaobjective;
+- current v0.2 decision-protocol identity remains unchanged.
 
 The authoritative frozen SHA above includes this batch.
+
+## Experience-first forensic result
+
+Added:
+
+- `Tools/MYTRUES/docs/archaeology/forensics/EXPERIENCE-FIRST-CHAT-FORENSIC-001.md`.
+
+Conclusion:
+
+- `Experience is the primary unit` = assistant formulation;
+- `MyTrues = SQL of experience` = assistant formulation;
+- Decision Cell / Cognitive Pre-flight / Cartridge / Amortization / Compiled
+  Cognition = research proposals, not PO-approved protocol entities;
+- Memory Mesh + deterministic Systematic Agent + LLM-assisted candidate linking
+  = PO-approved **metaobjective/experiment**;
+- provider-scoped v0.2 memory remains the executable baseline;
+- PAUSE/SANITIZE/RESOLVE remains unrepealed.
+
+No further forensic follow-up from batch 002 is currently required.
