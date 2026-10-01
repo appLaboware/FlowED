@@ -96,3 +96,20 @@ Somente decisões:
 - guardas satisfeitas;
 
 podem produzir ação automática.
+
+
+## Limite de licenciamento posterior ao experimento
+
+A execução acima permanece evidência histórica válida: Neo4j Community foi realmente
+usado naquele run.
+
+A revisão de banca de 2026-10-01 classificou Neo4j Community/GPLv3 como
+**VERMELHO** para a baseline de produto.
+
+Consequência:
+
+- EXP-007 não autoriza Neo4j como dependência MyTrues;
+- SQLite é o runtime persistente de referência;
+- o material Neo4j permanece apenas como referência de schema/modelagem e
+  reprodutibilidade histórica;
+- graph/vector retrieval futuro precisa de backend/licença aceitável.
