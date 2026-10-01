@@ -1256,3 +1256,101 @@ The January-2025 UTFPR/PPGI prototype belongs to an earlier academic stage.
 Current researcher intent is doctoral thesis formation.
 
 Do not retroactively rewrite the older document; record the research evolution.
+
+
+## Final forensic closure — VRMP EDT / MyTrues
+
+Two original chats requested after batch 003 were audited with strict chat-local
+forensics.
+
+### 64. Education-Driven Things was a real temporary human naming branch
+
+The EDT audit proves that the human user directly wrote:
+
+`chamarei de EDT (Education-Driven Things)`.
+
+Therefore prior archaeology was wrong to imply that this name existed only as a
+C2/wrong-workstream invention.
+
+However, historical 2025 primary materials plus current researcher clarification
+establish:
+
+`EDT = Education-Driven Thinking`
+
+as the current canonical thesis identity.
+
+Preserve the temporary branch as history; do not use it as current naming.
+
+### 65. Subject-history versus Thing-history came from PM/PO direction
+
+The same EDT audit finds that the boundary:
+
+```text
+MyTrues
+-> epistemic evolution of the subject
+
+EDT
+-> cognitive/causal evolution of a Thing
+```
+
+was introduced as a formal PM/PO direction and adopted operationally in that
+chat.
+
+It is not proven to be direct human-researcher wording.
+
+Therefore preserve it as a useful working boundary/hypothesis, not a thesis
+definition that overrides the current EDT/CCP/MyTrues hierarchy.
+
+### 66. Experience is important, but not established as MyTrues primary entity
+
+The MyTrues audit finds direct human evidence that chronology and the moment an
+event becomes considered matter to decision formation.
+
+It does **not** find direct human approval for:
+
+- `Experience = primary conceptual unit`;
+- `Experience != Belief != Position != Decision != Value` as formal ontology;
+- `MyTrues = persistent epistemic identity`;
+- user-owned memory as a protocol rule;
+- CognitivePreFlight / CognitiveCartridge / Decision Cell as canonical entities.
+
+Therefore:
+
+```text
+Experience matters
+= supported
+
+Experience is canonical primary MyTrues unit
+= not established
+
+Decision-memory identity superseded
+= not established
+```
+
+### 67. MyTrues = Minhas Verdades is directly user-authored
+
+The audit recovers a direct human statement:
+
+`o nome seria MyTrues pois é Minhas Verdades`.
+
+This is strong naming provenance.
+
+### 68. White-box product/composition is directly user-approved
+
+The same chat directly establishes that MyTrues remains a user-facing product
+identity even if implemented largely as a white-box label/composition over
+upstream tools.
+
+The user explicitly prefers not to create underlying custom implementation unless
+personalization/composition is insufficient.
+
+This strengthens the ADOPT/PERSONALIZE/COMPOSE-first engineering north.
+
+### 69. Batch-003 forensic backlog is closed
+
+The two required audits are now preserved at:
+
+- `docs/archaeology/forensics/VRMP-EDT-260901-01-FORENSIC.md`;
+- `docs/archaeology/forensics/VRMP-MYTRUES-260901-01-FORENSIC.md`.
+
+No remaining batch-003 forensic question blocks the current genealogy.
