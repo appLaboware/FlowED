@@ -40,7 +40,7 @@ define('SECURE_AUTH_SALT', '$SECURE_AUTH_SALT');
 define('LOGGED_IN_SALT',   '$LOGGED_IN_SALT');
 define('NONCE_SALT',       '$NONCE_SALT');
 
-$table_prefix = 'wp_';
+\$table_prefix = 'wp_';
 
 define('WP_DEBUG', false);
 define('DISALLOW_FILE_EDIT', true);
