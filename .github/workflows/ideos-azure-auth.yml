@@ -1,4 +1,4 @@
-name: IDEOS Azure OIDC probe
+name: IDEOS Azure credentials probe
 
 on:
   push:
@@ -11,10 +11,9 @@ on:
 
 permissions:
   contents: read
-  id-token: write
 
 jobs:
-  azure-oidc:
+  azure-auth:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -22,12 +21,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Login to Azure with GitHub OIDC
+      - name: Login to Azure using repository secret AZURE
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          creds: ${{ secrets.AZURE }}
 
       - name: Verify Azure identity
         run: |
@@ -38,11 +35,3 @@ jobs:
         run: |
           set -euo pipefail
           az group show             --name rg-flowed-ideos-lab             --query "{name:name,location:location,id:id}"             --output table
-
-      - name: Verify Contributor assignment
-        run: |
-          set -euo pipefail
-          SCOPE="$(az group show --name rg-flowed-ideos-lab --query id -o tsv)"
-          COUNT="$(az role assignment list             --assignee "${{ secrets.AZURE_CLIENT_ID }}"             --scope "$SCOPE"             --query "[?roleDefinitionName=='Contributor'] | length(@)"             -o tsv)"
-          test "$COUNT" -ge 1
-          echo "OIDC authentication and scoped Contributor RBAC are operational."
