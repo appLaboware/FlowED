@@ -361,3 +361,126 @@ Potential future uses:
 
 Do not use this corpus as a scientific benchmark until it has a frozen sampling
 protocol, labels, task definition and scoring methodology.
+
+
+## Uploaded research additions — SQLDAVELHA / Microbrain
+
+Three additional user-supplied artifacts were inspected on 2026-10-01:
+
+- `MTR-METAOBJECTIVE-001 — MYTRUES APPLIED TO MYTRUES`;
+- `MYTRUES-META-PROPOSAL-001`;
+- `GROK-MYTRUES-COGNITIVE-DISCOVERY-001`.
+
+They add research direction and external-discovery evidence but do not change
+the current v0.2 protocol baseline.
+
+### 15. Exchange repeated intelligence for accumulated experience
+
+The metaobjective gives a compact recurring principle, illustrated by
+`SQLDAVELHA`:
+
+> Do not repeatedly solve what accumulated experience has already made
+> queryable.
+
+The reusable MyTrues form is:
+
+```text
+context
++ action/configuration
+-> observed consequence
+```
+
+This is a research hypothesis about materializing useful experience, not a claim
+that every decision domain is finite or enumerable.
+
+It is compatible with the existing decision-memory direction because MyTrues
+already preserves provider-scoped decisions and abstains on unknown cases.
+
+### 16. Separate semantic assistance from epistemic authority
+
+The metaobjective sharpens a boundary already implicit in the current staging:
+
+```text
+LLM
+-> interpretation
+-> candidate association
+-> language rendering
+
+registered memory + systematic mechanism
+-> what may be claimed
+```
+
+Candidate relations proposed by an LLM must not silently become canonical
+relations.
+
+Likewise, an LLM renderer must not add factual/causal claims not authorized by
+the structured result.
+
+This is a strong research invariant for later experiments and should be tested,
+not merely asserted.
+
+### 17. MyTrues-applied-to-MyTrues dogfooding
+
+The metaobjective proposes that each architecture/configuration experiment itself
+become a MyTrues-style experience:
+
+```text
+dataset/context
++ cognitive configuration
++ question set
+-> observed performance
+```
+
+That would allow the research process to distinguish, under recorded context:
+
+- unknown configuration;
+- known-defeated configuration;
+- best-observed-so-far configuration;
+- context-dependent result.
+
+This is a useful long-range research loop because it makes architecture
+selection evidence-bearing rather than opinion-bearing.
+
+It remains **RECORD ONLY** until explicitly promoted by the PO.
+
+### 18. Proposed Microbrain is an instrument, not the product
+
+`MYTRUES-META-PROPOSAL-001` proposes a future bounded
+`MYTRUES-MICROBRAIN-V0` experiment with:
+
+- controlled fixtures;
+- deterministic systematic answer path;
+- deterministic gold evaluation;
+- explicit context/temporal/supersession/defeater switches;
+- repeatable reset/replay;
+- machine-readable configuration -> consequence evidence.
+
+The package contains no PO acceptance.
+
+Therefore this synthesis preserves the proposal but does not convert it into an
+active demand.
+
+### 19. External discovery runs require independent qualification
+
+The supplied Grok Discovery run is valuable but demonstrates why a producing
+model must not self-certify its own package.
+
+As received:
+
+- package hashes are internally consistent;
+- overall self-declared status is already `DONT_GO`;
+- three required JSON files do not parse;
+- its manifest declares 42 mechanisms / 68 variables while the delivered
+  parseable payload contains 20 / 23 and its own executive map says 20 / 23;
+- it self-declares G7 machine readability as GO despite the parse failures.
+
+Therefore:
+
+**external Discovery output is candidate research input until independently
+qualified.**
+
+Checksums prove byte integrity, not scientific or schema correctness.
+
+Preserved qualification:
+
+`research/external-runs/GROK-MYTRUES-COGNITIVE-DISCOVERY-001-QUALIFICATION.md`
