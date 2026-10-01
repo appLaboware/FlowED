@@ -1,54 +1,67 @@
 # IDEOS
 
-> Status: laboratório experimental dentro do FlowED.
+> Migration target: `MyTrues/ideos`
 
-## Objetivo
+IDEOS is a **DevOps intent CLI** built by composing adopted open tools before
+creating new behavior.
 
-Descobrir até onde é possível chegar usando exclusivamente ferramentas abertas já existentes antes de propor qualquer produto novo.
+It is not a replacement for Porter/CNAB, Docker, Kubernetes, Terraform/OpenTofu,
+Ansible, cloud CLIs, or MyTrues.
 
-A composição inicial usa:
+## Core rule
 
-1. **Cloud Native Buildpacks** para detecção/build quando aplicável.
-2. **Porter/CNAB** como empacotador e orquestrador do ciclo de vida.
-3. **Mixins Porter** como adaptadores para ferramentas e provedores.
-4. Ferramentas consolidadas como Docker/Compose, OpenTofu/Terraform, Azure CLI, AWS CLI, Kubernetes, Helm e Ansible para materialização.
+Before writing new code:
 
-IDEOS, neste estágio, não é uma implementação concorrente dessas ferramentas. É um laboratório de composição.
+1. discover existing tools/protocols;
+2. adopt and execute them as designed;
+3. exhaust native configuration/extensions;
+4. compose through replaceable ports/adapters;
+5. fork only after the fork gate;
+6. invent only after the Science Frontier Gate.
 
-## Regra do laboratório
+## MyTrues relationship
 
-Antes de escrever código novo:
+MyTrues is an independent generic decision protocol.
 
-1. procurar uma ferramenta ou protocolo aberto existente;
-2. provar a capacidade em um experimento reproduzível;
-3. registrar exatamente onde a composição existente termina;
-4. implementar somente a menor lacuna comprovadamente ausente.
+IDEOS consumes MyTrues only through its consumer-owned `DecisionMemory` port.
+The implementation is pinned by immutable upstream SHA and may be replaced by
+another compatible provider.
 
-## Estado validado
+IDEOS does not copy MyTrues implementation code or read MyTrues storage
+internals.
 
-Em 2026-09-30 foi validado o primeiro fluxo completo:
+See:
 
-Docker Engine do host
-→ container controlador IDEOS
-→ Porter
-→ invocation container CNAB
-→ Docker Compose
-→ PHP + MySQL
+- `spec/capability-ports.md`;
+- `upstreams/mytrues.lock.json.example`;
+- `../EVOLUTION/ADOPTIONS/001-IDEOS-MYTRUES.md` while staging remains in FlowED.
 
-A aplicação permaneceu ativa depois que o controlador terminou e foi posteriormente removida por `porter uninstall`.
+## Current adopted stack
 
-Evidência:
+The laboratory has used, among others:
+
+1. Cloud Native Buildpacks where applicable;
+2. Porter/CNAB for packaging/lifecycle;
+3. Porter mixins/adapters;
+4. Docker/Compose and provider tooling for materialization.
+
+## Current evidence
+
+A Docker reference flow has been proved:
+
+`Docker Engine -> IDEOS controller container -> Porter -> CNAB invocation -> Docker Compose -> workload`
+
+Evidence:
 
 https://github.com/appLaboware/FlowED/actions/runs/36769533522
 
-## Primeira fronteira comprovada
+Azure materialization has also been proved in separate experiments. A single
+generic contract across every target remains open and must not be claimed yet.
 
-O host não precisa de Porter instalado diretamente.
+## Structure
 
-Para o experimento atual, o requisito externo é Docker/Docker Compose. O restante do controle Porter está empacotado no container IDEOS.
-
-## Estrutura
-
-- `docs/`: arquitetura e decisões.
-- `runtime/`: container controlador do laboratório.
-- `experiments/`: provas reproduzíveis.
+- `docs/` — architecture/decisions;
+- `spec/` — positioning, capability ports, syscalls and form factors;
+- `runtime/` — controller/CLI laboratory packaging;
+- `experiments/` — reproducible proofs;
+- `upstreams/` — immutable adoption locks/templates.
