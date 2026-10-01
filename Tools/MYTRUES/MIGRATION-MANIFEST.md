@@ -6,7 +6,7 @@ Status: **STAGED — repository-admin operations pending target-org access/tooli
 
 Frozen FlowED migration source SHA:
 
-`2513281273f44495c702907948d6a856f9d6474f`
+`0352d0013aefcd7edf45dfaa0b61ef640f0f59fa`
 
 The canonical subtree import MUST use this SHA, not a later moving branch head.
 
@@ -69,8 +69,8 @@ License: MIT.
 Preferred method for the FlowED subtrees:
 
 ```text
-git subtree split --prefix=Tools/MYTRUES 2513281273f44495c702907948d6a856f9d6474f -b import/mytrues
-git subtree split --prefix=Tools/IDEOS 2513281273f44495c702907948d6a856f9d6474f -b import/ideos
+git subtree split --prefix=Tools/MYTRUES 0352d0013aefcd7edf45dfaa0b61ef640f0f59fa -b import/mytrues
+git subtree split --prefix=Tools/IDEOS 0352d0013aefcd7edf45dfaa0b61ef640f0f59fa -b import/ideos
 ```
 
 The resulting filtered branches preserve relevant FlowED commit history and are
@@ -222,3 +222,19 @@ The frozen source also includes:
   Experience-first domain promotion.
 
 The Experience-first branch is research only and does not redefine v0.2.
+
+## Experience-first forensic resolution
+
+The frozen source includes the primary-chat forensic follow-up that resolves the
+batch-002 Experience-first ambiguity.
+
+Result:
+
+- Experience-first is **not** a PO-approved MyTrues identity pivot;
+- `MyTrues = SQL of experience` is not PO-approved;
+- Memory Mesh/Systematic Agent is preserved only as an approved experimental
+  metaobjective;
+- provider-scoped v0.2 memory remains unrepealed;
+- PAUSE/SANITIZE/RESOLVE remains current executable behavior.
+
+No v0.2 schema or runtime change follows from this forensic result.
