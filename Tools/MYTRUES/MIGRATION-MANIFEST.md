@@ -6,7 +6,7 @@ Status: **STAGED — repository-admin operations pending target-org access/tooli
 
 Frozen FlowED migration source SHA:
 
-`0c8098169123b7d0f48105f1f249c3a8681e3ec6`
+`3ea0364ab2092e1863bf8ce8444fd1a8733dda78`
 
 The canonical subtree import MUST use this SHA, not a later moving branch head.
 
@@ -69,8 +69,8 @@ License: MIT.
 Preferred method for the FlowED subtrees:
 
 ```text
-git subtree split --prefix=Tools/MYTRUES 0c8098169123b7d0f48105f1f249c3a8681e3ec6 -b import/mytrues
-git subtree split --prefix=Tools/IDEOS 0c8098169123b7d0f48105f1f249c3a8681e3ec6 -b import/ideos
+git subtree split --prefix=Tools/MYTRUES 3ea0364ab2092e1863bf8ce8444fd1a8733dda78 -b import/mytrues
+git subtree split --prefix=Tools/IDEOS 3ea0364ab2092e1863bf8ce8444fd1a8733dda78 -b import/ideos
 ```
 
 The resulting filtered branches preserve relevant FlowED commit history and are
@@ -137,3 +137,16 @@ The frozen source above includes the Drive archaeology consolidation:
 
 These are documentary/research inputs unless separately promoted by versioned
 protocol work.
+
+## Additional research intake
+
+The frozen source also includes the 2026-10-01 supplied research artifacts:
+
+- canonical staging copy of `MTR-METAOBJECTIVE-001 — MYTRUES APPLIED TO MYTRUES`;
+- `MYTRUES-META-PROPOSAL-001` intake/governance record;
+- independent qualification record for
+  `GROK-MYTRUES-COGNITIVE-DISCOVERY-001`;
+- corresponding updates to the archaeology synthesis and Science Frontier gate.
+
+These are research/governance inputs only. They do not authorize Microbrain
+execution or promote the Grok run to qualified Discovery.
