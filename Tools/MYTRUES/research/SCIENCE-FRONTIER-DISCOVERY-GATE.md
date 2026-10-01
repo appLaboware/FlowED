@@ -313,3 +313,37 @@ Candidate research questions include:
   and provenance representations.
 
 No novelty claim follows merely from naming these concepts.
+
+
+## Versioned epistemic starting-point discipline
+
+CCP archaeology introduces a useful governance candidate:
+
+`CCP de Partida / CCP de Fundação Epistêmica / De onde partimos`.
+
+Before claiming a residual scientific contribution, research should be able to
+state:
+
+```text
+known relevant predecessors
+-> what is adopted
+-> supporting evidence
+-> limits/differences
+-> versioned known frontier
+-> candidate MyTrues proposition
+-> measured delta
+```
+
+Prefer:
+
+`known, audited, versioned frontier`
+
+over:
+
+`absolute frontier of science`.
+
+This discipline complements the existing ADOPT-first rule and helps prevent
+novelty claims from being created by omission of prior art.
+
+The name `CCP de Partida` remains provisional and is not part of the runtime
+protocol.
