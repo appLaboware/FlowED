@@ -259,20 +259,36 @@ Protocol.
 
 Before any promotion, perform two separate gates.
 
-### Gate A — provenance / PO intent
+### Gate A — provenance / PO intent — RESOLVED
 
-Recover the original chat and determine whether the PO explicitly approved:
+The original chat was forensically audited.
 
-- `Experience` as the primary MyTrues conceptual unit;
-- `MyTrues is the SQL of experience`;
-- decision memory being superseded by broader experiential memory;
-- user-owned memory taking precedence over provider-scoped memory.
+Result:
 
-Assistant synthesis alone is insufficient.
+- `Experience` as primary MyTrues unit — **not explicitly PO-approved**;
+- `MyTrues is the SQL of experience` — **not explicitly PO-approved**;
+- decision memory superseded by broader experiential memory — **NO**;
+- user-owned memory replacing provider-scoped memory — **NO**.
 
-### Gate B — prior art / science
+The PO did explicitly approve a broader experimental/metaobjective direction:
+organized memories + deterministic Systematic Agent + registration/linking
+component + LLM-assisted candidate linking/language.
 
-If Gate A confirms the branch as intentional, compare it against at least:
+That approval was immediately scoped as **metaobjective / experiment**, not
+product redefinition or implementation demand.
+
+See:
+
+`../docs/archaeology/forensics/EXPERIENCE-FIRST-CHAT-FORENSIC-001.md`.
+
+### Gate B — prior art / science — CONDITIONAL
+
+Gate A did **not** establish Experience-first as a product/domain pivot.
+
+Therefore this gate applies only if the PO later promotes the experimental
+metaobjective or one of its mechanisms for scientific investigation.
+
+If promoted, compare it against at least:
 
 - Case-Based Reasoning and case retention/reuse;
 - episodic/semantic agent memory;
