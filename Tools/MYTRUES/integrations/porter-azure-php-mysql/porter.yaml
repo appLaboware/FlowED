@@ -68,14 +68,14 @@ install:
             containers:
               - name: web
                 properties:
-                  image: webdevops/php:8.3-alpine
+                  image: quay.io/sclorg/php-83-c9s
                   command:
                     - /bin/sh
                     - -c
-                    - 'mkdir -p /app && printf "%s" "\$APP_B64" | base64 -d | tar -xzf - -C /app && exec php -S 0.0.0.0:80 -t /app'
+                    - 'printf "%s" "\$APP_B64" | base64 -d | tar -xzf - -C /opt/app-root/src && exec php -S 0.0.0.0:8080 -t /opt/app-root/src'
                   ports:
                     - protocol: TCP
-                      port: 80
+                      port: 8080
                   environmentVariables:
                     - name: APP_B64
                       secureValue: '$APP_B64'
@@ -85,12 +85,12 @@ install:
                       memoryInGB: 0.8
               - name: db
                 properties:
-                  image: mysql:8.4
+                  image: quay.io/sclorg/mysql-84-c9s
                   environmentVariables:
-                    - name: MYSQL_ALLOW_EMPTY_PASSWORD
-                      value: 'yes'
-                    - name: MYSQL_ROOT_HOST
-                      value: '%'
+                    - name: MYSQL_USER
+                      value: 'app'
+                    - name: MYSQL_PASSWORD
+                      value: 'app-pass'
                     - name: MYSQL_DATABASE
                       value: 'app'
                   resources:
@@ -101,7 +101,7 @@ install:
             ipAddress:
               ports:
                 - protocol: TCP
-                  port: 80
+                  port: 8080
               type: Public
               dnsNameLabel: ${ bundle.parameters.site_name }
             osType: Linux
