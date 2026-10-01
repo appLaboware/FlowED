@@ -59,10 +59,40 @@ jobs:
 
       - name: Install independent shared infra
         run: |
-          "$PORTER_HOME/porter" install shared-infra             --reference "$INFRA_REF"             --insecure-registry             --label sh.porter.SharingGroup=r1-shared-group
+          set -u
 
-          RESULT="$("$PORTER_HOME/porter" installations output show connstr --installation shared-infra)"
+          set +e
+          "$PORTER_HOME/porter" install shared-infra \
+            --reference "$INFRA_REF" \
+            --insecure-registry \
+            --label sh.porter.SharingGroup=r1-shared-group \
+            --verbosity debug \
+            > /tmp/shared-infra-install.log 2>&1
+          INSTALL_RC=$?
+          set -e
+
+          cat /tmp/shared-infra-install.log
+          echo "INSTALL_RC=$INSTALL_RC"
+
+          echo "=== installation after install command ==="
+          "$PORTER_HOME/porter" show shared-infra || true
+
+          echo "=== runs after install command ==="
+          "$PORTER_HOME/porter" installations runs list --installation shared-infra -o json || true
+
+          if [ "$INSTALL_RC" -ne 0 ]; then
+            exit "$INSTALL_RC"
+          fi
+
+          set +e
+          RESULT="$("$PORTER_HOME/porter" installations output show connstr --installation shared-infra 2>/tmp/shared-infra-output.err)"
+          OUTPUT_RC=$?
+          set -e
+
+          cat /tmp/shared-infra-output.err || true
+          echo "OUTPUT_RC=$OUTPUT_RC"
           echo "INFRA_OUTPUT=$RESULT"
+          test "$OUTPUT_RC" -eq 0
           test "$RESULT" = "mysql://r1-shared-infra"
 
       - name: Inspect shared graph and wiring
