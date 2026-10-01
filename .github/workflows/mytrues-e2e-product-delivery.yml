@@ -242,7 +242,44 @@ jobs:
 
             echo "MYTRUES ADAPTATION: retrying in $FINAL_LOCATION"
 
-            "$HOME/.porter/porter" install site-quota-retry               -c azure-oidc               --param app=/tmp/site.tar.gz               --param site_name="$SITE_NAME"               --param location="$FINAL_LOCATION"
+            TRANSIENT_RETRIES=0
+            ALT_SUCCESS=false
+
+            for attempt in 1 2 3; do
+              echo "Alternate-region attempt $attempt/3 in $FINAL_LOCATION"
+
+              set +e
+              "$HOME/.porter/porter" install "site-quota-retry-$attempt" \
+                -c azure-oidc \
+                --param app=/tmp/site.tar.gz \
+                --param site_name="$SITE_NAME" \
+                --param location="$FINAL_LOCATION" \
+                > >(tee "/tmp/porter-alt-$attempt.log") 2>&1
+              ALT_RC=$?
+              set -e
+
+              if [ "$ALT_RC" -eq 0 ]; then
+                ALT_SUCCESS=true
+                break
+              fi
+
+              if grep -q 'RegistryErrorResponse' "/tmp/porter-alt-$attempt.log"; then
+                TRANSIENT_RETRIES=$attempt
+                if [ "$attempt" -lt 3 ]; then
+                  DELAY=$((attempt * 10))
+                  echo "::warning::Transient container registry error; open baseline retry in ${DELAY}s."
+                  sleep "$DELAY"
+                  continue
+                fi
+              fi
+
+              echo "Alternate-region materialization failed with a non-retryable incident." >&2
+              exit "$ALT_RC"
+            done
+
+            test "$ALT_SUCCESS" = "true"
+          else
+            TRANSIENT_RETRIES=0
           fi
 
           {
@@ -250,6 +287,7 @@ jobs:
             echo "final_location=$FINAL_LOCATION"
             echo "quota_decision_id=$QUOTA_DECISION_ID"
             echo "quota_notice=$QUOTA_NOTICE"
+            echo "transient_registry_retries=$TRANSIENT_RETRIES"
           } >> "$GITHUB_OUTPUT"
 
       - name: Discover Azure materialization
@@ -421,6 +459,7 @@ jobs:
           - Estado MySQL entre duas requisições: **${{ steps.verify.outputs.first_visits }} -> ${{ steps.verify.outputs.second_visits }}**
           - OIDC GitHub -> Azure: **OK**
           - Materialização via Porter/CNAB: **OK**
+          - Retries transitórios de registry na região final: **${{ steps.materialize.outputs.transient_registry_retries }}**
 
           **Ação humana pendente**
           - Nenhuma para visualizar/testar o produto.
