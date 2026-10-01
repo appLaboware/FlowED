@@ -307,3 +307,36 @@ where:
 This does not make that pipeline the only valid CCP representation.
 
 The archive also contains speculative product/implementation material that is explicitly excluded from thesis identity, including neural metaphors, experiential synaptic weights, federated marketplaces and alternate EDT expansions.
+
+
+## Temporary Education-Driven Things branch
+
+A later original-chat forensic audit establishes that the human researcher did,
+in one workstream/chat, explicitly write:
+
+`chamarei de EDT (Education-Driven Things)`.
+
+Therefore this was a real temporary naming branch.
+
+It was not merely invented by C2.
+
+However it does not supersede the current research identity because:
+
+- earlier primary 2025 research material uses `Education-Driven Thinking`;
+- the researcher has now explicitly clarified that EDT is the conceptual doctoral
+  thesis and means `Education-Driven Thinking`.
+
+Historical rule:
+
+```text
+Education-Driven Thinking
+-> original thesis identity
+
+Education-Driven Things
+-> temporary human-created project/workstream name
+
+Education-Driven Thinking
+-> current canonical research identity
+```
+
+Preserve the temporary branch as part of the CCP of the thesis itself.
