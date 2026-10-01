@@ -2,19 +2,38 @@
 
 Date: 2026-10-01
 
-Status: **STAGED — repository-admin operations pending target-org access/tooling**
+Status: **READY FOR REPOSITORY-ADMIN EXECUTION**
 
-Frozen FlowED migration source SHA:
+Frozen FlowED staging source:
 
-`b2fd952acc88e252c1c71c7827786e8cb111ad11`
+`121c63642c4cc552c46a7cf3ff70ab57924cb2be`
 
-The canonical subtree import MUST use this SHA, not a later moving branch head.
+This SHA contains the current qualified archaeology, EDT/CCP/MyTrues boundaries,
+open extension architecture, org topology and 2026 frontier reference suite.
 
-## Rename map
+Later migration-only commits are not required as product/science source.
 
-No repository is deleted.
+## 1. Verified target organization
 
-Exact required renames:
+Organization:
+
+`MyTrues`
+
+GitHub App installation:
+
+`166957143`
+
+The installation can read/write repository contents and reports admin repository
+permission on all eight existing repositories.
+
+Repository-level create/rename actions are not exposed by the current connector,
+so execution requires a GitHub repository-admin UI/API/CLI surface.
+
+## 2. Preserve all current repositories
+
+No deletion.
+
+Rename exactly:
 
 - `MyTrues` -> `MyTrues_arquived_261001`;
 - `MyTrues_p` -> `MyTrues_p_arquived_261001`;
@@ -25,306 +44,258 @@ Exact required renames:
 - `site` -> `site_arquived_261001`;
 - `spec` -> `spec_arquived_261001`.
 
-## New canonical repositories
+After successful canonical imports and verification, set the eight renamed legacy
+repositories to GitHub archived/read-only state.
 
-### `MyTrues/mytrues`
+## 3. Definitive repositories
 
-Purpose: generic decision protocol.
+| Repository | Visibility | Purpose |
+|---|---|---|
+| `mytrues` | public | open decision-memory protocol, ports, conformance, reference implementation |
+| `ccp` | public | Creator Cognitive Path conceptual model/specification, provenance and projections |
+| `edt` | private initially | Education-Driven Thinking doctoral research workspace |
+| `research` | public | frontier map, benchmarks, experiments, replication, paper opportunities |
+| `registry` | public | open plugin/engine/adapter manifest registry and conformance metadata |
+| `ideos` | public | independent open DevOps-intent product/reference MyTrues client |
+| `site` | public | public docs/site |
+| `mytrues-enterprise` | private | closed commercial extensions implementing open MyTrues contracts |
 
-Initial code/content source:
+Canonical topology rationale:
 
-- `appLaboware/FlowED/Tools/MYTRUES`;
-- protocol schemas;
-- OpenAPI;
-- reference `provider_server.py`;
-- conformance `test_protocol.py`;
+`ORG-TOPOLOGY-2026-10-01.md`.
+
+## 4. Science versus product boundary
+
+### EDT
+
+`EDT = Education-Driven Thinking`.
+
+Conceptual/philosophical doctoral thesis.
+
+CCP is the central concept/object under investigation.
+
+The thesis does not depend on MyTrues inventing technically novel components.
+
+### CCP
+
+Open conceptual object/specification.
+
+Must remain independent of one MyTrues runtime.
+
+### MyTrues
+
+Technical product/instrument.
+
+Open common layer reaches the replaceable `DecisionEngine` contract.
+
+### Research
+
+Scientific/technical experiments and reproducibility.
+
+Uses current frontier baselines recorded in:
+
+`research/FRONTIER-REFERENCE-SUITE-2026.md`.
+
+## 5. Open versus closed boundary
+
+### Must remain open/common
+
+In `mytrues` / `registry`:
+
+- wire protocol;
+- schemas;
+- lifecycle semantics;
+- port contracts;
+- plugin manifest contract;
+- conformance;
+- reference implementation;
+- reference storage;
+- required security/data-handling declarations;
+- public registry compatibility metadata.
+
+### May remain closed
+
+In `mytrues-enterprise` or third-party private repositories:
+
+- proprietary DecisionEngine implementations;
+- enterprise-only adapters;
+- hosted control plane;
+- scaling/operations optimizations;
+- customer-specific deployment automation;
+- private learned models/profiles subject to law/contracts;
+- commercial integrations.
+
+Closed extensions implement open contracts; they do not redefine the contracts.
+
+## 6. History mapping
+
+### `ccp`
+
+Historical ancestor:
+
+`spec_arquived_261001`.
+
+Preserve its history as the starting history of the new `ccp`.
+
+Then import qualified current CCP material from FlowED.
+
+### `edt`
+
+Historical ancestor:
+
+`paper_arquived_261001`.
+
+Preserve its history as the starting history of the private `edt`.
+
+Then import current EDT/CCP boundary and historical-source indexes.
+
+### `research`
+
+Historical ancestor:
+
+`replication_arquived_261001`.
+
+Preserve its history and then import qualified `Tools/MYTRUES/research`.
+
+### `site`
+
+Historical ancestor:
+
+`site_arquived_261001`.
+
+### `mytrues`
+
+Do not reuse the old `MyTrues` root as current architecture.
+
+Build from qualified FlowED product paths only:
+
+- `LICENSE`;
+- `README.md`;
+- `docker-compose.yml`;
+- `protocol/`;
+- `conformance/`;
+- `core/`;
+- `memory/`;
+- `reference/`;
+- `integrations/`;
+- `open/`;
+- `seeds/`;
 - `docs/ALGORITHM-BOUNDARY.md`;
-- seed/conformance material that remains correctly classified.
+- `docs/GENERIC-PROTOCOL.md`;
+- `docs/OPEN-EXTENSION-ECOSYSTEM.md`.
 
-Historical documentary source:
+The old `MyTrues_arquived_261001` remains the historical evidence for the
+pre-canonical implementation family.
 
-- `InitProj-260119/MyTrues`;
-- inspected source head:
-  `dc891f1d354b85c6f11666d62cb1e59dde839b2e`;
-- CCP/EDT material is imported as documentary lineage, not as runtime authority.
+### `ideos`
 
-License: MIT.
+Import the `Tools/IDEOS` subtree from the frozen FlowED source.
 
-### `MyTrues/ideos`
+## 7. Licensing north
 
-Purpose: DevOps intent CLI.
+### Product/open code
 
-Initial source:
+`mytrues`, `ideos`, registry tooling:
 
-- `appLaboware/FlowED/Tools/IDEOS`;
-- `spec/syscall-table.md`;
-- `spec/capability-ports.md`;
-- `spec/form-factors.md`;
-- `spec/positioning.md`.
+MIT, unless a specific imported component requires a compatible distinct
+license.
 
-License: MIT.
+### CCP
 
-## History-preserving import
+Candidate split:
 
-Preferred method for the FlowED subtrees:
+- authored prose/specification: CC BY 4.0;
+- executable schemas/examples/code: MIT.
 
-```text
-git subtree split --prefix=Tools/MYTRUES b2fd952acc88e252c1c71c7827786e8cb111ad11 -b import/mytrues
-git subtree split --prefix=Tools/IDEOS b2fd952acc88e252c1c71c7827786e8cb111ad11 -b import/ideos
-```
+Do not apply a blanket license to third-party material.
 
-The resulting filtered branches preserve relevant FlowED commit history and are
-used to seed the new canonical repositories.
+### EDT
 
-Historical CCP/EDT lineage should be imported as a history-preserving
-documentation subtree. A valid approach is:
+Private/unpublished thesis workspace initially.
 
-1. fetch `InitProj-260119/MyTrues` at the recorded historical commit;
-2. filter/move that history under `docs/legacy-ccp/`;
-3. merge the filtered history into `MyTrues/mytrues`;
-4. preserve the original commit identities/provenance in the merge history.
+Published artifacts get explicit scholarly licensing individually.
 
-Do not use a copy-and-paste-only import when a history-preserving import is
-available.
+### Research
 
-## Original-source rule
+- code/harness: MIT candidate;
+- authored docs: CC BY 4.0 candidate;
+- datasets: preserve each upstream dataset license; never blanket-relicense.
 
-After migration:
+### Enterprise
 
-- MyTrues behavior changes only in `MyTrues/mytrues`;
-- IDEOS behavior changes only in `MyTrues/ideos`;
-- FlowED retains migration/evidence material only;
-- IDEOS consumes MyTrues by immutable SHA through `DecisionMemory`;
-- no implementation code is copied from MyTrues into IDEOS.
+Private/proprietary by default.
 
-## Completion evidence
+## 8. Frontier/reference gate
 
-The migration is complete only when the record contains:
+Before claiming technical/scientific novelty, compare as applicable against the
+current suite including:
+
+- LongMemEval-V2;
+- MemoryArena (ICML 2026);
+- AMemGym (ICLR 2026);
+- LoCoMo-Plus (ACL 2026);
+- GroupMemBench;
+- RHELM;
+- MemGym;
+- Microsoft Memora;
+- Microsoft human-inspired memory architecture;
+- Microsoft MAGE;
+- Google ReasoningBank;
+- Google MARS;
+- Google controlled agent-architecture scaling work;
+- W3C PROV;
+- ADR/MADR;
+- IBIS/QOC;
+- current design-rationale extraction/generation work.
+
+See the frozen frontier file for exact references and intended test use.
+
+## 9. Completion evidence
+
+The reorganization is complete only after recording:
+
+### Legacy
 
 - API/UI evidence for all eight renames;
-- URLs for both new canonical repositories;
-- initial canonical commit SHA for each;
-- evidence that history survived the import;
-- MIT license in both repositories;
-- real IDEOS -> MyTrues lock SHA;
-- adapter compatibility run URL.
+- all eight archived URLs;
+- archive/read-only status after import.
 
-## Migration-only files
+### New repos
 
-The history-preserving split starts from the frozen FlowED SHA above, but the
-canonical product repositories must not retain FlowED reorganization machinery.
+For all eight definitive repositories:
 
-Before the first canonical push, remove from the MyTrues import branch:
+- canonical URL;
+- visibility;
+- initial/default branch SHA;
+- description;
+- license/boundary README.
 
-- `ORG-INVENTORY.md`;
-- `MIGRATION-MANIFEST.md`;
-- `migration/`.
+### Imports
 
-These remain in FlowED as migration evidence.
+- proof that `ccp`, `edt`, `research`, `site` retained historical ancestor
+  history;
+- proof that `mytrues` contains only qualified product/common material;
+- proof that `research` contains the frontier suite;
+- proof that `edt` remains private initially.
 
-The canonical IDEOS import similarly does not receive FlowED-level
-`Tools/EVOLUTION/` documents; only the IDEOS subtree is imported.
+### Product
 
-## Google Drive archaeology
+- canonical MyTrues conformance run URL;
+- IDEOS -> MyTrues compatibility run;
+- real immutable MyTrues SHA in IDEOS upstream lock.
 
-The frozen source above includes the Drive archaeology consolidation:
+## 10. Execution runbook
 
-- pre-repository CCW/CCC/OMGDiary/TRUE lineage;
-- concrete decision/cognition pair fixtures;
-- Drive inventory;
-- recovered 2026 Science Frontier discovery contract;
-- `research/SCIENCE-FRONTIER-DISCOVERY-GATE.md`.
+Use:
 
-These are documentary/research inputs unless separately promoted by versioned
-protocol work.
+`migration/reorganize-org.sh`
 
-## Additional research intake
+The runbook is idempotency-aware and never deletes a repository.
 
-The frozen source also includes the 2026-10-01 supplied research artifacts:
+Current blocker:
 
-- canonical staging copy of `MTR-METAOBJECTIVE-001 — MYTRUES APPLIED TO MYTRUES`;
-- `MYTRUES-META-PROPOSAL-001` intake/governance record;
-- independent qualification record for
-  `GROK-MYTRUES-COGNITIVE-DISCOVERY-001`;
-- corresponding updates to the archaeology synthesis and Science Frontier gate.
+**repository-level rename/create/visibility operations are not exposed by the
+GitHub connector actions in this session, and the local runtime has no `gh`
+binary/authentication surface.**
 
-These are research/governance inputs only. They do not authorize Microbrain
-execution or promote the Grok run to qualified Discovery.
-
-## Conversation-reconstruction archaeology
-
-The frozen source also includes four 2026-10-01 uploaded reconstructions of
-earlier MyTrues/EDT/CCP conversations.
-
-They contributed:
-
-- No Retroactive Cognition;
-- CCP-as-source -> Views-as-build;
-- NORM/WHY/TRACE/ADR view taxonomy;
-- AKU/digital-neuron historical hypothesis;
-- MyTrues Discovery historical product branch;
-- MCP-as-adapter rule;
-- secondary claims requiring primary verification, including EDT expansion and
-  a reported CCP DOI.
-
-These are archaeology/research inputs unless separately promoted.
-
-## Open extension ecosystem / DecisionEngine boundary
-
-The frozen source also includes the 2026-10-01 architecture/research update that:
-
-- extends the OPEN MyTrues boundary through a replaceable `DecisionEngine` port;
-- defines a provisional hexagonal port/adapter/plugin taxonomy;
-- permits OSS, commercial, private, human and hybrid decision engines behind
-  the same open interoperability boundary;
-- treats MCP as an adapter/transport, not internal architecture;
-- treats LLM cognition extraction as candidate/staging generation, not automatic
-  canonical authority;
-- introduces a conformance-aware registry/marketplace direction;
-- adds focused science/product prior-art research;
-- adopts a PPX-first direction for portable preference/profile interchange;
-- narrows the scientific residual to decision-semantic preservation, replay,
-  provenance and authority across heterogeneous engines.
-
-These are target-design/research inputs. They do not silently modify the
-executable v0.2 failure profile and do not authorize a proprietary engine.
-
-## Chat extraction archaeology batch 001
-
-The frozen source also includes the first chat-extraction provenance triage:
-
-- source-confidence classification for 12 conversation-derived reports;
-- OMGDiary/MyTrues two-axis historical origin;
-- historical TrueEngine nomenclature;
-- early local-decision-before-generic-LLM semantics;
-- independent CCP technical evidence including `Raw log is not CCP`;
-- candidate multi-time epistemic model;
-- chronology/causality separation;
-- defeated-path memory hypothesis;
-- KNOWING versus SAYING boundary;
-- reinforcement that MyTrues Discovery remains a separate historical branch.
-
-These findings are archaeology/research inputs. They do not modify v0.2
-conformance or authorize new runtime behavior.
-
-## Chat extraction archaeology batch 002
-
-The frozen source also includes:
-
-- source-confidence triage for nine additional chat-derived reports;
-- exact SHA-256 identities of the reviewed uploads;
-- strict negative evidence from a FlowDisP-only chat;
-- explicit `MyTools`/MyTrues ambiguity handling;
-- preservation of the historical Datalog/Prolog/Cozo logic/rules branch;
-- correction that current OpenAPI staging is 0.2.0;
-- the Experience-first MyTrues research branch;
-- a Science Frontier gate requiring forensic PO-intent verification before any
-  Experience-first domain promotion.
-
-The Experience-first branch is research only and does not redefine v0.2.
-
-## Experience-first forensic resolution
-
-The frozen source includes the primary-chat forensic follow-up that resolves the
-batch-002 Experience-first ambiguity.
-
-Result:
-
-- Experience-first is **not** a PO-approved MyTrues identity pivot;
-- `MyTrues = SQL of experience` is not PO-approved;
-- Memory Mesh/Systematic Agent is preserved only as an approved experimental
-  metaobjective;
-- provider-scoped v0.2 memory remains unrepealed;
-- PAUSE/SANITIZE/RESOLVE remains current executable behavior.
-
-No v0.2 schema or runtime change follows from this forensic result.
-
-## Chat extraction archaeology batch 003
-
-The frozen source includes the final uploaded chat-extraction batch:
-
-- exact-byte SHA-256 inventory for nine additional reports;
-- Cognit.me / InitProj extraction kept upstream of MyTrues ingestion;
-- RAG characterization retained only as ungrounded incidental history;
-- CCP de Partida / Fundação Epistêmica as a research-governance candidate;
-- subject-history versus Thing-history EDT/MyTrues boundary candidate;
-- global Experience-first question reopened by a different source without
-  changing the v0.2 baseline;
-- unresolved EDT expansion conflict:
-  Education-Driven Thinking vs Education-Driven Things.
-
-Two original-chat forensic follow-ups remain before global genealogy is fully
-frozen:
-
-- VRMP-MYTRUES 260901 01;
-- VRMP-EDT 260901 01.
-
-These unresolved historical questions do not alter current v0.2 behavior.
-
-## EDT / CCP research boundary clarification
-
-The frozen source includes a current researcher clarification plus historical
-January/February-2025 EDT/CCP source pack.
-
-Current boundary:
-
-- EDT = Education-Driven Thinking;
-- EDT = conceptual/philosophical doctoral research thesis in engineering;
-- CCP = Caminho Cognitivo do Criador / Creator Cognitive Path, central concept;
-- MyTrues = technical instrument/reference implementation used to
-  operationalize/test CCP and potentially generate independent technical papers
-  or product opportunities.
-
-MyTrues technical novelty is not a prerequisite for EDT conceptual novelty.
-
-Education-Driven Things is non-canonical under current researcher orientation.
-
-The historical source pack is indexed without rewriting its earlier academic
-stage.
-
-## EDT-001 conceptual reinforcement assessment
-
-The frozen source includes an assessment of the EDT-001 tree archive.
-
-Promoted conceptual reinforcement:
-
-- creator cognition as a primary object;
-- consolidated artifact as consequence/projection rather than the whole epistemic object;
-- SOURCE != EXTRACTED != INFERRED != CONFIRMED != EVIDENCED != PROJECTION;
-- provenance distinct from rationale;
-- rejected alternatives/failures as useful cognitive-path material;
-- SOURCE -> CCP -> PROJECTION as a useful theoretical decomposition.
-
-Explicitly not promoted into EDT identity:
-
-- Education-Driven Things;
-- Experiential Decision Theory;
-- neural/synaptic/emotional metaphors;
-- marketplace/federation hypotheses;
-- graph/vector architecture;
-- claims that final documentation should disappear.
-
-See:
-- Tools/MYTRUES/docs/archaeology/EDT-001-TREE-ASSESSMENT.md
-- Tools/MYTRUES/docs/EDT-CCP-MYTRUES-BOUNDARY.md
-
-## Final VRMP forensic closure
-
-The frozen source includes the two requested strict original-chat audits:
-
-- VRMP-EDT 260901 01;
-- VRMP-MYTRUES 260901 01.
-
-Resolved conclusions:
-
-- Education-Driven Things was a real temporary human-created naming branch;
-- current canonical EDT remains Education-Driven Thinking;
-- subject-history vs Thing-history was a PM/PO working boundary, not proven
-  direct human thesis wording;
-- Experience is important but not established as the canonical primary MyTrues
-  entity;
-- decision-memory identity was not proven globally superseded;
-- MyTrues = Minhas Verdades is directly human-authored;
-- white-box/upstream composition preference is directly human-approved.
-
-Batch-003 forensic backlog is closed.
+Do not report execution until real GitHub mutation evidence exists.
