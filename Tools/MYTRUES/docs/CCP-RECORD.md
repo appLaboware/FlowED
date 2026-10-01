@@ -66,3 +66,27 @@ For provenance, the migration baseline references:
 
 The historical texts are preserved as documentary lineage, not as normative
 runtime behavior.
+
+## Consumption rule
+
+The default consumer path is:
+
+`current decision -> use it`
+
+A consumer SHOULD traverse the linked CCP Record when it needs to:
+
+- understand why the current decision exists;
+- challenge or propose a different decision;
+- re-evaluate after context/evidence changes;
+- audit provenance;
+- avoid repeating an already tested/rejected path.
+
+Therefore CCP is **available context, not mandatory payload for every decision
+request**.
+
+This rule is recovered from the earliest operational CCC flow: consult the
+current decision first, then traverse its cognitive path only when deeper
+context is necessary.
+
+A client must not require hidden chain-of-thought. The CCP Record contains
+explicitly recorded rationale/evidence/provenance chosen for preservation.
