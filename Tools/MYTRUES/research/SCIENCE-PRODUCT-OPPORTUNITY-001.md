@@ -223,6 +223,62 @@ Candidate adopted representations may include:
 - conditional preference formalisms such as CP-nets;
 - learned preference models.
 
+## PPX — Preference Profile Exchange
+
+A major prior-art correction was found after the initial pass.
+
+PPX 0.1.0-draft (2026-04-23) defines a portable, user-owned preference/context
+profile exchange format and interaction model across applications and agents.
+
+It already provides:
+
+- preference/aversion/tendency/constraint claims;
+- provenance kinds including user-stated, observed, imported, inferred and
+  derived aggregate;
+- confidence and stability;
+- context modifiers;
+- evidence references;
+- lifecycle/expiry/decay metadata;
+- explicit review states;
+- first-class consent grants;
+- domain extensions;
+- derived views;
+- JSON Schema;
+- bindings for MCP, A2A, AG-UI, A2UI and HTTP;
+- conformance levels.
+
+PPX is explicitly a draft, pre-standardization and pre-stable. It is strong
+prior art, not yet a mature international standard.
+
+Sources:
+
+- https://ppx.dev/spec/
+- https://ppx.dev/
+- https://ppx.dev/bindings/
+
+Historical profile prior art also includes W3C CC/PP, an RDF framework for
+describing capabilities and user preferences.
+
+Sources:
+
+- https://www.w3.org/TR/CCPP-struct-vocab/
+- https://www.w3.org/TR/CCPP-vocab/
+
+**MyTrues implication:**
+
+Do not invent `DecisionPolicyProfile` as a new portable preference-profile
+format.
+
+First attempt to adopt:
+
+`PPX Profile -> DecisionProfile adapter -> engine-specific semantic mapping`
+
+and define a MyTrues/decision extension only if a real residual is demonstrated.
+
+The candidate scientific question is no longer profile portability itself. It is
+whether decision semantics can be preserved/replayed when one portable profile
+is interpreted by heterogeneous decision engines.
+
 ## Personalized reasoning — PrefDisco
 
 ICLR 2026 introduces PrefDisco for proactive personalized reasoning: the system
@@ -415,15 +471,17 @@ of MyTrues' decision/memory problem, not from rediscovering AutoML.
 
 # 7. Candidate scientific residual
 
-## S1 — Engine-neutral DecisionPolicyProfile portability
+## S1 — Cross-engine semantic preservation of portable preference profiles
 
 Question:
 
-> Can one explicit, versioned decision-preference profile be executed by
-> heterogeneous decision engines while preserving measurable behavioral
-> semantics?
+> Can a portable profile such as PPX be mapped into heterogeneous decision
+> engines while preserving measurable decision semantics and making information
+> loss/divergence explicit?
 
-This is stronger than merely learning a persona for one model.
+Portable preference exchange itself is prior art. The residual is semantic
+execution/interoperability across unlike decision models, not inventing a new
+profile container.
 
 Potential experiment:
 
@@ -599,9 +657,13 @@ Value:
 This resembles the value MCP created for tool/context integration, but in the
 narrower decision domain.
 
-## P2 — User/provider-owned DecisionPolicyProfile
+## P2 — PPX-backed Decision Profile interoperability
 
-A portable, versioned profile may become a valuable product surface:
+A portable, versioned profile remains a valuable product surface, but MyTrues
+should first adopt/interoperate with PPX rather than define a competing profile
+format.
+
+Possible decision-oriented claims include:
 
 - "prefer LTS in production";
 - risk tolerance;
@@ -842,3 +904,35 @@ Engineering prior art:
 
 **GO for defining the open extension/port taxonomy and conformance model**, because
 that is useful product architecture even if it produces no novel science.
+
+
+### Revised residual after PPX
+
+PPX materially narrows the candidate frontier.
+
+The working decomposition is now:
+
+```text
+PPX / profile prior art
+  -> portable preferences, context, consent, provenance
+
+MyTrues candidate residual
+  -> decision lifecycle
+  -> decision-memory history
+  -> engine invocation
+  -> semantic mapping from profile to engine
+  -> abstention / authority
+  -> evidence + outcome
+  -> replay / re-decision
+```
+
+The key research problem is therefore not:
+
+`how do we serialize a person's preferences?`
+
+It is closer to:
+
+`how do we preserve, measure and audit decision behavior when the same portable
+preference evidence is interpreted by heterogeneous decision engines over time?`
+
+This remains a research question, not a novelty claim.
