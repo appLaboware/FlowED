@@ -174,3 +174,28 @@ Result:
 Exact forensic-response SHA-256:
 
 `eed92e493d199121c9f8e50546bd1339b489554ca03a207c992b2b09d739d99b`
+
+
+### Chat extraction triage — batch 003 (final uploaded batch)
+
+- `CHAT-EXTRACTION-TRIAGE-003.md`
+
+Key additions:
+
+- Cognit.me/InitProj explicitly separated from MyTrues ingestion/canonical memory;
+- strict negative evidence that MyTrues is not established as a RAG repository;
+- `CCP de Partida / Fundação Epistêmica / De onde partimos` research-governance
+  candidate;
+- subject-history versus Thing-history boundary between MyTrues and EDT;
+- global Experience-first question reopened by a different source without
+  undoing the prior forensic result;
+- explicit unresolved naming conflict:
+  `Education-Driven Thinking` versus `Education-Driven Things`.
+
+All nine uploaded reports have exact SHA-256 identities recorded in the triage.
+
+Two original chats remain high-value forensic follow-ups before global genealogy
+is frozen:
+
+- `VRMP-MYTRUES 260901 01`;
+- `VRMP-EDT 260901 01`.
