@@ -939,3 +939,114 @@ deterministic validators may be relevant analogies, but that conversation did
 not establish them as MyTrues requirements.
 
 Do not retroactively merge the domains.
+
+
+## Experience-first forensic resolution
+
+The original
+`mytrues- INTERMEMBERS.DEV_001-VRMP-DEMO-POO-01-DV4-02`
+chat was forensically re-audited using only that conversation.
+
+Preserved result:
+
+`docs/archaeology/forensics/EXPERIENCE-FIRST-CHAT-FORENSIC-001.md`
+
+### 47. Experience-first did not replace Decision as MyTrues identity
+
+The audit explicitly concludes:
+
+- `Experience is the primary unit` was an assistant formulation;
+- `MyTrues is the SQL of experience` was an assistant formulation;
+- the Experience->Belief/Position->Decision chain was assistant synthesis;
+- the chat does not prove a PO decision replacing decision memory with broader
+  experiential memory.
+
+Therefore the current MyTrues identity remains the generic/open decision-memory
+protocol north unless changed by a future explicit PO decision.
+
+### 48. SQLDAVELHA was approved as recurring experimental reference
+
+The PO explicitly promoted `SQLDAVELHA` as a recurring example/reference for
+the experimental method.
+
+This means:
+
+```text
+SQLDAVELHA
+= experimental intuition/reference
+```
+
+not:
+
+```text
+MyTrues
+= SQL of experience
+```
+
+### 49. Memory Mesh/Systematic Agent was approved only as metaobjective
+
+The substantive user-proposed model included:
+
+- organized memory database;
+- deterministic "Systematic Agent" answering from memory rather than model
+  training;
+- registration/linking component;
+- LLM(s) may propose links;
+- LLM used for natural-language interpretation/rendering.
+
+The assistant formalized this as:
+
+`Semantic Registrar -> Candidate Relations -> Memory Mesh -> Systematic Agent -> Language Renderer`
+
+and the PO answered:
+
+`e-x-a-t-a-m-e-n-t-e`.
+
+Immediately after, the PO explicitly scoped it:
+
+`nao é demanda, é registro previo para colcoar como metaobjetivo.`
+
+Thus:
+
+`approved experimental/metaobjective direction != authorized product identity != implementation demand`.
+
+### 50. Decision Cell and Experience vocabulary remain assistant research proposals
+
+The audit attributes the following to assistant proposal/synthesis rather than
+explicit PO decision:
+
+- Decision Cell;
+- Experience Base;
+- Defeater Base;
+- Successful Path Base;
+- Unknown Frontier;
+- Cognitive Pre-flight;
+- Cognitive Cartridge;
+- Cognitive Amortization;
+- Compiled Cognition.
+
+They remain valid research hypotheses to test if useful, but not canonical
+MyTrues entities.
+
+### 51. Provider-scoped memory remains unrepealed
+
+The audited chat does not prove that user-owned/provider-replaceable memory
+superseded provider-scoped memory.
+
+Therefore current v0.2 provider-isolation evidence remains authoritative for the
+executable baseline.
+
+A future memory-ownership model requires its own explicit decision.
+
+### 52. PAUSE/SANITIZE/RESOLVE was not de-centered by this chat
+
+The claim that the lifecycle lost centrality was assistant retrospective
+synthesis.
+
+No PO decision in this chat removed:
+
+`PAUSE -> SANITIZE -> RESOLVE -> RETAIN -> RESUME`
+
+from the current v0.2 behavior.
+
+Broader experiments may study other flows without altering that baseline.
