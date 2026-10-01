@@ -69,7 +69,7 @@ independent DevOps intent client.
 
 History-preserving canonical subtree import uses FlowED commit:
 
-`3ea0364ab2092e1863bf8ce8444fd1a8733dda78`
+`7cf59acb7651a688c680fdd40e1da0abb65e7963`
 
 This commit contains the complete product staging surface including the physical
 IDEOS `DecisionMemory` adapter boundary.
@@ -99,13 +99,13 @@ The frozen migration SHA above includes this recovered material.
 
 ## Runbook consistency note
 
-The authoritative frozen product snapshot is now:
+The migration manifest and `reorganize-org.sh` now both point to the same
+authoritative frozen source SHA:
 
-`3ea0364ab2092e1863bf8ce8444fd1a8733dda78`
+`7cf59acb7651a688c680fdd40e1da0abb65e7963`
 
-`Tools/MYTRUES/migration/reorganize-org.sh` currently contains an earlier frozen
-SHA and MUST NOT be executed until its `FLOWED_SOURCE_SHA` is updated to the
-authoritative value above. The migration manifest is authoritative.
+No known SHA drift remains between those two migration records.
+
 
 ## Google Drive archaeology
 
@@ -138,5 +138,28 @@ No Microbrain implementation is authorized by these artifacts.
 The Grok package is not promoted to qualified Discovery because its received
 payload contains required JSON parse failures and manifest/payload count
 inconsistencies.
+
+The authoritative frozen product SHA above includes these additions.
+
+## Conversation-reconstruction archaeology
+
+Four additional historical reconstructions were reviewed and indexed:
+
+- `Agentes no VSCode Codex.MD`;
+- `VRAMPP-001.MD`;
+- `VRAMPP-002 - 043b - D2b.MD`;
+- `Branch · Agentes no VSCode Codex.MD`.
+
+Promoted documentary invariants:
+
+- No Retroactive Cognition;
+- explicit canonical-promotion boundary.
+
+Preserved but not promoted as core:
+
+- AKU/digital-neuron hypothesis;
+- MyTrues Discovery product branch;
+- proposed family Discovery/Cognition/Verify;
+- old commercial/licensing/org layouts.
 
 The authoritative frozen product SHA above includes these additions.
