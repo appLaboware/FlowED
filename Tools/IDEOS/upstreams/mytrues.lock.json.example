@@ -1,0 +1,14 @@
+{
+  "schema": "ideos-upstream-lock-v1",
+  "capability": "DecisionMemory",
+  "upstream": {
+    "repository": "https://github.com/MyTrues/mytrues",
+    "commit_sha": "<REAL_CANONICAL_MYTRUES_SHA>",
+    "protocol_version": "0.2.0"
+  },
+  "adapter": {
+    "contract": "spec/capability-ports.md#decisionmemory",
+    "compatibility_evidence_run_url": "<GITHUB_ACTIONS_RUN_URL>"
+  },
+  "adopted_at": "<ISO-8601>"
+}
