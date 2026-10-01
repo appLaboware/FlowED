@@ -82,7 +82,7 @@ install:
                   resources:
                     requests:
                       cpu: 0.5
-                      memoryInGB: 0.75
+                      memoryInGB: 0.8
               - name: db
                 properties:
                   image: mysql:8.4
