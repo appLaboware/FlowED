@@ -1,0 +1,19 @@
+{
+  "protocol": "mytrues.decision/v1",
+  "requestId": "req-dns-001",
+  "subject": {
+    "kind": "failure",
+    "code": "dns.requested_provider_credentials_missing"
+  },
+  "context": {
+    "requested_domain": "porter-lab.me.dev.br",
+    "azure_provider_fqdn_available": true,
+    "azure_provider_fqdn": "decision-site.example.brazilsouth.azurecontainer.io",
+    "azure_public_ip_available": true,
+    "azure_public_ip": "203.0.113.42"
+  },
+  "constraints": {
+    "automation": "automatic",
+    "maxRisk": "low"
+  }
+}
