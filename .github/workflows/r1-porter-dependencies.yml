@@ -78,9 +78,13 @@ jobs:
 
           "$PORTER_HOME/porter" install parent-exact             --reference "$PARENT_REF"             --insecure-registry             --dependencies-version-strategy exact             --param 'child#child_value=exact-value'
 
-          RESULT="$("$PORTER_HOME/porter" installations output show parent_result             --installation parent-exact)"
-          echo "EXACT_RESULT=$RESULT"
-          test "$RESULT" = "v1.0.0:exact-value"
+          CHILD_RESULT="$("$PORTER_HOME/porter" installations output show child_result --installation parent-exact-child)"
+          echo "EXACT_CHILD_RESULT=$CHILD_RESULT"
+          test "$CHILD_RESULT" = "v1.0.0:exact-value"
+
+          PARENT_RESULT="$("$PORTER_HOME/porter" installations output show parent_result --installation parent-exact)"
+          echo "LEGACY_PARENT_DEP_OUTPUT_INTERPOLATION=$PARENT_RESULT"
+          printf '%s' "$PARENT_RESULT" > /tmp/legacy-parent-exact.txt
 
       - name: Max-patch selects newest compatible dependency
         run: |
@@ -88,9 +92,13 @@ jobs:
 
           "$PORTER_HOME/porter" install parent-maxpatch             --reference "$PARENT_REF"             --insecure-registry             --dependencies-version-strategy max-patch             --param 'child#child_value=maxpatch-value'
 
-          RESULT="$("$PORTER_HOME/porter" installations output show parent_result             --installation parent-maxpatch)"
-          echo "MAXPATCH_RESULT=$RESULT"
-          test "$RESULT" = "v1.0.1:maxpatch-value"
+          CHILD_RESULT="$("$PORTER_HOME/porter" installations output show child_result --installation parent-maxpatch-child)"
+          echo "MAXPATCH_CHILD_RESULT=$CHILD_RESULT"
+          test "$CHILD_RESULT" = "v1.0.1:maxpatch-value"
+
+          PARENT_RESULT="$("$PORTER_HOME/porter" installations output show parent_result --installation parent-maxpatch)"
+          echo "LEGACY_PARENT_DEP_OUTPUT_INTERPOLATION=$PARENT_RESULT"
+          printf '%s' "$PARENT_RESULT" > /tmp/legacy-parent-maxpatch.txt
 
       - name: Uninstall root and managed direct dependencies
         run: |
