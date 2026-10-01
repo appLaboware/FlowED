@@ -2,14 +2,13 @@
 
 Date: 2026-10-01
 
-Status: **RESEARCH BRANCH / DOMAIN DIVERGENCE — NOT CURRENT PROTOCOL DEFINITION**
+Status: **FORENSICALLY DOWNGRADED RESEARCH BRANCH — NOT PO-APPROVED PRODUCT IDENTITY**
 
 Primary source for this branch in the current archaeology:
 
 `mytrues- INTERMEMBERS.DEV_001-VRMP-DEMO-POO-01-DV4-02.MD`
 
-The source is a reconstruction and therefore does not prove turn-level PO
-approval for every item.
+The source is a reconstruction. A later primary-chat forensic audit now confirms that the central Experience-first identity claims were assistant formulations, not explicit PO decisions.
 
 ## Why this branch matters
 
@@ -48,8 +47,7 @@ Associated phrase:
 
 `MyTrues is the SQL of experience.`
 
-This must not replace the current product definition until primary evidence
-establishes whether the PO explicitly promoted the pivot.
+This does **not** replace the current product definition. Primary-chat forensic review found that the PO did not explicitly promote this pivot.
 
 ## Core research invariants recorded by the branch
 
@@ -74,9 +72,7 @@ The reconstruction labels the following as promoted directions:
 17. MyTrues is not EDT, Experimentation or InterMembers.
 18. Adopt before building.
 
-Only invariants already independently promoted elsewhere should be considered
-current design rules. The others remain research candidates until the branch is
-forensically qualified.
+Only invariants already independently promoted elsewhere should be considered current design rules. The forensic audit did **not** qualify Experience-first as a product/domain redefinition. The remaining items are research hypotheses.
 
 ## Candidate epistemic state
 
@@ -353,7 +349,7 @@ candidate recall, never as a truth vote.
 
 ## Provider-scoped versus user-owned memory
 
-Important unresolved tension:
+Historical/research tension (not resolved by this chat):
 
 ### operational v0.2
 
@@ -376,7 +372,7 @@ user/organization-owned MyTrues
 
 But this is only a candidate reconciliation.
 
-Do not promote until specified and tested.
+Do not treat user-owned/provider-replaceable memory as having superseded v0.2 provider-scoped memory. The forensic audit found no such PO decision in this chat.
 
 ## PAUSE/SANITIZE/RESOLVE relationship
 
@@ -399,18 +395,57 @@ It may indicate that:
 - the decision protocol is one bounded context over a broader experience store;
 - or Experience-first is a different product/research branch.
 
-That boundary is unresolved.
+That broader bounded-context question may still be researched, but this chat does not redefine the current product boundary.
 
-## Required forensic decision
+## Forensic result — RESOLVED
 
-Before v0.3 or product-domain redefinition, determine whether the original chat
-contains explicit PO approval for:
+The required primary-chat audit was performed.
 
-- `Experience` as primary conceptual unit;
-- `MyTrues = SQL of experience`;
-- broader experiential memory superseding decision-memory identity;
-- user-owned memory as preferred model over provider-scoped memory.
+See:
 
-Until then:
+`../../docs/archaeology/forensics/EXPERIENCE-FIRST-CHAT-FORENSIC-001.md`
 
-`PRESERVE, DO NOT PROMOTE`.
+Result:
+
+- `Experience is the primary conceptual unit` — assistant synthesis, not explicit PO approval;
+- `MyTrues is the SQL of experience` — assistant synthesis, not explicit PO approval;
+- Experience-first replacing decision-memory identity — **NO**;
+- user-owned/provider-replaceable memory replacing provider-scoped memory — **NO**;
+- PAUSE/SANITIZE/RESOLVE losing protocol centrality — not a PO decision.
+
+What the PO did approve:
+
+```text
+test candidate mechanisms instead of choosing by plausibility
+
+organized memories
+-> registration/linking component
+-> LLM may propose links
+-> relational memory structure
+-> deterministic Systematic Agent
+-> answer from authorized memory
+-> LLM used for interpretation/rendering
+```
+
+The assistant formalized this as a Memory Mesh/Systematic Agent architecture and
+the PO replied `e-x-a-t-a-m-e-n-t-e`.
+
+Immediately afterward the PO scoped it as:
+
+`nao é demanda, é registro previo para colcoar como metaobjetivo.`
+
+Therefore the authoritative classification is:
+
+`APPROVED METAOBJECTIVE / EXPERIMENTAL DIRECTION`
+
+not:
+
+`CURRENT MYTRUES PRODUCT IDENTITY`.
+
+### Current consequence
+
+Preserve this document as a research-hypothesis catalog.
+
+Do not use it to redefine the MyTrues Open Decision Protocol v0.2.
+
+`PRESERVE AS METAOBJECTIVE / DO NOT PROMOTE AS IDENTITY`.
