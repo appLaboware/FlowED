@@ -1,0 +1,177 @@
+name: IDEOS UX Porter one command to Azure
+
+on:
+  push:
+    branches:
+      - tools/ideos-lab
+    paths:
+      - "Tools/IDEOS/experiments/EXP-005-porter-one-command-azure/**"
+      - ".github/workflows/ideos-porter-one-command-azure.yml"
+  workflow_dispatch:
+    inputs:
+      site_name:
+        description: "Name for the public Azure site"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AZURE_BUNDLE: ${{ secrets.AZURE }}
+
+jobs:
+  one-command:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Clone repository
+        run: |
+          git clone --depth 1 --branch tools/ideos-lab https://github.com/appLaboware/FlowED.git repo
+
+      - name: Resolve Azure identifiers and site intention
+        id: context
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          get_value() {
+            local key="$1"
+            printf '%s\n' "$AZURE_BUNDLE" |
+              sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*=[[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\2/p" |
+              tail -n 1
+          }
+
+          CLIENT_ID="$(get_value AZURE_CLIENT_ID)"
+          TENANT_ID="$(get_value AZURE_TENANT_ID)"
+          SUBSCRIPTION_ID="$(get_value AZURE_SUBSCRIPTION_ID)"
+
+          test -n "$CLIENT_ID"
+          test -n "$TENANT_ID"
+          test -n "$SUBSCRIPTION_ID"
+
+          echo "::add-mask::$CLIENT_ID"
+          echo "::add-mask::$TENANT_ID"
+          echo "::add-mask::$SUBSCRIPTION_ID"
+
+          REQUESTED="${{ inputs.site_name }}"
+          if [ -n "$REQUESTED" ]; then
+            SITE_NAME="$REQUESTED"
+          else
+            SITE_NAME="porter-site-${GITHUB_RUN_ID}"
+          fi
+
+          SITE_NAME="$(printf '%s' "$SITE_NAME" | tr '[:upper:]_' '[:lower:]-' | tr -cd 'a-z0-9-')"
+          SITE_NAME="${SITE_NAME:0:50}"
+
+          {
+            echo "client_id=$CLIENT_ID"
+            echo "tenant_id=$TENANT_ID"
+            echo "subscription_id=$SUBSCRIPTION_ID"
+            echo "site_name=$SITE_NAME"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "Intent: materialize a public site named $SITE_NAME on Azure."
+
+      - name: Request GitHub OIDC token
+        id: oidc
+        shell: bash
+        run: |
+          set -euo pipefail
+          RESPONSE="$(curl --fail --silent --show-error             -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN"             "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange")"
+          TOKEN="$(jq -r '.value' <<<"$RESPONSE")"
+          test -n "$TOKEN"
+          test "$TOKEN" != "null"
+          echo "::add-mask::$TOKEN"
+          {
+            echo "token<<OIDC_EOF"
+            echo "$TOKEN"
+            echo "OIDC_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Install Porter and official Azure mixin
+        run: |
+          curl -fsSL https://cdn.porter.sh/latest/install-linux.sh | bash
+          "$HOME/.porter/porter" mixin install az
+          "$HOME/.porter/porter" version
+          "$HOME/.porter/porter" mixins list
+
+      - name: Configure Porter credential set
+        env:
+          AZURE_CLIENT_ID: ${{ steps.context.outputs.client_id }}
+          AZURE_TENANT_ID: ${{ steps.context.outputs.tenant_id }}
+          AZURE_SUBSCRIPTION_ID: ${{ steps.context.outputs.subscription_id }}
+          AZURE_FEDERATED_TOKEN: ${{ steps.oidc.outputs.token }}
+        run: |
+          cat >/tmp/azure-oidc.yaml <<'YAML'
+          schemaType: CredentialSet
+          schemaVersion: 1.0.1
+          name: azure-oidc
+          credentials:
+            - name: azure-client-id
+              source:
+                env: AZURE_CLIENT_ID
+            - name: azure-tenant-id
+              source:
+                env: AZURE_TENANT_ID
+            - name: azure-subscription-id
+              source:
+                env: AZURE_SUBSCRIPTION_ID
+            - name: azure-federated-token
+              source:
+                env: AZURE_FEDERATED_TOKEN
+          YAML
+
+          "$HOME/.porter/porter" credentials apply /tmp/azure-oidc.yaml
+
+      - name: ONE USER COMMAND - materialize site
+        env:
+          AZURE_CLIENT_ID: ${{ steps.context.outputs.client_id }}
+          AZURE_TENANT_ID: ${{ steps.context.outputs.tenant_id }}
+          AZURE_SUBSCRIPTION_ID: ${{ steps.context.outputs.subscription_id }}
+          AZURE_FEDERATED_TOKEN: ${{ steps.oidc.outputs.token }}
+        run: |
+          cd repo/Tools/IDEOS/experiments/EXP-005-porter-one-command-azure
+
+          echo "USER COMMAND:"
+          echo "porter install site -c azure-oidc --param site_name=${{ steps.context.outputs.site_name }}"
+
+          "$HOME/.porter/porter" install site             -c azure-oidc             --param site_name="${{ steps.context.outputs.site_name }}"
+
+      - name: Verify site and expose URL
+        id: site
+        env:
+          AZURE_CLIENT_ID: ${{ steps.context.outputs.client_id }}
+          AZURE_TENANT_ID: ${{ steps.context.outputs.tenant_id }}
+          AZURE_FEDERATED_TOKEN: ${{ steps.oidc.outputs.token }}
+          AZURE_SUBSCRIPTION_ID: ${{ steps.context.outputs.subscription_id }}
+        run: |
+          set -euo pipefail
+
+          az login             --service-principal             --username "$AZURE_CLIENT_ID"             --tenant "$AZURE_TENANT_ID"             --federated-token "$AZURE_FEDERATED_TOKEN"             --output none
+          az account set --subscription "$AZURE_SUBSCRIPTION_ID"
+
+          FQDN="$(az container show             --resource-group rg-flowed-ideos-lab             --name "${{ steps.context.outputs.site_name }}"             --query ipAddress.fqdn -o tsv)"
+
+          test -n "$FQDN"
+
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent --show-error --max-time 10 "http://$FQDN" >/tmp/site.html; then
+              echo "url=http://$FQDN" >> "$GITHUB_OUTPUT"
+              echo "SITE READY: http://$FQDN"
+              head -c 500 /tmp/site.html
+              echo
+              exit 0
+            fi
+            sleep 10
+          done
+
+          az container logs             --resource-group rg-flowed-ideos-lab             --name "${{ steps.context.outputs.site_name }}" || true
+          exit 1
+
+      - name: Final UX proof
+        run: |
+          echo "One Porter install command materialized a reachable Azure site."
+          echo "URL: ${{ steps.site.outputs.url }}"
