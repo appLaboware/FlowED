@@ -6,7 +6,7 @@ Status: **STAGED — repository-admin operations pending target-org access/tooli
 
 Frozen FlowED migration source SHA:
 
-`6e10ce30c92d4611e86f4b84c0ebbd0b4c80c47f`
+`b2fd952acc88e252c1c71c7827786e8cb111ad11`
 
 The canonical subtree import MUST use this SHA, not a later moving branch head.
 
@@ -69,8 +69,8 @@ License: MIT.
 Preferred method for the FlowED subtrees:
 
 ```text
-git subtree split --prefix=Tools/MYTRUES 6e10ce30c92d4611e86f4b84c0ebbd0b4c80c47f -b import/mytrues
-git subtree split --prefix=Tools/IDEOS 6e10ce30c92d4611e86f4b84c0ebbd0b4c80c47f -b import/ideos
+git subtree split --prefix=Tools/MYTRUES b2fd952acc88e252c1c71c7827786e8cb111ad11 -b import/mytrues
+git subtree split --prefix=Tools/IDEOS b2fd952acc88e252c1c71c7827786e8cb111ad11 -b import/ideos
 ```
 
 The resulting filtered branches preserve relevant FlowED commit history and are
@@ -307,3 +307,24 @@ Explicitly not promoted into EDT identity:
 See:
 - Tools/MYTRUES/docs/archaeology/EDT-001-TREE-ASSESSMENT.md
 - Tools/MYTRUES/docs/EDT-CCP-MYTRUES-BOUNDARY.md
+
+## Final VRMP forensic closure
+
+The frozen source includes the two requested strict original-chat audits:
+
+- VRMP-EDT 260901 01;
+- VRMP-MYTRUES 260901 01.
+
+Resolved conclusions:
+
+- Education-Driven Things was a real temporary human-created naming branch;
+- current canonical EDT remains Education-Driven Thinking;
+- subject-history vs Thing-history was a PM/PO working boundary, not proven
+  direct human thesis wording;
+- Experience is important but not established as the canonical primary MyTrues
+  entity;
+- decision-memory identity was not proven globally superseded;
+- MyTrues = Minhas Verdades is directly human-authored;
+- white-box/upstream composition preference is directly human-approved.
+
+Batch-003 forensic backlog is closed.
