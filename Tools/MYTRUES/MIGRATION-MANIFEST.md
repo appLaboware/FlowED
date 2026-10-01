@@ -6,7 +6,7 @@ Status: **STAGED — repository-admin operations pending target-org access/tooli
 
 Frozen FlowED migration source SHA:
 
-`b493a8883ae3cf0ec09c3997c2b39299a664376d`
+`d67d3e18ec0ac1f8bb363b25a9081b5239162ec4`
 
 The canonical subtree import MUST use this SHA, not a later moving branch head.
 
@@ -69,8 +69,8 @@ License: MIT.
 Preferred method for the FlowED subtrees:
 
 ```text
-git subtree split --prefix=Tools/MYTRUES b493a8883ae3cf0ec09c3997c2b39299a664376d -b import/mytrues
-git subtree split --prefix=Tools/IDEOS b493a8883ae3cf0ec09c3997c2b39299a664376d -b import/ideos
+git subtree split --prefix=Tools/MYTRUES d67d3e18ec0ac1f8bb363b25a9081b5239162ec4 -b import/mytrues
+git subtree split --prefix=Tools/IDEOS d67d3e18ec0ac1f8bb363b25a9081b5239162ec4 -b import/ideos
 ```
 
 The resulting filtered branches preserve relevant FlowED commit history and are
@@ -260,3 +260,24 @@ frozen:
 - VRMP-EDT 260901 01.
 
 These unresolved historical questions do not alter current v0.2 behavior.
+
+## EDT / CCP research boundary clarification
+
+The frozen source includes a current researcher clarification plus historical
+January/February-2025 EDT/CCP source pack.
+
+Current boundary:
+
+- EDT = Education-Driven Thinking;
+- EDT = conceptual/philosophical doctoral research thesis in engineering;
+- CCP = Caminho Cognitivo do Criador / Creator Cognitive Path, central concept;
+- MyTrues = technical instrument/reference implementation used to
+  operationalize/test CCP and potentially generate independent technical papers
+  or product opportunities.
+
+MyTrues technical novelty is not a prerequisite for EDT conceptual novelty.
+
+Education-Driven Things is non-canonical under current researcher orientation.
+
+The historical source pack is indexed without rewriting its earlier academic
+stage.
