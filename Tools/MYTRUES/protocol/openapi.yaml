@@ -1,19 +1,11 @@
 openapi: 3.1.0
 info:
   title: MyTrues Open Decision Protocol
-  version: 0.1.0
-  description: Open protocol for requesting operational decisions from interchangeable decision engines.
+  version: 0.2.0
 paths:
-  /v1/decisions/{decisionKey}:
+  /v1/decisions/resolve.failure:
     post:
-      operationId: decide
-      parameters:
-        - name: decisionKey
-          in: path
-          required: true
-          schema:
-            type: string
-            const: resolve.failure
+      operationId: requestFailureDecision
       requestBody:
         required: true
         content:
@@ -22,26 +14,68 @@ paths:
               $ref: ./schemas/decision-request.schema.json
       responses:
         "200":
-          description: Decision produced
+          description: Provider already has an applicable approved decision
           content:
             application/json:
               schema:
                 $ref: ./schemas/decision-response.schema.json
+        "202":
+          description: Execution must pause while this provider supplies a human decision
+          headers:
+            Location:
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/decision-pending.schema.json
         "400":
           description: Invalid request
           content:
             application/problem+json:
               schema:
                 $ref: ./schemas/problem.schema.json
-        "404":
-          description: No matching decision
+
+  /v1/decision-requests/{decisionRequestId}:
+    get:
+      operationId: getDecisionRequest
+      parameters:
+        - name: decisionRequestId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Human decision is available; caller may resume
           content:
-            application/problem+json:
+            application/json:
               schema:
-                $ref: ./schemas/problem.schema.json
-        "409":
-          description: Matching decision exists but execution constraints/guards reject it
+                $ref: ./schemas/decision-response.schema.json
+        "202":
+          description: Still awaiting provider decision
           content:
-            application/problem+json:
+            application/json:
               schema:
-                $ref: ./schemas/problem.schema.json
+                $ref: ./schemas/decision-pending.schema.json
+
+  /v1/provider/decision-requests/{decisionRequestId}/resolution:
+    post:
+      operationId: submitProviderResolution
+      description: Provider-side operation. Authentication/authorization is deployment-specific.
+      parameters:
+        - name: decisionRequestId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./schemas/provider-resolution.schema.json
+      responses:
+        "200":
+          description: Resolution stored in this provider's MyTrues and pending request resolved
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/decision-response.schema.json

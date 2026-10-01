@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mytrues.dev/protocol/0.1/schemas/decision-response.schema.json",
+  "$id": "https://mytrues.dev/protocol/0.2/schemas/decision-response.schema.json",
   "title": "MyTrues Decision Response",
   "type": "object",
   "additionalProperties": false,
@@ -8,6 +8,7 @@
     "protocol",
     "requestId",
     "status",
+    "provider",
     "decision",
     "selected",
     "guards",
@@ -24,65 +25,44 @@
     "status": {
       "const": "decided"
     },
-    "decision": {
+    "provider": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
         "id"
       ],
       "properties": {
         "id": {
-          "type": "string",
-          "minLength": 1
+          "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
+    },
+    "decision": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
     },
     "selected": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
         "action",
         "result"
       ],
+      "additionalProperties": false,
       "properties": {
         "action": {
-          "type": "string",
-          "minLength": 1
+          "type": "string"
         },
         "result": {
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "endpoint"
-          ],
-          "properties": {
-            "endpoint": {
-              "type": "object",
-              "additionalProperties": false,
-              "required": [
-                "type",
-                "value"
-              ],
-              "properties": {
-                "type": {
-                  "enum": [
-                    "hostname",
-                    "ip"
-                  ]
-                },
-                "value": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "scheme": {
-                  "enum": [
-                    "http",
-                    "https"
-                  ]
-                }
-              }
-            }
-          }
+          "additionalProperties": true
         }
       }
     },
@@ -90,7 +70,6 @@
       "type": "array",
       "items": {
         "type": "object",
-        "additionalProperties": false,
         "required": [
           "key",
           "satisfied"
@@ -102,7 +81,8 @@
           "satisfied": {
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false
       }
     },
     "notice": {
@@ -110,19 +90,20 @@
     },
     "meta": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
-        "engine",
-        "policyVersion"
+        "policyVersion",
+        "knowledgeRevision"
       ],
       "properties": {
-        "engine": {
-          "type": "string"
-        },
         "policyVersion": {
           "type": "string"
+        },
+        "knowledgeRevision": {
+          "type": "integer",
+          "minimum": 0
         }
-      }
+      },
+      "additionalProperties": false
     }
   }
 }

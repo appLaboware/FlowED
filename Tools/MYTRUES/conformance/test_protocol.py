@@ -1,87 +1,92 @@
 #!/usr/bin/env python3
-import json
-import time
-import urllib.request
-from pathlib import Path
+import json, time, urllib.request, urllib.error
 
-from jsonschema import validate
-
-ROOT = Path(__file__).resolve().parents[1]
-REQUEST = json.loads((ROOT / "protocol/examples/dns-failure.request.json").read_text())
-REQUEST_SCHEMA = json.loads((ROOT / "protocol/schemas/decision-request.schema.json").read_text())
-RESPONSE_SCHEMA = json.loads((ROOT / "protocol/schemas/decision-response.schema.json").read_text())
-
-validate(REQUEST, REQUEST_SCHEMA)
-
+A="http://127.0.0.1:18081"
+B="http://127.0.0.1:18082"
 
 def wait(url):
     for _ in range(60):
         try:
-            with urllib.request.urlopen(url + "/healthz", timeout=2) as r:
-                if r.status == 200:
-                    return
-        except Exception:
-            pass
-        time.sleep(1)
-    raise RuntimeError(f"service not ready: {url}")
+            if urllib.request.urlopen(url+"/healthz",timeout=2).status == 200: return
+        except Exception: time.sleep(1)
+    raise RuntimeError(url)
 
+def call(method,url,payload=None):
+    data=None if payload is None else json.dumps(payload).encode()
+    req=urllib.request.Request(url,data=data,method=method,headers={"Content-Type":"application/json"})
+    with urllib.request.urlopen(req,timeout=5) as r:
+        return r.status, dict(r.headers), json.load(r)
 
-def decide(url):
-    body = json.dumps(REQUEST).encode()
-    req = urllib.request.Request(
-        url + "/v1/decisions/resolve.failure",
-        data=body,
-        method="POST",
-        headers={
-            "Content-Type": "application/json",
-            "traceparent": "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01",
-        },
-    )
-    with urllib.request.urlopen(req, timeout=5) as r:
-        assert r.status == 200
-        assert r.headers.get("traceparent")
-        payload = json.load(r)
-        validate(payload, RESPONSE_SCHEMA)
-        return payload
+for u in (A,B): wait(u)
 
-
-def assert_common(x):
-    assert x["protocol"] == "mytrues.decision/v1"
-    assert x["requestId"] == REQUEST["requestId"]
-    assert x["status"] == "decided"
-    assert x["selected"]["action"] == "delivery.use_provider_endpoint"
-    assert x["guards"][0]["satisfied"] is True
-    assert x["notice"]
-    assert x["meta"]["engine"]
-
-
-for url in ("http://127.0.0.1:18081", "http://127.0.0.1:18082"):
-    wait(url)
-
-fqdn = decide("http://127.0.0.1:18081")
-ip = decide("http://127.0.0.1:18082")
-
-assert_common(fqdn)
-assert_common(ip)
-
-assert fqdn["selected"]["result"]["endpoint"] == {
-    "type": "hostname",
-    "value": REQUEST["context"]["azure_provider_fqdn"],
-    "scheme": "http",
+dns={
+ "protocol":"mytrues.decision/v1","requestId":"dns-1",
+ "subject":{"kind":"failure","code":"dns.requested_provider_credentials_missing"},
+ "context":{
+  "azure_provider_fqdn_available":True,
+  "azure_provider_fqdn":"site.example.brazilsouth.azurecontainer.io",
+  "azure_public_ip_available":True,
+  "azure_public_ip":"203.0.113.42"
+ }
 }
+sa,_,da=call("POST",A+"/v1/decisions/resolve.failure",dns)
+sb,_,db=call("POST",B+"/v1/decisions/resolve.failure",dns)
+assert sa==sb==200
+assert da["provider"]["id"]=="senior-a" and da["selected"]["result"]["endpoint"]["type"]=="hostname"
+assert db["provider"]["id"]=="senior-b" and db["selected"]["result"]["endpoint"]["type"]=="ip"
 
-assert ip["selected"]["result"]["endpoint"] == {
-    "type": "ip",
-    "value": REQUEST["context"]["azure_public_ip"],
-    "scheme": "http",
+unknown={
+ "protocol":"mytrues.decision/v1","requestId":"php-unknown-1",
+ "subject":{"kind":"failure","code":"runtime.php.extension_missing"},
+ "context":{
+  "runtime":"php","database":"mysql","missing_extension":"pdo_mysql",
+  "customer_domain":"private.customer.example",
+  "AZURE_CLIENT_ID":"real-client-id-must-not-leak",
+  "public_ip":"198.51.100.77"
+ }
 }
+pa,ha,pba=call("POST",A+"/v1/decisions/resolve.failure",unknown)
+pb,hb,pbb=call("POST",B+"/v1/decisions/resolve.failure",unknown)
+assert pa==pb==202
+serialized=json.dumps(pba)
+for forbidden in ("private.customer.example","real-client-id-must-not-leak","198.51.100.77"):
+    assert forbidden not in serialized
+assert pba["casePacket"]["abstractContext"]["runtime"]=="php"
+assert pba["casePacket"]["abstractContext"]["missing_extension"]=="pdo_mysql"
 
-assert fqdn["decision"]["id"] != ip["decision"]["id"]
-assert fqdn["meta"]["engine"] != ip["meta"]["engine"]
+resolution={
+ "decision":{
+  "id":"decision.php.install_pdo_mysql",
+  "action":"runtime.install_missing_extension",
+  "result":{"extension":"pdo_mysql","strategy":"install-and-retry"},
+  "guards":[{"key":"runtime_is_php"}],
+  "notice":"Provider senior-a approved installation of the missing PHP extension and retry."
+ }
+}
+drid=pba["decisionRequestId"]
+sr,_,resolved=call("POST",A+f"/v1/provider/decision-requests/{drid}/resolution",resolution)
+assert sr==200 and resolved["status"]=="decided"
+
+gr,_,after=call("GET",A+f"/v1/decision-requests/{drid}")
+assert gr==200 and after["decision"]["id"]=="decision.php.install_pdo_mysql"
+
+repeat,_,learned=call("POST",A+"/v1/decisions/resolve.failure",{**unknown,"requestId":"php-unknown-2"})
+assert repeat==200 and learned["decision"]["id"]=="decision.php.install_pdo_mysql"
+
+br,_,still=call("GET",B+pbb["statusUrl"])
+assert br==202 and still["status"]=="awaiting-provider-decision"
 
 print(json.dumps({
-    "protocol": "PASS",
-    "same_request": REQUEST["requestId"],
-    "mytrues_fqdn": fqdn,
-    "mytrues_ip": ip,
-}, indent=2))
+ "protocol":"PASS",
+ "provider_choice_changes_dns_outcome":{
+   "senior-a":da["selected"]["result"],
+   "senior-b":db["selected"]["result"]
+ },
+ "unknown_case":{
+   "senior-a_initial":"awaiting-provider-decision",
+   "senior-a_after_human":"decided",
+   "senior-a_future_same_case":"decided-immediately",
+   "senior-b":"still-awaiting-provider-decision"
+ },
+ "anonymization":"PASS"
+},indent=2))

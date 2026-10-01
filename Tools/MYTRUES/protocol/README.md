@@ -1,96 +1,69 @@
-# MyTrues Open Decision Protocol — draft 0.1
+# MyTrues Open Decision Protocol — draft 0.2
 
-## Objetivo
+## Modelo de interação
 
-Permitir que qualquer sistema consulte um serviço decisório sem conhecer:
+O cliente escolhe um **endpoint MyTrues de um fornecedor**.
 
-- banco de dados;
-- embeddings;
-- grafo;
-- heurísticas;
-- pesos;
-- modelo estatístico;
-- LLM;
-- algoritmo de ranking;
-- implementação MyTrues.
+### Caso conhecido
 
-## Operação síncrona mínima
+`POST /v1/decisions/resolve.failure`
 
-`POST /v1/decisions/{decision-key}`
+Retorna `200 decided`.
 
-Para o protótipo:
+### Caso desconhecido
 
-`decision-key = resolve.failure`
+O mesmo POST retorna:
 
-## Semântica adotada de DMN
+`202 awaiting-provider-decision`
 
-O protocolo usa os conceitos de:
+com:
 
-- decision service;
-- inputs;
-- context;
-- decision output.
+- `decisionRequestId`;
+- `statusUrl`;
+- identidade pública do provedor;
+- `casePacket` anonimizado;
+- estado do pedido.
 
-Ele NÃO exige que o engine interno seja DMN nem que exponha tabelas/regras DMN.
+A execução chamadora deve persistir seu checkpoint e aguardar.
 
-## Request
+### Resolução humana
 
-Um request contém:
+O fornecedor resolve o caso num sandbox sintético e registra:
 
-- `protocol`: versão do protocolo;
-- `requestId`: identidade idempotente/correlacionável;
-- `subject`: aquilo sobre o qual se decide;
-- `context`: fatos disponíveis;
-- `constraints`: limites impostos pelo chamador.
+`POST /v1/provider/decision-requests/{id}/resolution`
 
-O cliente pode enviar `traceparent` e `tracestate` conforme W3C Trace Context.
+A decisão passa a pertencer ao MyTrues **daquele fornecedor**.
 
-## Response
+### Retomada
 
-Uma decisão bem sucedida informa:
+O cliente pode:
 
-- decisão selecionada;
-- ação semântica;
-- resultado proposto;
-- guardas que foram satisfeitas;
-- aviso que deve ser apresentado ao usuário;
-- versão opaca do engine/policy.
+- consultar `GET /v1/decision-requests/{id}`; ou
+- receber futuramente `mytrues.decision.resolved` via CloudEvents.
 
-O response **não precisa explicar o algoritmo de ranking**.
+Quando o estado se torna `decided`, o processo retoma do checkpoint.
 
-## Erros
+## Privacidade do caso
 
-Falhas do protocolo usam `application/problem+json` conforme RFC 9457.
+O pacote enviado ao fornecedor MUST NOT carregar secrets ou identificadores reais
+necessários apenas à execução do cliente.
+
+A implementação deve transformar o incidente em um caso técnico genérico.
 
 Exemplos:
 
-- decisão desconhecida;
-- contexto insuficiente;
-- nenhuma decisão aprovada;
-- guardas não satisfeitas;
-- engine indisponível.
+- domínio real -> `<domain>`;
+- IP real -> `<ip>`;
+- secret/token -> `<redacted>`;
+- IDs de conta/subscription -> `<id>`.
 
-## Eventos opcionais
+Valores técnicos necessários ao raciocínio podem ser preservados, por exemplo
+`runtime=php`, `database=mysql`, `missing_extension=pdo_mysql`.
 
-Eventos como:
+O sandbox usa dados sintéticos/reservados.
 
-- decision.requested;
-- decision.made;
-- decision.executed;
-- decision.outcome.observed;
+## Semântica
 
-podem ser emitidos em CloudEvents 1.0.
+`202` não representa falha terminal. Representa uma decisão ainda não disponível.
 
-## Regra de interoperabilidade
-
-Um cliente CONFORME não pode depender de:
-
-- nome do banco;
-- Neo4j;
-- tamanho/dimensão de embedding;
-- algoritmo de similaridade;
-- pesos/ranking;
-- fornecedor de LLM;
-- implementação do engine.
-
-Esses elementos são privados do decisor.
+Um MyTrues conforme nunca fabrica uma ação apenas para evitar a pausa.

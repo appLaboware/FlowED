@@ -1,41 +1,51 @@
-# Algorithm boundary
+# Algorithm and ownership boundary
+
+## Correção de modelo
+
+O diferencial não é apenas trocar um engine dentro de uma instância global.
+
+Cada técnico/equipe/fornecedor possui **seu próprio MyTrues**:
+
+- memória isolada;
+- decisões próprias;
+- histórico próprio;
+- algoritmo próprio;
+- reputação/qualidade futura própria.
+
+O cliente escolhe o fornecedor MyTrues.
 
 ## Público
 
-São parte do protocolo aberto:
+- protocolo;
+- schemas;
+- lifecycle pending/decided;
+- case packet anonimizado;
+- submissão de resolução;
+- conformance;
+- eventos/tracing.
 
-- endpoint e métodos;
-- schemas de request/response;
-- problem details;
-- códigos e namespaces públicos necessários à interoperabilidade;
-- semântica de guardas/resultados;
-- conformance suite;
-- tracing/event envelope.
+## Privado do fornecedor
 
-## Privado/substituível
-
-Não são necessários para interoperar e podem compor o diferencial proprietário:
-
-- geração de candidatos;
-- recuperação semântica;
-- embeddings;
-- estrutura física de memória;
-- estratégia de grafo;
+- conteúdo da memória decisória;
 - ranking;
+- embeddings;
 - pesos;
-- confiança/calibração;
-- desempate;
-- fusão de evidências;
-- exploração x conservação;
-- aprendizagem a partir de outcomes;
-- seleção de quando pedir revisão humana;
-- modelos estatísticos/LLMs;
-- políticas internas de promoção/rebaixamento de casos.
+- heurísticas;
+- políticas de aprovação;
+- algoritmo;
+- estatísticas internas;
+- procedimentos/sandbox utilizados para chegar à decisão.
 
-A resposta pública pode identificar uma versão opaca do engine/policy para auditoria,
-sem publicar como ela funciona.
+## Regra humana
 
-## Regra
+Caso desconhecido MUST NOT ser auto-promovido a verdade operacional.
 
-A implementação fechada deve poder ser trocada por outra implementação CONFORME sem
-exigir alteração no cliente.
+A referência é:
+
+retrieve known -> decide
+
+ou, se desconhecido:
+
+pause -> sanitize -> human sandbox -> explicit resolution -> retain in provider memory -> resume
+
+Uma LLM MAY auxiliar o humano, mas não substitui a aprovação do fornecedor.

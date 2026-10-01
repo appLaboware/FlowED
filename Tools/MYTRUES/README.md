@@ -1,72 +1,77 @@
 # MyTrues
 
-MyTrues é um ensaio de um produto geral de **decisão operacional assistida por memória**.
+MyTrues é um ensaio de um produto geral de **memória decisória de um fornecedor humano**.
 
-A fronteira do produto é deliberada:
+## Unidade de confiança
 
-- **protocolo aberto**: qualquer projeto pode solicitar e consumir decisões sem depender da implementação MyTrues;
-- **engine substituível**: o algoritmo que recupera, organiza, ranqueia e escolhe decisões fica atrás de uma porta interna;
-- **execução fora do MyTrues**: MyTrues decide; o chamador continua responsável por executar a ação e reportar o resultado.
+Um MyTrues pertence a um técnico, equipe ou fornecedor.
 
-## Origem
+O cliente escolhe **qual MyTrues consultar**. Essa escolha pode mudar o processo e o
+resultado materializado porque cada fornecedor mantém:
 
-O protótipo foi promovido a partir do experimento
-`Tools/IDEOS/experiments/EXP-007-decision-memory`.
+- sua própria memória de casos;
+- suas próprias decisões aprovadas;
+- sua própria experiência acumulada;
+- seu próprio algoritmo de recuperação/ranking;
+- seu próprio histórico de outcomes.
 
-O EXP-007 permanece como evidência histórica do primeiro ciclo validado:
+Dois MyTrues podem falar o mesmo protocolo e decidir de formas diferentes.
 
-`failure -> expose -> retrieve -> guard -> decide -> adapt -> continue -> verify -> retain`
+## Regra central
 
-## Fronteira pública x proprietária
+MyTrues NÃO inventa uma decisão quando não possui uma solução aprovada.
+
+Fluxo:
 
 ```
-project
-   |
-   | MyTrues Open Decision Protocol
-   v
-+---------------------------+
-| MyTrues Decision Service  |
-|                           |
-| protocol adapter          |  <- aberto
-| conformance               |  <- aberto
-| DecisionEngine port       |  <- aberta a interface
-|        |                  |
-|        v                  |
-| proprietary engine        |  <- substituível / não faz parte do protocolo
-|        |                  |
-| decision memory adapter   |
-+---------------------------+
+intent
+  -> execution
+  -> known problem?
+       yes -> provider MyTrues decides -> resume
+       no  -> PAUSE
+              -> sanitize/generalize case
+              -> awaiting-provider-decision
+              -> senior solves synthetic sandbox case
+              -> decision is stored in THAT provider's MyTrues
+              -> pending request becomes decided
+              -> execution resumes
 ```
 
-A implementação em `reference/` existe somente para testar o protocolo.
-Os engines de exemplo são fixtures transparentes de conformidade e NÃO representam
-o futuro algoritmo proprietário do produto.
+O protagonismo é do humano sênior. LLMs podem pesquisar, organizar ou sugerir,
+mas uma sugestão não vira automaticamente verdade operacional.
 
-## Dois MyTrues, mesmo protocolo
+## Protocolo aberto; inteligência privada
 
-O laboratório sobe duas instâncias que recebem **a mesma requisição**:
+Aberto:
 
-- `mytrues-fqdn`: prefere devolver o hostname fornecido pela Azure;
-- `mytrues-ip`: prefere devolver o IP público da mesma aplicação.
+- HTTP/OpenAPI;
+- request/response;
+- estado pending/decided;
+- pacote de caso anonimizado;
+- submissão de resolução;
+- tracing;
+- eventos;
+- conformance.
 
-O cliente não muda.
+Privado por provedor:
 
-Somente o engine atrás da porta muda.
-
-Isso demonstra a propriedade central:
-
-> o protocolo define como pedir e receber uma decisão; o algoritmo define qual decisão é melhor.
+- memória;
+- casos;
+- ranking;
+- pesos;
+- embeddings;
+- grafo físico;
+- heurísticas;
+- aprendizagem;
+- algoritmo que escolhe entre decisões aprovadas.
 
 ## Padrões adotados
 
-MyTrues não cria do zero aquilo que já possui padrão maduro:
+- OMG DMN 1.5: vocabulário de decisão;
+- BPMN 2.0.2: semântica de pausa/espera por mensagem humana;
+- OpenAPI 3.1: API síncrona;
+- RFC 9457: problemas HTTP;
+- W3C Trace Context: correlação;
+- CloudEvents + AsyncAPI: notificação assíncrona opcional.
 
-- OMG DMN 1.5 — vocabulário e conceitos de decisão/decision service;
-- HTTP + JSON;
-- OpenAPI 3.1 — contrato de API;
-- RFC 9457 — erros HTTP estruturados;
-- W3C Trace Context — correlação distribuída;
-- CloudEvents 1.0 — eventos assíncronos opcionais.
-
-O protocolo MyTrues é uma composição pequena desses padrões para o caso operacional
-de decisão, não uma substituição deles.
+O protocolo compõe padrões existentes; não tenta substituí-los.
