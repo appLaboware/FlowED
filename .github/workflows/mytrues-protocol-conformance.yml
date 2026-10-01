@@ -56,13 +56,6 @@ jobs:
           print("PROPRIETARY CORE REQUIRED: NO")
           PY
 
-      - name: Upload conformance evidence
-        uses: actions/upload-artifact@v4
-        with:
-          name: mytrues-conformance-v0.2
-          path: /tmp/mytrues-conformance-v0.2.json
-          if-no-files-found: error
-
       - name: Shutdown
         if: always()
         working-directory: repo/Tools/MYTRUES
