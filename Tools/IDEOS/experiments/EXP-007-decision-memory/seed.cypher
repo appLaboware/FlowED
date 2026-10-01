@@ -29,7 +29,7 @@ MERGE (s3:Evidence {id:'ms-graphrag'})
 SET s3.kind='research-implementation',
     s3.title='Microsoft GraphRAG',
     s3.url='https://github.com/microsoft/graphrag',
-    s3.note='Knowledge graph retrieval inspiration only; not execution authority';
+    s3.note='Knowledge graph retrieval inspiration only - not execution authority';
 
 MERGE (f1:Failure {code:'azure.credentials.separate_missing'})
 SET f1.description='Preferred split Azure repository secrets are absent while a legacy aggregate AZURE secret may exist',
