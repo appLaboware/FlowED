@@ -51,13 +51,13 @@ repositories to GitHub archived/read-only state.
 
 | Repository | Visibility | Purpose |
 |---|---|---|
-| `mytrues` | public | open decision-memory protocol, ports, conformance, reference implementation |
-| `ccp` | public | Creator Cognitive Path conceptual model/specification, provenance and projections |
+| `mytrues` | private pre-release | open decision-memory protocol, ports, conformance, reference implementation |
+| `ccp` | private pre-release | Creator Cognitive Path conceptual model/specification, provenance and projections |
 | `edt` | private initially | Education-Driven Thinking doctoral research workspace |
-| `research` | public | frontier map, benchmarks, experiments, replication, paper opportunities |
-| `registry` | public | open plugin/engine/adapter manifest registry and conformance metadata |
-| `ideos` | public | independent open DevOps-intent product/reference MyTrues client |
-| `site` | public | public docs/site |
+| `research` | private pre-release | frontier map, benchmarks, experiments, replication, paper opportunities |
+| `registry` | private pre-release | open plugin/engine/adapter manifest registry and conformance metadata |
+| `ideos` | private pre-release | independent open DevOps-intent product/reference MyTrues client |
+| `site` | private pre-release | public docs/site |
 | `mytrues-enterprise` | private | closed commercial extensions implementing open MyTrues contracts |
 
 Canonical topology rationale:
@@ -191,7 +191,22 @@ pre-canonical implementation family.
 
 Import the `Tools/IDEOS` subtree from the frozen FlowED source.
 
-## 7. Licensing north
+## 7. Private-first release and licensing policy
+
+All definitive repositories stay PRIVATE during migration, qualification and content preparation.
+
+Repositories intended for later public release are marked `planned-public`, but that label grants no public license.
+
+Before public release:
+- audit secrets/private data;
+- audit third-party licenses;
+- decide exact code/content/data licenses;
+- add publication/release notice;
+- explicitly change GitHub visibility.
+
+For original unpublished material, a restricted pre-release notice may be used. It must not revoke rights already granted under earlier licenses or alter third-party licenses.
+
+## 8. Licensing north
 
 ### Product/open code
 
@@ -225,7 +240,7 @@ Published artifacts get explicit scholarly licensing individually.
 
 Private/proprietary by default.
 
-## 8. Frontier/reference gate
+## 9. Frontier/reference gate
 
 Before claiming technical/scientific novelty, compare as applicable against the
 current suite including:
@@ -250,7 +265,7 @@ current suite including:
 
 See the frozen frontier file for exact references and intended test use.
 
-## 9. Completion evidence
+## 10. Completion evidence
 
 The reorganization is complete only after recording:
 
@@ -284,7 +299,7 @@ For all eight definitive repositories:
 - IDEOS -> MyTrues compatibility run;
 - real immutable MyTrues SHA in IDEOS upstream lock.
 
-## 10. Execution runbook
+## 11. Execution runbook
 
 Use:
 
