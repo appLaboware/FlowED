@@ -936,3 +936,47 @@ It is closer to:
 preference evidence is interpreted by heterogeneous decision engines over time?`
 
 This remains a research question, not a novelty claim.
+
+
+## Interoperability research correction
+
+A further literature pass confirms that semantic/profile interoperability itself
+is also longstanding research.
+
+Relevant examples include:
+
+- W3C CC/PP for extensible user preference/capability profiles;
+- research on sharing/reusing heterogeneous user models through semantic
+  alignment;
+- federated interoperability frameworks for heterogeneous Systems of Systems,
+  emphasizing autonomy, semantic mediation, composable/interchangeable
+  components and open evolution.
+
+Therefore none of the following is an adequate standalone novelty claim:
+
+- a portable profile;
+- profile exchange across applications;
+- semantic mediation between heterogeneous systems;
+- a federated plugin architecture;
+- independently replaceable interoperability components.
+
+The candidate scientific residual must remain specifically tied to **decision
+behavior**:
+
+```text
+same portable preference evidence
++ same decision context/evidence snapshot
++ different DecisionEngine families
+        ↓
+measure:
+  semantic coverage
+  mapping loss
+  behavioral preservation/divergence
+  constraint violations
+  abstention behavior
+  replayability
+  provenance completeness
+```
+
+Even this is only a research question until a systematic review demonstrates
+that it is not already adequately addressed.
