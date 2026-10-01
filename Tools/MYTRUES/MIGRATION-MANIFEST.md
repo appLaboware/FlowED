@@ -6,7 +6,7 @@ Status: **STAGED — repository-admin operations pending target-org access/tooli
 
 Frozen FlowED migration source SHA:
 
-`0352d0013aefcd7edf45dfaa0b61ef640f0f59fa`
+`b493a8883ae3cf0ec09c3997c2b39299a664376d`
 
 The canonical subtree import MUST use this SHA, not a later moving branch head.
 
@@ -69,8 +69,8 @@ License: MIT.
 Preferred method for the FlowED subtrees:
 
 ```text
-git subtree split --prefix=Tools/MYTRUES 0352d0013aefcd7edf45dfaa0b61ef640f0f59fa -b import/mytrues
-git subtree split --prefix=Tools/IDEOS 0352d0013aefcd7edf45dfaa0b61ef640f0f59fa -b import/ideos
+git subtree split --prefix=Tools/MYTRUES b493a8883ae3cf0ec09c3997c2b39299a664376d -b import/mytrues
+git subtree split --prefix=Tools/IDEOS b493a8883ae3cf0ec09c3997c2b39299a664376d -b import/ideos
 ```
 
 The resulting filtered branches preserve relevant FlowED commit history and are
@@ -238,3 +238,25 @@ Result:
 - PAUSE/SANITIZE/RESOLVE remains current executable behavior.
 
 No v0.2 schema or runtime change follows from this forensic result.
+
+## Chat extraction archaeology batch 003
+
+The frozen source includes the final uploaded chat-extraction batch:
+
+- exact-byte SHA-256 inventory for nine additional reports;
+- Cognit.me / InitProj extraction kept upstream of MyTrues ingestion;
+- RAG characterization retained only as ungrounded incidental history;
+- CCP de Partida / Fundação Epistêmica as a research-governance candidate;
+- subject-history versus Thing-history EDT/MyTrues boundary candidate;
+- global Experience-first question reopened by a different source without
+  changing the v0.2 baseline;
+- unresolved EDT expansion conflict:
+  Education-Driven Thinking vs Education-Driven Things.
+
+Two original-chat forensic follow-ups remain before global genealogy is fully
+frozen:
+
+- VRMP-MYTRUES 260901 01;
+- VRMP-EDT 260901 01.
+
+These unresolved historical questions do not alter current v0.2 behavior.
