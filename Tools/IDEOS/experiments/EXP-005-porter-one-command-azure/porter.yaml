@@ -1,0 +1,155 @@
+schemaType: Bundle
+schemaVersion: 1.0.1
+name: porter-one-command-azure-site
+version: 0.1.0
+description: "Materialize a public HTTP site on Azure from one Porter command"
+registry: localhost:5000
+
+mixins:
+  - az
+
+credentials:
+  - name: azure-client-id
+    env: AZURE_CLIENT_ID
+  - name: azure-tenant-id
+    env: AZURE_TENANT_ID
+  - name: azure-subscription-id
+    env: AZURE_SUBSCRIPTION_ID
+  - name: azure-federated-token
+    env: AZURE_FEDERATED_TOKEN
+
+parameters:
+  - name: site_name
+    type: string
+    description: Public site/container name
+  - name: resource_group
+    type: string
+    default: rg-flowed-ideos-lab
+  - name: location
+    type: string
+    default: brazilsouth
+  - name: image
+    type: string
+    default: mcr.microsoft.com/azuredocs/aci-helloworld:latest
+
+outputs:
+  - name: fqdn
+    type: string
+    applyTo:
+      - install
+      - upgrade
+
+install:
+  - az:
+      description: "Authenticate to Azure using GitHub federated identity"
+      arguments:
+        - login
+      flags:
+        service-principal:
+        username: ${ bundle.credentials.azure-client-id }
+        tenant: ${ bundle.credentials.azure-tenant-id }
+        federated-token: ${ bundle.credentials.azure-federated-token }
+        allow-no-subscriptions:
+      suppress-output: true
+
+  - az:
+      description: "Select Azure subscription"
+      arguments:
+        - account
+        - set
+      flags:
+        subscription: ${ bundle.credentials.azure-subscription-id }
+
+  - az:
+      description: "Materialize public HTTP site"
+      arguments:
+        - container
+        - create
+      flags:
+        resource-group: ${ bundle.parameters.resource_group }
+        name: ${ bundle.parameters.site_name }
+        location: ${ bundle.parameters.location }
+        image: ${ bundle.parameters.image }
+        os-type: Linux
+        cpu: 1
+        memory: 1
+        ports: 80
+        ip-address: Public
+        dns-name-label: ${ bundle.parameters.site_name }
+        restart-policy: Always
+      outputs:
+        - name: fqdn
+          jsonPath: $.ipAddress.fqdn
+
+upgrade:
+  - az:
+      description: "Authenticate to Azure using GitHub federated identity"
+      arguments:
+        - login
+      flags:
+        service-principal:
+        username: ${ bundle.credentials.azure-client-id }
+        tenant: ${ bundle.credentials.azure-tenant-id }
+        federated-token: ${ bundle.credentials.azure-federated-token }
+        allow-no-subscriptions:
+      suppress-output: true
+
+  - az:
+      description: "Select Azure subscription"
+      arguments:
+        - account
+        - set
+      flags:
+        subscription: ${ bundle.credentials.azure-subscription-id }
+
+  - az:
+      description: "Re-materialize public HTTP site"
+      arguments:
+        - container
+        - create
+      flags:
+        resource-group: ${ bundle.parameters.resource_group }
+        name: ${ bundle.parameters.site_name }
+        location: ${ bundle.parameters.location }
+        image: ${ bundle.parameters.image }
+        os-type: Linux
+        cpu: 1
+        memory: 1
+        ports: 80
+        ip-address: Public
+        dns-name-label: ${ bundle.parameters.site_name }
+        restart-policy: Always
+      outputs:
+        - name: fqdn
+          jsonPath: $.ipAddress.fqdn
+
+uninstall:
+  - az:
+      description: "Authenticate to Azure using GitHub federated identity"
+      arguments:
+        - login
+      flags:
+        service-principal:
+        username: ${ bundle.credentials.azure-client-id }
+        tenant: ${ bundle.credentials.azure-tenant-id }
+        federated-token: ${ bundle.credentials.azure-federated-token }
+        allow-no-subscriptions:
+      suppress-output: true
+
+  - az:
+      description: "Select Azure subscription"
+      arguments:
+        - account
+        - set
+      flags:
+        subscription: ${ bundle.credentials.azure-subscription-id }
+
+  - az:
+      description: "Destroy public HTTP site"
+      arguments:
+        - container
+        - delete
+      flags:
+        resource-group: ${ bundle.parameters.resource_group }
+        name: ${ bundle.parameters.site_name }
+        yes:
