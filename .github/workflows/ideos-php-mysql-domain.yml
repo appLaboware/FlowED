@@ -25,6 +25,8 @@ env:
   AZURE_TENANT_ID_SECRET: ${{ secrets.AZURE_TENANT_ID }}
   AZURE_SUBSCRIPTION_ID_SECRET: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   CLOUDFLARE_BUNDLE: ${{ secrets.CLOUDFLARE }}
+  CF_DNS_EDIT_SECRET: ${{ secrets.CF_DNS_EDIT }}
+  CF_ZONE_READ_SECRET: ${{ secrets.CF_ZONE_READ }}
 
 jobs:
   one-command:
@@ -66,14 +68,18 @@ jobs:
           test -n "$AZURE_TENANT_ID" || { echo "AZURE_TENANT_ID is unavailable." >&2; exit 1; }
           test -n "$AZURE_SUBSCRIPTION_ID" || { echo "AZURE_SUBSCRIPTION_ID is unavailable." >&2; exit 1; }
 
-          test -n "$CLOUDFLARE_BUNDLE" || {
-            echo "Repository secret CLOUDFLARE is missing." >&2
-            echo "Expected two lines: CF_DNS_EDIT=... and CF_ZONE_READ=..." >&2
-            exit 1
-          }
+          CF_DNS_EDIT="$CF_DNS_EDIT_SECRET"
+          CF_ZONE_READ="$CF_ZONE_READ_SECRET"
+          CF_SOURCE="separate repository secrets"
 
-          CF_DNS_EDIT="$(get_value "$CLOUDFLARE_BUNDLE" CF_DNS_EDIT)"
-          CF_ZONE_READ="$(get_value "$CLOUDFLARE_BUNDLE" CF_ZONE_READ)"
+          if [ -z "$CF_DNS_EDIT" ] || [ -z "$CF_ZONE_READ" ]; then
+            CF_SOURCE="legacy CLOUDFLARE bundle secret"
+            CF_DNS_EDIT="${CF_DNS_EDIT:-$(get_value "$CLOUDFLARE_BUNDLE" CF_DNS_EDIT)}"
+            CF_ZONE_READ="${CF_ZONE_READ:-$(get_value "$CLOUDFLARE_BUNDLE" CF_ZONE_READ)}"
+          fi
+
+          test -n "$CF_DNS_EDIT" || { echo "CF_DNS_EDIT is unavailable." >&2; exit 1; }
+          test -n "$CF_ZONE_READ" || { echo "CF_ZONE_READ is unavailable." >&2; exit 1; }
 
           for value in "$AZURE_CLIENT_ID" "$AZURE_TENANT_ID" "$AZURE_SUBSCRIPTION_ID" "$CF_DNS_EDIT" "$CF_ZONE_READ"; do
             test -n "$value"
@@ -99,6 +105,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
           echo "Azure credentials resolved from: $AZURE_SOURCE"
+          echo "Cloudflare credentials resolved from: $CF_SOURCE"
           echo "Intent: deploy generic PHP+MySQL application at http://$DOMAIN"
 
       - name: Request GitHub OIDC token
