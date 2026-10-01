@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   azure-auth:
@@ -18,13 +19,45 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Login to Azure using repository secret AZURE
+      - name: Read Azure identifiers from repository secret
+        id: azure
+        shell: bash
+        env:
+          AZURE_RAW: ${{ secrets.AZURE }}
+        run: |
+          set -euo pipefail
+
+          extract() {
+            local key="$1"
+            printf '%s\n' "$AZURE_RAW" |
+              sed -nE "s/^[[:space:]]*$key[[:space:]]*[:=][[:space:]]*(.*)[[:space:]]*$/\\1/p" |
+              tail -n 1
+          }
+
+          CLIENT_ID="$(extract AZURE_CLIENT_ID)"
+          TENANT_ID="$(extract AZURE_TENANT_ID)"
+          SUBSCRIPTION_ID="$(extract AZURE_SUBSCRIPTION_ID)"
+
+          test -n "$CLIENT_ID" || { echo "AZURE_CLIENT_ID not found in secret AZURE" >&2; exit 1; }
+          test -n "$TENANT_ID" || { echo "AZURE_TENANT_ID not found in secret AZURE" >&2; exit 1; }
+          test -n "$SUBSCRIPTION_ID" || { echo "AZURE_SUBSCRIPTION_ID not found in secret AZURE" >&2; exit 1; }
+
+          echo "::add-mask::$CLIENT_ID"
+          echo "::add-mask::$TENANT_ID"
+          echo "::add-mask::$SUBSCRIPTION_ID"
+
+          echo "client_id=$CLIENT_ID" >> "$GITHUB_OUTPUT"
+          echo "tenant_id=$TENANT_ID" >> "$GITHUB_OUTPUT"
+          echo "subscription_id=$SUBSCRIPTION_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Login to Azure with OIDC
         uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE }}
+          client-id: ${{ steps.azure.outputs.client_id }}
+          tenant-id: ${{ steps.azure.outputs.tenant_id }}
+          subscription-id: ${{ steps.azure.outputs.subscription_id }}
 
       - name: Verify Azure identity
         run: |
