@@ -140,6 +140,35 @@ def init_db():
             ),
         )
 
+        quota_fallback_region = "eastus" if PROFILE == "fqdn" else "westus2"
+        quota_seed = {
+            "id": "decision.azure.retry_alternate_region",
+            "action": "placement.retry_alternate_region",
+            "result": {
+                "strategy": "retry-alternate-region",
+                "location": quota_fallback_region,
+            },
+            "guards": [
+                {"key": "alternate_region_allowed", "satisfied": True}
+            ],
+            "notice": (
+                "The requested Azure region has no remaining ACI Standard Core quota; "
+                f"this provider approved a non-destructive retry in {quota_fallback_region}."
+            ),
+        }
+
+        db.execute(
+            """
+            INSERT OR IGNORE INTO decisions(failure_code,decision_json,source)
+            VALUES(?,?,?)
+            """,
+            (
+                "azure.aci.standard_cores_quota_exceeded",
+                json.dumps(quota_seed),
+                "open-known-case",
+            ),
+        )
+
 
 def knowledge_revision():
     with connect() as db:
