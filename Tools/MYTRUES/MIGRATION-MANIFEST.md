@@ -6,7 +6,7 @@ Status: **STAGED — repository-admin operations pending target-org access/tooli
 
 Frozen FlowED migration source SHA:
 
-`65ea6ab7e81d0b4f8d664a6c4dfe663f2570777a`
+`4e6353a2611ae00f4da4b05c35de32a322b2753f`
 
 The canonical subtree import MUST use this SHA, not a later moving branch head.
 
@@ -69,8 +69,8 @@ License: MIT.
 Preferred method for the FlowED subtrees:
 
 ```text
-git subtree split --prefix=Tools/MYTRUES 65ea6ab7e81d0b4f8d664a6c4dfe663f2570777a -b import/mytrues
-git subtree split --prefix=Tools/IDEOS 65ea6ab7e81d0b4f8d664a6c4dfe663f2570777a -b import/ideos
+git subtree split --prefix=Tools/MYTRUES 4e6353a2611ae00f4da4b05c35de32a322b2753f -b import/mytrues
+git subtree split --prefix=Tools/IDEOS 4e6353a2611ae00f4da4b05c35de32a322b2753f -b import/ideos
 ```
 
 The resulting filtered branches preserve relevant FlowED commit history and are
@@ -188,3 +188,21 @@ The frozen source also includes the 2026-10-01 architecture/research update that
 
 These are target-design/research inputs. They do not silently modify the
 executable v0.2 failure profile and do not authorize a proprietary engine.
+
+## Chat extraction archaeology batch 001
+
+The frozen source also includes the first chat-extraction provenance triage:
+
+- source-confidence classification for 12 conversation-derived reports;
+- OMGDiary/MyTrues two-axis historical origin;
+- historical TrueEngine nomenclature;
+- early local-decision-before-generic-LLM semantics;
+- independent CCP technical evidence including `Raw log is not CCP`;
+- candidate multi-time epistemic model;
+- chronology/causality separation;
+- defeated-path memory hypothesis;
+- KNOWING versus SAYING boundary;
+- reinforcement that MyTrues Discovery remains a separate historical branch.
+
+These findings are archaeology/research inputs. They do not modify v0.2
+conformance or authorize new runtime behavior.
