@@ -246,3 +246,54 @@ Candidate metrics include:
 
 A useful result may be that no universal cross-engine semantic mapping is
 possible. Negative results are valid frontier evidence.
+
+
+## Experience-first branch gate
+
+A batch-002 conversation reconstruction introduces a broader research branch in
+which `Experience` is the primary conceptual unit and Decision is one derived
+epistemic/operational object.
+
+This branch MUST NOT silently redefine the current MyTrues Open Decision
+Protocol.
+
+Before any promotion, perform two separate gates.
+
+### Gate A — provenance / PO intent
+
+Recover the original chat and determine whether the PO explicitly approved:
+
+- `Experience` as the primary MyTrues conceptual unit;
+- `MyTrues is the SQL of experience`;
+- decision memory being superseded by broader experiential memory;
+- user-owned memory taking precedence over provider-scoped memory.
+
+Assistant synthesis alone is insufficient.
+
+### Gate B — prior art / science
+
+If Gate A confirms the branch as intentional, compare it against at least:
+
+- Case-Based Reasoning and case retention/reuse;
+- episodic/semantic agent memory;
+- Truth Maintenance / Assumption-Based TMS;
+- AGM/belief revision;
+- defeasible and structured argumentation;
+- temporal/provenance models;
+- planning/search experience reuse;
+- knowledge compilation / memoization;
+- automated algorithm configuration;
+- cognitive architectures and spreading activation where relevant.
+
+Candidate research questions include:
+
+- whether defeated paths reduce repeated deliberation under context equivalence;
+- how to represent `KNOWN / CONSIDERED / INFLUENCED` without causal overclaim;
+- how to preserve current and historical positions under AS-KNOWN-THEN;
+- whether provider-replaceable user-owned memory can preserve authority and
+  isolation simultaneously;
+- whether retrieval/activation can be cleanly separated from epistemic support;
+- whether a Decision Cell adds measurable value over established design-rationale
+  and provenance representations.
+
+No novelty claim follows merely from naming these concepts.
