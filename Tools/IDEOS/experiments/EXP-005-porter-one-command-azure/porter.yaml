@@ -4,6 +4,7 @@ name: porter-one-command-azure-site
 version: 0.1.0
 description: "Materialize a public HTTP site on Azure from one Porter command"
 registry: localhost:5000
+dockerfile: template.Dockerfile
 
 mixins:
   - az
