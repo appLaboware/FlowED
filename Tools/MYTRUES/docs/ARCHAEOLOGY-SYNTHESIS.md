@@ -484,3 +484,159 @@ Checksums prove byte integrity, not scientific or schema correctness.
 Preserved qualification:
 
 `research/external-runs/GROK-MYTRUES-COGNITIVE-DISCOVERY-001-QUALIFICATION.md`
+
+
+## Conversation reconstruction additions
+
+Four user-supplied reconstructions of earlier conversations were reviewed on
+2026-10-01.
+
+They are secondary archaeology sources, not primary specifications.
+
+Exact uploaded-byte identities are recorded under:
+
+`docs/archaeology/conversation-reconstructions/`
+
+### 20. No Retroactive Cognition
+
+One reconstruction recovers the explicit phrase:
+
+`NO RETROACTIVE COGNITION`
+
+This is consistent with the temporal/provenance direction and has now been
+promoted into `CCP-RECORD.md` as a documentary invariant:
+
+- preserve what was known/considered at the time;
+- later evidence creates reevaluation/supersession;
+- do not rewrite historical cognition as if later knowledge had existed earlier.
+
+### 21. CCP-as-source -> Views-as-build
+
+The reconstructions recover a strong documentation model:
+
+`CCP-as-source -> Views-as-build`
+
+with candidate views such as:
+
+- NORM — current normative/consolidated view;
+- WHY — rationale;
+- TRACE — provenance/history;
+- ADR — interoperability view;
+- onboarding/risk/policy/timeline/graph views.
+
+They also distinguish:
+
+- Tier 0 — deterministic;
+- Tier 1 — deterministic template;
+- Tier 2 — LLM-assisted narrative.
+
+This is a useful candidate model for derived documentation because it avoids
+calling unconstrained generation a deterministic compilation.
+
+It remains a design candidate until view contracts are specified and tested.
+
+### 22. AKU / Digital Neuron is a historical representation hypothesis
+
+The VRAMPP reconstruction links:
+
+`Atomic Knowledge Unit -> Digital Neuron -> connected cognition -> MyTrues`
+
+but explicitly records that AKU was never frozen as the native MyTrues unit.
+
+It also separates MyTrues from the learning/pedagogical layer.
+
+Therefore:
+
+- preserve AKU/digital-neuron terminology as historical/research input;
+- do not make it a current protocol schema;
+- do not make MyTrues itself an education platform.
+
+### 23. MyTrues Discovery is a separate historical product branch
+
+The D2/Project Miner reconstruction records a substantial branch named:
+
+`MyTrues Discovery`
+
+focused on project/corpus discovery, authority mapping, conflicts, duplicates,
+gaps, opportunities, candidates and evidence packages.
+
+That branch is preserved separately at:
+
+`research/product-branches/MYTRUES-DISCOVERY-HISTORICAL.md`
+
+It must not silently broaden the current decision protocol.
+
+A particularly reusable invariant from that branch is:
+
+`MCP = adapter, not core`
+
+which is compatible with the current port/adapter architecture.
+
+### 24. Canonical promotion is explicit
+
+The reconstructions repeatedly distinguish agent/LLM output, OUTBOX or proposal
+from canonical MyTrues memory.
+
+That rule has now been promoted into `CCP-RECORD.md`:
+
+`proposal/staging -> authority decision -> canonical retention`
+
+rather than automatic promotion.
+
+### 25. EDT expansion and CCP DOI require primary verification
+
+One reconstruction explicitly names EDT as:
+
+`Education-Driven Thinking`
+
+and says the user described CCP as an authored concept with a DOI.
+
+Other reconstructions note that the literal EDT expansion was not consistently
+recoverable.
+
+Therefore:
+
+- `Education-Driven Thinking` is a strong historical candidate expansion;
+- the CCP DOI/authorship statement is preserved as a claim;
+- neither should be presented as bibliographically verified until the primary
+  DOI/source record is located.
+
+### 26. Historical licensing/org plans are superseded by current explicit north
+
+The reconstructions preserve older plans such as:
+
+- Apache-2.0 preference for incorporated modules;
+- a larger MyTrues org with `cli/kernel/paper/replication/site/spec`;
+- possible open-core/commercial decision-engine boundaries.
+
+The current authorized reorganization explicitly selects:
+
+- `MyTrues/mytrues`;
+- `MyTrues/ideos`;
+- MIT for both initial canonical repositories.
+
+Therefore the older organization/licensing plans remain archaeology, not current
+execution authority.
+
+### 27. Working reconciliation: CCP central to EDT, optional to basic decision use
+
+The reconstructions expose a real tension:
+
+- historically CCP is central to EDT/MyTrues identity;
+- operationally a consumer often needs only the current DecisionRecord;
+- some later technical sketches treat CCP linkage as optional.
+
+A useful working reconciliation is:
+
+```text
+generic decision interoperability
+  -> DecisionRecord can be consumed directly
+
+deep audit / learning / reevaluation / EDT research
+  -> linked CCP Record
+```
+
+Thus CCP can remain scientifically central to EDT without forcing every routine
+decision lookup to transport the complete cognitive history.
+
+This is a synthesis/reconciliation, not yet a normative protocol amendment.
