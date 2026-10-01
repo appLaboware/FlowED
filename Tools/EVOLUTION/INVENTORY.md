@@ -14,7 +14,7 @@ não chegou a executar.
 
 | Domínio | Ferramenta/padrão | Estado real | Estágio | Evidência | Classe | Próxima fronteira |
 |---|---|---|---|---|---|---|
-| Lifecycle | Porter 1.6.1 | PASS parcial: install/upgrade/uninstall, sets, outputs, custom action, OCI/archive; Azure real também provado | E2 | R1-P01 run `36818953832`; Azure run `36796448509` | A+B | dependencies, signing, plugins, file-sources, failure analysis |
+| Lifecycle | Porter 1.6.1 | PASS parcial: install/upgrade/uninstall, sets, outputs, custom action, OCI/archive; Azure real também provado | E2 | R1-P01 run `36818953832`; Azure run `36796448509` | A+B | dependencies, signing, plugins, file-sources, failure analysis; storage sem SSPL |
 | Agent interface | Porter MCP | PASS com defeito confirmado de pureza stdio durante writes | E2 | R1-P01 run `36818953832` | B | minimizar/reportar stdout pollution; exercise `analyze_failure` |
 | Packaging | CNAB | PASS parcial: bundles reais, lifecycle e OCI local/externo | E2 | EXP-001 `36769533522`; R1-P01 `36818953832`; Azure `36796448509` | A+B | signing/verification, dependency boundaries, distribution hardening |
 | Dependencies v1 | Porter dependencies | PARTIAL: direct dependency + version strategy pass; documented output interpolation unresolved | E2 | R1-P02 run `36819797057` | B | minimize output-wiring gap and compare upstream/canary |
@@ -23,8 +23,9 @@ não chegou a executar.
 | Decision protocol | MyTrues open protocol | PASS partial: provider-scoped decide/pause/resolve/resume implemented; v0.2 JSON messages schema-validated | E3 | conformance `36871180992`; real delivery/WordPress successor runs | A+B | OpenAPI validation; events/provenance/versioning |
 | MyTrues schemas v0.2 | JSON Schema | PASS: meta-schema + request/response/pending/provider-resolution concrete messages | E2 | conformance run `36871180992` | B | add negative cases and compatibility/version-policy tests |
 | Human decision cycle | MyTrues pause→sanitize→resolve→resume | PASS | E3 | runs `36809927549`, `36810420973`, `36871180992` | B | authenticated provider resolution, durable async notification |
-| Provider-scoped memory | SQLite | PASS for isolation + restart persistence | E2 | run `36810420973` | B | migrations, concurrency, retention/export |
-| Graph memory | Neo4j | PASS as EXP-007 exact-case decision memory; cross-run retain not proved there | E1 | EXP-007 run `36806662068` | B within A-class E2E | PROV model, persistent service, hybrid retrieval benchmark |
+| Provider-scoped memory | SQLite | PASS for isolation + restart persistence; **runtime de referência aprovado** | E2 | run `36810420973` | B | migrations, concurrency, retention/export |
+| Graph model | Neo4j Community | **HISTORICAL POC ONLY**: EXP-007 provou lookup/grafo, mas banca classificou GPLv3 como VERMELHO; não é dependência/runtime de produto | E1 histórico | EXP-007 run `36806662068` | B histórico | preservar apenas schema/modelagem; reproduzir graph retrieval em backend/licença aceitável |
+| Porter admin storage | MongoDB 8.0 default/plugin path | observado no EXP-002; banca marcou SSPL transitivo como VERMELHO para baseline de produto | E0/E1 risk | EXP-002 run `36769533522` + audit note | A observation + D policy | provar/configurar storage alternativo aceitável antes de runtime de produto |
 | Decision science | deterministic approved-case lookup | PASS for known cases only | E1 | EXP-007 + MyTrues conformance | A+B | CBR/MCDA/Bayes/ranking/calibration baselines |
 | Decision science | CBR/MCDA/Bayes/LTR/calibration/causal | NOT RUN | E0 | roadmap/docs only | D | reproduce public baselines before any Core claim |
 | Process semantics | BPMN 2.0.2 | NOT RUN formally; conceptual mapping only | E0 | docs | D | formal state mapping for pending/receive/resume |
