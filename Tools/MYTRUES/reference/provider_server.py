@@ -72,6 +72,7 @@ def init_db():
                         "type": "hostname",
                         "contextKey": "azure_provider_fqdn",
                         "scheme": "http",
+                        "portContextKey": "azure_provider_port",
                     }
                 },
                 "guards": [
@@ -235,13 +236,16 @@ def materialize(decision, request):
         if value is None:
             raise LookupError(f"required context value is missing: {key}")
         materialized = dict(decision)
-        materialized["result"] = {
-            "endpoint": {
-                "type": endpoint["type"],
-                "value": value,
-                "scheme": endpoint.get("scheme", "http"),
-            }
+        materialized_endpoint = {
+            "type": endpoint["type"],
+            "value": value,
+            "scheme": endpoint.get("scheme", "http"),
         }
+        port_key = endpoint.get("portContextKey")
+        if port_key and request.get("context", {}).get(port_key) is not None:
+            materialized_endpoint["port"] = int(request["context"][port_key])
+
+        materialized["result"] = {"endpoint": materialized_endpoint}
         return materialized
 
     raise LookupError("decision has no materializable result")
