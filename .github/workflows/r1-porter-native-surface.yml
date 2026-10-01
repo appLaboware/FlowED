@@ -1,0 +1,162 @@
+name: R1 Porter native surface
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths:
+      - "Tools/EVOLUTION/experiments/R1-P01-porter-native-surface/**"
+      - ".github/workflows/r1-porter-native-surface.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: r1-porter-native-surface
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  porter-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      PORTER_HOME: ${{ runner.temp }}/porter
+      LAB_TOKEN: synthetic-r1-credential-value
+      BUNDLE_REF: localhost:5000/r1-native-surface:v0.1.0
+
+    steps:
+      - name: Clone
+        run: git clone --depth 1 --branch tools/ideos-lab https://github.com/appLaboware/FlowED.git repo
+
+      - name: Start local OCI registry
+        run: |
+          docker run -d --restart=always -p 5000:5000 --name r1-registry registry:2
+          for i in $(seq 1 30); do
+            curl -fsS http://localhost:5000/v2/ && exit 0
+            sleep 1
+          done
+          exit 1
+
+      - name: Install Porter v1.6.1 and exec mixin
+        run: |
+          curl -fsSL https://cdn.porter.sh/latest/install-linux.sh | PORTER_VERSION=v1.6.1 bash
+          "$PORTER_HOME/porter" mixin install exec
+          "$PORTER_HOME/porter" version | tee /tmp/porter-version.txt
+          grep -q 'v1.6.1' /tmp/porter-version.txt
+
+      - name: Configure named contexts and lab secret store
+        run: |
+          mkdir -p "$PORTER_HOME"
+          cp repo/Tools/EVOLUTION/experiments/R1-P01-porter-native-surface/config.yaml "$PORTER_HOME/config.yaml"
+
+          "$PORTER_HOME/porter" config context list | tee /tmp/contexts.txt
+          grep -q 'default' /tmp/contexts.txt
+          grep -q 'alternate' /tmp/contexts.txt
+
+          "$PORTER_HOME/porter" config context use alternate
+          "$PORTER_HOME/porter" config context list | tee /tmp/alternate.txt
+          grep -E '\* +alternate|\* alternate' /tmp/alternate.txt
+
+          "$PORTER_HOME/porter" config context use default
+
+      - name: Build, lint and explain native bundle
+        working-directory: repo/Tools/EVOLUTION/experiments/R1-P01-porter-native-surface
+        run: |
+          "$PORTER_HOME/porter" lint
+          "$PORTER_HOME/porter" build
+          "$PORTER_HOME/porter" explain -o json | tee /tmp/explain.json
+          grep -q '"greeting"' /tmp/explain.json
+          grep -q '"lab-token"' /tmp/explain.json
+          grep -q '"status"' /tmp/explain.json
+          grep -q '"result"' /tmp/explain.json
+
+      - name: Apply parameter and credential sets
+        working-directory: repo/Tools/EVOLUTION/experiments/R1-P01-porter-native-surface
+        run: |
+          "$PORTER_HOME/porter" parameters apply parameter-set.yaml
+          "$PORTER_HOME/porter" credentials apply credential-set.yaml
+
+          "$PORTER_HOME/porter" parameters show r1params -n r1-default -o json | tee /tmp/params.json
+          "$PORTER_HOME/porter" credentials show r1creds -n r1-default -o json | tee /tmp/creds.json
+
+          grep -q 'from-parameter-set' /tmp/params.json
+          ! grep -q "$LAB_TOKEN" /tmp/creds.json
+
+      - name: Exercise CLI lifecycle, outputs and custom action
+        working-directory: repo/Tools/EVOLUTION/experiments/R1-P01-porter-native-surface
+        run: |
+          set -euo pipefail
+
+          "$PORTER_HOME/porter" install native-cli             -n r1-default             -p r1params             -c r1creds
+
+          RESULT="$("$PORTER_HOME/porter" installations output show result             --installation native-cli             --namespace r1-default)"
+          test "$RESULT" = "install:from-parameter-set"
+
+          "$PORTER_HOME/porter" installations output list             --installation native-cli             --namespace r1-default             -o json | tee /tmp/install-outputs.json
+
+          grep -q '"sensitive": true' /tmp/install-outputs.json
+          ! grep -q 'sensitive-output-present' /tmp/install-outputs.json
+
+          "$PORTER_HOME/porter" invoke native-cli             --namespace r1-default             --action status             --param greeting=from-cli-status | tee /tmp/status.log
+
+          grep -q 'STATUS_OK greeting=from-cli-status' /tmp/status.log
+
+          "$PORTER_HOME/porter" upgrade native-cli             --namespace r1-default             -c r1creds             --param greeting=from-cli-override
+
+          RESULT="$("$PORTER_HOME/porter" installations output show result             --installation native-cli             --namespace r1-default)"
+          test "$RESULT" = "upgrade:from-cli-override"
+
+      - name: Publish and inspect OCI bundle
+        working-directory: repo/Tools/EVOLUTION/experiments/R1-P01-porter-native-surface
+        run: |
+          "$PORTER_HOME/porter" publish --insecure-registry
+          "$PORTER_HOME/porter" inspect             --reference "$BUNDLE_REF"             --insecure-registry             -o json | tee /tmp/inspect.json
+
+          grep -q 'r1-native-surface' /tmp/inspect.json
+
+          "$PORTER_HOME/porter" archive /tmp/r1-native-surface.tgz             --reference "$BUNDLE_REF"             --insecure-registry
+
+          test -s /tmp/r1-native-surface.tgz
+
+      - name: Prove native Porter MCP agent surface
+        working-directory: repo/Tools/EVOLUTION/experiments/R1-P01-porter-native-surface
+        run: |
+          python3 mcp_probe.py             --porter "$PORTER_HOME/porter"             --reference "$BUNDLE_REF" | tee /tmp/mcp-proof.txt
+
+          grep -q 'MCP_READ_ONLY_SURFACE=PASS' /tmp/mcp-proof.txt
+          grep -q 'MCP_SENSITIVE_OUTPUT_PROTECTION=PASS' /tmp/mcp-proof.txt
+          grep -q 'MCP_WRITE_SURFACE=PASS' /tmp/mcp-proof.txt
+          grep -q 'MCP_INSTALL_INVOKE_UNINSTALL=PASS' /tmp/mcp-proof.txt
+
+      - name: Complete CLI lifecycle
+        working-directory: repo/Tools/EVOLUTION/experiments/R1-P01-porter-native-surface
+        run: |
+          "$PORTER_HOME/porter" uninstall native-cli --namespace r1-default
+          "$PORTER_HOME/porter" show native-cli --namespace r1-default | tee /tmp/final-show.txt
+          grep -qi 'uninstall' /tmp/final-show.txt
+
+      - name: Evidence summary
+        run: |
+          {
+            echo "# R1-P01 evidence"
+            echo
+            echo "- Porter v1.6.1: PASS"
+            echo "- Named contexts: PASS"
+            echo "- Parameter sets: PASS"
+            echo "- Credential sets: PASS"
+            echo "- Credential value not exposed by credential-set inspection: PASS"
+            echo "- Install/upgrade/uninstall: PASS"
+            echo "- Bundle outputs: PASS"
+            echo "- Sensitive-output storage/masking: PASS"
+            echo "- Stateless custom action: PASS"
+            echo "- OCI publish/inspect: PASS"
+            echo "- Bundle archive: PASS"
+            echo "- MCP read-only-by-default: PASS"
+            echo "- MCP explicit write surface: PASS"
+            echo "- MCP lifecycle invocation: PASS"
+          } | tee /tmp/evidence.md
+          cat /tmp/evidence.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Cleanup local registry
+        if: always()
+        run: docker rm -f r1-registry || true

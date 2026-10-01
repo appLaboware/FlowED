@@ -1,0 +1,13 @@
+schemaVersion: "2.0.0"
+current-context: default
+
+contexts:
+  - name: default
+    config:
+      namespace: r1-default
+      default-secrets-plugin: filesystem
+
+  - name: alternate
+    config:
+      namespace: r1-alternate
+      default-secrets-plugin: filesystem
