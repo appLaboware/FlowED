@@ -69,7 +69,7 @@ independent DevOps intent client.
 
 History-preserving canonical subtree import uses FlowED commit:
 
-`4e6353a2611ae00f4da4b05c35de32a322b2753f`
+`2513281273f44495c702907948d6a856f9d6474f`
 
 This commit contains the complete product staging surface including the physical
 IDEOS `DecisionMemory` adapter boundary.
@@ -204,5 +204,25 @@ Added:
 
 No additional original-chat interrogation is required before continuing with
 the next archaeology batch.
+
+The authoritative frozen SHA above includes this batch.
+
+## Chat extraction archaeology batch 002
+
+Nine additional conversation-derived reports were reviewed.
+
+Added:
+
+- `docs/archaeology/CHAT-EXTRACTION-TRIAGE-002.md`;
+- `docs/archaeology/EARLY-TECHNICAL-LINEAGE.md`;
+- `research/branches/EXPERIENCE-FIRST-MYTRUES.md`;
+- Experience-first Science Frontier gate.
+
+Important unresolved item:
+
+the original chat
+`mytrues- INTERMEMBERS.DEV_001-VRMP-DEMO-POO-01-DV4-02`
+must be forensically queried before any claim that MyTrues was explicitly
+redefined from decision memory to Experience-first memory.
 
 The authoritative frozen SHA above includes this batch.
