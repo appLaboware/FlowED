@@ -43,7 +43,7 @@ Legenda:
 | dependency output wiring | UNRESOLVED | R1-P02 output exists but root interpolation empty | B-failure observation |
 | dependencies v2/shared | NOT PROVEN | R1-P03 `36820579778` fails before sharing behavior | B-failure |
 | signing/verification | NOT RUN | — | D |
-| storage plugins beyond lab default | NOT EXHAUSTED | — | D |
+| storage plugins beyond lab default | NOT EXHAUSTED; MongoDB 8.0/default path is **not accepted for product baseline** after SSPL transitivo RED decision | EXP-002 observed admin Mongo path; replacement not run | A observation + D policy |
 | secrets plugins | NOT RUN | — | D |
 | signing plugins | NOT RUN | — | D |
 | experimental file sources | NOT RUN | — | D |
@@ -107,7 +107,7 @@ Legenda:
 | decision tables / formal DMN | NOT RUN | — | D |
 | MCDA/MCDM | NOT RUN | — | D |
 | Bayesian decision support | NOT RUN | — | D |
-| graph retrieval benchmark | NOT RUN | — | D |
+| graph retrieval benchmark | NOT RUN; Neo4j is schema/model reference only after GPLv3 RED decision | — | D |
 | vector retrieval benchmark | NOT RUN | — | D |
 | hybrid retrieval | NOT RUN | — | D |
 | learning-to-rank | NOT RUN | — | D |
