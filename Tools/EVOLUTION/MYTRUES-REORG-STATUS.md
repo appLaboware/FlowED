@@ -69,7 +69,7 @@ independent DevOps intent client.
 
 History-preserving canonical subtree import uses FlowED commit:
 
-`0982911b09dc7738686db2f1ff953a7ce0c1fb8b`
+`2122ed8b6ebfd58fc905faa5d9bc45bfe1fd208d`
 
 This commit contains the complete product staging surface including the physical
 IDEOS `DecisionMemory` adapter boundary.
@@ -96,3 +96,13 @@ Canonical references:
   `Tools/MYTRUES/research/legacy-candidates/`.
 
 The frozen migration SHA above includes this recovered material.
+
+## Runbook consistency note
+
+The authoritative frozen product snapshot is now:
+
+`2122ed8b6ebfd58fc905faa5d9bc45bfe1fd208d`
+
+`Tools/MYTRUES/migration/reorganize-org.sh` currently contains an earlier frozen
+SHA and MUST NOT be executed until its `FLOWED_SOURCE_SHA` is updated to the
+authoritative value above. The migration manifest is authoritative.
