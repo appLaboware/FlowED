@@ -82,7 +82,8 @@ Legenda:
 | provider resolve -> resume | PASS | `36810420973` | B |
 | provider memory survives restart | PASS | `36810420973` | B |
 | two providers can decide differently | PASS | `36809927549` / `36810420973` | B |
-| JSON Schemas v0.2 | PASS: Draft 2020-12 meta-schema + concrete request/response/pending/resolution | `36871180992` | B |
+| JSON Schemas v0.2 | PASS: Draft 2020-12 meta-schema + concrete request/response/pending/resolution | `36871180992`, revalidated `36874885791` | B |
+| seed-004 provider memory fixture | PASS: 16 cases, 11/8 provider distribution, 4 divergent shared cases, unknown control 202, restart persistence | `36874885444` | B |
 | OpenAPI 3.1 document | EXISTS, NOT CURRENTLY VALIDATED as OpenAPI document | repo | D |
 | OpenAPI 3.2.1 migration | NOT RUN | — | D |
 | RFC 9457 complete conformance | NOT RUN | — | D |
@@ -93,7 +94,7 @@ Legenda:
 | idempotency policy | PARTIAL implementation behavior, no protocol proof | — | D |
 | version/compatibility policy | NOT DONE | — | D |
 
-**Immediate R3 schema task:** DONE for JSON messages in run `36871180992`.
+**Immediate R3 schema task:** DONE for JSON messages; latest revalidation `36874885791`. seed-004 bridge is also DONE as conformance evidence `36874885444`.
 
 **Gate R3:** OPEN because OpenAPI/RFC9457/current trace/events/provenance/versioning remain incomplete.
 
@@ -141,7 +142,7 @@ Legenda:
 
 | Item | Estado | Evidência | Classe |
 |---|---|---|---|
-| benchmark corpus | NOT BUILT | — | D |
+| benchmark corpus | NOT BUILT; seed-004 exists only as conformance fixture and is explicitly not promoted to benchmark | seed-004 `36874885444` proves fixture behavior, not benchmark quality | D for benchmark / B for fixture |
 | top-1 utility/accuracy | NOT MEASURED | — | D |
 | regret/cost | NOT MEASURED | — | D |
 | abstention rate | NOT MEASURED | — | D |
