@@ -6,7 +6,7 @@ Status: **STAGED — repository-admin operations pending target-org access/tooli
 
 Frozen FlowED migration source SHA:
 
-`7cf59acb7651a688c680fdd40e1da0abb65e7963`
+`65ea6ab7e81d0b4f8d664a6c4dfe663f2570777a`
 
 The canonical subtree import MUST use this SHA, not a later moving branch head.
 
@@ -69,8 +69,8 @@ License: MIT.
 Preferred method for the FlowED subtrees:
 
 ```text
-git subtree split --prefix=Tools/MYTRUES 7cf59acb7651a688c680fdd40e1da0abb65e7963 -b import/mytrues
-git subtree split --prefix=Tools/IDEOS 7cf59acb7651a688c680fdd40e1da0abb65e7963 -b import/ideos
+git subtree split --prefix=Tools/MYTRUES 65ea6ab7e81d0b4f8d664a6c4dfe663f2570777a -b import/mytrues
+git subtree split --prefix=Tools/IDEOS 65ea6ab7e81d0b4f8d664a6c4dfe663f2570777a -b import/ideos
 ```
 
 The resulting filtered branches preserve relevant FlowED commit history and are
@@ -168,3 +168,23 @@ They contributed:
   a reported CCP DOI.
 
 These are archaeology/research inputs unless separately promoted.
+
+## Open extension ecosystem / DecisionEngine boundary
+
+The frozen source also includes the 2026-10-01 architecture/research update that:
+
+- extends the OPEN MyTrues boundary through a replaceable `DecisionEngine` port;
+- defines a provisional hexagonal port/adapter/plugin taxonomy;
+- permits OSS, commercial, private, human and hybrid decision engines behind
+  the same open interoperability boundary;
+- treats MCP as an adapter/transport, not internal architecture;
+- treats LLM cognition extraction as candidate/staging generation, not automatic
+  canonical authority;
+- introduces a conformance-aware registry/marketplace direction;
+- adds focused science/product prior-art research;
+- adopts a PPX-first direction for portable preference/profile interchange;
+- narrows the scientific residual to decision-semantic preservation, replay,
+  provenance and authority across heterogeneous engines.
+
+These are target-design/research inputs. They do not silently modify the
+executable v0.2 failure profile and do not authorize a proprietary engine.
