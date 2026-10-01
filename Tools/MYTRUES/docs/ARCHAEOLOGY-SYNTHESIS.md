@@ -640,3 +640,136 @@ Thus CCP can remain scientifically central to EDT without forcing every routine
 decision lookup to transport the complete cognitive history.
 
 This is a synthesis/reconciliation, not yet a normative protocol amendment.
+
+
+## Chat-extraction batch 001 additions
+
+A new batch of chat-local and mixed conversation extractions was reviewed on
+2026-10-01.
+
+Source-confidence and per-chat provenance are recorded at:
+
+`docs/archaeology/CHAT-EXTRACTION-TRIAGE-001.md`
+
+### 28. Original two-axis memory lineage
+
+The strongest early chat-local source distinguishes:
+
+```text
+OMGDiary
+-> temporal / episodic cognition
+
+MyTrues
+-> semantic / decision-oriented "truths"
+```
+
+This is useful genealogy.
+
+It should not replace the current DecisionRecord/CCP separation, but it explains
+why the project repeatedly distinguishes chronology from decision semantics.
+
+### 29. TrueEngine is historical nomenclature only
+
+An early four-layer proposal contained:
+
+1. OMGDiary — episodes;
+2. MyTrues — truths;
+3. TrueEngine — inference;
+4. OMG — epiphany.
+
+`TrueEngine` is not current architecture.
+
+Preserve it as lineage only.
+
+Do not present current `DecisionEngine` as a proven direct rename unless a
+primary historical source establishes continuity.
+
+### 30. Local contextual authority predates the formal protocol
+
+A chat-local extraction records an early rule equivalent to:
+
+`project-local decision + why -> consult before generic LLM knowledge`
+
+This predates the later names `DecisionMemory`, `Authority` and
+candidate/canonical promotion.
+
+It is a useful historical precursor of the current epistemic-authority boundary.
+
+### 31. Raw source is not CCP
+
+A FlowED/CCP chat-local POC independently established:
+
+`raw source/log != annotation != structured CCP != projection`
+
+This is an important EDT/CCP invariant.
+
+A conversation transcript or session log is therefore not automatically a CCP
+Record merely because it contains cognition.
+
+### 32. Candidate multi-time epistemic model
+
+A later mixed reconstruction proposes distinct times:
+
+- `event_time`;
+- `known_time`;
+- repeatable `considered_time`;
+- `decision_time / promoted_time`;
+- `recorded_time`;
+- `valid_from / valid_until`.
+
+The rationale is strong: occurrence, awareness, consideration, promotion,
+recording and validity need not coincide.
+
+This remains a **research/schema candidate**, not protocol law.
+
+It should be compared with temporal database, bitemporal, provenance and belief
+revision prior art before promotion.
+
+### 33. Chronology is not causality
+
+The same lineage distinguishes a chronological graph from a causal-cognitive
+graph.
+
+Reusable invariant:
+
+`A before B` MUST NOT be silently promoted to `A caused B`.
+
+Causal relations require explicit evidence/authority.
+
+### 34. Defeated paths are candidate reusable experience
+
+The SQLDAVELHA lineage sharpens the memory hypothesis:
+
+`failed / defeated path != useless history`
+
+Under equivalent context, a defeated path may reduce future search.
+
+This remains a research hypothesis and must be compared against established
+case-based reasoning, negative experience, planning/search memory and automated
+algorithm-configuration literature.
+
+### 35. Epistemic state and linguistic rendering are separate
+
+A recovered formulation states:
+
+```text
+MyTrues = KNOWING
+"What may I claim?"
+
+LLM = SAYING
+"How should I explain it?"
+```
+
+This is consistent with the current authority boundary.
+
+A language model may interpret or render a structured answer, but it must not
+silently alter the epistemic state returned by the authoritative memory/decision
+process.
+
+### 36. MyTrues Discovery remains a separate branch
+
+The new batch reinforces that `MyTrues Discovery` emerged from a separate
+Project Miner / Truth Engine lineage.
+
+It remains preserved as a historical/research product branch and must not be
+silently merged into the generic decision protocol.
