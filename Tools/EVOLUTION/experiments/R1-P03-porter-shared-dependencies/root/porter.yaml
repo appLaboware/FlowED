@@ -1,0 +1,41 @@
+schemaType: Bundle
+schemaVersion: 1.1.0
+name: r1-shared-root
+version: 1.0.0
+description: "Dependencies v2 shared reuse and sibling output wiring fixture"
+registry: localhost:5000
+
+mixins:
+  - exec
+
+dependencies:
+  requires:
+    - name: infra
+      bundle:
+        reference: localhost:5000/r1-shared-infra:v1.0.0
+      sharing:
+        mode: true
+        group:
+          name: r1-shared-group
+
+    - name: app
+      bundle:
+        reference: localhost:5000/r1-shared-app:v1.0.0
+      sharing:
+        mode: true
+        group:
+          name: r1-shared-group
+      parameters:
+        connstr: ${bundle.dependencies.infra.outputs.connstr}
+
+install:
+  - exec:
+      command: /bin/echo
+      arguments:
+        - ROOT_INSTALLED
+
+uninstall:
+  - exec:
+      command: /bin/echo
+      arguments:
+        - ROOT_UNINSTALLED
