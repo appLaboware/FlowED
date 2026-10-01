@@ -182,7 +182,8 @@ sync_file "edt" "Tools/MYTRUES/docs/archaeology/EDT-HISTORICAL-SOURCES-001.md" "
 sync_file "edt" "Tools/MYTRUES/docs/archaeology/EDT-001-TREE-ASSESSMENT.md" "historical/EDT-001-TREE-ASSESSMENT.md"
 
 # Research
-rm -rf "$WORKDIR/work-research/current"
+rm -rf "$WORKDIR/work-research"
+git clone "https://github.com/${ORG}/research.git" "$WORKDIR/work-research"
 mkdir -p "$WORKDIR/work-research/current"
 cp -R "$WORKDIR/flowed/Tools/MYTRUES/research/." "$WORKDIR/work-research/current/"
 
