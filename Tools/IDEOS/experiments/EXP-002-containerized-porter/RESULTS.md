@@ -40,3 +40,19 @@ Docker Engine do host
 → aplicação materializada
 
 Não foi necessário manter o container controlador IDEOS executando após a materialização.
+
+
+## Limite de licenciamento posterior
+
+O fato de `porter-mongodb-docker-plugin` ter funcionado no laboratório continua sendo
+evidência histórica válida.
+
+A revisão de banca de 2026-10-01 marcou o caminho MongoDB 8.0/SSPL transitivo como
+**VERMELHO** para baseline de produto.
+
+Portanto:
+
+- EXP-002 não aprova esse storage administrativo para produção;
+- R1 deve esgotar/configurar storage oficial alternativo com licença aceitável;
+- upstream permanece imutável;
+- nenhum fork local é autorizado enquanto configuração/plugin oficial puder resolver.
