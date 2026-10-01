@@ -374,3 +374,33 @@ None of this silently changes the executable v0.2 failure profile.
 v0.2 remains the proved reference baseline.
 
 These ports/adapters define the target design space for versioned protocol work.
+
+
+## Upstream cognition-preparation boundary
+
+A historical PO decision separates source/session preparation from MyTrues.
+
+Example preserved in archaeology:
+
+```text
+raw session/source
+-> Cognit.me / extraction / atomization
+-> portable cognition artifacts
+-> MyTrues Source/CognitionProposal adapter
+-> authority/promotion
+-> canonical memory
+```
+
+Therefore MyTrues should not own chat cutting, deduplication or cognition
+atomization by definition.
+
+Those functions may be provided by an external tool/plugin.
+
+This reinforces the port/adapter ecosystem:
+
+- Source adapters ingest prepared material;
+- CognitionProposal adapters may generate candidate cognition;
+- Authority decides whether candidate material becomes canonical.
+
+The historical tool name `Cognit.me` is one example, not a required MyTrues
+dependency.
