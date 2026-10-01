@@ -773,3 +773,169 @@ Project Miner / Truth Engine lineage.
 
 It remains preserved as a historical/research product branch and must not be
 silently merged into the generic decision protocol.
+
+
+## Chat-extraction batch 002 additions
+
+Nine additional conversation-derived reports were reviewed on 2026-10-01.
+
+Per-chat source confidence and findings are recorded at:
+
+`docs/archaeology/CHAT-EXTRACTION-TRIAGE-002.md`
+
+### 37. `MyTools` is not a proven alias of MyTrues
+
+A strict chat-local source records the user writing `MyTools` and the assistant
+then normalizing it to `MyTrues` without confirmation.
+
+Therefore:
+
+- include `MyTools` in archaeology searches;
+- do not claim `MyTools -> MyTrues` rename/synonym without primary proof;
+- do not use assistant normalization as evidence of user intent.
+
+### 38. Organizational autoeducation is a candidate use case
+
+A FlowED-manifest chat discusses materializing organizational learning, company
+principles, technical culture, configuration changes and reasons for change.
+
+The strongest local occurrence uses `MyTools`, while MyTrues is introduced by
+the assistant afterward.
+
+Therefore this is useful as a **possible MyTrues consumer/use case**, not a
+proven core requirement.
+
+### 39. Early technical lineage used logic/rules
+
+A mixed reconstruction preserves a 2025 MyTrues technical branch based on:
+
+- Datalog/Prolog;
+- facts/rules/queries/explanations;
+- `/assert`, `/retract`, `/query`, `/why`;
+- append-only/event-sourcing ideas;
+- JSON Schema / Protobuf;
+- HTTP/gRPC;
+- CozoDB.
+
+This is historical architecture.
+
+The current staging is protocol-first and independently verifies OpenAPI 0.2.0,
+JSON Schema v0.2, provider isolation, pending/resolve/resume and durable SQLite
+provider memory.
+
+See:
+
+`docs/archaeology/EARLY-TECHNICAL-LINEAGE.md`
+
+### 40. Current protocol version evidence supersedes historical report labels
+
+A report mentions OpenAPI `0.1.0`.
+
+The current repository artifact says:
+
+`MyTrues Open Decision Protocol / info.version 0.2.0`.
+
+Current conformance code also requires schema IDs under `/protocol/0.2/`.
+
+The request identifier `mytrues.decision/v1` is a different versioning surface
+and remains present.
+
+Do not collapse document version, protocol identifier, schema version and product
+version.
+
+### 41. Experience-first MyTrues is a major unresolved domain branch
+
+The InterMembers/VRMP reconstruction records a substantial pivot from:
+
+`decision memory`
+
+toward:
+
+`Experience as primary conceptual unit`
+
+and the phrase:
+
+`MyTrues is the SQL of experience.`
+
+This is too consequential to merge silently with the current Open Decision
+Protocol.
+
+It is preserved at:
+
+`research/branches/EXPERIENCE-FIRST-MYTRUES.md`
+
+Until forensic confirmation from the original chat:
+
+- current executable baseline remains decision-protocol v0.2;
+- Experience-first remains a research/domain branch.
+
+### 42. Defeated paths are candidate first-class reusable experience
+
+The Experience branch strengthens the SQLDAVELHA hypothesis by treating known
+failures as assets rather than disposable history.
+
+Candidate concepts:
+
+- Experience Base;
+- Defeater Base;
+- Successful Path Base;
+- Unknown Frontier;
+- Cognitive Pre-flight;
+- Cognitive Amortization;
+- Compiled Cognition.
+
+These require prior-art comparison before protocol promotion.
+
+### 43. Retrieval attention must not become epistemic authority
+
+The Experience branch makes several useful separations:
+
+```text
+vector similarity != truth
+activation score != truth score
+candidate relation != canonical relation
+chronology != causality
+```
+
+These are compatible with the existing authority/provenance boundaries and
+should be retained as experiment invariants.
+
+### 44. Decision Cell is a representation hypothesis
+
+A decision is explored as a structured cognitive subgraph containing trigger,
+goal, context, assumptions, known/considered-at-the-time, alternatives,
+arguments, evidence, criteria, decision, action, observed outcome and revision.
+
+This is not a normative schema.
+
+### 45. Provider-scoped versus user-owned memory remains unresolved
+
+Two desirable properties now coexist in the archaeology:
+
+```text
+provider-scoped operational memory
+```
+
+for isolation, and:
+
+```text
+user-owned memory + replaceable provider
+```
+
+for portability/control.
+
+A possible user-owned store with provider-scoped partitions is only a candidate
+reconciliation.
+
+No protocol amendment is authorized.
+
+### 46. FlowDisP negative evidence must remain negative
+
+One strict chat-local report explicitly says MyTrues was not developed in that
+FlowDisP conversation.
+
+Principles such as repository-canonical state, externalized memory and
+deterministic validators may be relevant analogies, but that conversation did
+not establish them as MyTrues requirements.
+
+Do not retroactively merge the domains.
