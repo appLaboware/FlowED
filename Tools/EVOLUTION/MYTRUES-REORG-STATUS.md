@@ -69,7 +69,7 @@ independent DevOps intent client.
 
 History-preserving canonical subtree import uses FlowED commit:
 
-`b2fd952acc88e252c1c71c7827786e8cb111ad11`
+`121c63642c4cc552c46a7cf3ff70ab57924cb2be`
 
 This commit contains the complete product staging surface including the physical
 IDEOS `DecisionMemory` adapter boundary.
@@ -102,7 +102,7 @@ The frozen migration SHA above includes this recovered material.
 The migration manifest and `reorganize-org.sh` now both point to the same
 authoritative frozen source SHA:
 
-`b2fd952acc88e252c1c71c7827786e8cb111ad11`
+`121c63642c4cc552c46a7cf3ff70ab57924cb2be`
 
 No known SHA drift remains between those two migration records.
 
@@ -331,3 +331,117 @@ Resolved:
 No remaining batch-003 forensic question blocks the current genealogy.
 
 The authoritative frozen SHA above includes this closure.
+
+
+## Real MyTrues organization access restored
+
+The GitHub App installation now includes the actual `MyTrues` organization.
+
+Installation id:
+
+`166957143`
+
+Repository selection:
+
+`all`.
+
+All eight expected legacy repositories are readable and report admin repository
+permission.
+
+`Tools/MYTRUES/ORG-INVENTORY.md` is now COMPLETE with:
+
+- pushed_at;
+- size;
+- default branch;
+- exact head SHA;
+- content summary;
+- URL.
+
+The previous target-org access blocker is closed.
+
+## Definitive organization topology
+
+Added:
+
+`Tools/MYTRUES/ORG-TOPOLOGY-2026-10-01.md`
+
+Definitive repository set:
+
+### public/open
+
+- `MyTrues/mytrues`;
+- `MyTrues/ccp`;
+- `MyTrues/research`;
+- `MyTrues/registry`;
+- `MyTrues/ideos`;
+- `MyTrues/site`.
+
+### private
+
+- `MyTrues/edt`;
+- `MyTrues/mytrues-enterprise`.
+
+The topology explicitly separates:
+
+- EDT thesis;
+- CCP concept/spec;
+- reproducible science;
+- open product/common protocol;
+- extension registry;
+- reference client;
+- closed commercial extensions.
+
+## Frontier reference suite
+
+Added:
+
+`Tools/MYTRUES/research/FRONTIER-REFERENCE-SUITE-2026.md`.
+
+The suite includes current reference benchmarks/systems such as:
+
+- LongMemEval-V2;
+- MemoryArena;
+- AMemGym;
+- LoCoMo-Plus;
+- GroupMemBench;
+- RHELM;
+- MemGym;
+- Microsoft Memora;
+- Microsoft human-inspired memory architecture;
+- Microsoft MAGE;
+- Google ReasoningBank;
+- Google MARS;
+- Google agent-system scaling work;
+- provenance/design-rationale/human-authority references.
+
+These are baselines/reference tests, not evidence of MyTrues novelty.
+
+## Current remaining blocker
+
+The current GitHub connector exposes repository content/branch/issue/PR writes
+and reports admin permission, but does **not** expose repository-level:
+
+- rename;
+- create;
+- visibility/settings mutation.
+
+The local runtime also has no `gh` CLI.
+
+Therefore the only remaining blocker to actual organization mutation is the lack
+of a repository-admin mutation surface in this session.
+
+The exact executable runbook is staged at:
+
+`Tools/MYTRUES/migration/reorganize-org.sh`.
+
+It now performs:
+
+- all eight legacy renames;
+- creation of the eight definitive repositories;
+- visibility split;
+- history seeding for CCP/EDT/research/site;
+- filtered product import for MyTrues;
+- IDEOS import;
+- registry/enterprise boundary seeding;
+- final archive/read-only lock;
+- migration evidence generation.
