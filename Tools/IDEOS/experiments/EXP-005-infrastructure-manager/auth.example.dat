@@ -1,0 +1,14 @@
+# EXAMPLE ONLY. DO NOT COMMIT REAL CREDENTIALS.
+#
+# IM service credential
+id = im ; type = InfrastructureManager ; username = USER ; password = PASSWORD
+
+# Azure credential forms supported by the current IM documentation/connector:
+#
+# User/password form:
+# id = azure ; type = Azure ; subscription_id = SUBSCRIPTION_ID ; username = USER ; password = PASSWORD
+#
+# Service-principal form used by the current Azure connector:
+# id = azure ; type = Azure ; subscription_id = SUBSCRIPTION_ID ; client_id = CLIENT_ID ; secret = CLIENT_SECRET ; tenant = TENANT_ID
+#
+# Our existing GitHub→Azure identity uses OIDC and intentionally has no CLIENT_SECRET.
