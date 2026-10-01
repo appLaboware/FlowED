@@ -92,7 +92,8 @@ jobs:
           grep -qi 'succeeded' /tmp/infra-after-root-uninstall.txt
 
       - name: Cleanup shared infra
-        run: "$PORTER_HOME/porter" uninstall shared-infra
+        run: |
+          "$PORTER_HOME/porter" uninstall shared-infra
 
       - name: Evidence summary
         run: |
