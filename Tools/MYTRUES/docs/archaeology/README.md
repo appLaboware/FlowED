@@ -152,3 +152,25 @@ Key additions:
 
 The Experience-first branch requires original-chat forensic confirmation before
 any product/domain promotion.
+
+
+### Experience-first forensic resolution
+
+- `forensics/EXPERIENCE-FIRST-CHAT-FORENSIC-001.md`
+
+The original InterMembers/VRMP chat was re-audited with a strict chat-local
+forensic prompt.
+
+Result:
+
+- Experience-first was **not** a PO-approved identity pivot;
+- `MyTrues = SQL of experience` was **not** PO-approved;
+- user-owned/provider-replaceable memory did **not** supersede provider-scoped
+  memory in that chat;
+- PAUSE/SANITIZE/RESOLVE was not explicitly de-centered;
+- Memory Mesh/Systematic Agent was approved only as an experimental
+  **metaobjective**, not implementation demand.
+
+Exact forensic-response SHA-256:
+
+`eed92e493d199121c9f8e50546bd1339b489554ca03a207c992b2b09d739d99b`
