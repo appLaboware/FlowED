@@ -6,7 +6,7 @@ Status: **STAGED — repository-admin operations pending target-org access/tooli
 
 Frozen FlowED migration source SHA:
 
-`3ea0364ab2092e1863bf8ce8444fd1a8733dda78`
+`7cf59acb7651a688c680fdd40e1da0abb65e7963`
 
 The canonical subtree import MUST use this SHA, not a later moving branch head.
 
@@ -69,8 +69,8 @@ License: MIT.
 Preferred method for the FlowED subtrees:
 
 ```text
-git subtree split --prefix=Tools/MYTRUES 3ea0364ab2092e1863bf8ce8444fd1a8733dda78 -b import/mytrues
-git subtree split --prefix=Tools/IDEOS 3ea0364ab2092e1863bf8ce8444fd1a8733dda78 -b import/ideos
+git subtree split --prefix=Tools/MYTRUES 7cf59acb7651a688c680fdd40e1da0abb65e7963 -b import/mytrues
+git subtree split --prefix=Tools/IDEOS 7cf59acb7651a688c680fdd40e1da0abb65e7963 -b import/ideos
 ```
 
 The resulting filtered branches preserve relevant FlowED commit history and are
@@ -150,3 +150,21 @@ The frozen source also includes the 2026-10-01 supplied research artifacts:
 
 These are research/governance inputs only. They do not authorize Microbrain
 execution or promote the Grok run to qualified Discovery.
+
+## Conversation-reconstruction archaeology
+
+The frozen source also includes four 2026-10-01 uploaded reconstructions of
+earlier MyTrues/EDT/CCP conversations.
+
+They contributed:
+
+- No Retroactive Cognition;
+- CCP-as-source -> Views-as-build;
+- NORM/WHY/TRACE/ADR view taxonomy;
+- AKU/digital-neuron historical hypothesis;
+- MyTrues Discovery historical product branch;
+- MCP-as-adapter rule;
+- secondary claims requiring primary verification, including EDT expansion and
+  a reported CCP DOI.
+
+These are archaeology/research inputs unless separately promoted.
