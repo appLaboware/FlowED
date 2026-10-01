@@ -36,3 +36,17 @@ Examples:
   cross-run persistent.
 
 This audit is the baseline for `EVOLUTION/INVENTORY.md`.
+
+
+## Licensing boundary — post-audit decision
+
+A banca de 2026-10-01 adicionou dois gates de licença sem alterar os resultados
+históricos:
+
+- Neo4j Community/GPLv3: **VERMELHO** para runtime de produto; EXP-007 permanece
+  evidência histórica, mas Neo4j é somente referência de schema/modelagem;
+- Porter administrative MongoDB 8.0/SSPL: **VERMELHO** transitivo para baseline de
+  produto; EXP-002 permanece evidência histórica, mas R1 precisa provar storage
+  alternativo aceitável.
+
+SQLite permanece a memória persistente de referência do MyTrues.
