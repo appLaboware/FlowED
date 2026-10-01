@@ -69,7 +69,7 @@ independent DevOps intent client.
 
 History-preserving canonical subtree import uses FlowED commit:
 
-`b493a8883ae3cf0ec09c3997c2b39299a664376d`
+`d67d3e18ec0ac1f8bb363b25a9081b5239162ec4`
 
 This commit contains the complete product staging surface including the physical
 IDEOS `DecisionMemory` adapter boundary.
@@ -102,7 +102,7 @@ The frozen migration SHA above includes this recovered material.
 The migration manifest and `reorganize-org.sh` now both point to the same
 authoritative frozen source SHA:
 
-`b493a8883ae3cf0ec09c3997c2b39299a664376d`
+`d67d3e18ec0ac1f8bb363b25a9081b5239162ec4`
 
 No known SHA drift remains between those two migration records.
 
@@ -274,3 +274,42 @@ They do not modify the current MyTrues Open Decision Protocol v0.2 executable
 baseline.
 
 The authoritative frozen SHA above includes the final uploaded batch.
+
+## EDT / CCP research boundary
+
+Current researcher clarification and historical source pack have been integrated.
+
+Authoritative current orientation:
+
+```text
+EDT
+= Education-Driven Thinking
+= conceptual/philosophical doctoral thesis
+
+CCP
+= Caminho Cognitivo do Criador / Creator Cognitive Path
+= central concept under study
+
+MyTrues
+= technical instrument/reference implementation
+= operationalizes/tests CCP
+= may yield independent technical publications/product opportunities
+```
+
+Consequences:
+
+- do not make EDT a MyTrues runtime/product layer;
+- do not require MyTrues technical novelty as a precondition for EDT novelty;
+- do not use current MyTrues implementation choices to rewrite historical EDT;
+- Education-Driven Things is non-canonical under current researcher orientation.
+
+Historical source pack:
+
+`Tools/MYTRUES/docs/archaeology/EDT-HISTORICAL-SOURCES-001.md`.
+
+Current boundary:
+
+`Tools/MYTRUES/docs/EDT-CCP-MYTRUES-BOUNDARY.md`.
+
+Only the separate global MyTrues `Experience as primary unit` forensic question
+remains if product ontology needs to be frozen.
