@@ -1183,3 +1183,76 @@ Do not silently choose one.
 
 The expansion remains a forensic naming issue until original authority is
 verified.
+
+
+## EDT / CCP / MyTrues boundary correction
+
+A direct researcher clarification plus historical source pack resolves a
+long-running category error.
+
+### 59. EDT is Education-Driven Thinking
+
+Current canonical expansion:
+
+`Education-Driven Thinking (EDT)`.
+
+Historical January/February-2025 material already uses this expansion and frames
+EDT as a conceptual paradigm centered on the creator cognitive process.
+
+`Education-Driven Things` is therefore non-canonical unless an explicit future
+human-researcher rename occurs.
+
+### 60. EDT is the conceptual thesis, not the tool
+
+Current research orientation:
+
+```text
+EDT
+= conceptual/philosophical engineering thesis
+
+CCP
+= creator cognitive path
+= central object/concept investigated by EDT
+
+MyTrues
+= technical instrument/reference implementation
+= used to operationalize/test CCP
+```
+
+MyTrues may provide indirect feasibility/evidence for CCP.
+
+It does not define the thesis.
+
+### 61. MyTrues novelty and EDT novelty are separate questions
+
+Do not require MyTrues to invent a new storage/graph/engine in order for EDT/CCP
+to remain scientifically interesting.
+
+Likewise, a technically novel MyTrues mechanism does not automatically prove EDT.
+
+Preserve two independent prior-art/frontier processes:
+
+- EDT/CCP conceptual/scientific frontier;
+- MyTrues technical/product frontier.
+
+### 62. CCW predates current MyTrues tool identity
+
+Historical `Creator Cognitive Walkthrough (CCW)` proposed capture of the creator
+cognitive process using **cognitive keyframes**, preserving decision/reflection
+moments, discarded hypotheses, errors and difficulties.
+
+This is strong genealogy for CCP.
+
+Preserve:
+
+`CCW -> precursor/model in the CCP lineage`.
+
+Do not rewrite CCW as if it had always been CCP.
+
+### 63. Historical academic stage must remain historical
+
+The January-2025 UTFPR/PPGI prototype belongs to an earlier academic stage.
+
+Current researcher intent is doctoral thesis formation.
+
+Do not retroactively rewrite the older document; record the research evolution.
