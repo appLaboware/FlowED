@@ -347,3 +347,87 @@ novelty claims from being created by omission of prior art.
 
 The name `CCP de Partida` remains provisional and is not part of the runtime
 protocol.
+
+
+## Thesis frontier versus tool frontier
+
+The project now explicitly separates two different scientific questions.
+
+### EDT / CCP thesis frontier
+
+EDT is a conceptual/philosophical engineering thesis.
+
+Its central object is the creator cognitive path (CCP).
+
+The thesis may remain scientifically meaningful even if every MyTrues technical
+component is adopted from existing open tools.
+
+Questions here include:
+
+- what is lost when only consolidated artifacts survive;
+- whether creator cognitive path should be preserved as a primary epistemic or
+  documentation object;
+- what constitutes a sufficient CCP representation;
+- how CCP relates to design rationale, traceability, provenance, organizational
+  memory, experiential learning and knowledge evolution;
+- what benefits/limitations appear when CCP is made inspectable.
+
+### MyTrues tool frontier
+
+MyTrues is the technical instrument/reference implementation used to
+operationalize/test CCP-related ideas.
+
+Questions here include:
+
+- protocol/data representation;
+- temporal semantics;
+- provenance;
+- authority;
+- decision memory;
+- profiles/engines;
+- retrieval;
+- portability;
+- conformance;
+- measurable technical behavior.
+
+A technical novelty gate applies to **MyTrues inventions**.
+
+It must not be used as a veto on the conceptual EDT thesis.
+
+Therefore:
+
+```text
+no residual MyTrues technical novelty
+!=
+no EDT/CCP scientific contribution
+```
+
+and:
+
+```text
+MyTrues technical novelty
+!=
+automatic proof of EDT
+```
+
+MyTrues can provide indirect feasibility/evidence for CCP while also generating
+independent technical research opportunities.
+
+## Instrument validity principle
+
+When MyTrues is used to test CCP, distinguish:
+
+```text
+conceptual proposition
+-> operationalization
+-> instrument behavior
+-> observed evidence
+-> interpretation
+```
+
+Do not equate instrument implementation details with the concept itself.
+
+A failed storage/adapter/engine choice does not by itself falsify CCP.
+
+A successful implementation does not by itself prove the broader philosophical
+claims of EDT.
