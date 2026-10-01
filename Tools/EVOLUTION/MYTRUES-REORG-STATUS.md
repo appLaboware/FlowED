@@ -69,7 +69,7 @@ independent DevOps intent client.
 
 History-preserving canonical subtree import uses FlowED commit:
 
-`7cf59acb7651a688c680fdd40e1da0abb65e7963`
+`65ea6ab7e81d0b4f8d664a6c4dfe663f2570777a`
 
 This commit contains the complete product staging surface including the physical
 IDEOS `DecisionMemory` adapter boundary.
@@ -102,7 +102,7 @@ The frozen migration SHA above includes this recovered material.
 The migration manifest and `reorganize-org.sh` now both point to the same
 authoritative frozen source SHA:
 
-`7cf59acb7651a688c680fdd40e1da0abb65e7963`
+`65ea6ab7e81d0b4f8d664a6c4dfe663f2570777a`
 
 No known SHA drift remains between those two migration records.
 
@@ -161,5 +161,31 @@ Preserved but not promoted as core:
 - MyTrues Discovery product branch;
 - proposed family Discovery/Cognition/Verify;
 - old commercial/licensing/org layouts.
+
+The authoritative frozen product SHA above includes these additions.
+
+## Open extension / engine ecosystem north
+
+The current staging now records:
+
+- OPEN protocol boundary through `DecisionEngine`;
+- provisional ports for DecisionMemory, DecisionProfile, Evidence, Provenance,
+  Authority, CognitionProposal, Retrieval, Outcome, View and Source;
+- independently distributable adapters/plugins;
+- MCP as adapter, not core;
+- LLM cognition harvester as candidate producer behind explicit authority;
+- conformance-aware registry/marketplace as a product direction;
+- PPX as direct prior art/adoption candidate for portable preference profiles;
+- science/product opportunity map and capability/prior-art inventory.
+
+Current Science Frontier status:
+
+- GO for continued prior-art and open interoperability design;
+- GO for open port/adapter/plugin/conformance work;
+- DONT_GO for claiming preference-profile portability as novel;
+- DONT_GO for claiming plugin/marketplace architecture as novel;
+- DONT_GO for inventing a proprietary DecisionEngine yet;
+- possible research residual remains cross-engine decision semantic preservation,
+  temporal replay/provenance, authority gating and memory-reuse behavior.
 
 The authoritative frozen product SHA above includes these additions.
