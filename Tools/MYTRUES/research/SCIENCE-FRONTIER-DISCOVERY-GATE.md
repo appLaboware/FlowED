@@ -120,3 +120,72 @@ MyTrues v0.2 does **not** claim an original decision algorithm.
 
 It provides an open decision protocol/reference behavior and therefore remains a
 valid baseline/client surface while this gate is being investigated.
+
+
+## External-run qualification gate
+
+A Discovery package produced by an external model/provider does not qualify
+itself merely by declaring its own gates as GO.
+
+Before any external run contributes to the canonical design space, intake MUST
+independently check at least:
+
+- package checksum integrity;
+- JSON/CSV parseability;
+- required-file presence;
+- unique IDs;
+- source-reference integrity;
+- manifest counts recomputed from payload;
+- agreement between manifest and executive summaries;
+- contradiction/open-question counts where declared;
+- numeric-range provenance;
+- candidate-source verification against primary/authoritative records.
+
+A self-declared G7/MACHINE_READABILITY result is not evidence of parseability.
+
+The Grok Discovery intake of 2026-10-01 is the first preserved negative example:
+its checksums pass, but three required JSON files fail parsing and the manifest
+counts disagree with the delivered mechanism/variable arrays.
+
+See:
+
+`external-runs/GROK-MYTRUES-COGNITIVE-DISCOVERY-001-QUALIFICATION.md`
+
+## Metaobjective on record: MyTrues applied to MyTrues
+
+The preserved `MTR-METAOBJECTIVE-001` proposes a long-range research loop in
+which MyTrues records architecture experiments as:
+
+```text
+context
++ configuration
++ question set
+-> observed consequence
+```
+
+Its recurring shorthand is `SQLDAVELHA`: accumulated experience may replace
+repeated uncertain reasoning where prior situations/consequences have become
+queryable.
+
+This is a research hypothesis, not a production architecture.
+
+The same document proposes a strict experimental boundary:
+
+- LLMs may interpret language and propose candidate relations;
+- candidate relations are not canonical relations;
+- deterministic/registered evidence determines epistemic state;
+- an LLM renderer may change representation, not what the system is authorized
+  to claim.
+
+## Microbrain proposal boundary
+
+`MYTRUES-META-PROPOSAL-001` proposes a future controlled
+`MYTRUES-MICROBRAIN-V0` before architecture selection.
+
+The package is preserved as a proposal only.
+
+No implementation is authorized until the PO explicitly promotes it.
+
+If promoted later, it should remain an experimental measurement instrument and
+must not be treated as the final ontology, final storage architecture, or proof
+of novelty.
