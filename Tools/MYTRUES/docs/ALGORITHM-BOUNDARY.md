@@ -112,3 +112,26 @@ existência não transforma o mecanismo simples de lookup em Core proprietário.
 
 O futuro Core, se existir, fica atrás do protocolo aberto e precisa atravessar o
 Science Frontier Gate antes de receber qualquer claim de superioridade.
+
+
+## Storage boundary
+
+The current reference implementation in `reference/provider_server.py` persists
+provider state in SQLite through `MYTRUES_DB_PATH`.
+
+That is the executable reference runtime proved by conformance.
+
+Neo4j material under `memory/neo4j/` is historical/schema reference only after the
+2026-10-01 license gate and is not a MyTrues runtime dependency.
+
+## Seed loading boundary
+
+`MYTRUES_SEED_MANIFEST` loads provider-specific decisions into the same SQLite
+reference memory.
+
+This is **data initialization**, not decision algorithm behavior:
+
+- the provider receives only decisions explicitly assigned to its ID;
+- absence of a decision still follows the normal unknown-case `202` path;
+- the seed cannot manufacture a decision for the control case;
+- seed-004 conformance run `36874885444` proves this behavior.
