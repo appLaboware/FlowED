@@ -20,9 +20,9 @@ não chegou a executar.
 | Dependencies v1 | Porter dependencies | PARTIAL: direct dependency + version strategy pass; documented output interpolation unresolved | E2 | R1-P02 run `36819797057` | B | minimize output-wiring gap and compare upstream/canary |
 | Dependencies v2 | Porter shared dependencies | FAILED/NOT PROVEN after fixture publish; independent shared-infra install returns non-zero | E1 experimental | R1-P03 run `36820579778` | B-failure | minimize, correct diagnostics, upstream-first |
 | Infrastructure manager | GRyCAP IM | PASS for real Docker materialization; current Azure OIDC shape incompatible with tested connector | E2 | runs `36800909647`, `36801390616` | A | no secret downgrade; revisit only if upstream adds federation path |
-| Decision protocol | MyTrues open protocol | PASS partial: provider-scoped decide/pause/resolve/resume implemented | E3 | conformance `36810420973`; real delivery/WordPress successor runs | A+B | validate v0.2 schemas formally; events/provenance/versioning |
-| MyTrues schemas v0.2 | JSON Schema + OpenAPI 3.1 | EXISTS BUT CURRENT WORKFLOW DOES NOT VALIDATE SCHEMAS | E1 | files in repo only | D | schema validation in Actions; OpenAPI validation |
-| Human decision cycle | MyTrues pause→sanitize→resolve→resume | PASS | E3 | runs `36809927549`, `36810420973`, `36818073138` | B | authenticated provider resolution, durable async notification |
+| Decision protocol | MyTrues open protocol | PASS partial: provider-scoped decide/pause/resolve/resume implemented; v0.2 JSON messages schema-validated | E3 | conformance `36871180992`; real delivery/WordPress successor runs | A+B | OpenAPI validation; events/provenance/versioning |
+| MyTrues schemas v0.2 | JSON Schema | PASS: meta-schema + request/response/pending/provider-resolution concrete messages | E2 | conformance run `36871180992` | B | add negative cases and compatibility/version-policy tests |
+| Human decision cycle | MyTrues pause→sanitize→resolve→resume | PASS | E3 | runs `36809927549`, `36810420973`, `36871180992` | B | authenticated provider resolution, durable async notification |
 | Provider-scoped memory | SQLite | PASS for isolation + restart persistence | E2 | run `36810420973` | B | migrations, concurrency, retention/export |
 | Graph memory | Neo4j | PASS as EXP-007 exact-case decision memory; cross-run retain not proved there | E1 | EXP-007 run `36806662068` | B within A-class E2E | PROV model, persistent service, hybrid retrieval benchmark |
 | Decision science | deterministic approved-case lookup | PASS for known cases only | E1 | EXP-007 + MyTrues conformance | A+B | CBR/MCDA/Bayes/ranking/calibration baselines |
@@ -36,7 +36,7 @@ não chegou a executar.
 | Async API | AsyncAPI | NOT RUN | E0 | docs | D | AsyncAPI 3.1 contract |
 | Provenance | W3C PROV | NOT RUN | E0 | docs | D | map Case/Decision/Evidence/Execution/Agent |
 | Identity | GitHub OIDC -> Azure | PASS for federated login, RG read and Contributor write | E2 | EXP-003 run `36795844036` | A | least privilege/immutable subject hardening |
-| Test executor | GitHub Actions | PASS as laboratory executor | E2 | all accepted run IDs | A+B | separate test runner from product runtime; artifact retention |
+| Test executor | GitHub Actions | PASS as laboratory executor; `actions/upload-artifact@v4` is not executable in actions in current repo configuration (startup_failure with zero jobs) | E2 | accepted runs; artifact attempt `36870956574` | A+B + startup-failure observation | separate test runner from product runtime; artifact retention via allowed mechanism |
 | Azure target | ACI | PASS for public PHP/MySQL and WordPress fixtures | E2 | Porter Azure `36796448509`; WordPress `36815666277` | A | compare Container Apps/App Service/AKS/VM |
 | DNS provider | Cloudflare API | NOT PROVEN in audited EXP-006 Actions path; missing credentials observed | E0/E1 | EXP-006 run `36805070315` | A-failure | provider bootstrap or sanctioned mock/sandbox; no fake success |
 | App fixture | WordPress | PASS as real PHP application fixture, not architectural abstraction | E1 | run `36815666277` | A | retain as fixture only; add other app families |
