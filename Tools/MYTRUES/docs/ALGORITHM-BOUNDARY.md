@@ -72,3 +72,43 @@ ou:
 
 LLMs podem auxiliar pesquisa e preparação de alternativas, mas não criam autoridade
 operacional por si mesmas.
+
+## Coerência com a implementação de referência atual
+
+A implementação em `reference/provider_server.py` é deliberadamente uma baseline
+OPEN, não o futuro MyTrues Core.
+
+Hoje ela faz:
+
+1. procura uma decisão persistida por `failure_code` na memória SQLite do fornecedor;
+2. se existir, materializa e devolve `200 decided`;
+3. se não existir, cria um pedido pendente e devolve
+   `202 awaiting-provider-decision`;
+4. produz um `casePacket` sanitizado para o fornecedor;
+5. aceita uma resolução explícita no endpoint provider-side;
+6. persiste essa resolução somente na memória daquele fornecedor;
+7. em ocorrência futura do mesmo failure code, reutiliza a decisão persistida.
+
+O conformance v0.2 prova esse comportamento em Actions, inclusive após restart.
+
+### O que essa referência NÃO faz
+
+Ela não:
+
+- gera uma nova decisão por LLM;
+- promove similaridade vetorial a autoridade;
+- escolhe autonomamente uma solução para caso desconhecido;
+- implementa CBR completo, MCDA, Bayes, learning-to-rank ou outro algoritmo
+  científico ainda não reproduzido;
+- autentica hoje a operação provider-side;
+- constitui propriedade intelectual proprietária.
+
+### Seeds não são algoritmo
+
+Decisões pré-carregadas para um fornecedor são **dados/memória de referência**.
+
+Elas podem ser públicas no laboratório ou privadas em uma instância real, mas sua
+existência não transforma o mecanismo simples de lookup em Core proprietário.
+
+O futuro Core, se existir, fica atrás do protocolo aberto e precisa atravessar o
+Science Frontier Gate antes de receber qualquer claim de superioridade.
