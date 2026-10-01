@@ -61,8 +61,8 @@ jobs:
       - name: Build and publish parent
         working-directory: repo/Tools/EVOLUTION/experiments/R1-P02-porter-dependencies/parent
         run: |
-          "$PORTER_HOME/porter" lint --insecure-registry
-          "$PORTER_HOME/porter" build --insecure-registry
+          "$PORTER_HOME/porter" lint
+          "$PORTER_HOME/porter" build
           "$PORTER_HOME/porter" publish --insecure-registry
 
       - name: Inspect full direct dependency graph
