@@ -133,3 +133,23 @@ artifacts. It does not obtain canonical authority merely by being an adapter.
 
 A future registry/marketplace is an ecosystem/distribution concern, not part of
 the semantic definition of a decision.
+
+
+## Preference-profile prior art boundary
+
+MyTrues does not own the concept of a portable user/provider preference profile.
+
+The target `DecisionProfile` capability should first interoperate with PPX
+(Preference Profile Exchange) and evaluate older profile prior art such as
+W3C CC/PP.
+
+A MyTrues-specific portable profile schema is not authorized merely because the
+protocol has a `DecisionProfile` port.
+
+The likely integration direction is:
+
+`portable profile (for example PPX) -> DecisionProfile adapter -> selected
+DecisionEngine mapping`
+
+The decision protocol may standardize how an engine/profile/version participates
+in a DecisionRecord without standardizing a new preference vocabulary.
