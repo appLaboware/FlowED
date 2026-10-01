@@ -1,23 +1,27 @@
 # Open surface
 
-Everything in this surface is intentionally based on public knowledge or open,
-documented interoperability contracts.
+A superfície aberta contém tudo que já pertence ao estado conhecido da técnica,
+ciência ou padronização e tudo que for necessário para interoperabilidade.
 
-Current open pieces include:
+Inclui:
 
 - MyTrues Open Decision Protocol;
-- OpenAPI and JSON Schemas;
-- BPMN-like pause/receive semantics;
-- RFC 9457 problem responses;
-- W3C Trace Context integration points;
-- CloudEvents / AsyncAPI integration points;
-- anonymized case-packet convention;
-- provider-scoped persistence reference implementation;
-- SQLite and Neo4j reference memory adapters;
-- conformance tests;
-- baseline decision algorithms and fixtures.
+- OpenAPI e JSON Schemas;
+- RFC 9457;
+- W3C Trace Context;
+- CloudEvents / AsyncAPI;
+- DMN/BPMN como referências semânticas;
+- W3C PROV para proveniência;
+- SQLite e Neo4j reference adapters;
+- vector/graph retrieval quando baseado em técnicas públicas;
+- CBR, MCDA, regras, probabilistic decision support e demais baselines publicadas;
+- conformance suites;
+- reference implementations;
+- adapters genéricos;
+- benchmarks abertos.
 
-Nothing here is treated as proprietary merely because MyTrues uses it.
+A regra é:
 
-The open surface is the baseline against which a future MyTrues Core must prove
-additional value.
+> conhecimento público não é fechado para fabricar diferencial.
+
+O futuro MyTrues Core deve provar valor adicional sobre esta baseline aberta.
