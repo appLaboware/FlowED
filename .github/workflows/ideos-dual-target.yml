@@ -17,6 +17,8 @@ env:
   EXP_DIR: Tools/IDEOS/experiments/EXP-004-dual-target
   RESOURCE_GROUP: rg-flowed-ideos-lab
   LOCATION: brazilsouth
+  INSTANCE_NAME: vitrine
+  DNS_LABEL: vitrine-flowed-ideos
 
 jobs:
   docker:
@@ -98,9 +100,14 @@ jobs:
           echo "$OUTPUT"
           grep -F "A mesma aplicacao foi materializada pelo mesmo contrato." <<<"$OUTPUT"
 
-      - name: Show endpoint
-        run: bash "$EXP_DIR/materialize.sh" endpoint azure
-
-      - name: Destroy
-        if: always()
-        run: bash "$EXP_DIR/materialize.sh" destroy azure
+      - name: Return ready URL
+        run: |
+          URL="$(bash "$EXP_DIR/materialize.sh" endpoint azure)"
+          echo "READY_URL=$URL"
+          {
+            echo "# Aplicação pronta"
+            echo
+            echo "$URL"
+            echo
+            echo "A mesma Application foi materializada e validada na Azure."
+          } >> "$GITHUB_STEP_SUMMARY"
