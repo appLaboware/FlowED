@@ -1,0 +1,7 @@
+services:
+  im:
+    image: grycap/im:latest
+    container_name: ideos-exp005-im
+    ports:
+      - "8800:8800"
+      - "8899:8899"
