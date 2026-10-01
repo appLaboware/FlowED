@@ -32,8 +32,9 @@ docker_name() {
 }
 
 azure_name() {
-  # Stable per GitHub run when available; otherwise stable for interactive use.
-  if [[ -n "${GITHUB_RUN_ID:-}" ]]; then
+  if [[ -n "${INSTANCE_NAME:-}" ]]; then
+    echo "$INSTANCE_NAME"
+  elif [[ -n "${GITHUB_RUN_ID:-}" ]]; then
     echo "ideos-${APP_ID}-${GITHUB_RUN_ID}"
   else
     echo "ideos-${APP_ID}"
@@ -41,6 +42,11 @@ azure_name() {
 }
 
 azure_dns_label() {
+  if [[ -n "${DNS_LABEL:-}" ]]; then
+    echo "$DNS_LABEL" | tr '[:upper:]' '[:lower:]'
+    return
+  fi
+
   local suffix
   if [[ -n "${GITHUB_RUN_ID:-}" ]]; then
     suffix="${GITHUB_RUN_ID}"
