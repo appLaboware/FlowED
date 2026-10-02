@@ -6,7 +6,7 @@ Status: **READY FOR REPOSITORY-ADMIN EXECUTION**
 
 Frozen FlowED staging source:
 
-`121c63642c4cc552c46a7cf3ff70ab57924cb2be`
+`caa2cdf2969f84785cb9a931012a4bec31be48d9`
 
 This SHA contains the current qualified archaeology, EDT/CCP/MyTrues boundaries,
 open extension architecture, org topology and 2026 frontier reference suite.
@@ -345,3 +345,25 @@ After separation:
 - MyTrues does not become the permanent owner of EDT/CCP academic identity.
 
 See `FEDERATION-ADOPTION-TOPOLOGY.md`.
+
+
+## Private-first bootstrap pack
+
+The frozen source now includes:
+
+- repository-specific current-boundary READMEs;
+- restricted private pre-release notice;
+- publication gate;
+- governance rules;
+- planned public-license policies;
+- private EDT rights boundary;
+- private enterprise rights boundary;
+- privacy/rights/publication matrix.
+
+These files are staged under:
+
+`Tools/MYTRUES/migration/bootstrap/`
+
+and are copied only after target repositories are confirmed PRIVATE.
+
+The migration itself does not publish any repository.
