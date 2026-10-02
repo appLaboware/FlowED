@@ -92,17 +92,14 @@ jobs:
           az account show             --query "{subscription:id,tenant:tenantId,identity:user.name,type:user.type}"             --output table
 
 
-      - name: Inventory available Azure container infrastructure
+      - name: Provision managed container environment
         shell: bash
         run: |
           set -euo pipefail
-          echo "RESOURCE_INVENTORY"
-          az resource list --query "[].{name:name,type:type,location:location,group:resourceGroup}" -o table
-          echo "PROVIDER_STATUS"
-          for ns in Microsoft.App Microsoft.ContainerInstance Microsoft.ContainerRegistry Microsoft.Web Microsoft.Storage; do
-            az provider show -n "$ns" --query "{namespace:namespace,state:registrationState}" -o json
-          done
-          echo "EXISTING_CONTAINER_GROUPS"
-          az container list -g rg-flowed-ideos-lab --query "[].{name:name,location:location,state:provisioningState,host:ipAddress.fqdn}" -o table
-          echo "APP_SERVICE_LINUX_LOCATIONS"
-          az appservice list-locations --linux-workers-enabled --sku B1 --query "[].name" -o json
+          az extension add --name containerapp --upgrade --only-show-errors
+          rg=rg-flowed-ideos-lab
+          name=mytrues-memory-env
+          if ! az containerapp env show -g "$rg" -n "$name" -o none 2>/dev/null; then
+            az containerapp env create -g "$rg" -n "$name" --location brazilsouth --logs-destination none --only-show-errors -o none
+          fi
+          az containerapp env show -g "$rg" -n "$name" --query "{name:name,location:location,state:properties.provisioningState,domain:properties.defaultDomain}" -o json
