@@ -124,7 +124,7 @@ jobs:
             unset MYTRUES_MANAGEMENT_TOKEN
             help="$(az postgres flexible-server create --help)"
             auth=--microsoft-entra-auth
-            if ! rg -q -- '--microsoft-entra-auth' <<<"$help"; then auth=--active-directory-auth; fi
+            if ! grep -q -- '--microsoft-entra-auth' <<<"$help"; then auth=--active-directory-auth; fi
             az postgres flexible-server create -g "$rg" -n "$name" --location brazilsouth \
               --version 18 --tier Burstable --sku-name Standard_B1ms --storage-size 32 \
               --backup-retention 7 --public-access None "$auth" Enabled --password-auth Disabled \
