@@ -3,11 +3,11 @@ set -euo pipefail
 
 : "${BRIDGE_SHA:?BRIDGE_SHA is required}"
 
-RG="rg-flowed-ideos-lab"
+CONTROL_RG="rg-flowed-ideos-lab"
+POC_RG="rg-mytrues-typedb-poc"
 VAULT="mytrues-ingest-kv"
 VM="mytrues-typedb-poc"
-REGION=""
-PREFERRED_REGIONS=(brazilsouth eastus2 eastus centralus westus3)
+PREFERRED_REGIONS=(eastus2 eastus centralus westus3 brazilsouth)
 
 echo "[1/6] Preparing TypeDB admin credential in Azure Key Vault"
 MGMT_TOKEN="$(az account get-access-token --query accessToken -o tsv)"
@@ -20,7 +20,7 @@ PY
 unset MGMT_TOKEN
 echo "::add-mask::$OID"
 
-az keyvault set-policy -g "$RG" -n "$VAULT" --object-id "$OID" \
+az keyvault set-policy -g "$CONTROL_RG" -n "$VAULT" --object-id "$OID" \
   --secret-permissions get set list --only-show-errors -o none
 sleep 5
 
@@ -32,16 +32,24 @@ if [ -z "$TYPEDB_ADMIN_PASSWORD" ]; then
 fi
 echo "::add-mask::$TYPEDB_ADMIN_PASSWORD"
 
-echo "[2/6] Creating or reusing isolated Azure VM"
+echo "[2/6] Selecting and allocating isolated Azure VM"
 SUB="$(az account show --query id -o tsv)"
 SUFFIX="$(printf '%s' "$SUB" | sha256sum | cut -c1-10)"
 DNS_LABEL="mytrues-typedb-$SUFFIX"
+REGION=""
 
-if ! az vm show -g "$RG" -n "$VM" -o none 2>/dev/null; then
-  VM_SIZE=""
-  VM_FAMILY=""
+existing_state="$(az vm show -g "$POC_RG" -n "$VM" --query provisioningState -o tsv 2>/dev/null || true)"
+if [ "$existing_state" = "Succeeded" ]; then
+  REGION="$(az vm show -g "$POC_RG" -n "$VM" --query location -o tsv)"
+  echo "Reusing healthy TypeDB VM in $REGION"
+else
+  if az group show -n "$POC_RG" -o none 2>/dev/null; then
+    echo "Removing incomplete previous POC resource group"
+    az group delete -n "$POC_RG" --yes --only-show-errors
+  fi
+
   for candidate_region in "${PREFERRED_REGIONS[@]}"; do
-    echo "Checking capacity and quota in $candidate_region"
+    echo "Checking quota/capacity metadata in $candidate_region"
     az vm list-skus --location "$candidate_region" --resource-type virtualMachines --all -o json > /tmp/typedb-skus.json
     az vm list-usage --location "$candidate_region" -o json > /tmp/typedb-usage.json
 
@@ -56,11 +64,8 @@ for u in usage:
         spare[name]=int(u.get("limit",0))-int(u.get("currentValue",0))
     except (TypeError,ValueError):
         pass
-
-regional=spare.get("cores", 999999)
-if regional < 2:
+if spare.get("cores",999999) < 2:
     raise SystemExit(0)
-
 choices=[]
 for row in skus:
     name=row.get("name","")
@@ -80,71 +85,76 @@ for row in skus:
     if cpus != 2 or mem < 4 or mem > 16:
         continue
     class_rank=0 if name.startswith("Standard_B") else 1
-    choices.append((class_rank, mem, name, family))
-
+    choices.append((class_rank,mem,name,family))
 if choices:
     _,mem,name,family=sorted(choices)[0]
     print(f"{name}|{family}|{mem}")
 PY
 )"
-    if [ -n "$PICK" ]; then
-      IFS='|' read -r VM_SIZE VM_FAMILY VM_MEMORY <<<"$PICK"
-      REGION="$candidate_region"
-      echo "Selected Azure VM: region=$REGION size=$VM_SIZE family=$VM_FAMILY memory_gb=$VM_MEMORY"
-      break
+    [ -n "$PICK" ] || { echo "No suitable quota-backed SKU in $candidate_region"; continue; }
+
+    IFS='|' read -r VM_SIZE VM_FAMILY VM_MEMORY <<<"$PICK"
+    echo "Attempting region=$candidate_region size=$VM_SIZE family=$VM_FAMILY memory_gb=$VM_MEMORY"
+
+    az group create -n "$POC_RG" -l "$candidate_region" --tags project=MyTrues purpose=typedb-poc --only-show-errors -o none
+
+    if az vm create \
+      -g "$POC_RG" -n "$VM" --location "$candidate_region" \
+      --image "Canonical:ubuntu-24_04-lts:server:latest" \
+      --size "$VM_SIZE" \
+      --admin-username typedbadmin \
+      --generate-ssh-keys \
+      --public-ip-sku Standard \
+      --public-ip-address-dns-name "$DNS_LABEL" \
+      --nsg-rule NONE \
+      --tags project=MyTrues purpose=typedb-poc \
+      --only-show-errors -o none; then
+        REGION="$candidate_region"
+        echo "VM allocation succeeded in $REGION"
+        break
     fi
+
+    echo "Allocation failed in $candidate_region; rolling back isolated POC resources"
+    az group delete -n "$POC_RG" --yes --only-show-errors || true
   done
-
-  test -n "$VM_SIZE" || { echo "No unrestricted 2-vCPU / >=4GB VM has both capacity and family quota in preferred regions" >&2; exit 1; }
-
-  az vm create \
-    -g "$RG" -n "$VM" --location "$REGION" \
-    --image "Canonical:ubuntu-24_04-lts:server:latest" \
-    --size "$VM_SIZE" \
-    --admin-username typedbadmin \
-    --generate-ssh-keys \
-    --public-ip-sku Standard \
-    --public-ip-address-dns-name "$DNS_LABEL" \
-    --nsg-rule NONE \
-    --tags project=MyTrues purpose=typedb-poc \
-    --only-show-errors -o none
-else
-  REGION="$(az vm show -g "$RG" -n "$VM" --query location -o tsv)"
-  echo "Reusing existing TypeDB VM in $REGION"
 fi
+
+test -n "$REGION" || { echo "Unable to allocate a suitable VM in any preferred region" >&2; exit 1; }
+
 echo "[3/6] Ensuring only HTTP/HTTPS public ingress"
-NIC_ID="$(az vm show -g "$RG" -n "$VM" --query 'networkProfile.networkInterfaces[0].id' -o tsv)"
+NIC_ID="$(az vm show -g "$POC_RG" -n "$VM" --query 'networkProfile.networkInterfaces[0].id' -o tsv)"
 NSG_ID="$(az network nic show --ids "$NIC_ID" --query 'networkSecurityGroup.id' -o tsv)"
 NSG_NAME="${NSG_ID##*/}"
 
-az network nsg rule create -g "$RG" --nsg-name "$NSG_NAME" -n allow-http \
+az network nsg rule create -g "$POC_RG" --nsg-name "$NSG_NAME" -n allow-http \
   --priority 1120 --direction Inbound --access Allow --protocol Tcp \
   --source-address-prefixes Internet --source-port-ranges '*' \
   --destination-address-prefixes '*' --destination-port-ranges 80 \
   --only-show-errors -o none
 
-az network nsg rule create -g "$RG" --nsg-name "$NSG_NAME" -n allow-https \
+az network nsg rule create -g "$POC_RG" --nsg-name "$NSG_NAME" -n allow-https \
   --priority 1121 --direction Inbound --access Allow --protocol Tcp \
   --source-address-prefixes Internet --source-port-ranges '*' \
   --destination-address-prefixes '*' --destination-port-ranges 443 \
   --only-show-errors -o none
 
-PUBLIC_HOST="$(az vm show -d -g "$RG" -n "$VM" --query fqdns -o tsv)"
+PUBLIC_HOST="$(az vm show -d -g "$POC_RG" -n "$VM" --query fqdns -o tsv)"
 test -n "$PUBLIC_HOST"
 
 echo "[4/6] Installing TypeDB CE 3.12.1 and seeding canonical memory"
 BASE="https://raw.githubusercontent.com/appLaboware/FlowED/$BRIDGE_SHA/Tools/MyTrues/typedb-poc-bridge"
 curl -fsSL "$BASE/on-vm.sh" -o /tmp/on-vm.sh
 
+TYPEDB_ADMIN_PASSWORD="$TYPEDB_ADMIN_PASSWORD" PUBLIC_HOST="$PUBLIC_HOST" BRIDGE_SHA="$BRIDGE_SHA" \
 python3 - <<'PY'
-import os, pathlib, shlex
+import os,pathlib,shlex
 keys=("TYPEDB_ADMIN_PASSWORD","PUBLIC_HOST","BRIDGE_SHA")
 wrapper="#!/bin/bash\n"+''.join("export "+k+"="+shlex.quote(os.environ[k])+"\n" for k in keys)
 wrapper+=pathlib.Path("/tmp/on-vm.sh").read_text()
 pathlib.Path("/tmp/typedb-on-vm.sh").write_text(wrapper)
 PY
 
-az vm run-command invoke -g "$RG" -n "$VM" \
+az vm run-command invoke -g "$POC_RG" -n "$VM" \
   --command-id RunShellScript --scripts @/tmp/typedb-on-vm.sh \
   --output json > /tmp/typedb-deploy.json
 
@@ -178,7 +188,7 @@ rm -f /tmp/signin.json
 
 echo "[6/6] Publishing non-secret connection metadata"
 STUDIO_URL="$(PUBLIC_HOST="$PUBLIC_HOST" python3 - <<'PY'
-import os, urllib.parse
+import os,urllib.parse
 host=os.environ["PUBLIC_HOST"]
 print("https://studio.typedb.com/connect?"+urllib.parse.urlencode({
     "address":"https://"+host,
@@ -197,6 +207,8 @@ if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
   {
     echo "## MyTrues TypeDB Azure POC"
     echo
+    echo "- Resource group: `$POC_RG`"
+    echo "- Region: `$REGION`"
     echo "- TypeDB CE: `3.12.1`"
     echo "- Database: `mytrues_memory_poc_v0`"
     echo "- Endpoint: `https://$PUBLIC_HOST`"
