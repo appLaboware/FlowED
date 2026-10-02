@@ -95,8 +95,6 @@ create_repo_if_missing "research" "private"   "Reproducible frontier research, b
 
 create_repo_if_missing "registry" "private"   "Open MyTrues plugin/engine/adapter registry and conformance metadata"
 
-create_repo_if_missing "ideos" "private"   "Open DevOps intent product and reference MyTrues client"
-
 create_repo_if_missing "site" "private"   "Public MyTrues/CCP/EDT documentation and site"
 
 create_repo_if_missing "mytrues-enterprise" "private"   "Closed commercial extensions implementing the open MyTrues contracts"
@@ -141,16 +139,19 @@ git remote add origin "https://github.com/${ORG}/mytrues.git"
 git push -u --force origin main
 
 # ---------------------------------------------------------------------------
-# 6. Import IDEOS subtree preserving relevant FlowED history.
+# 6. IDEOS remains external.
 # ---------------------------------------------------------------------------
 
-rm -rf "$WORKDIR/ideos-source"
-git clone "https://github.com/${FLOWED_REPO}.git" "$WORKDIR/ideos-source"
-cd "$WORKDIR/ideos-source"
-git checkout "$FLOWED_SOURCE_SHA"
-git branch -D import-ideos 2>/dev/null || true
-git subtree split --prefix=Tools/IDEOS "$FLOWED_SOURCE_SHA" -b import-ideos
-git push --force "https://github.com/${ORG}/ideos.git" "import-ideos:main"
+# DO NOT import IDEOS into the MyTrues organization.
+# Canonical IDEOS owner:
+#   https://github.com/IDEOS-DEV/IDeOS-core
+#
+# IDEOS is a downstream/reference client that adopts MyTrues through open
+# protocol/ports. FlowED may pin/reference both independently.
+#
+# If the mistaken empty MyTrues/ideos staging repo exists, preserve it as:
+#   ideos_misplaced_arquived_261001
+# and archive/read-only it outside this content-import step.
 
 # ---------------------------------------------------------------------------
 # 7. Add current conceptual/research material to historical successor repos.
@@ -242,7 +243,6 @@ MYTRUES_SHA="$(gh api "repos/${ORG}/mytrues/commits/main" --jq '.sha')"
 CCP_SHA="$(gh api "repos/${ORG}/ccp/commits/main" --jq '.sha')"
 EDT_SHA="$(gh api "repos/${ORG}/edt/commits/main" --jq '.sha')"
 RESEARCH_SHA="$(gh api "repos/${ORG}/research/commits/main" --jq '.sha')"
-IDEOS_SHA="$(gh api "repos/${ORG}/ideos/commits/main" --jq '.sha')"
 
 for r in MyTrues MyTrues_p cli kernel paper replication site spec; do
   gh api -X PATCH "repos/${ORG}/${r}${SUFFIX}" -F archived=true >/dev/null
@@ -259,7 +259,6 @@ cat > "$WORKDIR/migration-evidence.json" <<JSON
     "edt": {"visibility":"private","sha":"$EDT_SHA"},
     "research": {"visibility":"private","sha":"$RESEARCH_SHA"},
     "registry": {"visibility":"private"},
-    "ideos": {"visibility":"private","sha":"$IDEOS_SHA"},
     "site": {"visibility":"private"},
     "mytrues-enterprise": {"visibility":"private"}
   }
@@ -271,7 +270,7 @@ cat "$WORKDIR/migration-evidence.json"
 echo
 echo "NEXT:"
 echo "1. run MyTrues conformance in canonical mytrues"
-echo "2. run IDEOS -> MyTrues adapter compatibility and pin canonical SHA"
+echo "2. run IDEOS-DEV/IDeOS-core -> MyTrues compatibility and pin canonical MyTrues SHA in external IDEOS"
 echo "3. verify CCP/EDT/research history and licenses"
 echo "4. populate registry manifest/conformance schemas"
 echo "5. publish no scientific novelty claim until frontier suite gates are run"
