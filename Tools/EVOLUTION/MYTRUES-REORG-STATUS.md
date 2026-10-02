@@ -487,3 +487,61 @@ and reproducibility research rather than the canonical EDT thesis home.
 See:
 
 `Tools/MYTRUES/FEDERATION-ADOPTION-TOPOLOGY.md`.
+
+
+## Admin migration phase — COMPLETE
+
+Real GitHub state verified on 2026-10-01 after local `gh` execution.
+
+### Historical repositories renamed
+
+- `MyTrues_arquived_261001`;
+- `MyTrues_p_arquived_261001`;
+- `cli_arquived_261001`;
+- `kernel_arquived_261001`;
+- `paper_arquived_261001`;
+- `replication_arquived_261001`;
+- `site_arquived_261001`;
+- `spec_arquived_261001`.
+
+All are PRIVATE.
+
+They are not yet GitHub-archived/read-only; that remains a Finalize action after
+canonical content verification.
+
+### Current MyTrues destinations
+
+- `mytrues` — PRIVATE;
+- `ccp` — PRIVATE temporary academic incubation;
+- `edt` — PRIVATE temporary academic incubation;
+- `research` — PRIVATE MyTrues-specific research;
+- `registry` — PRIVATE pre-release;
+- `site` — PRIVATE pre-release;
+- `mytrues-enterprise` — PRIVATE commercial.
+
+### IDEOS correction
+
+The mistakenly created empty `MyTrues/ideos` repository was renamed to:
+
+`ideos_misplaced_arquived_261001`
+
+and kept PRIVATE.
+
+Canonical IDEOS remains:
+
+`IDEOS-DEV/IDeOS-core`
+
+No IDEOS content may be imported into the MyTrues organization.
+
+### Private-first licensing correction
+
+The canonical private pre-release `MyTrues/mytrues` import MUST NOT copy the
+staged MIT `LICENSE` yet.
+
+Instead, current canonical repositories receive a restricted private
+pre-release notice for original unpublished material.
+
+The intended future public licenses remain planning targets only and are applied
+only at an explicit release gate.
+
+Historical/upstream licenses remain intact and cannot be retroactively revoked.
