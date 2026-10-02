@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import json, os, sys
+import json, os, sys, time
 from typedb.driver import TypeDB, TransactionType, Credentials, DriverOptions, DriverTlsConfig
 
 DB="mytrues_memory_poc_v0"
@@ -24,7 +24,28 @@ def bindings(tx, oid):
 
 tests=[]
 detail={}
-with TypeDB.driver("127.0.0.1:1729", Credentials("admin",PW), OPT) as driver:
+
+driver=None
+last_error=None
+deadline=time.time()+90
+while time.time() < deadline:
+    try:
+        candidate=TypeDB.driver("127.0.0.1:1729", Credentials("admin",PW), OPT)
+        list(candidate.databases.all())
+        driver=candidate
+        break
+    except Exception as exc:
+        last_error=exc
+        try:
+            candidate.close()
+        except Exception:
+            pass
+        time.sleep(2)
+
+if driver is None:
+    raise RuntimeError(f"TypeDB did not become protocol-ready within 90s: {last_error}")
+
+with driver:
     assert driver.databases.contains(DB), f"database {DB} missing"
     with driver.transaction(DB,TransactionType.READ) as tx:
         occ_count=len(rows(tx,"match $o isa occurrence; select $o;"))
