@@ -5,8 +5,12 @@ on:
     branches:
       - tools/ideos-lab
     paths:
-      - ".github/workflows/mytrues-typedb-poc.yml"
-      - "Tools/MyTrues/typedb-poc-bridge/**"
+      - "Tools/MyTrues/typedb-poc-bridge/deploy-azure.sh"
+      - "Tools/MyTrues/typedb-poc-bridge/on-vm.sh"
+      - "Tools/MyTrues/typedb-poc-bridge/seed_once.py"
+      - "Tools/MyTrues/typedb-poc-bridge/qualify_live.py"
+      - "Tools/MyTrues/typedb-poc-bridge/00-schema.tql"
+      - "Tools/MyTrues/typedb-poc-bridge/canonical-memory.json"
   workflow_dispatch:
 
 permissions:
