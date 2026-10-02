@@ -56,7 +56,6 @@ repositories to GitHub archived/read-only state.
 | `edt` | private initially | Education-Driven Thinking doctoral research workspace |
 | `research` | private pre-release | frontier map, benchmarks, experiments, replication, paper opportunities |
 | `registry` | private pre-release | open plugin/engine/adapter manifest registry and conformance metadata |
-| `ideos` | private pre-release | independent open DevOps-intent product/reference MyTrues client |
 | `site` | private pre-release | public docs/site |
 | `mytrues-enterprise` | private | closed commercial extensions implementing open MyTrues contracts |
 
@@ -187,9 +186,18 @@ Build from qualified FlowED product paths only:
 The old `MyTrues_arquived_261001` remains the historical evidence for the
 pre-canonical implementation family.
 
-### `ideos`
+### IDEOS — external canonical owner
 
-Import the `Tools/IDEOS` subtree from the frozen FlowED source.
+Do **not** create/import IDEOS under the MyTrues organization.
+
+Canonical IDEOS repository:
+
+`IDEOS-DEV/IDeOS-core`
+
+IDEOS adopts MyTrues through the open protocol/ports. FlowED references both as
+independent upstreams. The mistakenly created empty `MyTrues/ideos` repo must be
+preserved privately as `ideos_misplaced_arquived_261001` and archived, not used
+as a canonical source.
 
 ## 7. Private-first release and licensing policy
 
@@ -210,7 +218,7 @@ For original unpublished material, a restricted pre-release notice may be used. 
 
 ### Product/open code
 
-`mytrues`, `ideos`, registry tooling:
+`mytrues`, registry tooling:
 
 MIT, unless a specific imported component requires a compatible distinct
 license.
@@ -296,8 +304,8 @@ For all eight definitive repositories:
 ### Product
 
 - canonical MyTrues conformance run URL;
-- IDEOS -> MyTrues compatibility run;
-- real immutable MyTrues SHA in IDEOS upstream lock.
+- IDEOS-DEV/IDeOS-core -> MyTrues compatibility run;
+- real immutable MyTrues SHA in the canonical external IDEOS upstream lock.
 
 ## 11. Execution runbook
 
@@ -314,3 +322,26 @@ GitHub connector actions in this session, and the local runtime has no `gh`
 binary/authentication surface.**
 
 Do not report execution until real GitHub mutation evidence exists.
+
+
+## Academic incubation / future transfer
+
+`MyTrues/ccp` and `MyTrues/edt` are deliberately temporary incubation repos.
+
+When dedicated academic organizations exist:
+
+1. freeze accepted SHA;
+2. transfer/migrate each canonical repo preserving history;
+3. verify branches/tags/issues/history;
+4. update MyTrues/FlowED references to the new canonical URL/SHA;
+5. remove the second writable canonical copy.
+
+Prefer GitHub repository transfer when feasible.
+
+After separation:
+
+- MyTrues references/adopts CCP as an external conceptual upstream;
+- EDT uses MyTrues as an experimental instrument;
+- MyTrues does not become the permanent owner of EDT/CCP academic identity.
+
+See `FEDERATION-ADOPTION-TOPOLOGY.md`.
