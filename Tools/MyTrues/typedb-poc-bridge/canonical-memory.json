@@ -1,0 +1,14 @@
+{
+  "model": "MyTrues Memory Primitive v0",
+  "source": "MyTrues/mytrues:poc/typedb-memory-primitive-v0",
+  "occurrences": [
+    {"id":"occ:npm-failure-001","bindings":{"key:type":"kind:use","key:actor":"person:rold","key:action":"action:npm-install","key:tool":"tool:npm","key:context":"project:alpha","key:outcome":"outcome:dependency-error-x","key:time":"time:2026-10-02T10:00:00-03:00","key:provenance":"source:terminal","key:conforms-to":"schema:v1"}},
+    {"id":"occ:decision-pnpm-001","bindings":{"key:type":"kind:decision","key:decider":"person:rold","key:subject":"subject:package-manager","key:selected":"tool:pnpm","key:based-on":"occ:npm-failure-001","key:time":"time:2026-10-02T10:05:00-03:00","key:provenance":"source:human","key:conforms-to":"schema:v1"}},
+    {"id":"occ:influence-001","bindings":{"key:type":"kind:influence","key:source":"occ:npm-failure-001","key:target":"occ:decision-pnpm-001","key:time":"time:2026-10-02T10:05:00-03:00"}},
+    {"id":"occ:variable-alias-001","bindings":{"key:type":"kind:variable-alias","key:scope":"project:github-x","key:expected":"variable:DATABASE_URL","key:actual":"variable:MY_DATABASE","key:author":"person:rold","key:time":"time:2026-10-02T11:00:00-03:00"}},
+    {"id":"occ:correction-001","bindings":{"key:type":"kind:correction","key:corrects":"occ:variable-alias-001","key:author":"person:rold","key:reason":"reason:prod-only-alias","key:time":"time:2026-10-02T11:10:00-03:00"}},
+    {"id":"occ:schema-evolution-001","bindings":{"key:type":"kind:schema-evolution","key:from":"schema:v1","key:to":"schema:v2","key:introduced":"concept:action","key:time":"time:2026-10-02T12:00:00-03:00"}},
+    {"id":"occ:semantic-declaration-001","bindings":{"key:type":"kind:semantic-declaration","key:subject":"kind:influence","key:is-a":"kind:relation-kind","key:time":"time:2026-10-02T12:00:00-03:00"}},
+    {"id":"occ:relation-correction-001","bindings":{"key:type":"kind:correction","key:corrects":"occ:influence-001","key:author":"person:rold","key:time":"time:2026-10-02T12:00:00-03:00"}}
+  ]
+}
