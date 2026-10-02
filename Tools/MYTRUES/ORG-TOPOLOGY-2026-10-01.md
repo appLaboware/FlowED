@@ -10,8 +10,9 @@ The organization must separate four concerns that historically became mixed:
 
 1. conceptual doctoral research (EDT);
 2. the central conceptual object/specification (CCP);
-3. technical/product implementation (MyTrues and clients);
-4. reproducible frontier research/benchmarks.
+3. technical/product implementation owned by MyTrues;
+4. external adopted products/clients owned by their own organizations;
+5. reproducible frontier research/benchmarks.
 
 It must also make the open/closed boundary explicit.
 
@@ -219,17 +220,6 @@ interoperability protocol.
 License: MIT for tooling/schema; registry metadata under an explicit open data
 policy.
 
-#### `MyTrues/ideos` — PRIVATE PRE-RELEASE / PLANNED PUBLIC
-
-Purpose:
-
-open independent DevOps-intent product/reference client.
-
-IDEOS consumes MyTrues only through open ports/protocol and an immutable upstream
-lock.
-
-IDEOS does not define MyTrues semantics.
-
 #### `MyTrues/site` — PRIVATE PRE-RELEASE / PLANNED PUBLIC
 
 Purpose:
@@ -320,7 +310,6 @@ Published papers can later receive dedicated archival/DOI repositories if needed
         ┌───────────────────────────┐
         │ mytrues                   │
         │ registry                  │
-        │ ideos                     │
         │ site                      │
         └─────────────┬─────────────┘
                       │ open contracts
@@ -354,12 +343,12 @@ metadata to interoperate safely.
 
 1. rename all eight legacy repos;
 2. create `ccp`, `edt`, `research`;
-3. create `mytrues`, `registry`, `ideos`, `site`;
+3. create `mytrues`, `registry`, `site`;
 4. create private `mytrues-enterprise`;
-5. import qualified history/content;
-6. run conformance/benchmark smoke tests;
-7. only then archive the eight renamed legacy repos at GitHub repository-setting
-   level.
+5. keep `ccp` and `edt` as temporary academic incubation repos;
+6. import qualified history/content;
+7. run conformance/benchmark smoke tests;
+8. only then archive the eight renamed legacy repos at GitHub repository-setting level.
 
 ## Visibility target
 
@@ -372,7 +361,6 @@ All definitive repositories remain PRIVATE until an explicit release review.
 | `edt` | private | private working thesis; selective publication only |
 | `research` | private | planned public after reproducibility/licensing review |
 | `registry` | private | planned public after schema/conformance review |
-| `ideos` | private | planned public after product/release review |
 | `site` | private | planned public when public content is ready |
 | `mytrues-enterprise` | private | remains private/commercial |
 
@@ -408,3 +396,54 @@ Create a new repo only when at least one applies:
 - independent product/business boundary.
 
 Otherwise keep it as a directory/module.
+
+
+## Federated ownership correction
+
+IDEOS does **not** belong in the MyTrues organization.
+
+Canonical IDEOS ownership is external:
+
+`IDEOS-DEV/IDeOS-core`.
+
+Observed on 2026-10-01:
+
+- visibility: private;
+- default branch: `main`;
+- head: `5b43b1bda1f9ab3c91424dc5c05346827a031ffd`.
+
+Relationship:
+
+```text
+IDEOS-DEV/IDeOS-core
+    -> adopts MyTrues through open protocol/ports
+
+FlowED
+    -> references/pins IDEOS
+    -> references/pins MyTrues
+```
+
+The empty `MyTrues/ideos` repository created during migration is a misplaced
+staging artifact. It must not receive IDEOS content. Preserve it privately as
+`ideos_misplaced_arquived_261001` and archive it after the correction.
+
+See:
+
+`FEDERATION-ADOPTION-TOPOLOGY.md`.
+
+## Academic incubation is temporary
+
+`MyTrues/ccp` and `MyTrues/edt` are current incubation locations only.
+
+Long-term:
+
+- CCP gets a dedicated academic organization/repository;
+- EDT gets a dedicated academic organization/repository;
+- history is transferred/preserved;
+- MyTrues keeps pinned references/adoption records rather than writable copies.
+
+This prevents the MyTrues product organization from becoming the permanent owner
+of independent academic identities.
+
+`MyTrues/research` remains valid because it is specifically **MyTrues technical
+and reproducibility research**, not the canonical home of the EDT thesis.
