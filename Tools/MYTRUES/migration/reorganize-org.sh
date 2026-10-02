@@ -13,7 +13,7 @@ set -euo pipefail
 
 ORG="MyTrues"
 FLOWED_REPO="appLaboware/FlowED"
-FLOWED_SOURCE_SHA="121c63642c4cc552c46a7cf3ff70ab57924cb2be"
+FLOWED_SOURCE_SHA="caa2cdf2969f84785cb9a931012a4bec31be48d9"
 SUFFIX="_arquived_261001"
 
 WORKDIR="${WORKDIR:-$(pwd)/.mytrues-org-migration}"
