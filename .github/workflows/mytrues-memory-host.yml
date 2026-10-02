@@ -100,7 +100,19 @@ jobs:
           vm=mytrues-project-memory
           suffix="$(az account show --query id -o tsv | sha256sum | cut -c1-10)"
           if ! az vm show -g "$rg" -n "$vm" -o none 2>/dev/null; then
-            az vm create -g "$rg" -n "$vm" --location eastus --image Ubuntu2404 --size Standard_B2s --admin-username mytruesadmin --generate-ssh-keys --public-ip-sku Standard --public-ip-address-dns-name "mytrues-memory-$suffix" --nsg-rule NONE --tags project=MyTrues purpose=decision-memory --output none
+            created=false
+            for size in Standard_B2ls_v2 Standard_B2als_v2 Standard_B1ms; do
+              echo "Trying bounded small VM size: $size"
+              if az vm create -g "$rg" -n "$vm" --location eastus --image Ubuntu2404 --size "$size" --admin-username mytruesadmin --generate-ssh-keys --public-ip-sku Standard --public-ip-address-dns-name "mytrues-memory-$suffix" --nsg-rule NONE --tags project=MyTrues purpose=decision-memory --output none > /tmp/vm-create-out 2>/tmp/vm-create-error; then
+                created=true; break
+              fi
+              if ! grep -q 'SkuNotAvailable' /tmp/vm-create-error; then
+                echo "VM creation failed for a reason other than capacity; not retrying."
+                sed -E 's/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/[identifier]/g' /tmp/vm-create-error | tail -15
+                exit 1
+              fi
+            done
+            test "$created" = true || { echo "No bounded small VM size available in eastus."; exit 1; }
           fi
           az vm open-port -g "$rg" -n "$vm" --port 80 --priority 1010 -o none
           az vm open-port -g "$rg" -n "$vm" --port 443 --priority 1011 -o none
