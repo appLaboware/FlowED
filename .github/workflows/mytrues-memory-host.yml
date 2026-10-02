@@ -133,3 +133,22 @@ jobs:
           fi
           az postgres flexible-server show -g "$rg" -n "$name" \
             --query "{name:name,state:state,version:version,host:fullyQualifiedDomainName,auth:authConfig}" -o json
+
+      - name: Prepare private payload encryption key
+        shell: bash
+        run: |
+          set -euo pipefail
+          rg=rg-flowed-ideos-lab
+          vault=mytrues-ingest-kv
+          export MYTRUES_MANAGEMENT_TOKEN="$(az account get-access-token --query accessToken -o tsv)"
+          oid="$(python -c 'import os,json,base64; p=os.environ["MYTRUES_MANAGEMENT_TOKEN"].split(".")[1]; print(json.loads(base64.urlsafe_b64decode(p+"="*(-len(p)%4)))["oid"])')"
+          echo "::add-mask::$oid"
+          unset MYTRUES_MANAGEMENT_TOKEN
+          if ! az keyvault show -g "$rg" -n "$vault" -o none 2>/dev/null; then
+            az keyvault create -g "$rg" -n "$vault" --location brazilsouth --enable-rbac-authorization false --only-show-errors -o none
+          fi
+          az keyvault set-policy -g "$rg" -n "$vault" --object-id "$oid" --key-permissions get create decrypt encrypt --only-show-errors -o none
+          if ! az keyvault key show --vault-name "$vault" -n chat-transfer -o none 2>/dev/null; then
+            az keyvault key create --vault-name "$vault" -n chat-transfer --kty RSA --size 3072 --ops encrypt decrypt --only-show-errors -o none
+          fi
+          az keyvault key show --vault-name "$vault" -n chat-transfer --query key -o json
