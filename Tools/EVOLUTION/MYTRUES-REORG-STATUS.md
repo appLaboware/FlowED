@@ -545,3 +545,40 @@ The intended future public licenses remain planning targets only and are applied
 only at an explicit release gate.
 
 Historical/upstream licenses remain intact and cannot be retroactively revoked.
+
+
+## Content migration local-run status
+
+Local PowerShell execution evidence on 2026-10-01:
+
+### v3
+
+Stopped before content import during `git-filter-repo` preflight due to a
+PowerShell case-insensitive function-name collision:
+
+`Git` recursively resolved to itself instead of native `git`.
+
+No canonical content was imported.
+
+### v4
+
+The recursive function bug was fixed.
+
+The run again stopped before content import, this time during metadata hygiene,
+because `ideos_misplaced_arquived_261001` had already been archived and GitHub
+correctly rejected a later PATCH with HTTP 403.
+
+Observed state after failure:
+
+- `ideos_misplaced_arquived_261001`: PRIVATE + ARCHIVED + empty;
+- `mytrues`, `ccp`, `edt`, `research`, `registry`, `site`,
+  `mytrues-enterprise`: PRIVATE + empty;
+- no IDEOS content imported into MyTrues;
+- no canonical content migration started.
+
+Operational correction:
+
+future local content migration must treat `archived=true` as terminal/read-only
+and skip all later mutations for that repository.
+
+The next local script revision is v5.
