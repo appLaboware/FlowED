@@ -68,3 +68,100 @@ jobs:
         run: |
           set -euo pipefail
           az group show             --name rg-flowed-ideos-lab             --query "{name:name,location:location,id:id}"             --output table
+
+      - name: Resolve or create TypeDB admin password
+        id: typedb_secret
+        shell: bash
+        run: |
+          set -euo pipefail
+          rg=rg-flowed-ideos-lab
+          vault=mytrues-ingest-kv
+          export MGMT_TOKEN="$(az account get-access-token --query accessToken -o tsv)"
+          oid="$(python -c 'import os,json,base64; p=os.environ["MGMT_TOKEN"].split(".")[1]; print(json.loads(base64.urlsafe_b64decode(p+"="*(-len(p)%4)))["oid"])')"
+          unset MGMT_TOKEN
+          echo "::add-mask::$oid"
+          az keyvault set-policy -g "$rg" -n "$vault" --object-id "$oid" --secret-permissions get set list --only-show-errors -o none
+          sleep 5
+          PASSWORD="$(az keyvault secret show --vault-name "$vault" -n typedb-poc-admin --query value -o tsv 2>/dev/null || true)"
+          if [ -z "$PASSWORD" ]; then
+            PASSWORD="$(openssl rand -hex 24)"
+            az keyvault secret set --vault-name "$vault" -n typedb-poc-admin --value "$PASSWORD" --only-show-errors -o none
+          fi
+          echo "::add-mask::$PASSWORD"
+          echo "password<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$PASSWORD" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Provision isolated TypeDB VM
+        id: typedb_vm
+        shell: bash
+        run: |
+          set -euo pipefail
+          rg=rg-flowed-ideos-lab
+          vm=mytrues-typedb-poc
+          region=brazilsouth
+          suffix="$(az account show --query id -o tsv | sha256sum | cut -c1-10)"
+          label="mytrues-typedb-$suffix"
+          if ! az vm show -g "$rg" -n "$vm" -o none 2>/dev/null; then
+            az vm create -g "$rg" -n "$vm" --location "$region" --image Ubuntu2404 --size Standard_B2s --admin-username typedbadmin --generate-ssh-keys --public-ip-sku Standard --public-ip-address-dns-name "$label" --nsg-rule NONE --tags project=MyTrues purpose=typedb-poc --only-show-errors -o none
+          fi
+          az vm open-port -g "$rg" -n "$vm" --port 80 --priority 1120 --only-show-errors -o none
+          az vm open-port -g "$rg" -n "$vm" --port 443 --priority 1121 --only-show-errors -o none
+          host="$(az vm show -d -g "$rg" -n "$vm" --query fqdns -o tsv)"
+          test -n "$host"
+          echo "host=$host" >> "$GITHUB_OUTPUT"
+
+      - name: Install and seed persistent TypeDB
+        env:
+          TYPEDB_ADMIN_PASSWORD: ${{ steps.typedb_secret.outputs.password }}
+          PUBLIC_HOST: ${{ steps.typedb_vm.outputs.host }}
+          BRIDGE_SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os,pathlib,shlex
+          keys=("TYPEDB_ADMIN_PASSWORD","PUBLIC_HOST","BRIDGE_SHA")
+          wrapper="#!/bin/bash\n"+''.join("export "+k+"="+shlex.quote(os.environ[k])+"\n" for k in keys)
+          wrapper+=pathlib.Path("Tools/MyTrues/typedb-poc-bridge/on-vm.sh").read_text()
+          pathlib.Path("/tmp/typedb-on-vm.sh").write_text(wrapper)
+          PY
+          az vm run-command invoke -g rg-flowed-ideos-lab -n mytrues-typedb-poc --command-id RunShellScript --scripts @/tmp/typedb-on-vm.sh --output json > /tmp/typedb-deploy.json
+          python - <<'PY'
+          import json
+          r=json.load(open("/tmp/typedb-deploy.json"))
+          msg="\n".join(x.get("message","") for x in r.get("value",[]))
+          assert "READY database=mytrues_memory_poc_v0 occurrences=8 bindings=45" in msg, msg[-1200:]
+          assert "DEPLOY_OK" in msg, msg[-1200:]
+          print("TypeDB guest deployment and canonical seed verified.")
+          PY
+
+      - name: Verify public HTTPS TypeDB API
+        env:
+          TYPEDB_ADMIN_PASSWORD: ${{ steps.typedb_secret.outputs.password }}
+          PUBLIC_HOST: ${{ steps.typedb_vm.outputs.host }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          ok=false
+          for i in $(seq 1 90); do
+            code="$(curl -sS --connect-timeout 5 --max-time 10 -o /tmp/signin.json -w '%{http_code}' -X POST "https://$PUBLIC_HOST/v1/signin" -H 'content-type: application/json' --data-binary "{\"username\":\"admin\",\"password\":\"$TYPEDB_ADMIN_PASSWORD\"}" || true)"
+            if [ "$code" = 200 ]; then ok=true; break; fi
+            sleep 2
+          done
+          test "$ok" = true
+          jq -e '.token | type == "string" and length > 20' /tmp/signin.json >/dev/null
+          rm -f /tmp/signin.json
+
+      - name: TypeDB Studio summary
+        env:
+          PUBLIC_HOST: ${{ steps.typedb_vm.outputs.host }}
+        shell: bash
+        run: |
+          link="$(python -c 'import os,urllib.parse; print("https://studio.typedb.com/connect?"+urllib.parse.urlencode({"address":"https://"+os.environ["PUBLIC_HOST"],"username":"admin","name":"MyTrues TypeDB POC"}))')"
+          echo "### MyTrues TypeDB POC" >> "$GITHUB_STEP_SUMMARY"
+          echo "Endpoint: https://$PUBLIC_HOST" >> "$GITHUB_STEP_SUMMARY"
+          echo "Database: mytrues_memory_poc_v0" >> "$GITHUB_STEP_SUMMARY"
+          echo "Password secret: Azure Key Vault mytrues-ingest-kv / typedb-poc-admin" >> "$GITHUB_STEP_SUMMARY"
+          echo "Studio: $link" >> "$GITHUB_STEP_SUMMARY"
+
