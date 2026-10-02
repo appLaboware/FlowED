@@ -37,10 +37,26 @@ SUFFIX="$(printf '%s' "$SUB" | sha256sum | cut -c1-10)"
 DNS_LABEL="mytrues-typedb-$SUFFIX"
 
 if ! az vm show -g "$RG" -n "$VM" -o none 2>/dev/null; then
+  echo "Resolving currently available VM size in $REGION"
+  CANDIDATES=(Standard_B2als_v2 Standard_B2as_v2 Standard_D2as_v5 Standard_D2s_v5 Standard_D2_v5)
+  SKU_JSON="$(az vm list-skus --location "$REGION" --resource-type virtualMachines --all -o json)"
+  VM_SIZE="$(SKU_JSON="$SKU_JSON" python3 - <<'PY'
+import json, os
+candidates=["Standard_B2als_v2","Standard_B2as_v2","Standard_D2as_v5","Standard_D2s_v5","Standard_D2_v5"]
+rows=json.loads(os.environ["SKU_JSON"])
+available={r.get("name") for r in rows if not r.get("restrictions")}
+for c in candidates:
+    if c in available:
+        print(c)
+        break
+PY
+)"
+  test -n "$VM_SIZE" || { echo "No approved 2-vCPU TypeDB POC SKU is currently unrestricted in $REGION" >&2; exit 1; }
+  echo "Selected Azure VM size: $VM_SIZE"
   az vm create \
     -g "$RG" -n "$VM" --location "$REGION" \
     --image "Canonical:ubuntu-24_04-lts:server:latest" \
-    --size Standard_B2s \
+    --size "$VM_SIZE" \
     --admin-username typedbadmin \
     --generate-ssh-keys \
     --public-ip-sku Standard \
