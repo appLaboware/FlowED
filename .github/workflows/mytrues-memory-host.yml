@@ -110,3 +110,26 @@ jobs:
             az containerapp env create -g "$rg" -n "$name" --location brazilsouth --logs-destination none --only-show-errors -o none
           fi
           az containerapp env show -g "$rg" -n "$name" --query "{name:name,location:location,state:properties.provisioningState,domain:properties.defaultDomain}" -o json
+
+      - name: Provision persistent PostgreSQL with federated authentication
+        shell: bash
+        run: |
+          set -euo pipefail
+          rg=rg-flowed-ideos-lab
+          name=mytrues-canonical-pg
+          if ! az postgres flexible-server show -g "$rg" -n "$name" -o none 2>/dev/null; then
+            export MYTRUES_MANAGEMENT_TOKEN="$(az account get-access-token --query accessToken -o tsv)"
+            oid="$(python -c 'import os,json,base64; p=os.environ["MYTRUES_MANAGEMENT_TOKEN"].split(".")[1]; print(json.loads(base64.urlsafe_b64decode(p+"="*(-len(p)%4)))["oid"])')"
+            echo "::add-mask::$oid"
+            unset MYTRUES_MANAGEMENT_TOKEN
+            help="$(az postgres flexible-server create --help)"
+            auth=--microsoft-entra-auth
+            if ! rg -q -- '--microsoft-entra-auth' <<<"$help"; then auth=--active-directory-auth; fi
+            az postgres flexible-server create -g "$rg" -n "$name" --location brazilsouth \
+              --version 18 --tier Burstable --sku-name Standard_B1ms --storage-size 32 \
+              --backup-retention 7 --public-access None "$auth" Enabled --password-auth Disabled \
+              --admin-object-id "$oid" --admin-display-name mytrues-workflow --admin-type ServicePrincipal \
+              --yes --only-show-errors -o none
+          fi
+          az postgres flexible-server show -g "$rg" -n "$name" \
+            --query "{name:name,state:state,version:version,host:fullyQualifiedDomainName,auth:authConfig}" -o json
