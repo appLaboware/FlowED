@@ -103,7 +103,7 @@ jobs:
             created=false
             for size in Standard_B2ls_v2 Standard_B2als_v2 Standard_B1ms; do
               echo "Trying bounded small VM size: $size"
-              if az vm create -g "$rg" -n "$vm" --location eastus --image Ubuntu2404 --size "$size" --admin-username mytruesadmin --generate-ssh-keys --public-ip-sku Standard --public-ip-address-dns-name "mytrues-memory-$suffix" --nsg-rule NONE --tags project=MyTrues purpose=decision-memory --output none > /tmp/vm-create-out 2>/tmp/vm-create-error; then
+              if az vm create -g "$rg" -n "$vm" --location eastus2 --image Ubuntu2404 --size "$size" --admin-username mytruesadmin --generate-ssh-keys --public-ip-sku Standard --public-ip-address-dns-name "mytrues-memory-$suffix" --nsg-rule NONE --tags project=MyTrues purpose=decision-memory --output none > /tmp/vm-create-out 2>/tmp/vm-create-error; then
                 created=true; break
               fi
               if ! grep -q 'SkuNotAvailable' /tmp/vm-create-error; then
@@ -112,7 +112,7 @@ jobs:
                 exit 1
               fi
             done
-            test "$created" = true || { echo "No bounded small VM size available in eastus."; exit 1; }
+            test "$created" = true || { echo "No bounded small VM size available in eastus2."; exit 1; }
           fi
           az vm open-port -g "$rg" -n "$vm" --port 80 --priority 1010 -o none
           az vm open-port -g "$rg" -n "$vm" --port 443 --priority 1011 -o none
