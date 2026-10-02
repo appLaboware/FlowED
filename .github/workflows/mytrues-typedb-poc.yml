@@ -5,7 +5,6 @@ on:
     branches:
       - tools/ideos-lab
     paths:
-      - "Tools/IDEOS/experiments/EXP-003-azure-compose/**"
       - ".github/workflows/mytrues-typedb-poc.yml"
   workflow_dispatch:
 
@@ -19,16 +18,13 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Read Azure identifiers from repository secret
+      - name: Resolve Azure identifiers from repository secret
         id: azure
         shell: bash
         env:
           AZURE_RAW: ${{ secrets.AZURE }}
         run: |
           set -euo pipefail
-
           extract() {
             local key="$1"
             printf '%s\n' "$AZURE_RAW" |
@@ -52,19 +48,41 @@ jobs:
           echo "tenant_id=$TENANT_ID" >> "$GITHUB_OUTPUT"
           echo "subscription_id=$SUBSCRIPTION_ID" >> "$GITHUB_OUTPUT"
 
-      - name: Login to Azure with OIDC
-        uses: azure/login@v2
-        with:
-          client-id: ${{ steps.azure.outputs.client_id }}
-          tenant-id: ${{ steps.azure.outputs.tenant_id }}
-          subscription-id: ${{ steps.azure.outputs.subscription_id }}
-
-      - name: Verify Azure identity
+      - name: Request GitHub OIDC token directly
+        id: oidc
+        shell: bash
         run: |
           set -euo pipefail
-          az account show --output table
+          RESPONSE="$(curl --fail --silent --show-error \
+            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange")"
+          TOKEN="$(jq -r '.value' <<<"$RESPONSE")"
+          test -n "$TOKEN"
+          test "$TOKEN" != "null"
+          echo "::add-mask::$TOKEN"
+          {
+            echo "token<<EOF"
+            echo "$TOKEN"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
-      - name: Verify laboratory resource group
+      - name: Login to Azure CLI without external action
+        shell: bash
         run: |
           set -euo pipefail
-          az group show             --name rg-flowed-ideos-lab             --query "{name:name,location:location,id:id}"             --output table
+          az login \
+            --service-principal \
+            --username "${{ steps.azure.outputs.client_id }}" \
+            --tenant "${{ steps.azure.outputs.tenant_id }}" \
+            --federated-token "${{ steps.oidc.outputs.token }}" \
+            --allow-no-subscriptions \
+            --output none
+          az account set --subscription "${{ steps.azure.outputs.subscription_id }}"
+
+      - name: Verify Azure identity and laboratory resource group
+        shell: bash
+        run: |
+          set -euo pipefail
+          az account show --query '{subscription:id,tenant:tenantId,type:user.type}' -o json
+          az group show --name rg-flowed-ideos-lab --query '{name:name,location:location}' -o json
+          echo "AZURE_AUTH_OK"
