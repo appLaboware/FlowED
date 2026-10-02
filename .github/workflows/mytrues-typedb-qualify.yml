@@ -1,0 +1,95 @@
+name: MyTrues TypeDB semantic qualification
+
+on:
+  push:
+    branches:
+      - tools/ideos-lab
+    paths:
+      - ".github/workflows/mytrues-typedb-qualify.yml"
+      - "Tools/MyTrues/typedb-poc-bridge/qualify_live.py"
+      - "Tools/MyTrues/typedb-poc-bridge/seed_once.py"
+      - "Tools/MyTrues/typedb-poc-bridge/00-schema.tql"
+      - "Tools/MyTrues/typedb-poc-bridge/canonical-memory.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mytrues-typedb-semantic-qualification
+  cancel-in-progress: true
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    steps:
+      - name: Start clean TypeDB CE
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run -d --name mytrues-typedb-qualify \
+            -p 127.0.0.1:1729:1729 \
+            -p 127.0.0.1:8000:8000 \
+            typedb/typedb:3.12.1
+
+      - name: Fetch POC sources and driver
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://raw.githubusercontent.com/appLaboware/FlowED/${GITHUB_SHA}/Tools/MyTrues/typedb-poc-bridge"
+          mkdir -p /tmp/mytrues-poc
+          for f in 00-schema.tql canonical-memory.json seed_once.py qualify_live.py; do
+            curl -fsSL "$base/$f" -o "/tmp/mytrues-poc/$f"
+          done
+          python3 -m venv /tmp/mytrues-poc/venv
+          /tmp/mytrues-poc/venv/bin/pip install -q 'typedb-driver==3.13.6'
+
+      - name: Seed canonical memory
+        shell: bash
+        env:
+          TYPEDB_ADMIN_PASSWORD: semantic-qualification-password
+        run: |
+          set -euo pipefail
+          cd /tmp/mytrues-poc
+          for i in $(seq 1 90); do
+            if TYPEDB_ADMIN_PASSWORD="$TYPEDB_ADMIN_PASSWORD" ./venv/bin/python seed_once.py; then
+              break
+            fi
+            if [ "$i" = 90 ]; then
+              docker logs mytrues-typedb-qualify
+              exit 1
+            fi
+            sleep 1
+          done
+
+      - name: Run T01-T10 before restart
+        shell: bash
+        env:
+          TYPEDB_ADMIN_PASSWORD: semantic-qualification-password
+        run: |
+          set -euo pipefail
+          cd /tmp/mytrues-poc
+          ./venv/bin/python qualify_live.py | tee /tmp/qualification-before.json.txt
+          grep -q 'QUALIFICATION_PASS T01-T10' /tmp/qualification-before.json.txt
+
+      - name: Restart TypeDB and rerun T01-T10
+        shell: bash
+        env:
+          TYPEDB_ADMIN_PASSWORD: semantic-qualification-password
+        run: |
+          set -euo pipefail
+          docker restart mytrues-typedb-qualify >/dev/null
+          cd /tmp/mytrues-poc
+          ./venv/bin/python qualify_live.py | tee /tmp/qualification-after.json.txt
+          grep -q 'QUALIFICATION_PASS T01-T10' /tmp/qualification-after.json.txt
+
+      - name: Show persistence evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "SEMANTIC_QUALIFICATION_PASS"
+          echo "before_restart=T01-T10_PASS"
+          echo "after_restart=T01-T10_PASS"
+          docker inspect mytrues-typedb-qualify --format 'image={{.Config.Image}} status={{.State.Status}}'
