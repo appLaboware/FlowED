@@ -6,6 +6,7 @@ on:
       - tools/ideos-lab
     paths:
       - ".github/workflows/mytrues-typedb-poc.yml"
+      - "Tools/MyTrues/typedb-poc-bridge/**"
   workflow_dispatch:
 
 permissions:
