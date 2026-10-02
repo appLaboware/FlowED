@@ -7,7 +7,7 @@ RG="rg-flowed-ideos-lab"
 VAULT="mytrues-ingest-kv"
 PREFERRED_REGIONS=(eastus2 eastus centralus westus3 brazilsouth)
 
-echo "[1/6] Preparing TypeDB admin credential in Azure Key Vault"
+echo "[1/7] Preparing TypeDB admin credential in Azure Key Vault"
 MGMT_TOKEN="$(az account get-access-token --query accessToken -o tsv)"
 OID="$(MGMT_TOKEN="$MGMT_TOKEN" python3 - <<'PY'
 import os,json,base64
@@ -46,7 +46,7 @@ cleanup_attempt() {
   az network vnet delete -g "$RG" -n "$vnet" --only-show-errors >/dev/null 2>&1 || true
 }
 
-echo "[2/6] Selecting and allocating isolated Azure VM"
+echo "[2/7] Selecting and allocating isolated Azure VM"
 VM="$(az vm list -g "$RG" --query "[?tags.project=='MyTrues' && tags.purpose=='typedb-poc' && tags.role=='typedb-server' && provisioningState=='Succeeded'].name | [0]" -o tsv 2>/dev/null || true)"
 REGION=""
 if [ -n "$VM" ]; then
@@ -130,7 +130,7 @@ fi
 
 test -n "$VM" && test -n "$REGION" || { echo "Unable to allocate TypeDB POC VM in preferred regions" >&2; exit 1; }
 
-echo "[3/6] Ensuring only HTTP/HTTPS public ingress"
+echo "[3/7] Ensuring only HTTP/HTTPS public ingress"
 NIC_ID="$(az vm show -g "$RG" -n "$VM" --query 'networkProfile.networkInterfaces[0].id' -o tsv)"
 NSG_ID="$(az network nic show --ids "$NIC_ID" --query 'networkSecurityGroup.id' -o tsv)"
 NSG_NAME="${NSG_ID##*/}"
@@ -148,7 +148,7 @@ az network nsg rule create -g "$RG" --nsg-name "$NSG_NAME" -n allow-https \
 PUBLIC_HOST="$(az vm show -d -g "$RG" -n "$VM" --query fqdns -o tsv)"
 test -n "$PUBLIC_HOST"
 
-echo "[4/6] Installing TypeDB CE 3.12.1 and seeding canonical memory"
+echo "[4/7] Installing TypeDB CE 3.12.1 and seeding canonical memory"
 BASE="https://raw.githubusercontent.com/appLaboware/FlowED/$BRIDGE_SHA/Tools/MyTrues/typedb-poc-bridge"
 curl -fsSL "$BASE/on-vm.sh" -o /tmp/on-vm.sh
 TYPEDB_ADMIN_PASSWORD="$TYPEDB_ADMIN_PASSWORD" PUBLIC_HOST="$PUBLIC_HOST" BRIDGE_SHA="$BRIDGE_SHA" \
@@ -174,7 +174,39 @@ if "DEPLOY_OK" not in msg:
 print("Guest validation: 8 occurrences / 45 bindings")
 PY
 
-echo "[5/6] Verifying HTTPS and TypeDB authentication"
+echo "[5/7] Restarting TypeDB and qualifying persistence/semantics"
+QUALIFY_URL="$BASE/qualify_live.py"
+curl -fsSL "$QUALIFY_URL" -o /tmp/qualify_live.py
+
+TYPEDB_ADMIN_PASSWORD="$TYPEDB_ADMIN_PASSWORD" BRIDGE_SHA="$BRIDGE_SHA" \
+python3 - <<'PY'
+import os,pathlib,shlex
+wrapper="#!/bin/bash\n"
+wrapper+="export TYPEDB_ADMIN_PASSWORD="+shlex.quote(os.environ["TYPEDB_ADMIN_PASSWORD"])+"\n"
+wrapper+="export BRIDGE_SHA="+shlex.quote(os.environ["BRIDGE_SHA"])+"\n"
+wrapper+="set -euo pipefail\n"
+wrapper+="docker restart mytrues-typedb >/dev/null\n"
+wrapper+="for i in $(seq 1 90); do if timeout 2 bash -c '</dev/tcp/127.0.0.1/1729' 2>/dev/null; then break; fi; [ \"$i\" = 90 ] && exit 1; sleep 1; done\n"
+wrapper+="base=https://raw.githubusercontent.com/appLaboware/FlowED/$BRIDGE_SHA/Tools/MyTrues/typedb-poc-bridge\n"
+wrapper+="curl -fsSL \"$base/qualify_live.py\" -o /var/lib/mytrues-typedb/poc/qualify_live.py\n"
+wrapper+="TYPEDB_ADMIN_PASSWORD=\"$TYPEDB_ADMIN_PASSWORD\" /var/lib/mytrues-typedb/venv/bin/python /var/lib/mytrues-typedb/poc/qualify_live.py\n"
+pathlib.Path("/tmp/typedb-qualify.sh").write_text(wrapper)
+PY
+
+az vm run-command invoke -g "$RG" -n "$VM" \
+  --command-id RunShellScript --scripts @/tmp/typedb-qualify.sh \
+  --output json > /tmp/typedb-qualify.json
+
+python3 - <<'PY'
+import json
+r=json.load(open("/tmp/typedb-qualify.json"))
+msg="\n".join(x.get("message","") for x in r.get("value",[]))
+if "QUALIFICATION_PASS T01-T10" not in msg:
+    raise SystemExit("Live qualification failed or incomplete:\n"+msg[-4000:])
+print("Live qualification: T01-T10 PASS after TypeDB container restart")
+PY
+
+echo "[6/7] Verifying HTTPS and TypeDB authentication"
 OK=false
 for i in $(seq 1 90); do
   CODE="$(curl -sS --connect-timeout 5 --max-time 10 -o /tmp/signin.json -w '%{http_code}' \
@@ -187,7 +219,7 @@ test "$OK" = true
 jq -e '.token | type == "string" and length > 20' /tmp/signin.json >/dev/null
 rm -f /tmp/signin.json
 
-echo "[6/6] Publishing non-secret connection metadata"
+echo "[7/7] Publishing non-secret connection metadata"
 STUDIO_URL="$(PUBLIC_HOST="$PUBLIC_HOST" python3 - <<'PY'
 import os,urllib.parse
 host=os.environ["PUBLIC_HOST"]
@@ -215,6 +247,6 @@ if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
     echo "- Username: `admin`"
     echo "- Password: Azure Key Vault `$VAULT` / secret `typedb-poc-admin`"
     echo "- Studio: $STUDIO_URL"
-    echo "- Canonical seed: **8 occurrences / 45 bindings**"
+    echo "- Canonical seed: **8 occurrences / 45 bindings**"\n    echo "- Live qualification after restart: **T01-T10 PASS**"
   } >> "$GITHUB_STEP_SUMMARY"
 fi
