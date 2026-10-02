@@ -2,7 +2,7 @@ name: MyTrues memory Azure host bootstrap
 on:
   push:
     branches: [tools/ideos-lab]
-    paths: ['.github/workflows/mytrues-memory-host.yml']
+    paths: ['.github/workflows/mytrues-memory-host.yml', '.github/mytrues-live-payload.json']
   workflow_dispatch:
 permissions:
   contents: read
@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
+      - uses: actions/checkout@v4
       - name: Resolve Azure repository credentials
         id: azure
         shell: bash
@@ -152,3 +153,34 @@ jobs:
             az keyvault key create --vault-name "$vault" -n chat-transfer --kty RSA --size 3072 --ops encrypt decrypt --only-show-errors -o none
           fi
           az keyvault key show --vault-name "$vault" -n chat-transfer --query key -o json
+
+      - name: Ingest sealed private records into persistent PostgreSQL
+        shell: bash
+        run: |
+          set -euo pipefail
+          rg=rg-flowed-ideos-lab
+          name=mytrues-canonical-pg
+          rule=ingest-"$GITHUB_RUN_ID"
+          ip="$(curl --fail --silent --show-error https://api.ipify.org)"
+          az postgres flexible-server db create -g "$rg" -s "$name" -d mytrues --only-show-errors -o none
+          az postgres flexible-server firewall-rule create -g "$rg" -n "$name" --rule-name "$rule" --start-ip-address "$ip" --end-ip-address "$ip" --only-show-errors -o none
+          trap 'az postgres flexible-server firewall-rule delete -g "$rg" -n "$name" --rule-name "$rule" --yes --only-show-errors -o none' EXIT
+          pip install --quiet 'psycopg[binary]==3.2.3' azure-identity==1.25.0 azure-keyvault-keys==4.10.0 cryptography==46.0.0
+          python - <<'PY'
+          import os,json,base64,io,zipfile,tempfile,pathlib,subprocess
+          from azure.identity import AzureCliCredential
+          from azure.keyvault.keys.crypto import CryptographyClient,EncryptionAlgorithm
+          from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+          obj=json.loads(pathlib.Path(".github/mytrues-live-payload.json").read_text())
+          assert obj["schema"]=="mytrues.private-transfer/1"
+          assert obj["kid"].startswith("https://mytrues-ingest-kv.vault.azure.net/keys/chat-transfer/")
+          decode=base64.b64decode
+          client=CryptographyClient(obj["kid"],AzureCliCredential())
+          session=client.decrypt(EncryptionAlgorithm.rsa_oaep_256,decode(obj["wrapped_key"])).plaintext
+          package=AESGCM(session).decrypt(decode(obj["nonce"]),decode(obj["ciphertext"]),b"mytrues.private-transfer/1")
+          with tempfile.TemporaryDirectory() as root:
+              archive=zipfile.ZipFile(io.BytesIO(package))
+              for name in ("separation.py","postgres_adapter.py","transfer.py","chat_record.py","bridge_ingest.py","decisions.json","capture.json"):
+                  pathlib.Path(root,name).write_bytes(archive.read(name))
+              subprocess.run(["python","bridge_ingest.py"],cwd=root,check=True)
+          PY
