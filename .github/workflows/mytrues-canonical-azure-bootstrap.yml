@@ -89,20 +89,3 @@ jobs:
             fi
           fi
           echo "CANONICAL_FEDERATION=READY"
-      - name: Prepare identifiers for authorized canonical configuration transfer
-        if: success()
-        env:
-          CLIENT_ID: ${{ steps.azure.outputs.client_id }}
-          TENANT_ID: ${{ steps.azure.outputs.tenant_id }}
-          SUBSCRIPTION_ID: ${{ steps.azure.outputs.subscription_id }}
-        shell: python
-        run: |
-          import os,json
-          # Only public resource identifiers, never secret bundle/password/tokens.
-          json.dump({k:os.environ[v] for k,v in {"client_id":"CLIENT_ID","tenant_id":"TENANT_ID","subscription_id":"SUBSCRIPTION_ID"}.items()},open("/tmp/azure-identifiers.json","w"))
-      - uses: actions/upload-artifact@v4
-        if: success()
-        with:
-          name: canonical-azure-public-identifiers
-          path: /tmp/azure-identifiers.json
-          retention-days: 1
