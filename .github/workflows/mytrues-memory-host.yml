@@ -92,6 +92,13 @@ jobs:
           az account show             --query "{subscription:id,tenant:tenantId,identity:user.name,type:user.type}"             --output table
 
 
+      - name: Inspect existing persistent databases
+        shell: bash
+        run: |
+          set -euo pipefail
+          az postgres flexible-server list --query "[].{name:name,group:resourceGroup,location:location,version:version,state:state,fqdn:fullyQualifiedDomainName}" -o json
+          az keyvault list --query "[].{name:name,group:resourceGroup,location:location}" -o json
+
       - name: Provision managed container environment
         shell: bash
         run: |
