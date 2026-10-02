@@ -1,0 +1,17 @@
+define
+  attribute atom-id, value string;
+  attribute lexical, value string;
+
+  entity atom,
+    owns atom-id @key,
+    owns lexical,
+    plays binding:key,
+    plays binding:value;
+
+  entity occurrence sub atom,
+    plays binding:occurrence;
+
+  relation binding,
+    relates occurrence @card(1),
+    relates key @card(1),
+    relates value @card(1);
