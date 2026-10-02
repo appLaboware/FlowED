@@ -68,7 +68,7 @@ independent DevOps intent client.
 
 History-preserving canonical subtree import uses FlowED commit:
 
-`121c63642c4cc552c46a7cf3ff70ab57924cb2be`
+`caa2cdf2969f84785cb9a931012a4bec31be48d9`
 
 This commit contains the complete product staging surface including the physical
 IDEOS `DecisionMemory` adapter boundary.
@@ -101,7 +101,7 @@ The frozen migration SHA above includes this recovered material.
 The migration manifest and `reorganize-org.sh` now both point to the same
 authoritative frozen source SHA:
 
-`121c63642c4cc552c46a7cf3ff70ab57924cb2be`
+`caa2cdf2969f84785cb9a931012a4bec31be48d9`
 
 No known SHA drift remains between those two migration records.
 
@@ -582,3 +582,22 @@ future local content migration must treat `archived=true` as terminal/read-only
 and skip all later mutations for that repository.
 
 The next local script revision is v5.
+
+
+## Private-first bootstrap prepared
+
+Prepared under `Tools/MYTRUES/migration/bootstrap/`:
+
+- common restricted pre-release notice;
+- publication gate;
+- governance;
+- per-repository current boundary;
+- future publication/license intent;
+- EDT private rights boundary;
+- Enterprise restricted rights boundary.
+
+Also added:
+
+`Tools/MYTRUES/migration/PRIVACY-RIGHTS-PUBLICATION-MATRIX.md`.
+
+No target repository content was modified while lockdown was still running.
