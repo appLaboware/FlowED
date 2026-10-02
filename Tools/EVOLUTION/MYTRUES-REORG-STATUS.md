@@ -50,7 +50,6 @@ independent DevOps intent client.
   - `site` -> `site_arquived_261001`;
   - `spec` -> `spec_arquived_261001`.
 - [ ] Create `MyTrues/mytrues`.
-- [ ] Create `MyTrues/ideos`.
 - [ ] Execute history-preserving subtree/import process.
 - [ ] Verify MIT license at both canonical roots.
 - [ ] Record canonical initial commit SHAs and repository URLs.
@@ -445,3 +444,46 @@ It now performs:
 - registry/enterprise boundary seeding;
 - final archive/read-only lock;
 - migration evidence generation.
+
+
+## Federated ownership correction — IDEOS external
+
+The real `IDEOS-DEV` organization is connected and contains the canonical
+repository:
+
+`IDEOS-DEV/IDeOS-core`
+
+Observed:
+
+- visibility: private;
+- default branch: `main`;
+- head: `5b43b1bda1f9ab3c91424dc5c05346827a031ffd`.
+
+Therefore:
+
+- do not create/import IDEOS as a canonical repo under `MyTrues`;
+- IDEOS remains independently owned by `IDEOS-DEV`;
+- IDEOS adopts MyTrues as an external capability/client;
+- FlowED references/pins both independently.
+
+The empty `MyTrues/ideos` repository created during the first admin migration
+pass is a misplaced staging artifact. Preserve it privately as
+`ideos_misplaced_arquived_261001` and archive it; do not populate it.
+
+## Academic incubation policy
+
+`MyTrues/ccp` and `MyTrues/edt` remain temporary incubation repositories.
+
+When dedicated academic organizations are created:
+
+- transfer/migrate history preserving identity;
+- update canonical URLs/SHAs;
+- replace local writable copies with pinned adoption/reference records;
+- prefer GitHub repository transfer when feasible.
+
+`MyTrues/research` remains appropriate because it is MyTrues-specific technical
+and reproducibility research rather than the canonical EDT thesis home.
+
+See:
+
+`Tools/MYTRUES/FEDERATION-ADOPTION-TOPOLOGY.md`.
