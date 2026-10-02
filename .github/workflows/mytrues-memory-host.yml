@@ -92,12 +92,17 @@ jobs:
           az account show             --query "{subscription:id,tenant:tenantId,identity:user.name,type:user.type}"             --output table
 
 
-      - name: Diagnose small compute availability
+      - name: Inventory available Azure container infrastructure
         shell: bash
         run: |
           set -euo pipefail
-          for region in eastus eastus2; do
-            echo "REGION=$region"
-            az vm list-skus --location "$region" --resource-type virtualMachines --all --query "[?name=='Standard_B2s' || name=='Standard_B2ls_v2' || name=='Standard_B2als_v2' || name=='Standard_B1ms' || name=='Standard_D2s_v3' || name=='Standard_D2as_v5' || name=='Standard_D2s_v5'].{name:name,restrictions:restrictions}" -o json
-            az vm list-usage --location "$region" --query "[?contains(name.localizedValue, 'B') || name.value=='cores'].{name:name.localizedValue,current:currentValue,limit:limit}" -o table
+          echo "RESOURCE_INVENTORY"
+          az resource list --query "[].{name:name,type:type,location:location,group:resourceGroup}" -o table
+          echo "PROVIDER_STATUS"
+          for ns in Microsoft.App Microsoft.ContainerInstance Microsoft.ContainerRegistry Microsoft.Web Microsoft.Storage; do
+            az provider show -n "$ns" --query "{namespace:namespace,state:registrationState}" -o json
           done
+          echo "EXISTING_CONTAINER_GROUPS"
+          az container list -g rg-flowed-ideos-lab --query "[].{name:name,location:location,state:provisioningState,host:ipAddress.fqdn}" -o table
+          echo "APP_SERVICE_LINUX_LOCATIONS"
+          az appservice list-locations --linux-workers-enabled --sku B1 --query "[].name" -o json
