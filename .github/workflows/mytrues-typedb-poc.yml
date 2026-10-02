@@ -13,9 +13,9 @@ permissions:
   id-token: write
 
 jobs:
-  azure-auth:
+  deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
 
     steps:
       - name: Resolve Azure identifiers from repository secret
@@ -86,3 +86,14 @@ jobs:
           az account show --query '{subscription:id,tenant:tenantId,type:user.type}' -o json
           az group show --name rg-flowed-ideos-lab --query '{name:name,location:location}' -o json
           echo "AZURE_AUTH_OK"
+
+      - name: Deploy persistent TypeDB POC
+        shell: bash
+        env:
+          BRIDGE_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          url="https://raw.githubusercontent.com/appLaboware/FlowED/$BRIDGE_SHA/Tools/MyTrues/typedb-poc-bridge/deploy-azure.sh"
+          curl -fsSL "$url" -o /tmp/deploy-azure.sh
+          chmod +x /tmp/deploy-azure.sh
+          /tmp/deploy-azure.sh
