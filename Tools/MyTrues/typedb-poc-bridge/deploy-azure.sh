@@ -39,11 +39,11 @@ DNS_LABEL="mytrues-typedb-$SUFFIX"
 if ! az vm show -g "$RG" -n "$VM" -o none 2>/dev/null; then
   echo "Resolving currently available VM size in $REGION"
   CANDIDATES=(Standard_B2als_v2 Standard_B2as_v2 Standard_D2as_v5 Standard_D2s_v5 Standard_D2_v5)
-  SKU_JSON="$(az vm list-skus --location "$REGION" --resource-type virtualMachines --all -o json)"
-  VM_SIZE="$(SKU_JSON="$SKU_JSON" python3 - <<'PY'
-import json, os
+  az vm list-skus --location "$REGION" --resource-type virtualMachines --all -o json > /tmp/typedb-skus.json
+  VM_SIZE="$(python3 - <<'PY'
+import json
 candidates=["Standard_B2als_v2","Standard_B2as_v2","Standard_D2as_v5","Standard_D2s_v5","Standard_D2_v5"]
-rows=json.loads(os.environ["SKU_JSON"])
+rows=json.load(open("/tmp/typedb-skus.json"))
 available={r.get("name") for r in rows if not r.get("restrictions")}
 for c in candidates:
     if c in available:
