@@ -6,7 +6,8 @@ set -euo pipefail
 RG="rg-flowed-ideos-lab"
 VAULT="mytrues-ingest-kv"
 VM="mytrues-typedb-poc"
-REGION="brazilsouth"
+REGION=""
+PREFERRED_REGIONS=(brazilsouth eastus2 eastus centralus westus3)
 
 echo "[1/6] Preparing TypeDB admin credential in Azure Key Vault"
 MGMT_TOKEN="$(az account get-access-token --query accessToken -o tsv)"
@@ -37,22 +38,65 @@ SUFFIX="$(printf '%s' "$SUB" | sha256sum | cut -c1-10)"
 DNS_LABEL="mytrues-typedb-$SUFFIX"
 
 if ! az vm show -g "$RG" -n "$VM" -o none 2>/dev/null; then
-  echo "Resolving currently available VM size in $REGION"
-  CANDIDATES=(Standard_B2als_v2 Standard_B2as_v2 Standard_D2as_v5 Standard_D2s_v5 Standard_D2_v5)
-  az vm list-skus --location "$REGION" --resource-type virtualMachines --all -o json > /tmp/typedb-skus.json
-  VM_SIZE="$(python3 - <<'PY'
+  VM_SIZE=""
+  VM_FAMILY=""
+  for candidate_region in "${PREFERRED_REGIONS[@]}"; do
+    echo "Checking capacity and quota in $candidate_region"
+    az vm list-skus --location "$candidate_region" --resource-type virtualMachines --all -o json > /tmp/typedb-skus.json
+    az vm list-usage --location "$candidate_region" -o json > /tmp/typedb-usage.json
+
+    PICK="$(python3 - <<'PY'
 import json
-candidates=["Standard_B2als_v2","Standard_B2as_v2","Standard_D2as_v5","Standard_D2s_v5","Standard_D2_v5"]
-rows=json.load(open("/tmp/typedb-skus.json"))
-available={r.get("name") for r in rows if not r.get("restrictions")}
-for c in candidates:
-    if c in available:
-        print(c)
-        break
+skus=json.load(open("/tmp/typedb-skus.json"))
+usage=json.load(open("/tmp/typedb-usage.json"))
+spare={}
+for u in usage:
+    name=(u.get("name") or {}).get("value","").lower()
+    try:
+        spare[name]=int(u.get("limit",0))-int(u.get("currentValue",0))
+    except (TypeError,ValueError):
+        pass
+
+regional=spare.get("cores", 999999)
+if regional < 2:
+    raise SystemExit(0)
+
+choices=[]
+for row in skus:
+    name=row.get("name","")
+    if not (name.startswith("Standard_B") or name.startswith("Standard_D")):
+        continue
+    if row.get("restrictions"):
+        continue
+    family=(row.get("family") or "").lower()
+    if not family or spare.get(family,0) < 2:
+        continue
+    caps={c.get("name"):c.get("value") for c in row.get("capabilities",[])}
+    try:
+        cpus=float(caps.get("vCPUs","0"))
+        mem=float(caps.get("MemoryGB","0"))
+    except ValueError:
+        continue
+    if cpus != 2 or mem < 4 or mem > 16:
+        continue
+    class_rank=0 if name.startswith("Standard_B") else 1
+    choices.append((class_rank, mem, name, family))
+
+if choices:
+    _,mem,name,family=sorted(choices)[0]
+    print(f"{name}|{family}|{mem}")
 PY
 )"
-  test -n "$VM_SIZE" || { echo "No approved 2-vCPU TypeDB POC SKU is currently unrestricted in $REGION" >&2; exit 1; }
-  echo "Selected Azure VM size: $VM_SIZE"
+    if [ -n "$PICK" ]; then
+      IFS='|' read -r VM_SIZE VM_FAMILY VM_MEMORY <<<"$PICK"
+      REGION="$candidate_region"
+      echo "Selected Azure VM: region=$REGION size=$VM_SIZE family=$VM_FAMILY memory_gb=$VM_MEMORY"
+      break
+    fi
+  done
+
+  test -n "$VM_SIZE" || { echo "No unrestricted 2-vCPU / >=4GB VM has both capacity and family quota in preferred regions" >&2; exit 1; }
+
   az vm create \
     -g "$RG" -n "$VM" --location "$REGION" \
     --image "Canonical:ubuntu-24_04-lts:server:latest" \
@@ -64,8 +108,10 @@ PY
     --nsg-rule NONE \
     --tags project=MyTrues purpose=typedb-poc \
     --only-show-errors -o none
+else
+  REGION="$(az vm show -g "$RG" -n "$VM" --query location -o tsv)"
+  echo "Reusing existing TypeDB VM in $REGION"
 fi
-
 echo "[3/6] Ensuring only HTTP/HTTPS public ingress"
 NIC_ID="$(az vm show -g "$RG" -n "$VM" --query 'networkProfile.networkInterfaces[0].id' -o tsv)"
 NSG_ID="$(az network nic show --ids "$NIC_ID" --query 'networkSecurityGroup.id' -o tsv)"
