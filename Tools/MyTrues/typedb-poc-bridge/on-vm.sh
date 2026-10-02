@@ -15,10 +15,13 @@ docker pull "$IMAGE" >/dev/null
 if docker inspect mytrues-typedb >/dev/null 2>&1; then
   docker rm -f mytrues-typedb >/dev/null
 fi
-docker run -d --name mytrues-typedb --restart unless-stopped   -p 127.0.0.1:1729:1729 -p 127.0.0.1:8000:8000   -v /var/lib/mytrues-typedb/data:/var/lib/typedb/data   "$IMAGE" >/dev/null
+docker run -d --name mytrues-typedb --restart unless-stopped \
+  -p 127.0.0.1:1729:1729 -p 127.0.0.1:8000:8000 \
+  -v /var/lib/mytrues-typedb/data:/var/lib/typedb/data \
+  "$IMAGE" >/dev/null
 
 for i in $(seq 1 90); do
-  if curl -fsS --max-time 2 http://127.0.0.1:8000/ >/dev/null 2>&1; then break; fi
+  if timeout 2 bash -c '</dev/tcp/127.0.0.1/1729' 2>/dev/null; then break; fi
   if [ "$i" = 90 ]; then docker logs mytrues-typedb >&2; exit 1; fi
   sleep 1
 done
@@ -30,17 +33,23 @@ curl -fsSL "$base/seed_once.py" -o /var/lib/mytrues-typedb/poc/seed_once.py
 
 python3 -m venv /var/lib/mytrues-typedb/venv
 /var/lib/mytrues-typedb/venv/bin/pip install -q 'typedb-driver==3.13.6'
-TYPEDB_ADMIN_PASSWORD="$TYPEDB_ADMIN_PASSWORD" /var/lib/mytrues-typedb/venv/bin/python /var/lib/mytrues-typedb/poc/seed_once.py
+TYPEDB_ADMIN_PASSWORD="$TYPEDB_ADMIN_PASSWORD" \
+  /var/lib/mytrues-typedb/venv/bin/python /var/lib/mytrues-typedb/poc/seed_once.py
 
 cat >/var/lib/mytrues-typedb/Caddyfile <<EOF
 $PUBLIC_HOST {
   reverse_proxy 127.0.0.1:8000
 }
 EOF
+
 docker pull caddy:2 >/dev/null
 if docker inspect mytrues-typedb-https >/dev/null 2>&1; then
   docker rm -f mytrues-typedb-https >/dev/null
 fi
-docker run -d --name mytrues-typedb-https --restart unless-stopped --network host   -v /var/lib/mytrues-typedb/Caddyfile:/etc/caddy/Caddyfile:ro   -v /var/lib/mytrues-typedb/caddy-data:/data   -v /var/lib/mytrues-typedb/caddy-config:/config   caddy:2 >/dev/null
+docker run -d --name mytrues-typedb-https --restart unless-stopped --network host \
+  -v /var/lib/mytrues-typedb/Caddyfile:/etc/caddy/Caddyfile:ro \
+  -v /var/lib/mytrues-typedb/caddy-data:/data \
+  -v /var/lib/mytrues-typedb/caddy-config:/config \
+  caddy:2 >/dev/null
 
 echo "DEPLOY_OK"
