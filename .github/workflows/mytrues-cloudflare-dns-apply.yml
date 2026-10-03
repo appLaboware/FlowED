@@ -1,0 +1,134 @@
+name: MyTrues Cloudflare DNS apply
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/5 * * * *'
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-cloudflare-dns-apply.yml']
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AZURE_BUNDLE: ${{ secrets.AZURE }}
+  CF_DNS_EDIT: ${{ secrets.CF_DNS_EDIT }}
+  CLOUDFLARE_BUNDLE: ${{ secrets.CLOUDFLARE }}
+
+jobs:
+  dns:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Resolve Cloudflare token presence
+        id: cf
+        shell: bash
+        run: |
+          set -euo pipefail
+          token="$CF_DNS_EDIT"
+          if [ -z "$token" ] && [ -n "$CLOUDFLARE_BUNDLE" ]; then
+            token="$(printf '%s\n' "$CLOUDFLARE_BUNDLE" | sed -nE "s/^[[:space:]]*(export[[:space:]]+)?CF_DNS_EDIT[[:space:]]*[:=][[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\\2/p" | tail -n1)"
+          fi
+          if [ -z "$token" ]; then
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "CLOUDFLARE_CREDENTIAL_ABSENT"
+            exit 0
+          fi
+          echo "::add-mask::$token"
+          {
+            echo "available=true"
+            echo "token<<EOF"
+            echo "$token"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+          echo "CLOUDFLARE_CREDENTIAL_READY"
+
+      - name: Resolve Azure identifiers
+        if: steps.cf.outputs.available == 'true'
+        id: azure
+        shell: bash
+        run: |
+          set -euo pipefail
+          extract() {
+            local key="$1"
+            printf '%s\n' "$AZURE_BUNDLE" |
+              sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*[:=][[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\\2/p" |
+              tail -n 1
+          }
+          CLIENT_ID="$(extract AZURE_CLIENT_ID)"
+          TENANT_ID="$(extract AZURE_TENANT_ID)"
+          SUBSCRIPTION_ID="$(extract AZURE_SUBSCRIPTION_ID)"
+          test -n "$CLIENT_ID" && test -n "$TENANT_ID" && test -n "$SUBSCRIPTION_ID"
+          echo "::add-mask::$CLIENT_ID"; echo "::add-mask::$TENANT_ID"; echo "::add-mask::$SUBSCRIPTION_ID"
+          echo "client_id=$CLIENT_ID" >> "$GITHUB_OUTPUT"
+          echo "tenant_id=$TENANT_ID" >> "$GITHUB_OUTPUT"
+          echo "subscription_id=$SUBSCRIPTION_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Request GitHub OIDC token
+        if: steps.cf.outputs.available == 'true'
+        id: oidc
+        shell: bash
+        run: |
+          set -euo pipefail
+          RESPONSE="$(curl --fail --silent --show-error \
+            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange")"
+          TOKEN="$(jq -r '.value' <<<"$RESPONSE")"
+          test -n "$TOKEN" && test "$TOKEN" != "null"
+          echo "::add-mask::$TOKEN"
+          {
+            echo "token<<EOF"
+            echo "$TOKEN"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Login Azure
+        if: steps.cf.outputs.available == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          az login --service-principal \
+            --username "${{ steps.azure.outputs.client_id }}" \
+            --tenant "${{ steps.azure.outputs.tenant_id }}" \
+            --federated-token "${{ steps.oidc.outputs.token }}" \
+            --allow-no-subscriptions -o none
+          az account set --subscription "${{ steps.azure.outputs.subscription_id }}"
+
+      - name: Upsert canonical DNS records
+        if: steps.cf.outputs.available == 'true'
+        env:
+          CF_TOKEN: ${{ steps.cf.outputs.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          rg=rg-flowed-ideos-lab; app=mytrues-reader; env=mytrues-memory-env
+          fqdn="$(az containerapp show -g "$rg" -n "$app" --query properties.configuration.ingress.fqdn -o tsv)"
+          verify="$(az containerapp show -g "$rg" -n "$app" --query properties.customDomainVerificationId -o tsv)"
+          ip="$(az containerapp env show -g "$rg" -n "$env" --query properties.staticIp -o tsv)"
+          test -n "$fqdn" && test -n "$verify" && test -n "$ip"
+
+          api=https://api.cloudflare.com/client/v4
+          zone="$(curl -fsS -H "Authorization: Bearer $CF_TOKEN" -H 'Content-Type: application/json' "$api/zones?name=mytrues.io&status=active" | jq -r '.result[0].id // empty')"
+          test -n "$zone"
+
+          upsert() {
+            local type="$1" name="$2" content="$3" proxied="$4"
+            local found id body
+            found="$(curl -fsS -H "Authorization: Bearer $CF_TOKEN" -H 'Content-Type: application/json' "$api/zones/$zone/dns_records?type=$type&name=$name")"
+            id="$(jq -r '.result[0].id // empty' <<<"$found")"
+            body="$(jq -nc --arg type "$type" --arg name "$name" --arg content "$content" --argjson proxied "$proxied" '{type:$type,name:$name,content:$content,ttl:1,proxied:$proxied}')"
+            if [ -n "$id" ]; then
+              curl -fsS -X PUT -H "Authorization: Bearer $CF_TOKEN" -H 'Content-Type: application/json' --data "$body" "$api/zones/$zone/dns_records/$id" | jq -e '.success == true' >/dev/null
+            else
+              curl -fsS -X POST -H "Authorization: Bearer $CF_TOKEN" -H 'Content-Type: application/json' --data "$body" "$api/zones/$zone/dns_records" | jq -e '.success == true' >/dev/null
+            fi
+            echo "DNS_UPSERTED $type $name"
+          }
+
+          upsert A mytrues.io "$ip" false
+          upsert TXT asuid.mytrues.io "$verify" false
+          upsert CNAME reader.mytrues.io "$fqdn" false
+          upsert TXT asuid.reader.mytrues.io "$verify" false
+          echo "CLOUDFLARE_MYTRUES_DNS_READY"
