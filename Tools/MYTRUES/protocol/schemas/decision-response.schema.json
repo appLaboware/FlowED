@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mytrues.dev/protocol/0.2/schemas/decision-response.schema.json",
+  "title": "MyTrues Decision Response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol",
+    "requestId",
+    "status",
+    "provider",
+    "decision",
+    "selected",
+    "guards",
+    "notice",
+    "meta"
+  ],
+  "properties": {
+    "protocol": {
+      "const": "mytrues.decision/v1"
+    },
+    "requestId": {
+      "type": "string"
+    },
+    "status": {
+      "const": "decided"
+    },
+    "provider": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "decision": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "selected": {
+      "type": "object",
+      "required": [
+        "action",
+        "result"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "result": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "guards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "satisfied"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "satisfied": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "notice": {
+      "type": "string"
+    },
+    "meta": {
+      "type": "object",
+      "required": [
+        "policyVersion",
+        "knowledgeRevision"
+      ],
+      "properties": {
+        "policyVersion": {
+          "type": "string"
+        },
+        "knowledgeRevision": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,77 @@
+schemaType: Bundle
+schemaVersion: 1.0.1
+name: r1-native-surface
+version: 0.1.0
+description: "R1 proof of Porter native parameter, credential, output, custom action and lifecycle capabilities"
+registry: localhost:5000
+
+mixins:
+  - exec
+
+credentials:
+  - name: lab-token
+    description: Synthetic credential used only to prove credential-set injection.
+    env: LAB_TOKEN
+    applyTo:
+      - install
+      - upgrade
+
+parameters:
+  - name: greeting
+    type: string
+    default: default-greeting
+    env: GREETING
+    applyTo:
+      - install
+      - upgrade
+      - status
+
+outputs:
+  - name: result
+    type: string
+    path: /cnab/app/result.txt
+    applyTo:
+      - install
+      - upgrade
+
+  - name: sensitive-marker
+    type: string
+    path: /cnab/app/sensitive.txt
+    sensitive: true
+    applyTo:
+      - install
+      - upgrade
+
+customActions:
+  status:
+    description: Report bundle status without modifying installation state.
+    modifies: false
+    stateless: true
+
+install:
+  - exec:
+      description: "Prove parameter and credential injection, then emit outputs"
+      command: ./run.sh
+      arguments:
+        - install
+
+upgrade:
+  - exec:
+      description: "Prove CLI override precedence and update outputs"
+      command: ./run.sh
+      arguments:
+        - upgrade
+
+status:
+  - exec:
+      description: "Run a stateless custom action"
+      command: ./run.sh
+      arguments:
+        - status
+
+uninstall:
+  - exec:
+      description: "Complete lifecycle without external infrastructure"
+      command: ./run.sh
+      arguments:
+        - uninstall

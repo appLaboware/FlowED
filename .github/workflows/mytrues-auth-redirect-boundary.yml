@@ -1,0 +1,30 @@
+name: MyTrues auth redirect boundary probe
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-auth-redirect-boundary.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check Reader auth entry redirect
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io"
+          curl -sS -D /tmp/h -o /tmp/b "$base/auth/start"
+          code="$(awk 'toupper($1) ~ /^HTTP/ {c=$2} END{print c}' /tmp/h)"
+          loc="$(awk 'BEGIN{IGNORECASE=1}/^location:/{sub(/^[^:]+:[[:space:]]*/,"");gsub(/\r/,"");print;exit}' /tmp/h)"
+          echo "AUTH_ENTRY_HTTP=$code"
+          if printf '%s' "$loc" | grep -q '^/login?status=unavailable'; then
+            echo "AUTH_FAILS_CLOSED_ON_READER"
+          elif printf '%s' "$loc" | grep -q '^https://mcp.mytrues.io/authorize'; then
+            echo "AUTH_DELEGATES_TO_EXISTING_OAUTH"
+          else
+            echo "AUTH_REDIRECT_CLASS=OTHER"
+          fi
+          test "$code" = "302" -o "$code" = "303"

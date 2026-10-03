@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mytrues.dev/protocol/0.2/schemas/provider-resolution.schema.json",
+  "title": "Provider Resolution",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decision"
+  ],
+  "properties": {
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "action",
+        "result",
+        "guards",
+        "notice"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "result": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "guards": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "key"
+            ],
+            "properties": {
+              "key": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "notice": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,104 @@
+name: MyTrues canonical domain and OAuth prepare
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-canonical-domain-oauth.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+env:
+  AZURE_BUNDLE: ${{ secrets.AZURE }}
+  CF_DNS_EDIT: ${{ secrets.CF_DNS_EDIT }}
+  CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+jobs:
+  prepare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Resolve Azure
+        id: az
+        shell: bash
+        run: |
+          set -euo pipefail
+          extract(){ local key="$1"; printf '%s\n' "$AZURE_BUNDLE" | sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*[:=][[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\\2/p" | tail -n1; }
+          CLIENT_ID="$(extract AZURE_CLIENT_ID)"; TENANT_ID="$(extract AZURE_TENANT_ID)"; SUBSCRIPTION_ID="$(extract AZURE_SUBSCRIPTION_ID)"
+          test -n "$CLIENT_ID" && test -n "$TENANT_ID" && test -n "$SUBSCRIPTION_ID"
+          echo "::add-mask::$CLIENT_ID"; echo "::add-mask::$TENANT_ID"; echo "::add-mask::$SUBSCRIPTION_ID"
+          echo "client=$CLIENT_ID" >> "$GITHUB_OUTPUT"; echo "tenant=$TENANT_ID" >> "$GITHUB_OUTPUT"; echo "sub=$SUBSCRIPTION_ID" >> "$GITHUB_OUTPUT"
+      - name: Azure login
+        shell: bash
+        run: |
+          set -euo pipefail
+          TOKEN="$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange" | jq -r .value)"
+          echo "::add-mask::$TOKEN"
+          az login --service-principal --username "${{ steps.az.outputs.client }}" --tenant "${{ steps.az.outputs.tenant }}" --federated-token "$TOKEN" --allow-no-subscriptions -o none
+          az account set --subscription "${{ steps.az.outputs.sub }}"
+      - name: Audit canonical DNS and Azure requirements
+        id: infra
+        shell: bash
+        run: |
+          set -euo pipefail
+          rg=rg-flowed-ideos-lab
+          app=mytrues-reader
+          env=mytrues-memory-env
+          fqdn="$(az containerapp show -g "$rg" -n "$app" --query properties.configuration.ingress.fqdn -o tsv)"
+          verification="$(az containerapp show -g "$rg" -n "$app" --query properties.customDomainVerificationId -o tsv)"
+          static_ip="$(az containerapp env show -g "$rg" -n "$env" --query properties.staticIp -o tsv)"
+          test -n "$fqdn" && test -n "$verification" && test -n "$static_ip"
+          echo "fqdn=$fqdn" >> "$GITHUB_OUTPUT"
+          echo "verification=$verification" >> "$GITHUB_OUTPUT"
+          echo "static_ip=$static_ip" >> "$GITHUB_OUTPUT"
+          auth="$(dig +short NS mytrues.io | head -n1)"
+          echo "NS=$auth"
+          echo "APEX_A=$(dig +short A mytrues.io @"$auth" | tr '\n' ' ')"
+          echo "APEX_TXT=$(dig +short TXT asuid.mytrues.io @"$auth" | tr -d '\"' | tr '\n' ' ')"
+          echo "READER_CNAME=$(dig +short CNAME reader.mytrues.io @"$auth" | sed 's/\.$//' | tr '\n' ' ')"
+          echo "READER_TXT=$(dig +short TXT asuid.reader.mytrues.io @"$auth" | tr -d '\"' | tr '\n' ' ')"
+          echo "EXPECTED_APEX_A=$static_ip"
+          echo "EXPECTED_APEX_TXT=$verification"
+          echo "EXPECTED_READER_CNAME=$fqdn"
+          echo "EXPECTED_READER_TXT=$verification"
+      - name: Register one persistent portal OAuth client
+        id: oauth
+        shell: bash
+        run: |
+          set -euo pipefail
+          vault=mytrues-ingest-kv
+          existing="$(az keyvault secret show --vault-name "$vault" -n portal-oauth-client-id --query value -o tsv 2>/dev/null || true)"
+          if [ -n "$existing" ]; then
+            echo "::add-mask::$existing"
+            echo "client_id=$existing" >> "$GITHUB_OUTPUT"
+            echo "OAUTH_CLIENT_REUSED"
+            exit 0
+          fi
+          payload="$(jq -nc '{
+            client_name:"MyTrues Portal",
+            redirect_uris:[
+              "https://reader.mytrues.io/auth/callback",
+              "https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io/auth/callback"
+            ],
+            grant_types:["authorization_code","refresh_token"],
+            response_types:["code"],
+            token_endpoint_auth_method:"none",
+            application_type:"web"
+          }')"
+          code="$(curl -sS -o /tmp/reg -w '%{http_code}' -H 'content-type: application/json' --data "$payload" https://mcp.mytrues.io/register)"
+          echo "DCR_HTTP=$code"
+          cat /tmp/reg | jq 'if .client_id then {accepted:true,redirect_uris} else . end'
+          test "$code" = "200" -o "$code" = "201"
+          cid="$(jq -r .client_id /tmp/reg)"
+          test -n "$cid" && test "$cid" != null
+          echo "::add-mask::$cid"
+          az keyvault secret set --vault-name "$vault" -n portal-oauth-client-id --value "$cid" --only-show-errors -o none
+          echo "client_id=$cid" >> "$GITHUB_OUTPUT"
+          echo "OAUTH_CLIENT_READY"
+      - name: Inspect available Cloudflare credential
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -n "$CF_DNS_EDIT" ]; then echo "CF_DNS_EDIT_PRESENT"; else echo "CF_DNS_EDIT_ABSENT"; fi
+          if [ -n "$CF_API_TOKEN" ]; then echo "CLOUDFLARE_API_TOKEN_PRESENT"; else echo "CLOUDFLARE_API_TOKEN_ABSENT"; fi
+          echo "KEYVAULT_MATCHES:"
+          az keyvault secret list --vault-name mytrues-ingest-kv --query "[].name" -o tsv | grep -Ei 'cloudflare|cf-|dns|zone' || true

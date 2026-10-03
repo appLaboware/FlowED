@@ -1,0 +1,141 @@
+schemaType: Bundle
+schemaVersion: 1.0.1
+name: mytrues-generic-php-mysql-azure
+version: 0.1.0
+description: "Generic PHP artifact plus MySQL dependency materialized on Azure"
+registry: localhost:5000
+dockerfile: template.Dockerfile
+
+mixins:
+  - az
+  - exec
+
+credentials:
+  - name: azure-client-id
+    env: AZURE_CLIENT_ID
+  - name: azure-tenant-id
+    env: AZURE_TENANT_ID
+  - name: azure-subscription-id
+    env: AZURE_SUBSCRIPTION_ID
+  - name: azure-federated-token
+    env: AZURE_FEDERATED_TOKEN
+
+parameters:
+  - name: app
+    type: file
+    path: /cnab/app/input/app.tar.gz
+  - name: site_name
+    type: string
+  - name: resource_group
+    type: string
+    default: rg-flowed-ideos-lab
+  - name: location
+    type: string
+    default: brazilsouth
+
+install:
+  - az:
+      description: "Authenticate to Azure using GitHub federated identity"
+      arguments: [login]
+      flags:
+        service-principal:
+        username: ${ bundle.credentials.azure-client-id }
+        tenant: ${ bundle.credentials.azure-tenant-id }
+        federated-token: ${ bundle.credentials.azure-federated-token }
+        allow-no-subscriptions:
+      suppress-output: true
+
+  - az:
+      description: "Select Azure subscription"
+      arguments: [account, set]
+      flags:
+        subscription: ${ bundle.credentials.azure-subscription-id }
+
+  - exec:
+      description: "Translate generic PHP artifact plus MySQL dependency into Azure container-group declaration"
+      command: /bin/bash
+      arguments:
+        - -c
+        - |
+          set -euo pipefail
+          APP_B64="$(base64 -w0 /cnab/app/input/app.tar.gz)"
+
+          cat >/tmp/application.yaml <<YAML
+          name: ${ bundle.parameters.site_name }
+          apiVersion: '2021-10-01'
+          location: ${ bundle.parameters.location }
+          properties:
+            containers:
+              - name: web
+                properties:
+                  image: quay.io/sclorg/php-83-c9s
+                  command:
+                    - /bin/sh
+                    - -c
+                    - 'printf "%s" "\$APP_B64" | base64 -d | tar -xzf - -C /opt/app-root/src && exec php -S 0.0.0.0:8080 -t /opt/app-root/src'
+                  ports:
+                    - protocol: TCP
+                      port: 8080
+                  environmentVariables:
+                    - name: APP_B64
+                      secureValue: '$APP_B64'
+                  resources:
+                    requests:
+                      cpu: 0.5
+                      memoryInGB: 0.8
+              - name: db
+                properties:
+                  image: quay.io/sclorg/mysql-84-c9s
+                  environmentVariables:
+                    - name: MYSQL_USER
+                      value: 'app'
+                    - name: MYSQL_PASSWORD
+                      value: 'app-pass'
+                    - name: MYSQL_DATABASE
+                      value: 'app'
+                  resources:
+                    requests:
+                      cpu: 0.5
+                      memoryInGB: 1.0
+            restartPolicy: Always
+            ipAddress:
+              ports:
+                - protocol: TCP
+                  port: 8080
+              type: Public
+              dnsNameLabel: ${ bundle.parameters.site_name }
+            osType: Linux
+          YAML
+
+  - az:
+      description: "Materialize PHP and MySQL on Azure Container Instances"
+      arguments: [container, create]
+      flags:
+        resource-group: ${ bundle.parameters.resource_group }
+        file: /tmp/application.yaml
+
+uninstall:
+  - az:
+      description: "Authenticate to Azure using GitHub federated identity"
+      arguments: [login]
+      flags:
+        service-principal:
+        username: ${ bundle.credentials.azure-client-id }
+        tenant: ${ bundle.credentials.azure-tenant-id }
+        federated-token: ${ bundle.credentials.azure-federated-token }
+        allow-no-subscriptions:
+      suppress-output: true
+
+  - az:
+      description: "Select Azure subscription"
+      arguments: [account, set]
+      flags:
+        subscription: ${ bundle.credentials.azure-subscription-id }
+
+  - az:
+      description: "Destroy Azure application"
+      arguments: [container, delete]
+      flags:
+        resource-group: ${ bundle.parameters.resource_group }
+        name: ${ bundle.parameters.site_name }
+        yes:

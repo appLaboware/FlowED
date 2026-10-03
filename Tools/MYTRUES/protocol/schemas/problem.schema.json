@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mytrues.dev/protocol/0.2/schemas/problem.schema.json",
+  "title": "RFC 9457 compatible Problem Details",
+  "type": "object",
+  "required": ["type", "title", "status"],
+  "properties": {
+    "type": {"type": "string"},
+    "title": {"type": "string"},
+    "status": {"type": "integer", "minimum": 100, "maximum": 599},
+    "detail": {"type": "string"},
+    "instance": {"type": "string"}
+  },
+  "additionalProperties": true
+}

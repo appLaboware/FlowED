@@ -1,0 +1,59 @@
+name: MyTrues seed-004 conformance
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths:
+      - "Tools/MYTRUES/seeds/seed-004/**"
+      - "Tools/MYTRUES/reference/provider_server.py"
+      - "Tools/MYTRUES/docker-compose.yml"
+      - ".github/workflows/mytrues-004-seed.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: mytrues-seed-004
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  seed-004:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Clone repository
+        run: git clone --depth 1 --branch tools/ideos-lab https://github.com/appLaboware/FlowED.git repo
+
+      - name: Start provider-scoped MyTrues reference services
+        working-directory: repo/Tools/MYTRUES
+        run: docker compose up -d --build
+
+      - name: Prove seed-004 behavior
+        working-directory: repo/Tools/MYTRUES
+        run: python3 seeds/seed-004/test_seed.py | tee /tmp/mytrues-seed-004.json
+
+      - name: Assert seed-004 acceptance
+        run: |
+          python3 - <<'PY'
+          import json
+          x=json.load(open("/tmp/mytrues-seed-004.json"))
+          assert x["result"]=="PASS"
+          assert x["cases"]==16
+          assert x["provider_decision_counts"]=={"senior-a":11,"senior-b":8}
+          assert len(x["divergent_codes"])==4
+          assert x["control_behavior"]["senior-a"].startswith("202")
+          assert x["control_behavior"]["senior-b"].startswith("202")
+          assert x["provider_scoped_memory_after_restart"]=="PASS"
+          print("SEED-004 SIXTEEN CASES: PASS")
+          print("SENIOR-A 11 / SENIOR-B 8: PASS")
+          print("FOUR DIVERGENT SHARED CASES: PASS")
+          print("UNKNOWN CONTROL PAUSES BOTH PROVIDERS: PASS")
+          print("PROVIDER MEMORY SURVIVES RESTART: PASS")
+          PY
+
+      - name: Shutdown
+        if: always()
+        working-directory: repo/Tools/MYTRUES
+        run: docker compose down -v

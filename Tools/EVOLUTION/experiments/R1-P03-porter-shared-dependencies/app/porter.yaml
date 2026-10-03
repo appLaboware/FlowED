@@ -1,0 +1,40 @@
+schemaType: Bundle
+schemaVersion: 1.0.1
+name: r1-shared-app
+version: 1.0.0
+description: "Shared dependency consumer fixture"
+registry: localhost:5000
+
+mixins:
+  - exec
+
+parameters:
+  - name: connstr
+    type: string
+    env: CONNSTR
+    applyTo:
+      - install
+
+outputs:
+  - name: app_result
+    type: string
+    path: /cnab/app/app-result.txt
+    applyTo:
+      - install
+
+install:
+  - exec:
+      command: /bin/sh
+      arguments:
+        - -c
+        - |
+          set -eu
+          test "${CONNSTR:-}" = "mysql://r1-shared-infra"
+          printf 'wired:%s\n' "$CONNSTR" > /cnab/app/app-result.txt
+          echo "APP_WIRED=$CONNSTR"
+
+uninstall:
+  - exec:
+      command: /bin/echo
+      arguments:
+        - APP_UNINSTALL

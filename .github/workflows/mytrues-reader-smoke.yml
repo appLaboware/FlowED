@@ -1,0 +1,29 @@
+name: MyTrues Human Reader smoke test
+
+on:
+  push:
+    branches:
+      - tools/ideos-lab
+    paths:
+      - ".github/workflows/mytrues-reader-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Verify public reader
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://mytrues-tdb-e2f9605d-eastus2.eastus2.cloudapp.azure.com/reader/"
+          code="$(curl -fsS -o /tmp/reader.html -w '%{http_code}' "$url")"
+          test "$code" = "200"
+          grep -q '<title>MyTrues · Human Reader</title>' /tmp/reader.html
+          grep -q 'Human Memory Reader' /tmp/reader.html
+          echo "READER_SMOKE_PASS"
+          echo "url=$url"

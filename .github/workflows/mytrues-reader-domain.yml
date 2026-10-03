@@ -1,0 +1,149 @@
+name: MyTrues Reader custom domain
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-reader-domain.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AZURE_BUNDLE: ${{ secrets.AZURE }}
+
+jobs:
+  bind:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Resolve Azure identifiers
+        id: azure
+        shell: bash
+        run: |
+          set -euo pipefail
+          extract(){ local key="$1"; printf '%s\n' "$AZURE_BUNDLE" | sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*[:=][[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\\2/p" | tail -n1; }
+          CLIENT_ID="$(extract AZURE_CLIENT_ID)"; TENANT_ID="$(extract AZURE_TENANT_ID)"; SUBSCRIPTION_ID="$(extract AZURE_SUBSCRIPTION_ID)"
+          test -n "$CLIENT_ID" && test -n "$TENANT_ID" && test -n "$SUBSCRIPTION_ID"
+          echo "::add-mask::$CLIENT_ID"; echo "::add-mask::$TENANT_ID"; echo "::add-mask::$SUBSCRIPTION_ID"
+          echo "client_id=$CLIENT_ID" >> "$GITHUB_OUTPUT"; echo "tenant_id=$TENANT_ID" >> "$GITHUB_OUTPUT"; echo "subscription_id=$SUBSCRIPTION_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Azure OIDC login
+        shell: bash
+        run: |
+          set -euo pipefail
+          TOKEN="$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange" | jq -r .value)"
+          test -n "$TOKEN" && test "$TOKEN" != null
+          echo "::add-mask::$TOKEN"
+          az login --service-principal --username "${{ steps.azure.outputs.client_id }}" --tenant "${{ steps.azure.outputs.tenant_id }}" --federated-token "$TOKEN" --allow-no-subscriptions -o none
+          az account set --subscription "${{ steps.azure.outputs.subscription_id }}"
+
+      - name: Resolve exact DNS requirements from Azure
+        id: dns
+        shell: bash
+        run: |
+          set -euo pipefail
+          rg=rg-flowed-ideos-lab
+          app=mytrues-reader
+          fqdn="$(az containerapp show -g "$rg" -n "$app" --query properties.configuration.ingress.fqdn -o tsv)"
+          verification="$(az containerapp ingress show -g "$rg" -n "$app" --query properties.customDomainVerificationId -o tsv)"
+          if [ -z "$verification" ] || [ "$verification" = "null" ]; then
+            verification="$(az containerapp show -g "$rg" -n "$app" --query properties.customDomainVerificationId -o tsv)"
+          fi
+          test -n "$fqdn" && test -n "$verification" && test "$verification" != null
+          echo "fqdn=$fqdn" >> "$GITHUB_OUTPUT"
+          echo "verification=$verification" >> "$GITHUB_OUTPUT"
+          echo "CNAME_REQUIRED=reader.mytrues.io -> $fqdn"
+          echo "TXT_REQUIRED=asuid.reader.mytrues.io -> $verification"
+
+      - name: Check authoritative Cloudflare DNS
+        id: check
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected_cname="${{ steps.dns.outputs.fqdn }}"
+          expected_txt="${{ steps.dns.outputs.verification }}"
+          auth="$(dig +short NS mytrues.io | head -n1)"
+          test -n "$auth"
+
+          cname="$(dig +short CNAME reader.mytrues.io @"$auth" | sed 's/\.$//' | head -n1)"
+          txt="$(dig +short TXT asuid.reader.mytrues.io @"$auth" | tr -d '"' | head -n1)"
+
+          echo "AUTHORITATIVE_NS=$auth"
+          echo "AUTHORITATIVE_CNAME=${cname:-<absent>}"
+          echo "AUTHORITATIVE_TXT=${txt:-<absent>}"
+
+          ready=false
+          if [ "$cname" = "$expected_cname" ] && [ "$txt" = "$expected_txt" ]; then
+            ready=true
+          fi
+          echo "ready=$ready" >> "$GITHUB_OUTPUT"
+
+          if [ "$ready" != true ]; then
+            {
+              echo '## reader.mytrues.io — DNS pending'
+              echo
+              echo 'Create these DNS-only records in Cloudflare:'
+              echo
+              echo '| Type | Name | Value | Proxy |'
+              echo '|---|---|---|---|'
+              echo "| CNAME | reader | $expected_cname | DNS only |"
+              echo "| TXT | asuid.reader | $expected_txt | n/a |"
+              echo
+              echo 'The managed-certificate workflow will bind TLS after these exact records appear authoritatively.'
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "READER_DNS_PENDING"
+          else
+            echo "READER_DNS_READY"
+          fi
+
+      - name: Add hostname and bind managed TLS certificate
+        if: steps.check.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          rg=rg-flowed-ideos-lab
+          app=mytrues-reader
+          env=mytrues-memory-env
+          host=reader.mytrues.io
+
+          existing="$(az containerapp hostname list -g "$rg" -n "$app" --query "[?name=='$host'].name | [0]" -o tsv 2>/dev/null || true)"
+          if [ "$existing" != "$host" ]; then
+            az containerapp hostname add -g "$rg" -n "$app" --hostname "$host" --only-show-errors -o none
+          fi
+
+          az containerapp hostname bind             -g "$rg" -n "$app"             --hostname "$host"             --environment "$env"             --validation-method CNAME             --only-show-errors -o none
+
+          echo "READER_HOSTNAME_BOUND"
+
+      - name: Verify public DNS, TLS and portal routing
+        if: steps.check.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          host=reader.mytrues.io
+          for i in $(seq 1 60); do
+            if curl -fsS --max-time 15 "https://$host/" -o /tmp/home.html; then
+              break
+            fi
+            sleep 5
+          done
+          grep -q 'Estamos preparando' /tmp/home.html
+
+          app_code="$(curl -sS -D /tmp/app-h -o /dev/null -w '%{http_code}' "https://$host/app")"
+          test "$app_code" = "302"
+          grep -qi '^location: /login' /tmp/app-h
+
+          curl -sS -D /tmp/auth-h -o /dev/null "https://$host/auth/start"
+          grep -qi '^HTTP/.* 302' /tmp/auth-h
+          loc="$(awk 'BEGIN{IGNORECASE=1} /^location:/ {sub(/^[^:]+:[[:space:]]*/,"");gsub(/\r/,"");print;exit}' /tmp/auth-h)"
+          printf '%s' "$loc" | grep -Fq 'redirect_uri=https%3A%2F%2Freader.mytrues.io%2Fauth%2Fcallback'
+
+          echo | openssl s_client -connect "$host:443" -servername "$host" 2>/dev/null | openssl x509 -noout -ext subjectAltName >/tmp/cert
+          grep -Fq 'DNS:reader.mytrues.io' /tmp/cert
+
+          echo "READER_CUSTOM_DOMAIN_TLS_PASS"
+          echo "READER_PUBLIC_TEASER_PASS"
+          echo "READER_PRIVATE_APP_GATE_PASS"
+          echo "READER_CUSTOM_CALLBACK_PASS"

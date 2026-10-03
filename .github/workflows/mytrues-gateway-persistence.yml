@@ -1,0 +1,178 @@
+name: MyTrues gateway persistence
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-gateway-persistence.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+env:
+  AZURE_BUNDLE: ${{ secrets.AZURE }}
+  AZURE_CLIENT_ID_SECRET: ${{ secrets.AZURE_CLIENT_ID }}
+  AZURE_TENANT_ID_SECRET: ${{ secrets.AZURE_TENANT_ID }}
+  AZURE_SUBSCRIPTION_ID_SECRET: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+jobs:
+  host:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Resolve Azure repository credentials
+        id: azure
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          get_bundle_value() {
+            local key="$1"
+            printf '%s\n' "$AZURE_BUNDLE" |
+              sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*=[[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\2/p" |
+              tail -n 1
+          }
+
+          CLIENT_ID="$AZURE_CLIENT_ID_SECRET"
+          TENANT_ID="$AZURE_TENANT_ID_SECRET"
+          SUBSCRIPTION_ID="$AZURE_SUBSCRIPTION_ID_SECRET"
+          SOURCE="separate repository secrets"
+
+          if [ -z "$CLIENT_ID" ] || [ -z "$TENANT_ID" ] || [ -z "$SUBSCRIPTION_ID" ]; then
+            SOURCE="legacy AZURE bundle secret"
+            CLIENT_ID="${CLIENT_ID:-$(get_bundle_value AZURE_CLIENT_ID)}"
+            TENANT_ID="${TENANT_ID:-$(get_bundle_value AZURE_TENANT_ID)}"
+            SUBSCRIPTION_ID="${SUBSCRIPTION_ID:-$(get_bundle_value AZURE_SUBSCRIPTION_ID)}"
+          fi
+
+          test -n "$CLIENT_ID" || { echo "AZURE_CLIENT_ID is unavailable." >&2; exit 1; }
+          test -n "$TENANT_ID" || { echo "AZURE_TENANT_ID is unavailable." >&2; exit 1; }
+          test -n "$SUBSCRIPTION_ID" || { echo "AZURE_SUBSCRIPTION_ID is unavailable." >&2; exit 1; }
+
+          echo "::add-mask::$CLIENT_ID"
+          echo "::add-mask::$TENANT_ID"
+          echo "::add-mask::$SUBSCRIPTION_ID"
+
+          {
+            echo "client_id=$CLIENT_ID"
+            echo "tenant_id=$TENANT_ID"
+            echo "subscription_id=$SUBSCRIPTION_ID"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "Azure credentials resolved from: $SOURCE"
+          echo "Preferred format: three separate repository secrets."
+
+      - name: Request GitHub OIDC token
+        id: oidc
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          RESPONSE="$(curl --fail --silent --show-error             -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN"             "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange")"
+
+          TOKEN="$(jq -r '.value' <<<"$RESPONSE")"
+          test -n "$TOKEN"
+          test "$TOKEN" != "null"
+
+          echo "::add-mask::$TOKEN"
+          {
+            echo "token<<OIDC_EOF"
+            echo "$TOKEN"
+            echo "OIDC_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "GitHub issued an OIDC token."
+
+      - name: Login to Azure using federated identity
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          az login             --service-principal             --username "${{ steps.azure.outputs.client_id }}"             --tenant "${{ steps.azure.outputs.tenant_id }}"             --federated-token "${{ steps.oidc.outputs.token }}"             --allow-no-subscriptions             --output none
+
+          az account set --subscription "${{ steps.azure.outputs.subscription_id }}"
+
+          az account show             --query "{subscription:id,tenant:tenantId,identity:user.name,type:user.type}"             --output table
+
+
+      - name: Provision isolated OAuth persistence and database role
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install 'psycopg[binary]==3.2.3' --quiet
+          python3 - <<'PY'
+          import hashlib,json,os,secrets,subprocess,tempfile,time,urllib.request
+          from pathlib import Path
+          import psycopg
+          RG="rg-flowed-ideos-lab"
+          APP="mytrues-mcp"
+          ENV="mytrues-memory-env"
+          SERVER="mytrues-canonical-pg"
+          def az(*args):
+              r=subprocess.run(["az",*args,"--only-show-errors","-o","json"],capture_output=True,text=True)
+              if r.returncode: raise RuntimeError("Azure operation failed: "+" ".join(args[:3]))
+              return json.loads(r.stdout) if r.stdout.strip() else None
+          app=az("containerapp","show","-g",RG,"-n",APP)
+          oid=app["identity"]["principalId"]
+          rule="gateway-provision-"+os.environ["GITHUB_RUN_ID"]
+          ip=urllib.request.urlopen("https://api.ipify.org",timeout=20).read().decode().strip()
+          import ipaddress
+          ipaddress.ip_address(ip)
+          az("postgres","flexible-server","firewall-rule","create","-g",RG,"--name",rule,"--server-name",SERVER,"--start-ip-address",ip,"--end-ip-address",ip)
+          try:
+              token=az("account","get-access-token","--resource","https://ossrdbms-aad.database.windows.net")["accessToken"]
+              def connect(database):
+                  return psycopg.connect(host=SERVER+".postgres.database.azure.com",dbname=database,user="mytrues-workflow",password=token,sslmode="verify-full",sslrootcert="/etc/ssl/certs/ca-certificates.crt",connect_timeout=15)
+              for attempt in range(12):
+                  try:
+                      db=connect("postgres")
+                      break
+                  except psycopg.OperationalError:
+                      if attempt==11: raise RuntimeError("PostgreSQL provisioning connection failed") from None
+                      time.sleep(5)
+              with db:
+                  found=db.execute("SELECT oid FROM pg_roles WHERE rolname=%s",("mytrues-mcp",)).fetchone()
+                  if found:
+                      labels=db.execute("SELECT label FROM pg_shseclabel WHERE objoid=%s",(found[0],)).fetchall()
+                      assert any(oid in x[0] for x in labels),"Existing database role has different identity"
+                  else:
+                      db.execute("SELECT * FROM pg_catalog.pgaadauth_create_principal_with_oid(%s,%s,%s,false,false)",("mytrues-mcp",oid,"service"))
+              with connect("mytrues") as db:
+                  db.execute('GRANT CONNECT ON DATABASE mytrues TO "mytrues-mcp"')
+                  db.execute('GRANT USAGE ON SCHEMA public TO "mytrues-mcp"')
+                  db.execute('GRANT SELECT, INSERT ON public.cognition_records TO "mytrues-mcp"')
+                  allowed=db.execute("SELECT has_table_privilege('mytrues-mcp','public.cognition_records','SELECT'),has_table_privilege('mytrues-mcp','public.cognition_records','INSERT'),has_table_privilege('mytrues-mcp','public.cognition_records','UPDATE'),has_table_privilege('mytrues-mcp','public.cognition_records','DELETE')").fetchone()
+                  assert allowed==(True,True,False,False),allowed
+              print("DATABASE_ROLE=SELECT_INSERT_ONLY",flush=True)
+          finally:
+              az("postgres","flexible-server","firewall-rule","delete","-g",RG,"--server-name",SERVER,"--name",rule,"--yes")
+          account="mytruesoauth"+hashlib.sha256(app["id"].encode()).hexdigest()[:10]
+          existing=az("storage","account","list","-g",RG)
+          if not any(x["name"]==account for x in existing):
+              az("storage","account","create","-g",RG,"-n",account,"-l","brazilsouth","--sku","Standard_LRS","--kind","StorageV2","--https-only","true","--min-tls-version","TLS1_2","--allow-blob-public-access","false")
+          az("storage","share-rm","create","-g",RG,"--storage-account",account,"--name","oauth-state","--quota","5")
+          key=az("storage","account","keys","list","-g",RG,"-n",account)[0]["value"]
+          az("containerapp","env","storage","set","-g",RG,"-n",ENV,"--storage-name","mytrues-oauth","--access-mode","ReadWrite","--azure-file-account-name",account,"--azure-file-account-key",key,"--azure-file-share-name","oauth-state")
+          secret_names=az("containerapp","secret","list","-g",RG,"-n",APP)
+          if not any(x["name"]=="oauth-signing-key" for x in secret_names):
+              az("containerapp","secret","set","-g",RG,"-n",APP,"--secrets","oauth-signing-key="+secrets.token_urlsafe(48))
+          app=az("containerapp","show","-g",RG,"-n",APP)
+          template=app["properties"]["template"]
+          template.pop("revisionSuffix",None)
+          volumes=template.get("volumes") or []
+          volumes=[v for v in volumes if v["name"]!="oauth-state"]
+          volumes.append({"name":"oauth-state","storageType":"AzureFile","storageName":"mytrues-oauth","mountOptions":"uid=65532,gid=65532,dir_mode=0700,file_mode=0600"})
+          template["volumes"]=volumes
+          assert len(template["containers"])==1
+          container=template["containers"][0]
+          mounts=container.get("volumeMounts") or []
+          container["volumeMounts"]=[v for v in mounts if v["volumeName"]!="oauth-state"]+[{"volumeName":"oauth-state","mountPath":"/mnt/mytrues-oauth"}]
+          env=container.get("env") or []
+          container["env"]=[e for e in env if e["name"] not in ("FASTMCP_HOME","MYTRUES_OAUTH_SIGNING_KEY")]+[{"name":"FASTMCP_HOME","value":"/mnt/mytrues-oauth"},{"name":"MYTRUES_OAUTH_SIGNING_KEY","secretRef":"oauth-signing-key"}]
+          with tempfile.TemporaryDirectory() as folder:
+              spec=Path(folder)/"app.yaml"
+              spec.write_text(json.dumps({"properties":{"managedEnvironmentId":app["properties"]["managedEnvironmentId"],"template":template}}))
+              az("containerapp","update","-g",RG,"-n",APP,"--yaml",str(spec))
+          current=az("containerapp","show","-g",RG,"-n",APP)
+          assert any(v["storageName"]=="mytrues-oauth" for v in current["properties"]["template"]["volumes"])
+          print("OAUTH_VOLUME_CONFIGURED="+account,flush=True)
+          print("USER_BINDING_AND_RUNTIME_DATABASE_NETWORK_STILL_PENDING",flush=True)
+          
+          PY

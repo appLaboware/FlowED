@@ -1,0 +1,488 @@
+{
+  "seed": "seed-004",
+  "version": "0.1.0",
+  "description": "Sanitized provider decision-memory cases derived from WordPress -> Azure ACI + SMB + Cloudflare operational failures.",
+  "provenance": {
+    "classification": "sanitized-reconstruction",
+    "note": "Failure taxonomy supplied by the project owner; contexts and decisions are reconstructed reference cases for conformance, not a verbatim incident log."
+  },
+  "control_failure_code": "observability.novel_failure_never_seen",
+  "divergent_both": [
+    "php.extension_missing",
+    "wordpress.maintenance_transient",
+    "sqlite.dropin_stub_deployed",
+    "git.dubious_ownership"
+  ],
+  "cases": [
+    {
+      "failure_code": "azure.aci.smb_volume_permissions_root",
+      "context": {
+        "provider": "azure",
+        "service": "aci",
+        "volume_protocol": "smb",
+        "mount_owner": "root:root",
+        "runtime_uid": 1001,
+        "runtime_gid": 0,
+        "write_probe": "permission-denied"
+      },
+      "decisions": {
+        "senior-a": {
+          "id": "decision.senior-a.azure.aci.smb_permissions",
+          "action": "storage.align_smb_mount_permissions",
+          "result": {
+            "strategy": "align-mount-options-or-runtime-identity",
+            "reconcile": "before-app-start",
+            "destructive": false
+          },
+          "guards": [
+            {
+              "key": "provider_is_azure_aci",
+              "satisfied": true
+            }
+          ],
+          "notice": "Senior A chooses to reconcile SMB mount ownership/mode with the application runtime before retrying."
+        }
+      }
+    },
+    {
+      "failure_code": "wordpress.canonical_host_mismatch",
+      "context": {
+        "runtime": "wordpress",
+        "canonical_host": "site.example.invalid",
+        "provider_origin": "origin.example.invalid",
+        "edge_status": 522
+      },
+      "decisions": {
+        "senior-a": {
+          "id": "decision.senior-a.wordpress.defer_canonical_cutover",
+          "action": "edge.defer_canonical_cutover_until_origin_healthy",
+          "result": {
+            "strategy": "keep-provider-origin-canonical-until-edge-health",
+            "then": "promote-custom-host"
+          },
+          "guards": [
+            {
+              "key": "provider_origin_available",
+              "satisfied": true
+            }
+          ],
+          "notice": "Senior A keeps the provider origin authoritative until edge health is proven, then promotes the canonical host."
+        }
+      }
+    },
+    {
+      "failure_code": "cloudflare.healthcheck_stale_backend",
+      "context": {
+        "provider": "cloudflare",
+        "healthcheck_backend": "stale-origin.example.invalid",
+        "current_origin": "current-origin.example.invalid",
+        "probe_state": "unhealthy"
+      },
+      "decisions": {
+        "senior-a": {
+          "id": "decision.senior-a.cloudflare.reconcile_healthcheck",
+          "action": "edge.reconcile_healthcheck_backend",
+          "result": {
+            "strategy": "update-origin-target-and-wait-convergence",
+            "validation": "two-consecutive-healthy-probes"
+          },
+          "guards": [
+            {
+              "key": "current_origin_known",
+              "satisfied": true
+            }
+          ],
+          "notice": "Senior A updates the edge health target to the current origin and waits for stable healthy probes before cutover."
+        }
+      }
+    },
+    {
+      "failure_code": "wordpress.installer_ssl_redirect_loop",
+      "context": {
+        "runtime": "wordpress",
+        "installer_path": "/wp-admin/install.php",
+        "observed_status": 302,
+        "scheme_at_origin": "http",
+        "scheme_at_edge": "https"
+      },
+      "decisions": {
+        "senior-a": {
+          "id": "decision.senior-a.wordpress.proxy_scheme_reconcile",
+          "action": "wordpress.reconcile_proxy_scheme",
+          "result": {
+            "strategy": "align-forwarded-proto-and-canonical-scheme",
+            "retry": "installer"
+          },
+          "guards": [
+            {
+              "key": "edge_tls_terminates_before_origin",
+              "satisfied": true
+            }
+          ],
+          "notice": "Senior A aligns proxy scheme signaling with the WordPress canonical scheme before retrying the installer."
+        }
+      }
+    },
+    {
+      "failure_code": "azure.aci.quota_environment_exhausted",
+      "context": {
+        "provider": "azure",
+        "service": "aci",
+        "quota_name": "StandardCores",
+        "requested_region": "region-a",
+        "alternate_region_allowed": true
+      },
+      "decisions": {
+        "senior-a": {
+          "id": "decision.senior-a.azure.quota_alternate_region",
+          "action": "placement.select_allowed_alternate_region",
+          "result": {
+            "strategy": "quota-aware-region-fallback",
+            "destructive_cleanup": false
+          },
+          "guards": [
+            {
+              "key": "alternate_region_allowed",
+              "satisfied": true
+            }
+          ],
+          "notice": "Senior A retries placement in an allowed region instead of deleting unrelated resources or failing the intent."
+        }
+      }
+    },
+    {
+      "failure_code": "azure.region_edge_reachability",
+      "context": {
+        "provider": "azure",
+        "edge_provider": "cloudflare",
+        "direct_origin_reachable": true,
+        "edge_reachable": false,
+        "requested_region": "region-a"
+      },
+      "decisions": {
+        "senior-a": {
+          "id": "decision.senior-a.azure.edge_reachable_region",
+          "action": "placement.move_to_edge_reachable_region",
+          "result": {
+            "strategy": "probe-provider-origin-from-edge-before-cutover"
+          },
+          "guards": [
+            {
+              "key": "direct_origin_reachable",
+              "satisfied": true
+            }
+          ],
+          "notice": "Senior A selects a placement that is reachable from the edge and validates edge-to-origin reachability before cutover."
+        }
+      }
+    },
+    {
+      "failure_code": "sqlite.dropin_stub_deployed",
+      "context": {
+        "runtime": "wordpress",
+        "database": "sqlite",
+        "dropin_file": "db.php",
+        "dropin_probe": "stub-detected"
+      },
+      "decisions": {
+        "senior-a": {
+          "id": "decision.senior-a.sqlite.rollback_stub",
+          "action": "artifact.rollback_stub_dropin",
+          "result": {
+            "strategy": "rollback-to-last-verified-artifact",
+            "database_mode": "known-good"
+          },
+          "guards": [
+            {
+              "key": "stub_detected",
+              "satisfied": true
+            }
+          ],
+          "notice": "Senior A rolls back the stub drop-in and restores the last verified application artifact."
+        },
+        "senior-b": {
+          "id": "decision.senior-b.sqlite.replace_stub",
+          "action": "artifact.replace_stub_with_verified_dropin",
+          "result": {
+            "strategy": "rebuild-artifact-with-verified-dropin",
+            "verification": "functional-query"
+          },
+          "guards": [
+            {
+              "key": "stub_detected",
+              "satisfied": true
+            }
+          ],
+          "notice": "Senior B rebuilds the artifact with a verified functional drop-in and proves it with a database query."
+        }
+      }
+    },
+    {
+      "failure_code": "wordpress.maintenance_transient",
+      "context": {
+        "runtime": "wordpress",
+        "maintenance_file": ".maintenance",
+        "age_seconds": 45,
+        "updater_process_present": false
+      },
+      "decisions": {
+        "senior-a": {
+          "id": "decision.senior-a.wordpress.wait_maintenance",
+          "action": "wordpress.wait_and_recheck_maintenance",
+          "result": {
+            "strategy": "bounded-wait",
+            "seconds": 60,
+            "recheck": true
+          },
+          "guards": [
+            {
+              "key": "maintenance_age_within_transient_window",
+              "satisfied": true
+            }
+          ],
+          "notice": "Senior A treats the maintenance marker as transient first and waits before mutating application state."
+        },
+        "senior-b": {
+          "id": "decision.senior-b.wordpress.remove_stale_maintenance",
+          "action": "wordpress.remove_stale_maintenance_after_guard",
+          "result": {
+            "strategy": "guarded-remove",
+            "require_no_updater_process": true
+          },
+          "guards": [
+            {
+              "key": "updater_process_absent",
+              "satisfied": true
+            }
+          ],
+          "notice": "Senior B removes the maintenance marker only after proving there is no active updater."
+        }
+      }
+    },
+    {
+      "failure_code": "php.extension_missing",
+      "context": {
+        "runtime": "php",
+        "missing_extension": "mysqli",
+        "extension_required": true
+      },
+      "decisions": {
+        "senior-a": {
+          "id": "decision.senior-a.php.install_extension_runtime",
+          "action": "runtime.install_extension_and_retry",
+          "result": {
+            "strategy": "install-compatible-package-in-current-runtime",
+            "extension": "mysqli",
+            "retry": true
+          },
+          "guards": [
+            {
+              "key": "runtime_mutation_allowed",
+              "satisfied": true
+            }
+          ],
+          "notice": "Senior A installs the compatible missing PHP extension in the current runtime and retries the health check."
+        },
+        "senior-b": {
+          "id": "decision.senior-b.php.rebuild_image_extension",
+          "action": "runtime.rebuild_image_with_extension",
+          "result": {
+            "strategy": "immutable-image-rebuild",
+            "extension": "mysqli",
+            "redeploy": true
+          },
+          "guards": [
+            {
+              "key": "image_rebuild_available",
+              "satisfied": true
+            }
+          ],
+          "notice": "Senior B rebuilds the immutable runtime image with the required PHP extension and redeploys."
+        }
+      }
+    },
+    {
+      "failure_code": "git.dubious_ownership",
+      "context": {
+        "tool": "git",
+        "repository_path": "/workspace/example",
+        "owner_uid": 1001,
+        "runner_uid": 1000,
+        "error_class": "dubious-ownership"
+      },
+      "decisions": {
+        "senior-a": {
+          "id": "decision.senior-a.git.scoped_safe_directory",
+          "action": "git.configure_scoped_safe_directory",
+          "result": {
+            "strategy": "add-current-workspace-only",
+            "global_wildcard": false
+          },
+          "guards": [
+            {
+              "key": "workspace_path_known",
+              "satisfied": true
+            }
+          ],
+          "notice": "Senior A adds only the current workspace to Git safe.directory, avoiding a global wildcard."
+        },
+        "senior-b": {
+          "id": "decision.senior-b.git.fix_ownership",
+          "action": "filesystem.correct_repository_ownership",
+          "result": {
+            "strategy": "align-repository-owner-with-runner",
+            "then": "retry-git"
+          },
+          "guards": [
+            {
+              "key": "ownership_change_allowed",
+              "satisfied": true
+            }
+          ],
+          "notice": "Senior B corrects repository ownership to match the execution user and retries Git without weakening safe-directory checks."
+        }
+      }
+    },
+    {
+      "failure_code": "docker.network_wrong_bridge",
+      "context": {
+        "runtime": "docker",
+        "app_network": "app-net",
+        "db_network": "default",
+        "expected_shared_network": "app-net"
+      },
+      "decisions": {
+        "senior-b": {
+          "id": "decision.senior-b.docker.attach_expected_bridge",
+          "action": "docker.attach_services_to_expected_bridge",
+          "result": {
+            "strategy": "reconcile-compose-network-membership",
+            "recreate_if_required": true
+          },
+          "guards": [
+            {
+              "key": "expected_network_declared",
+              "satisfied": true
+            }
+          ],
+          "notice": "Senior B reconciles both services onto the declared application bridge and then reruns connectivity checks."
+        }
+      }
+    },
+    {
+      "failure_code": "docker.volume_uid_mismatch",
+      "context": {
+        "runtime": "docker",
+        "volume_path": "/data",
+        "volume_uid": 0,
+        "runtime_uid": 1000,
+        "write_probe": "permission-denied"
+      },
+      "decisions": {
+        "senior-b": {
+          "id": "decision.senior-b.docker.align_volume_uid",
+          "action": "filesystem.align_volume_uid_gid",
+          "result": {
+            "strategy": "align-volume-owner-with-runtime-identity",
+            "recursive": "bounded-to-volume-root"
+          },
+          "guards": [
+            {
+              "key": "volume_is_application_owned",
+              "satisfied": true
+            }
+          ],
+          "notice": "Senior B aligns the application-owned volume UID/GID with the runtime identity before retrying the write probe."
+        }
+      }
+    },
+    {
+      "failure_code": "wordpress.wpconfig_missing_abspath",
+      "context": {
+        "runtime": "wordpress",
+        "config_file": "wp-config.php",
+        "abspath_defined": false,
+        "wp_settings_required": false
+      },
+      "decisions": {
+        "senior-b": {
+          "id": "decision.senior-b.wordpress.regenerate_wpconfig_bootstrap",
+          "action": "wordpress.regenerate_wpconfig_bootstrap",
+          "result": {
+            "strategy": "restore-abspath-and-wp-settings-require",
+            "preserve_database_settings": true
+          },
+          "guards": [
+            {
+              "key": "wpconfig_is_generated",
+              "satisfied": true
+            }
+          ],
+          "notice": "Senior B regenerates the bootstrap tail of wp-config.php with ABSPATH and wp-settings.php while preserving database settings."
+        }
+      }
+    },
+    {
+      "failure_code": "azure.resourcegroup_delete_slow",
+      "context": {
+        "provider": "azure",
+        "resource_group": "rg-example",
+        "state": "BeingDeleted",
+        "recreate_requested": true
+      },
+      "decisions": {
+        "senior-a": {
+          "id": "decision.senior-a.azure.wait_resourcegroup_delete",
+          "action": "azure.wait_resourcegroup_deletion_and_retry",
+          "result": {
+            "strategy": "poll-beingdeleted-to-absent",
+            "bounded_wait": true,
+            "retry_create": true
+          },
+          "guards": [
+            {
+              "key": "state_is_being_deleted",
+              "satisfied": true
+            }
+          ],
+          "notice": "Senior A treats BeingDeleted as a reconciliation state, waits for absence, then retries creation without racing Azure."
+        }
+      }
+    },
+    {
+      "failure_code": "provider.no_api_captcha",
+      "context": {
+        "provider": "provider-example",
+        "api_available": false,
+        "interactive_challenge": "captcha",
+        "automation_allowed": false
+      },
+      "decisions": {
+        "senior-b": {
+          "id": "decision.senior-b.provider.human_browser_step",
+          "action": "provider.pause_for_human_browser_step",
+          "result": {
+            "strategy": "human-in-the-loop",
+            "resume_with": "decision-request-id"
+          },
+          "guards": [
+            {
+              "key": "api_unavailable_and_interactive_challenge",
+              "satisfied": true
+            }
+          ],
+          "notice": "Senior B stops automation and routes the synthetic case to a human browser step rather than bypassing the interactive challenge."
+        }
+      }
+    },
+    {
+      "failure_code": "observability.novel_failure_never_seen",
+      "context": {
+        "signal": "novel-signal",
+        "error_class": "unknown",
+        "seen_before": false
+      },
+      "decisions": {}
+    }
+  ]
+}

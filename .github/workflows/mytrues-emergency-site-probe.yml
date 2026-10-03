@@ -1,0 +1,29 @@
+name: MyTrues emergency site probe
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-emergency-site-probe.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Probe live Reader
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io"
+          for path in / /healthz /login /assets/mytrues-logo.png; do
+            code="$(curl -sS -o /tmp/body -w '%{http_code}' --max-time 20 "$base$path" || true)"
+            echo "$path HTTP=$code"
+            head -c 180 /tmp/body 2>/dev/null | tr '\n' ' ' || true
+            echo
+          done
+          root="$(curl -fsS --max-time 20 "$base/")"
+          printf '%s' "$root" | grep -q '<title>MyTrues'
+          health="$(curl -fsS --max-time 20 "$base/healthz")"
+          jq -e '.ok == true' <<<"$health" >/dev/null
+          echo "LIVE_SITE_PASS"

@@ -1,0 +1,31 @@
+schemaType: Bundle
+schemaVersion: 1.0.1
+name: r1-shared-infra
+version: 1.0.0
+description: "Shared dependency infra fixture"
+registry: localhost:5000
+
+mixins:
+  - exec
+
+outputs:
+  - name: connstr
+    type: string
+    path: /cnab/app/connstr.txt
+    applyTo:
+      - install
+
+install:
+  - exec:
+      command: /bin/sh
+      arguments:
+        - -c
+        - |
+          printf 'mysql://r1-shared-infra\n' > /cnab/app/connstr.txt
+          echo INFRA_READY
+
+uninstall:
+  - exec:
+      command: /bin/echo
+      arguments:
+        - INFRA_UNINSTALL

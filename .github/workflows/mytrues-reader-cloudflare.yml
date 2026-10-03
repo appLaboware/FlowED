@@ -1,0 +1,148 @@
+name: MyTrues Reader Cloudflare DNS
+
+on:
+  push:
+    branches:
+      - tools/ideos-lab
+    paths:
+      - ".github/workflows/mytrues-reader-cloudflare.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CLOUDFLARE_BUNDLE: ${{ secrets.CLOUDFLARE }}
+  CF_DNS_EDIT_SECRET: ${{ secrets.CF_DNS_EDIT }}
+  CF_ZONE_READ_SECRET: ${{ secrets.CF_ZONE_READ }}
+
+jobs:
+  dns:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Resolve Cloudflare credentials
+        id: cf
+        shell: bash
+        run: |
+          set -euo pipefail
+          get_value() {
+            local blob="$1" key="$2"
+            printf '%s\n' "$blob" |
+              sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*[:=][[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\\2/p" |
+              tail -n 1
+          }
+
+          CF_DNS_EDIT="$CF_DNS_EDIT_SECRET"
+          CF_ZONE_READ="$CF_ZONE_READ_SECRET"
+          SOURCE="separate repository secrets"
+
+          if [ -z "$CF_DNS_EDIT" ] || [ -z "$CF_ZONE_READ" ]; then
+            SOURCE="legacy CLOUDFLARE bundle"
+            CF_DNS_EDIT="${CF_DNS_EDIT:-$(get_value "$CLOUDFLARE_BUNDLE" CF_DNS_EDIT)}"
+            CF_ZONE_READ="${CF_ZONE_READ:-$(get_value "$CLOUDFLARE_BUNDLE" CF_ZONE_READ)}"
+          fi
+
+          test -n "$CF_DNS_EDIT" || { echo "CF_DNS_EDIT unavailable" >&2; exit 1; }
+          test -n "$CF_ZONE_READ" || { echo "CF_ZONE_READ unavailable" >&2; exit 1; }
+
+          echo "::add-mask::$CF_DNS_EDIT"
+          echo "::add-mask::$CF_ZONE_READ"
+          {
+            echo "dns_edit<<EOF"
+            echo "$CF_DNS_EDIT"
+            echo "EOF"
+            echo "zone_read<<EOF"
+            echo "$CF_ZONE_READ"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+          echo "Cloudflare credentials resolved from: $SOURCE"
+
+      - name: Verify Cloudflare tokens
+        shell: bash
+        env:
+          CF_DNS_EDIT: ${{ steps.cf.outputs.dns_edit }}
+          CF_ZONE_READ: ${{ steps.cf.outputs.zone_read }}
+        run: |
+          set -euo pipefail
+          for token in "$CF_ZONE_READ" "$CF_DNS_EDIT"; do
+            result="$(curl -fsS https://api.cloudflare.com/client/v4/user/tokens/verify               -H "Authorization: Bearer $token" -H 'Content-Type: application/json')"
+            jq -e '.success == true and .result.status == "active"' <<<"$result" >/dev/null
+          done
+          echo "CLOUDFLARE_TOKEN_VERIFY_PASS"
+
+      - name: Resolve zone and Azure Reader contract
+        id: contract
+        shell: bash
+        env:
+          CF_ZONE_READ: ${{ steps.cf.outputs.zone_read }}
+        run: |
+          set -euo pipefail
+          zone_name=mytrues.io
+          reader_host=reader.mytrues.io
+          reader_fqdn=mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io
+          verification=0932A75FCFE80964E218D9938962D94B83467900842010A4F491B7007C6D091F
+
+          zones="$(curl -fsS "https://api.cloudflare.com/client/v4/zones?name=$zone_name&status=active"             -H "Authorization: Bearer $CF_ZONE_READ" -H 'Content-Type: application/json')"
+          zone_id="$(jq -r '.result[0].id // empty' <<<"$zones")"
+          test -n "$zone_id" || { echo "Active Cloudflare zone not found: $zone_name" >&2; exit 1; }
+
+          echo "zone_id=$zone_id" >> "$GITHUB_OUTPUT"
+          echo "reader_host=$reader_host" >> "$GITHUB_OUTPUT"
+          echo "reader_fqdn=$reader_fqdn" >> "$GITHUB_OUTPUT"
+          echo "verification=$verification" >> "$GITHUB_OUTPUT"
+          echo "CLOUDFLARE_ZONE_PASS zone=$zone_name"
+
+      - name: Upsert reader.mytrues.io records
+        shell: bash
+        env:
+          CF_DNS_EDIT: ${{ steps.cf.outputs.dns_edit }}
+          ZONE_ID: ${{ steps.contract.outputs.zone_id }}
+          READER_HOST: ${{ steps.contract.outputs.reader_host }}
+          READER_FQDN: ${{ steps.contract.outputs.reader_fqdn }}
+          VERIFICATION: ${{ steps.contract.outputs.verification }}
+        run: |
+          set -euo pipefail
+
+          api="https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records"
+          auth=(-H "Authorization: Bearer $CF_DNS_EDIT" -H 'Content-Type: application/json')
+
+          upsert() {
+            local type="$1" name="$2" content="$3"
+            local id
+            id="$(curl -fsS "$api?type=$type&name=$name" "${auth[@]}" | jq -r '.result[0].id // empty')"
+            body="$(jq -n --arg type "$type" --arg name "$name" --arg content "$content"               '{type:$type,name:$name,content:$content,ttl:1,proxied:false}')"
+            if [ -n "$id" ]; then
+              response="$(curl -fsS -X PUT "$api/$id" "${auth[@]}" --data "$body")"
+            else
+              response="$(curl -fsS -X POST "$api" "${auth[@]}" --data "$body")"
+            fi
+            jq -e '.success == true' <<<"$response" >/dev/null
+          }
+
+          upsert CNAME "$READER_HOST" "$READER_FQDN"
+          upsert TXT "asuid.reader.mytrues.io" "$VERIFICATION"
+
+          echo "CLOUDFLARE_DNS_UPSERT_PASS"
+
+      - name: Verify authoritative DNS
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected_cname="mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io"
+          expected_txt="0932A75FCFE80964E218D9938962D94B83467900842010A4F491B7007C6D091F"
+
+          ok=false
+          for i in $(seq 1 40); do
+            cname="$(dig +short CNAME reader.mytrues.io @rosa.ns.cloudflare.com | sed 's/\.$//')"
+            txt="$(dig +short TXT asuid.reader.mytrues.io @rosa.ns.cloudflare.com | tr -d '\"')"
+            if [ "$cname" = "$expected_cname" ] && [ "$txt" = "$expected_txt" ]; then
+              ok=true
+              break
+            fi
+            sleep 3
+          done
+          test "$ok" = true
+
+          echo "CLOUDFLARE_DNS_AUTHORITATIVE_PASS"
+          echo "reader.mytrues.io -> $expected_cname"

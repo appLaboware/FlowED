@@ -1,0 +1,105 @@
+name: IDEOS laboratory
+
+on:
+  push:
+    branches:
+      - tools/ideos-lab
+    paths:
+      - "Tools/IDEOS/**"
+      - ".github/workflows/ideos-lab.yml"
+  workflow_dispatch:
+
+jobs:
+  porter-containerized-runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Clone repository
+        run: |
+          git clone --depth 1 --branch tools/ideos-lab https://github.com/appLaboware/FlowED.git repo
+
+      - name: Docker versions
+        run: |
+          cd repo
+          docker version
+          docker compose version
+
+      - name: Build IDEOS controller
+        run: |
+          cd repo
+          docker compose -f Tools/IDEOS/runtime/compose.yaml build ideos
+
+      - name: Verify Porter and Docker from controller
+        run: |
+          cd repo
+          Tools/IDEOS/runtime/ideos porter version
+          Tools/IDEOS/runtime/ideos docker version
+          Tools/IDEOS/runtime/ideos porter mixins list
+
+      - name: Build PHP application image from controller
+        run: |
+          cd repo
+          Tools/IDEOS/runtime/ideos docker build             -t ideos-exp001-web:local             experiments/EXP-001-php-mysql/app
+
+      - name: Build Porter bundle
+        run: |
+          cd repo
+          Tools/IDEOS/runtime/ideos porter build             --dir experiments/EXP-001-php-mysql
+
+      - name: Grant invocation container access to Docker socket
+        run: |
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            alpine:3.21 \
+            chmod 666 /var/run/docker.sock
+
+      - name: Install bundle
+        run: |
+          cd repo
+          Tools/IDEOS/runtime/ideos porter install ideos-exp001             --file experiments/EXP-001-php-mysql/porter.yaml             --allow-docker-host-access
+
+      - name: Verify application after controller exited
+        run: |
+          cd repo
+          for i in $(seq 1 60); do
+            if body="$(curl -fsS http://127.0.0.1:18080 2>/dev/null)"; then
+              if echo "$body" | grep -q "IDEOS EXP-001" && echo "$body" | grep -q "Visitas persistidas:"; then
+                echo "$body"
+                exit 0
+              fi
+            fi
+            sleep 2
+          done
+          docker ps -a
+          docker logs ideos-exp001-db || true
+          docker logs ideos-exp001-web || true
+          exit 1
+
+      - name: Verify application containers persist independently
+        run: |
+          cd repo
+          docker ps --format '{{.Names}}' | grep -qx ideos-exp001-web
+          docker ps --format '{{.Names}}' | grep -qx ideos-exp001-db
+
+      - name: Uninstall bundle
+        run: |
+          cd repo
+          Tools/IDEOS/runtime/ideos porter uninstall ideos-exp001             --file experiments/EXP-001-php-mysql/porter.yaml             --allow-docker-host-access             --delete
+
+      - name: Verify application removal
+        run: |
+          cd repo
+          ! docker ps -a --format '{{.Names}}' | grep -qx ideos-exp001-web
+          ! docker ps -a --format '{{.Names}}' | grep -qx ideos-exp001-db
+
+      - name: Diagnostics
+        if: always()
+        run: |
+          cd repo
+          echo "=== docker ps -a ==="
+          docker ps -a
+          echo "=== docker images ==="
+          docker images
+          echo "=== runtime compose ==="
+          docker compose -f Tools/IDEOS/runtime/compose.yaml ps || true

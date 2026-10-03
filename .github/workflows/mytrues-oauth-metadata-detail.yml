@@ -1,0 +1,23 @@
+name: MyTrues OAuth metadata detail probe
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-oauth-metadata-detail.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Inspect public OAuth metadata only
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsS https://mcp.mytrues.io/.well-known/oauth-authorization-server | jq .
+          echo '--- OPENID ---'
+          curl -fsS https://mcp.mytrues.io/.well-known/openid-configuration | jq . || true

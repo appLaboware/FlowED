@@ -1,0 +1,11 @@
+services:
+  decision-memory:
+    image: neo4j:2026.09.0
+    container_name: ideos-decision-memory
+    environment:
+      NEO4J_AUTH: neo4j/ideos-decision-lab
+      NEO4J_server_memory_heap_initial__size: 256m
+      NEO4J_server_memory_heap_max__size: 512m
+    ports:
+      - "7474:7474"
+      - "7687:7687"

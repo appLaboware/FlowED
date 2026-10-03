@@ -1,0 +1,103 @@
+name: MyTrues OAuth activate Reader callback
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-oauth-reader-activate.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AZURE_BUNDLE: ${{ secrets.AZURE }}
+
+jobs:
+  activate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Resolve Azure
+        id: az
+        shell: bash
+        run: |
+          set -euo pipefail
+          extract(){ local key="$1"; printf '%s\n' "$AZURE_BUNDLE" | sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*[:=][[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\\2/p" | tail -n1; }
+          C="$(extract AZURE_CLIENT_ID)"; T="$(extract AZURE_TENANT_ID)"; S="$(extract AZURE_SUBSCRIPTION_ID)"
+          test -n "$C" && test -n "$T" && test -n "$S"
+          echo "::add-mask::$C"; echo "::add-mask::$T"; echo "::add-mask::$S"
+          echo "c=$C" >> "$GITHUB_OUTPUT"; echo "t=$T" >> "$GITHUB_OUTPUT"; echo "s=$S" >> "$GITHUB_OUTPUT"
+
+      - name: Login Azure
+        shell: bash
+        run: |
+          set -euo pipefail
+          tok="$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange" | jq -r .value)"
+          echo "::add-mask::$tok"
+          az login --service-principal --username "${{ steps.az.outputs.c }}" --tenant "${{ steps.az.outputs.t }}" --federated-token "$tok" --allow-no-subscriptions -o none
+          az account set --subscription "${{ steps.az.outputs.s }}"
+
+      - name: Activate already validated derived image
+        id: deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          rg=rg-flowed-ideos-lab
+          app=mytrues-mcp
+          target=acrwp1001021831.azurecr.io/mytrues-mcp:reader-callback-eecd63d-a1
+          rollback=acrwp1001021831.azurecr.io/mytrues-mcp:b5beaa94a96d
+
+          echo "ROLLBACK_IMAGE=$rollback"
+          az containerapp update -g "$rg" -n "$app" --image "$target" --only-show-errors -o none
+
+          ready=false
+          for i in $(seq 1 60); do
+            latest="$(az containerapp show -g "$rg" -n "$app" --query properties.latestReadyRevisionName -o tsv 2>/dev/null || true)"
+            image="$(az containerapp show -g "$rg" -n "$app" --query properties.template.containers[0].image -o tsv 2>/dev/null || true)"
+            health=""
+            if [ -n "$latest" ]; then
+              health="$(az containerapp revision show -g "$rg" -n "$app" --revision "$latest" --query properties.healthState -o tsv 2>/dev/null || true)"
+            fi
+            if [ "$image" = "$target" ] && [ "$health" = "Healthy" ]; then
+              ready=true
+              echo "revision=$latest" >> "$GITHUB_OUTPUT"
+              break
+            fi
+            sleep 5
+          done
+          test "$ready" = true
+          echo "MCP_DERIVED_REVISION_HEALTHY"
+
+      - name: Prove compatibility before leaving revision active
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 30); do
+            curl -fsS --max-time 12 https://mcp.mytrues.io/healthz >/tmp/health && break
+            sleep 3
+          done
+
+          probe(){
+            local uri="$1"
+            code="$(curl -sS -o /tmp/reg -w '%{http_code}'               -H 'content-type: application/json'               --data "$(jq -nc --arg uri "$uri" '{client_name:"MyTrues compatibility proof",redirect_uris:[$uri],grant_types:["authorization_code","refresh_token"],response_types:["code"],token_endpoint_auth_method:"none",application_type:"web"}')"               https://mcp.mytrues.io/register)"
+            test "$code" = "200" -o "$code" = "201"
+            jq -e '.client_id' /tmp/reg >/dev/null
+          }
+
+          probe https://chatgpt.com/connector_platform_oauth_redirect
+          echo "CHATGPT_DCR_PASS"
+          probe https://reader.mytrues.io/auth/callback
+          echo "READER_DOMAIN_DCR_PASS"
+          probe https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io/auth/callback
+          echo "READER_AZURE_DCR_PASS"
+
+          base=https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io
+          code="$(curl -sS -D /tmp/h -o /dev/null -w '%{http_code}' "$base/auth/start")"
+          test "$code" = "302"
+          loc="$(awk 'BEGIN{IGNORECASE=1} /^location:/ {sub(/^[^:]+:[[:space:]]*/,"");gsub(/\r/,"");print;exit}' /tmp/h)"
+          LOC="$loc" python3 -c 'import os,urllib.parse as u; p=u.urlparse(os.environ["LOC"]); q=u.parse_qs(p.query); assert p.netloc=="mcp.mytrues.io" and p.path.rstrip("/")=="/authorize"; assert (q.get("redirect_uri") or [""])[0].endswith("/auth/callback"); assert (q.get("code_challenge_method") or [""])[0]=="S256"'
+          echo "READER_AUTH_START_PASS"
+
+          echo "OAUTH_READER_ACTIVATION_PASS"
+          echo "active_revision=${{ steps.deploy.outputs.revision }}"

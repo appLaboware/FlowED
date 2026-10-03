@@ -1,0 +1,49 @@
+name: MyTrues MCP rollback base image
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-mcp-rollback-base.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+env:
+  AZURE_BUNDLE: ${{ secrets.AZURE }}
+jobs:
+  rollback:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Resolve Azure identifiers
+        id: azure
+        shell: bash
+        run: |
+          set -euo pipefail
+          extract(){ local key="$1"; printf '%s\n' "$AZURE_BUNDLE" | sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*[:=][[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\\2/p" | tail -n1; }
+          echo "client_id=$(extract AZURE_CLIENT_ID)" >> "$GITHUB_OUTPUT"
+          echo "tenant_id=$(extract AZURE_TENANT_ID)" >> "$GITHUB_OUTPUT"
+          echo "subscription_id=$(extract AZURE_SUBSCRIPTION_ID)" >> "$GITHUB_OUTPUT"
+      - name: Azure login
+        shell: bash
+        run: |
+          set -euo pipefail
+          TOKEN="$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange" | jq -r .value)"
+          echo "::add-mask::$TOKEN"
+          az login --service-principal --username "${{ steps.azure.outputs.client_id }}" --tenant "${{ steps.azure.outputs.tenant_id }}" --federated-token "$TOKEN" --allow-no-subscriptions -o none
+          az account set --subscription "${{ steps.azure.outputs.subscription_id }}"
+      - name: Restore proven MCP image
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="acrwp1001021831.azurecr.io/mytrues-mcp:b5beaa94a96d"
+          az containerapp update -g rg-flowed-ideos-lab -n mytrues-mcp --image "$base" --only-show-errors -o none
+          for i in $(seq 1 50); do
+            image="$(az containerapp show -g rg-flowed-ideos-lab -n mytrues-mcp --query properties.template.containers[0].image -o tsv 2>/dev/null || true)"
+            if [ "$image" = "$base" ] && curl -fsS --max-time 15 https://mcp.mytrues.io/.well-known/oauth-authorization-server >/tmp/oauth; then
+              jq -e '.code_challenge_methods_supported | index("S256") != null' /tmp/oauth >/dev/null
+              echo "MCP_ROLLBACK_PASS"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1

@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f5f3ee"><title>MyTrues · Portal</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css">
+<link rel="stylesheet" href="/assets/css/portal.css">
+</head>
+<body><canvas id="ambient" class="portal-ambient" aria-hidden="true"></canvas><div id="app" v-cloak>
+<div class="app">
+<header class="topbar"><div class="topinner">
+ <div class="brand"><img src="/assets/mytrues-logo.png" alt=""><span class="word">MyTrues</span></div>
+ <nav class="nav" v-if="me && me.role!=='unbound'"><button v-for="n in nav" :key="n.id" :class="{active:section===n.id}" @click="go(n.id)">{{n.label}}</button></nav>
+ <div class="topright"><button class="lang" @click="switchLocale">{{locale==='pt-BR'?'EN':'PT'}}</button><div class="user" v-if="me">{{initials(me.name)}}</div></div>
+</div></header>
+
+<main class="main">
+ <section v-if="me && me.role==='unbound'" class="claim">
+  <div class="card">
+   <div class="eyebrow">{{t('claim_title')}}</div>
+   <h1 style="font-size:34px;letter-spacing:-.045em;font-weight:580;margin:8px 0 10px">{{t('private_memory')}}</h1>
+   <p style="font-size:12px;color:var(--muted);line-height:1.55">{{t('claim_note')}}</p>
+   <div class="field"><input v-model="claimCode" :placeholder="t('invite_code')"></div>
+   <button class="btn primary" style="margin-top:12px" @click="claim">{{t('claim')}}</button>
+  </div>
+ </section>
+
+ <template v-else-if="me">
+  <section class="intro">
+   <div><div class="eyebrow">{{t('private_memory')}}</div><h1>{{t('hello')}}, {{(me.name||'').split(' ')[0]}}.</h1></div>
+   <div class="intro-actions"><button class="btn primary" @click="openNew">+ {{t('new_truth')}}</button></div>
+  </section>
+
+  <section v-if="section==='home'" class="summary">
+   <div class="cell"><div class="label">{{t('memory_current')}}</div><div class="value">{{events.length}}</div><div class="subvalue">{{t('memories_found')}}</div></div>
+   <div class="cell"><div class="label">{{t('signed_as')}}</div><div class="value" style="font-size:17px">{{me.role==='admin'?t('role_admin'):t('role_member')}}</div><div class="subvalue">{{me.email||''}}</div></div>
+   <div class="cell"><div class="label">MyTrues</div><div class="value" style="font-size:17px">{{me.memory_namespace||'private'}}</div><div class="subvalue">append-only</div></div>
+  </section>
+
+  <section v-if="section==='home'||section==='memory'" class="section">
+   <div class="sectionhead"><div><h2>{{section==='home'?t('recent'):t('nav_memory')}}</h2></div><button class="btn ghost" @click="openNew">{{t('new_truth')}}</button></div>
+   <div class="search"><i class="mdi mdi-magnify" style="color:#919792"></i><input v-model="query" :placeholder="t('search_placeholder')" @keyup.enter="search"><button class="go" @click="search">{{t('search')}}</button></div>
+   <div class="chips"><button class="chip" v-for="x in suggestions" :key="x" @click="query=x;search()">{{x}}</button></div>
+   <div v-if="loading" style="font-size:12px;color:var(--muted);padding:20px 0">{{t('loading')}}</div>
+   <div v-else-if="events.length" class="timeline">
+    <article v-for="e in events" :key="e.id" class="event" :class="bucket(e)">
+     <div class="card">
+      <div class="eventtop"><span class="badge">{{humanType(e)}}</span><span class="time">{{date(e.time)}}</span></div>
+      <div class="title">{{humanTitle(e)}}</div><div class="body">{{humanBody(e)}}</div>
+      <div class="rowactions"><button class="textbtn" @click="continueFrom(e)">{{t('continue')}}</button><button class="textbtn" @click="continueFrom(e,'corrects')">{{t('correct')}}</button><button class="textbtn" @click="continueFrom(e,'confirms')">{{t('confirm')}}</button></div>
+     </div>
+    </article>
+   </div>
+   <div v-else class="empty">{{t('no_memory')}}</div>
+  </section>
+
+  <section v-if="section==='people' && me.role==='admin'" class="section admin-space">
+   <div class="sectionhead admin-head">
+    <div><div class="eyebrow">{{t('admin_overline')}}</div><h2>{{t('people_title')}}</h2><p>{{t('people_note')}}</p></div>
+    <button class="btn primary" @click="personDialog=true">{{t('add_person')}}</button>
+   </div>
+
+   <div class="admin-metrics">
+    <div class="admin-metric"><span>{{t('admin_people')}}</span><strong>{{admin.counts.people||0}}</strong></div>
+    <div class="admin-metric"><span>{{t('admin_interests')}}</span><strong>{{admin.counts.interests||0}}</strong></div>
+    <div class="admin-metric"><span>{{t('admin_admins')}}</span><strong>{{admin.counts.admins||0}}</strong></div>
+   </div>
+
+   <div class="admin-tabs">
+    <button :class="{active:adminTab==='people'}" @click="adminTab='people'">{{t('admin_people')}}</button>
+    <button :class="{active:adminTab==='interests'}" @click="adminTab='interests'">{{t('admin_interests')}}</button>
+    <button :class="{active:adminTab==='admins'}" @click="adminTab='admins'">{{t('admin_admins')}}</button>
+   </div>
+
+   <div v-if="adminTab==='people'" class="people">
+    <div class="card person" v-for="p in admin.people" :key="p.user_id">
+     <div class="personmain"><div class="personavatar">{{initials(p.display_name)}}</div><div style="min-width:0"><div class="personname">{{p.display_name}}</div><div class="personmail">{{p.email}}</div><div class="personmeta">{{p.role}} · {{p.claimed?t('google_linked'):t('waiting_link')}}</div></div></div>
+     <span class="status" :class="{off:p.status!=='active'}">{{p.status==='active'?t('status_active'):t('status_disabled')}}</span>
+    </div>
+   </div>
+
+   <div v-if="adminTab==='interests'" class="admin-list">
+    <div class="admin-row" v-for="x in admin.interests" :key="x.email">
+      <div><strong>{{x.display_name}}</strong><span>{{x.email}}</span></div>
+      <time>{{date(x.created_at)}}</time>
+    </div>
+    <div class="empty" v-if="!admin.interests.length">{{t('admin_no_interests')}}</div>
+   </div>
+
+   <div v-if="adminTab==='admins'" class="admin-list">
+    <div class="admin-row" v-for="x in admin.admins" :key="x.user_id">
+      <div><strong>{{x.display_name}}</strong><span>{{x.email}}</span><small>{{x.google_linked?t('google_linked'):t('waiting_link')}}</small></div>
+      <span class="status" :class="{off:x.status!=='active'}">{{x.status==='active'?t('status_active'):t('status_disabled')}}</span>
+    </div>
+    <div class="empty" v-if="!admin.admins.length">{{t('admin_no_admins')}}</div>
+   </div>
+  </section>
+ </template>
+</main>
+
+<nav class="mobilebar" v-if="me && me.role!=='unbound'"><button v-for="n in mobileNav" :key="n.id" :class="{active:section===n.id}" @click="go(n.id)"><i :class="'mdi '+n.icon"></i>{{n.label}}</button></nav>
+
+<div class="overlay" v-if="truthDialog" @click.self="truthDialog=false"><section class="modal">
+ <h3>{{t('truth_title')}}</h3><p>{{t('truth_note')}}</p>
+ <div class="field"><label>{{t('subject')}}</label><input v-model="form.subject"></div>
+ <div class="field"><label>{{t('statement')}}</label><textarea v-model="form.statement"></textarea></div>
+ <div class="field"><label>{{t('nature')}}</label><select v-model="form.kind"><option v-for="x in kindItems" :key="x.value" :value="x.value">{{x.title}}</option></select></div>
+ <div class="field"><label>{{t('historical_link')}}</label><select v-model="form.relation"><option v-for="x in relationItems" :key="x.value" :value="x.value">{{x.title}}</option></select></div>
+ <div class="field" v-if="form.relation!=='none'"><label>{{t('related_occurrence')}}</label><select v-model="form.related_occurrence"><option v-for="x in occurrenceItems" :key="x.value" :value="x.value">{{x.title}}</option></select></div>
+ <div class="modalactions"><button class="btn ghost" @click="truthDialog=false">{{t('cancel')}}</button><button class="btn primary" :disabled="saving" @click="saveTruth">{{t('register')}}</button></div>
+</section></div>
+
+<div class="overlay" v-if="personDialog" @click.self="personDialog=false"><section class="modal">
+ <h3>{{t('add_person')}}</h3>
+ <div class="field"><label>{{t('person_name')}}</label><input v-model="personForm.display_name"></div>
+ <div class="field"><label>{{t('person_email')}}</label><input v-model="personForm.email"></div>
+ <div class="field"><label>{{t('person_role')}}</label><select v-model="personForm.role"><option v-for="x in roleItems" :key="x.value" :value="x.value">{{x.title}}</option></select></div>
+ <div class="invite" v-if="lastInvite"><strong>{{t('invite_code')}}</strong><br>{{lastInvite}}</div>
+ <div class="modalactions"><button class="btn ghost" @click="personDialog=false">{{t('close')}}</button><button class="btn primary" @click="savePerson">{{t('register')}}</button></div>
+</section></div>
+
+<div v-if="snackbar" style="position:fixed;left:50%;bottom:26px;z-index:90;transform:translateX(-50%);background:#18211d;color:white;border-radius:999px;padding:10px 14px;font-size:11px">{{message}}</div>
+</div></div>
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script src="/assets/js/i18n.js"></script>
+<script src="/assets/js/ambient.js"></script>
+<script src="/assets/js/portal.js"></script>
+</body></html>

@@ -1,0 +1,55 @@
+name: MyTrues Portal visual smoke
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-portal-visual-smoke.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Verify public teaser, local assets and private access boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io"
+
+          code="$(curl -fsS -o /tmp/index -w '%{http_code}' "$base/")"
+          test "$code" = "200"
+          grep -q '<title>MyTrues</title>' /tmp/index
+          grep -q 'data-i18n="headline"' /tmp/index
+          ! grep -qi 'Sua verdade tem história\|memória cognitiva privada\|Atom.*Occurrence' /tmp/index
+
+          logo_code="$(curl -fsS -o /tmp/logo -w '%{http_code}' "$base/assets/mytrues-logo.png")"
+          test "$logo_code" = "200"
+          test "$(wc -c </tmp/logo)" -gt 500
+
+          curl -fsS "$base/i18n/pt-BR/landing.json" | jq -e '.headline and .lead and .submit' >/dev/null
+          curl -fsS "$base/i18n/en/landing.json" | jq -e '.headline and .lead and .submit' >/dev/null
+          curl -fsS "$base/assets/js/ambient.js" | grep -q 'requestAnimationFrame'
+
+          app_headers="$(curl -sS -D - -o /dev/null "$base/app")"
+          app_code="$(printf '%s\n' "$app_headers" | awk 'toupper($1) ~ /^HTTP/ {c=$2} END{print c}')"
+          app_loc="$(printf '%s\n' "$app_headers" | awk 'BEGIN{IGNORECASE=1}/^location:/{sub(/^[^:]+:[[:space:]]*/,"");gsub(/\r/,"");print;exit}')"
+          test "$app_code" = "302"
+          test "$app_loc" = "/login"
+
+          login_code="$(curl -fsS -o /tmp/login -w '%{http_code}' "$base/login")"
+          test "$login_code" = "200"
+          grep -q 'MyTrues · Google' /tmp/login
+          ! grep -qi 'preserva decisões\|verdades mudam\|memória cognitiva' /tmp/login
+
+          auth_headers="$(curl -sS -D - -o /tmp/authbody "$base/auth/start")"
+          auth_code="$(printf '%s\n' "$auth_headers" | awk 'toupper($1) ~ /^HTTP/ {c=$2} END{print c}')"
+          test "$auth_code" != "500"
+          test "$auth_code" = "302" -o "$auth_code" = "303"
+
+          echo "PUBLIC_TEASER_PASS"
+          echo "SELF_HOSTED_LOGO_PASS"
+          echo "I18N_JSON_PASS"
+          echo "AMBIENT_CANVAS_PASS"
+          echo "PRIVATE_PRODUCT_BOUNDARY_PASS"
+          echo "AUTH_NO_500_PASS code=$auth_code"

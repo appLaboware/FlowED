@@ -1,0 +1,47 @@
+name: MyTrues OAuth reader callback verify
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-oauth-reader-verify.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AZURE_BUNDLE: ${{ secrets.AZURE }}
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - name: Resolve Azure
+        id: az
+        shell: bash
+        run: |
+          set -euo pipefail
+          extract(){ local key="$1"; printf '%s\n' "$AZURE_BUNDLE" | sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*[:=][[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\\2/p" | tail -n1; }
+          echo "client=$(extract AZURE_CLIENT_ID)" >> "$GITHUB_OUTPUT"
+          echo "tenant=$(extract AZURE_TENANT_ID)" >> "$GITHUB_OUTPUT"
+          echo "sub=$(extract AZURE_SUBSCRIPTION_ID)" >> "$GITHUB_OUTPUT"
+      - name: Azure login and live image
+        shell: bash
+        run: |
+          set -euo pipefail
+          TOKEN="$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange" | jq -r .value)"
+          az login --service-principal --username "${{ steps.az.outputs.client }}" --tenant "${{ steps.az.outputs.tenant }}" --federated-token "$TOKEN" --allow-no-subscriptions -o none
+          az account set --subscription "${{ steps.az.outputs.sub }}"
+          az containerapp show -g rg-flowed-ideos-lab -n mytrues-mcp --query '{image:properties.template.containers[0].image,latestReady:properties.latestReadyRevisionName,latest:properties.latestRevisionName,state:properties.provisioningState}' -o json
+      - name: Verify callback
+        shell: bash
+        run: |
+          set -euo pipefail
+          uri="https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io/auth/callback"
+          code="$(curl -sS -o /tmp/reg -w '%{http_code}' -H 'content-type: application/json' --data "$(jq -nc --arg uri "$uri" '{client_name:"MyTrues Reader verify",redirect_uris:[$uri],grant_types:["authorization_code","refresh_token"],response_types:["code"],token_endpoint_auth_method:"none",application_type:"web"}')" https://mcp.mytrues.io/register)"
+          echo "HTTP=$code"
+          jq 'if .client_id then {accepted:true,redirect_uris} else . end' /tmp/reg
+          test "$code" = "201" -o "$code" = "200"
+          echo "READER_CALLBACK_LIVE_PASS"

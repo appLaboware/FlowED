@@ -1,0 +1,196 @@
+name: MyTrues Portal identity and people registry
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-portal-identity.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AZURE_BUNDLE: ${{ secrets.AZURE }}
+
+jobs:
+  provision:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Resolve Azure identifiers
+        id: azure
+        shell: bash
+        run: |
+          set -euo pipefail
+          extract(){ local key="$1"; printf '%s\n' "$AZURE_BUNDLE" | sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*[:=][[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\\2/p" | tail -n1; }
+          CLIENT_ID="$(extract AZURE_CLIENT_ID)"; TENANT_ID="$(extract AZURE_TENANT_ID)"; SUBSCRIPTION_ID="$(extract AZURE_SUBSCRIPTION_ID)"
+          test -n "$CLIENT_ID" && test -n "$TENANT_ID" && test -n "$SUBSCRIPTION_ID"
+          echo "::add-mask::$CLIENT_ID"; echo "::add-mask::$TENANT_ID"; echo "::add-mask::$SUBSCRIPTION_ID"
+          echo "client_id=$CLIENT_ID" >> "$GITHUB_OUTPUT"
+          echo "tenant_id=$TENANT_ID" >> "$GITHUB_OUTPUT"
+          echo "subscription_id=$SUBSCRIPTION_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Azure OIDC login
+        shell: bash
+        run: |
+          set -euo pipefail
+          TOKEN="$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange" | jq -r .value)"
+          echo "::add-mask::$TOKEN"
+          az login --service-principal --username "${{ steps.azure.outputs.client_id }}" --tenant "${{ steps.azure.outputs.tenant_id }}" --federated-token "$TOKEN" --allow-no-subscriptions -o none
+          az account set --subscription "${{ steps.azure.outputs.subscription_id }}"
+
+      - name: Assign Reader managed identity
+        id: identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          rg=rg-flowed-ideos-lab
+          app=mytrues-reader
+          az containerapp identity assign -g "$rg" -n "$app" --system-assigned --only-show-errors -o none
+          oid="$(az containerapp show -g "$rg" -n "$app" --query identity.principalId -o tsv)"
+          test -n "$oid"
+          echo "::add-mask::$oid"
+          echo "oid=$oid" >> "$GITHUB_OUTPUT"
+          echo "READER_MANAGED_IDENTITY_READY"
+
+      - name: Provision PostgreSQL Reader role and people registry
+        shell: bash
+        env:
+          READER_OID: ${{ steps.identity.outputs.oid }}
+        run: |
+          set -euo pipefail
+          python3 -m pip install -q 'psycopg[binary]==3.2.3'
+          python3 - <<'PY'
+          import concurrent.futures,ipaddress,json,os,subprocess,time,urllib.request
+          import psycopg
+
+          RG="rg-flowed-ideos-lab"
+          APP="mytrues-reader"
+          SERVER="mytrues-canonical-pg"
+          READER_OID=os.environ["READER_OID"]
+
+          def az(*args):
+              r=subprocess.run(["az",*args,"--only-show-errors","-o","json"],capture_output=True,text=True)
+              if r.returncode:
+                  raise RuntimeError("Azure operation failed: "+" ".join(args[:4])+" :: "+r.stderr[-500:])
+              return json.loads(r.stdout) if r.stdout.strip() else None
+
+          app=az("containerapp","show","-g",RG,"-n",APP)
+          ips=sorted(set(app["properties"]["outboundIpAddresses"]))
+          assert ips and all(ipaddress.ip_address(ip).version==4 for ip in ips)
+
+          existing=az("postgres","flexible-server","firewall-rule","list","-g",RG,"--server-name",SERVER)
+          known={(x["startIpAddress"],x["endIpAddress"]) for x in existing}
+          def permit(ip):
+              if (ip,ip) in known:return
+              az("postgres","flexible-server","firewall-rule","create","-g",RG,"--server-name",SERVER,"--name","reader-egress-"+ip.replace(".","-"),"--start-ip-address",ip,"--end-ip-address",ip)
+          with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
+              list(pool.map(permit,ips))
+
+          rule="reader-provision-"+os.environ["GITHUB_RUN_ID"]
+          runner_ip=urllib.request.urlopen("https://api.ipify.org",timeout=20).read().decode().strip()
+          ipaddress.ip_address(runner_ip)
+          az("postgres","flexible-server","firewall-rule","create","-g",RG,"--server-name",SERVER,"--name",rule,"--start-ip-address",runner_ip,"--end-ip-address",runner_ip)
+          try:
+              token=az("account","get-access-token","--resource","https://ossrdbms-aad.database.windows.net")["accessToken"]
+              def connect(dbname):
+                  return psycopg.connect(
+                      host=SERVER+".postgres.database.azure.com",
+                      dbname=dbname,user="mytrues-workflow",password=token,
+                      sslmode="verify-full",sslrootcert="/etc/ssl/certs/ca-certificates.crt",
+                      connect_timeout=12,
+                  )
+
+              for attempt in range(12):
+                  try:
+                      admin=connect("postgres");break
+                  except psycopg.OperationalError:
+                      if attempt==11: raise
+                      time.sleep(5)
+
+              with admin:
+                  found=admin.execute("SELECT oid FROM pg_roles WHERE rolname=%s",("mytrues-reader",)).fetchone()
+                  if found:
+                      labels=admin.execute("SELECT label FROM pg_shseclabel WHERE objoid=%s",(found[0],)).fetchall()
+                      assert any(READER_OID in x[0] for x in labels),"Existing mytrues-reader DB principal belongs to another identity"
+                  else:
+                      admin.execute(
+                          "SELECT * FROM pg_catalog.pgaadauth_create_principal_with_oid(%s,%s,%s,false,false)",
+                          ("mytrues-reader",READER_OID,"service"),
+                      )
+
+              with connect("mytrues") as db:
+                  db.execute("""
+                    CREATE TABLE IF NOT EXISTS mytrues_users(
+                      user_id UUID PRIMARY KEY,
+                      display_name TEXT NOT NULL CHECK(length(display_name) BETWEEN 1 AND 120),
+                      email TEXT NOT NULL,
+                      status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','disabled')),
+                      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+                    )
+                  """)
+                  db.execute("CREATE UNIQUE INDEX IF NOT EXISTS mytrues_users_email_lower_uq ON mytrues_users(lower(email))")
+                  db.execute("""
+                    CREATE TABLE IF NOT EXISTS mytrues_identities(
+                      provider TEXT NOT NULL,
+                      subject TEXT NOT NULL,
+                      user_id UUID NOT NULL REFERENCES mytrues_users(user_id),
+                      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+                      PRIMARY KEY(provider,subject)
+                    )
+                  """)
+                  db.execute("""
+                    CREATE TABLE IF NOT EXISTS mytrues_access(
+                      user_id UUID PRIMARY KEY REFERENCES mytrues_users(user_id),
+                      role TEXT NOT NULL DEFAULT 'member' CHECK(role IN ('admin','member')),
+                      memory_namespace TEXT NOT NULL UNIQUE,
+                      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+                      updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+                    )
+                  """)
+                  db.execute("""
+                    CREATE TABLE IF NOT EXISTS mytrues_invites(
+                      invite_id UUID PRIMARY KEY,
+                      user_id UUID NOT NULL REFERENCES mytrues_users(user_id),
+                      code_hash TEXT NOT NULL UNIQUE,
+                      status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','claimed','revoked')),
+                      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+                      claimed_at TIMESTAMPTZ
+                    )
+                  """)
+                  db.execute("""
+                    CREATE TABLE IF NOT EXISTS mytrues_interest(
+                      interest_id UUID PRIMARY KEY,
+                      display_name TEXT NOT NULL CHECK(length(display_name) BETWEEN 1 AND 120),
+                      email TEXT NOT NULL,
+                      source TEXT NOT NULL DEFAULT 'public-site',
+                      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+                      updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+                    )
+                  """)
+                  db.execute("CREATE UNIQUE INDEX IF NOT EXISTS mytrues_interest_email_lower_uq ON mytrues_interest(lower(email))")
+
+                  db.execute('GRANT CONNECT ON DATABASE mytrues TO "mytrues-reader"')
+                  db.execute('GRANT USAGE ON SCHEMA public TO "mytrues-reader"')
+                  db.execute('GRANT SELECT,INSERT,UPDATE ON mytrues_users,mytrues_access,mytrues_invites,mytrues_interest TO "mytrues-reader"')
+                  db.execute('GRANT SELECT,INSERT ON mytrues_identities TO "mytrues-reader"')
+
+                  checks={
+                    "mytrues_users":("SELECT","INSERT","UPDATE"),
+                    "mytrues_access":("SELECT","INSERT","UPDATE"),
+                    "mytrues_invites":("SELECT","INSERT","UPDATE"),
+                    "mytrues_interest":("SELECT","INSERT","UPDATE"),
+                    "mytrues_identities":("SELECT","INSERT"),
+                  }
+                  for table,privs in checks.items():
+                      for priv in privs:
+                          assert db.execute("SELECT has_table_privilege('mytrues-reader',%s,%s)",(table,priv)).fetchone()[0]
+                      assert not db.execute("SELECT has_table_privilege('mytrues-reader',%s,'DELETE')",(table,)).fetchone()[0]
+
+              print("PORTAL_PEOPLE_REGISTRY_READY")
+              print("READER_DATABASE_ROLE=NO_DELETE")
+              print("READER_OUTBOUND_RULES="+str(len(ips)))
+          finally:
+              az("postgres","flexible-server","firewall-rule","delete","-g",RG,"--server-name",SERVER,"--name",rule,"--yes")
+          PY

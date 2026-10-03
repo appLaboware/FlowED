@@ -1,0 +1,47 @@
+name: MyTrues Reader auth smoke
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-reader-auth-smoke.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Verify Reader starts an accepted OAuth transaction
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io"
+
+          curl -fsS "$base/healthz" | jq -e '.ok == true and .auth == "https://mcp.mytrues.io"' >/dev/null
+          curl -fsS "$base/login" -o /tmp/login.html
+          grep -q 'Continuar com Google' /tmp/login.html
+
+          curl -sS -D /tmp/h -o /dev/null -c /tmp/cookies "$base/auth/start"
+          code="$(awk 'toupper($1) ~ /^HTTP/ {c=$2} END {print c}' /tmp/h)"
+          loc="$(awk 'BEGIN{IGNORECASE=1} /^location:/ {sub(/^[^:]+:[[:space:]]*/,"");gsub(/\r/,"");print;exit}' /tmp/h)"
+          test "$code" = "302"
+          printf '%s' "$loc" | grep -Fq 'https://mcp.mytrues.io/authorize?'
+          printf '%s' "$loc" | grep -Fq 'redirect_uri=https%3A%2F%2Fmytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io%2Fauth%2Fcallback'
+
+          auth_code="$(curl -sS -o /tmp/auth-body -D /tmp/auth-h -w '%{http_code}' "$loc")"
+          test "$auth_code" = "200" -o "$auth_code" = "302"
+          if grep -qi 'invalid_redirect_uri' /tmp/auth-body; then
+            echo "OAuth still rejected Reader redirect" >&2
+            exit 1
+          fi
+
+          api_code="$(curl -sS -o /tmp/api.json -w '%{http_code}' "$base/api/history?q=npm")"
+          test "$api_code" = "401"
+
+          echo "READER_LOGIN_PAGE_PASS"
+          echo "READER_DCR_PASS"
+          echo "READER_AUTHORIZE_START_PASS"
+          echo "READER_ANONYMOUS_API_DENIED_PASS"

@@ -1,0 +1,12 @@
+network public (outbound = 'yes')
+
+system app (
+  cpu.arch = 'x86_64' and
+  cpu.count >= 1 and
+  memory.size >= 512m and
+  net_interface.0.connection = 'public' and
+  disk.0.os.name = 'linux' and
+  disk.0.image.url = 'docker://ubuntu:22.04'
+)
+
+deploy app 1

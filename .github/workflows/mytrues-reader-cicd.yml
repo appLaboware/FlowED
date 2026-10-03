@@ -1,0 +1,464 @@
+name: MyTrues Reader CI/CD
+
+on:
+  push:
+    branches:
+      - tools/ideos-lab
+    paths:
+      - "Tools/MyTrues/typedb-poc-bridge/reader/**"
+      - ".github/workflows/mytrues-reader-cicd.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AZURE_BUNDLE: ${{ secrets.AZURE }}
+
+concurrency:
+  group: mytrues-reader-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+
+    steps:
+      - name: Debounce rapid pushes
+        shell: bash
+        run: |
+          # Concurrency cancels superseded runs during this window, before they touch Azure.
+          sleep 30
+
+      - name: Resolve Azure identifiers
+        id: azure
+        shell: bash
+        run: |
+          set -euo pipefail
+          extract() {
+            local key="$1"
+            printf '%s\n' "$AZURE_BUNDLE" |
+              sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*[:=][[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\\2/p" |
+              tail -n 1
+          }
+          CLIENT_ID="$(extract AZURE_CLIENT_ID)"
+          TENANT_ID="$(extract AZURE_TENANT_ID)"
+          SUBSCRIPTION_ID="$(extract AZURE_SUBSCRIPTION_ID)"
+          test -n "$CLIENT_ID" && test -n "$TENANT_ID" && test -n "$SUBSCRIPTION_ID"
+          echo "::add-mask::$CLIENT_ID"
+          echo "::add-mask::$TENANT_ID"
+          echo "::add-mask::$SUBSCRIPTION_ID"
+          echo "client_id=$CLIENT_ID" >> "$GITHUB_OUTPUT"
+          echo "tenant_id=$TENANT_ID" >> "$GITHUB_OUTPUT"
+          echo "subscription_id=$SUBSCRIPTION_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Request GitHub OIDC token
+        id: oidc
+        shell: bash
+        run: |
+          set -euo pipefail
+          RESPONSE="$(curl --fail --silent --show-error \
+            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange")"
+          TOKEN="$(jq -r '.value' <<<"$RESPONSE")"
+          test -n "$TOKEN" && test "$TOKEN" != "null"
+          echo "::add-mask::$TOKEN"
+          {
+            echo "token<<EOF"
+            echo "$TOKEN"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Login Azure
+        shell: bash
+        run: |
+          set -euo pipefail
+          az login --service-principal \
+            --username "${{ steps.azure.outputs.client_id }}" \
+            --tenant "${{ steps.azure.outputs.tenant_id }}" \
+            --federated-token "${{ steps.oidc.outputs.token }}" \
+            --allow-no-subscriptions -o none
+          az account set --subscription "${{ steps.azure.outputs.subscription_id }}"
+
+      - name: Validate Reader backend source
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://raw.githubusercontent.com/appLaboware/FlowED/$GITHUB_SHA/Tools/MyTrues/typedb-poc-bridge/reader"
+          curl -fsSL "$base/app.py" -o /tmp/app.py
+          curl -fsSL "$base/index.html" -o /tmp/index.html
+          curl -fsSL "$base/portal.html" -o /tmp/portal.html
+          curl -fsSL "$base/login.html" -o /tmp/login.html
+          curl -fsSL "$base/assets/css/public.css" -o /tmp/public.css
+          curl -fsSL "$base/assets/css/access.css" -o /tmp/access.css
+          curl -fsSL "$base/assets/css/portal.css" -o /tmp/portal.css
+          curl -fsSL "$base/assets/js/i18n.js" -o /tmp/i18n.js
+          curl -fsSL "$base/assets/js/ambient.js" -o /tmp/ambient.js
+          curl -fsSL "$base/assets/js/landing.js" -o /tmp/landing.js
+          curl -fsSL "$base/assets/js/access.js" -o /tmp/access.js
+          curl -fsSL "$base/assets/js/portal.js" -o /tmp/portal.js
+          curl -fsSL "$base/i18n/pt-BR/common.json" -o /tmp/common-pt.json
+          curl -fsSL "$base/i18n/pt-BR/landing.json" -o /tmp/landing-pt.json
+          curl -fsSL "$base/i18n/pt-BR/access.json" -o /tmp/access-pt.json
+          curl -fsSL "$base/i18n/pt-BR/portal.json" -o /tmp/portal-pt.json
+          curl -fsSL "$base/i18n/en/common.json" -o /tmp/common-en.json
+          curl -fsSL "$base/i18n/en/landing.json" -o /tmp/landing-en.json
+          curl -fsSL "$base/i18n/en/access.json" -o /tmp/access-en.json
+          curl -fsSL "$base/i18n/en/portal.json" -o /tmp/portal-en.json
+          curl -fsSL "$base/locales/pt-BR/common.json" -o /tmp/locales-common-pt.json
+          curl -fsSL "$base/locales/pt-BR/landing.json" -o /tmp/locales-landing-pt.json
+          curl -fsSL "$base/locales/pt-BR/access.json" -o /tmp/locales-access-pt.json
+          curl -fsSL "$base/locales/pt-BR/portal.json" -o /tmp/locales-portal-pt.json
+          curl -fsSL "$base/locales/en/common.json" -o /tmp/locales-common-en.json
+          curl -fsSL "$base/locales/en/landing.json" -o /tmp/locales-landing-en.json
+          curl -fsSL "$base/locales/en/access.json" -o /tmp/locales-access-en.json
+          curl -fsSL "$base/locales/en/portal.json" -o /tmp/locales-portal-en.json
+          python3 -m py_compile /tmp/app.py
+          jq -e . /tmp/common-pt.json /tmp/landing-pt.json /tmp/access-pt.json /tmp/portal-pt.json /tmp/common-en.json /tmp/landing-en.json /tmp/access-en.json /tmp/portal-en.json /tmp/locales-common-pt.json /tmp/locales-landing-pt.json /tmp/locales-access-pt.json /tmp/locales-portal-pt.json /tmp/locales-common-en.json /tmp/locales-landing-en.json /tmp/locales-access-en.json /tmp/locales-portal-en.json >/dev/null
+          grep -q '<title>MyTrues</title>' /tmp/index.html
+          grep -q 'data-i18n="headline_a"' /tmp/index.html
+          grep -q 'data-i18n="headline_b"' /tmp/index.html
+          grep -q '<title>MyTrues · Portal</title>' /tmp/portal.html
+          grep -q 'class="access-mark"' /tmp/login.html
+          grep -q 'mytrues-logo.png' /tmp/login.html
+          echo "READER_SOURCE_VALID"
+
+      - name: Resolve runtime secrets
+        id: runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          rg=rg-flowed-ideos-lab
+          vault=mytrues-ingest-kv
+
+          TYPEDB_PASSWORD="$(az keyvault secret show \
+            --vault-name "$vault" -n typedb-poc-admin --query value -o tsv)"
+          test -n "$TYPEDB_PASSWORD"
+
+          SESSION_KEY="$(az keyvault secret show \
+            --vault-name "$vault" -n reader-session-key --query value -o tsv 2>/dev/null || true)"
+          if [ -z "$SESSION_KEY" ]; then
+            SESSION_KEY="$(openssl rand -hex 48)"
+            az keyvault secret set --vault-name "$vault" -n reader-session-key \
+              --value "$SESSION_KEY" --only-show-errors -o none
+          fi
+
+          MCP_CAPABILITY="$(az keyvault secret show \
+            --vault-name "$vault" -n reader-mcp-capability --query value -o tsv 2>/dev/null || true)"
+          if [ -z "$MCP_CAPABILITY" ]; then
+            MCP_CAPABILITY="$(openssl rand -hex 32)"
+            az keyvault secret set --vault-name "$vault" -n reader-mcp-capability \
+              --value "$MCP_CAPABILITY" --only-show-errors -o none
+          fi
+
+          PORTAL_PREVIEW="$(az keyvault secret show \
+            --vault-name "$vault" -n portal-preview-capability --query value -o tsv 2>/dev/null || true)"
+          if [ -z "$PORTAL_PREVIEW" ]; then
+            PORTAL_PREVIEW="$(openssl rand -hex 32)"
+            az keyvault secret set --vault-name "$vault" -n portal-preview-capability \
+              --value "$PORTAL_PREVIEW" --only-show-errors -o none
+          fi
+
+          ADMIN_BOOTSTRAP="$(az keyvault secret show \
+            --vault-name "$vault" -n portal-admin-bootstrap --query value -o tsv 2>/dev/null || true)"
+          if [ -z "$ADMIN_BOOTSTRAP" ]; then
+            ADMIN_BOOTSTRAP="$(openssl rand -hex 24)"
+            az keyvault secret set --vault-name "$vault" -n portal-admin-bootstrap \
+              --value "$ADMIN_BOOTSTRAP" --only-show-errors -o none
+          fi
+
+          OAUTH_CLIENT_ID="$(az keyvault secret show \
+            --vault-name "$vault" -n portal-oauth-client-id --query value -o tsv 2>/dev/null || true)"
+          if [ -z "$OAUTH_CLIENT_ID" ]; then
+            payload="$(jq -nc '{
+              client_name:"MyTrues Portal",
+              redirect_uris:[
+                "https://reader.mytrues.io/auth/callback",
+                "https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io/auth/callback"
+              ],
+              grant_types:["authorization_code","refresh_token"],
+              response_types:["code"],
+              token_endpoint_auth_method:"none",
+              application_type:"web"
+            }')"
+            code="$(curl -sS -o /tmp/oauth-reg -w '%{http_code}' -H 'content-type: application/json' --data "$payload" https://mcp.mytrues.io/register)"
+            test "$code" = "200" -o "$code" = "201"
+            OAUTH_CLIENT_ID="$(jq -r .client_id /tmp/oauth-reg)"
+            test -n "$OAUTH_CLIENT_ID" && test "$OAUTH_CLIENT_ID" != null
+            az keyvault secret set --vault-name "$vault" -n portal-oauth-client-id \
+              --value "$OAUTH_CLIENT_ID" --only-show-errors -o none
+          fi
+
+          echo "::add-mask::$TYPEDB_PASSWORD"
+          echo "::add-mask::$SESSION_KEY"
+          echo "::add-mask::$MCP_CAPABILITY"
+          echo "::add-mask::$PORTAL_PREVIEW"
+          echo "::add-mask::$ADMIN_BOOTSTRAP"
+          echo "::add-mask::$OAUTH_CLIENT_ID"
+
+          az containerapp secret set -g "$rg" -n mytrues-reader \
+            --secrets "typedb-password=$TYPEDB_PASSWORD" "reader-session-key=$SESSION_KEY" "mcp-capability=$MCP_CAPABILITY" "portal-preview-capability=$PORTAL_PREVIEW" "portal-admin-bootstrap=$ADMIN_BOOTSTRAP" "portal-oauth-client-id=$OAUTH_CLIENT_ID" \
+            --only-show-errors -o none
+
+          {
+            echo "mcp_capability<<EOF"
+            echo "$MCP_CAPABILITY"
+            echo "EOF"
+            echo "portal_preview<<EOF"
+            echo "$PORTAL_PREVIEW"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "RUNTIME_SECRETS_READY"
+
+      - name: Deploy authenticated Reader backend
+        id: deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          rg=rg-flowed-ideos-lab
+          env=mytrues-memory-env
+          app=mytrues-reader
+          env_id="$(az containerapp env show -g "$rg" -n "$env" --query id -o tsv)"
+          source_base="https://raw.githubusercontent.com/appLaboware/FlowED/$GITHUB_SHA/Tools/MyTrues/typedb-poc-bridge/reader"
+          sha7="$(printf '%s' "$GITHUB_SHA" | cut -c1-7)"
+          suffix="git-$sha7-a$GITHUB_RUN_ATTEMPT"
+
+          jq -n \
+            --arg env_id "$env_id" \
+            --arg source_base "$source_base" \
+            --arg suffix "$suffix" \
+            --arg sha "$GITHUB_SHA" \
+            '{
+              properties:{
+                managedEnvironmentId:$env_id,
+                template:{
+                  revisionSuffix:$suffix,
+                  containers:[{
+                    name:"reader",
+                    image:"python:3.12-alpine",
+                    command:["/bin/sh"],
+                    args:["-c",(
+                      "set -e; mkdir -p /app/assets/css /app/assets/js /app/i18n/pt-BR /app/i18n/en /app/locales/pt-BR /app/locales/en; " +
+                      "wget -qO /app/app.py \"" + $source_base + "/app.py\"; " +
+                      "wget -qO /app/index.html \"" + $source_base + "/index.html\"; " +
+                      "wget -qO /app/portal.html \"" + $source_base + "/portal.html\"; " +
+                      "wget -qO /app/login.html \"" + $source_base + "/login.html\"; " +
+                      "wget -qO /app/assets/css/public.css \"" + $source_base + "/assets/css/public.css\"; " +
+                      "wget -qO /app/assets/css/access.css \"" + $source_base + "/assets/css/access.css\"; " +
+                      "wget -qO /app/assets/css/portal.css \"" + $source_base + "/assets/css/portal.css\"; " +
+                      "wget -qO /app/assets/js/i18n.js \"" + $source_base + "/assets/js/i18n.js\"; " +
+                      "wget -qO /app/assets/js/ambient.js \"" + $source_base + "/assets/js/ambient.js\"; " +
+                      "wget -qO /app/assets/js/landing.js \"" + $source_base + "/assets/js/landing.js\"; " +
+                      "wget -qO /app/assets/js/access.js \"" + $source_base + "/assets/js/access.js\"; " +
+                      "wget -qO /app/assets/js/portal.js \"" + $source_base + "/assets/js/portal.js\"; " +
+                      "wget -qO /app/i18n/pt-BR/common.json \"" + $source_base + "/i18n/pt-BR/common.json\"; " +
+                      "wget -qO /app/i18n/pt-BR/landing.json \"" + $source_base + "/i18n/pt-BR/landing.json\"; " +
+                      "wget -qO /app/i18n/pt-BR/access.json \"" + $source_base + "/i18n/pt-BR/access.json\"; " +
+                      "wget -qO /app/i18n/pt-BR/portal.json \"" + $source_base + "/i18n/pt-BR/portal.json\"; " +
+                      "wget -qO /app/i18n/en/common.json \"" + $source_base + "/i18n/en/common.json\"; " +
+                      "wget -qO /app/i18n/en/landing.json \"" + $source_base + "/i18n/en/landing.json\"; " +
+                      "wget -qO /app/i18n/en/access.json \"" + $source_base + "/i18n/en/access.json\"; " +
+                      "wget -qO /app/i18n/en/portal.json \"" + $source_base + "/i18n/en/portal.json\"; " +
+                      "wget -qO /app/locales/pt-BR/common.json \"" + $source_base + "/locales/pt-BR/common.json\"; " +
+                      "wget -qO /app/locales/pt-BR/landing.json \"" + $source_base + "/locales/pt-BR/landing.json\"; " +
+                      "wget -qO /app/locales/pt-BR/access.json \"" + $source_base + "/locales/pt-BR/access.json\"; " +
+                      "wget -qO /app/locales/pt-BR/portal.json \"" + $source_base + "/locales/pt-BR/portal.json\"; " +
+                      "wget -qO /app/locales/en/common.json \"" + $source_base + "/locales/en/common.json\"; " +
+                      "wget -qO /app/locales/en/landing.json \"" + $source_base + "/locales/en/landing.json\"; " +
+                      "wget -qO /app/locales/en/access.json \"" + $source_base + "/locales/en/access.json\"; " +
+                      "wget -qO /app/locales/en/portal.json \"" + $source_base + "/locales/en/portal.json\"; " +
+                      "wget -qO /app/assets/mytrues-logo.png 'https://avatars.githubusercontent.com/u/217432391?v=4'; " +
+                      "pip install --no-cache-dir fastapi==0.118.0 uvicorn==0.37.0 httpx==0.28.1 psycopg[binary]==3.2.3 >/tmp/pip.log 2>&1; " +
+                      "cd /app; exec uvicorn app:app --host 0.0.0.0 --port 8000"
+                    )],
+                    env:[
+                      {name:"READER_GIT_SHA",value:$sha},
+                      {name:"OAUTH_BASE",value:"https://mcp.mytrues.io"},
+                      {name:"OAUTH_CLIENT_ID",secretRef:"portal-oauth-client-id"},
+                      {name:"PORTAL_AUTH_ENABLED",value:"true"},
+                      {name:"CANONICAL_URL",value:"https://mytrues.io"},
+                      {name:"TYPEDB_URL",value:"https://mytrues-tdb-e2f9605d-eastus2.eastus2.cloudapp.azure.com"},
+                      {name:"TYPEDB_DB",value:"mytrues_memory_poc_v0"},
+                      {name:"TYPEDB_USERNAME",value:"admin"},
+                      {name:"TYPEDB_PASSWORD",secretRef:"typedb-password"},
+                      {name:"READER_SESSION_KEY",secretRef:"reader-session-key"},
+                      {name:"MCP_CAPABILITY",secretRef:"mcp-capability"},
+                      {name:"PORTAL_PREVIEW_CAPABILITY",secretRef:"portal-preview-capability"},
+                      {name:"PORTAL_ADMIN_BOOTSTRAP",secretRef:"portal-admin-bootstrap"},
+                      {name:"MYTRUES_POSTGRES_HOST",value:"mytrues-canonical-pg.postgres.database.azure.com"},
+                      {name:"MYTRUES_POSTGRES_DB",value:"mytrues"},
+                      {name:"MYTRUES_POSTGRES_USER",value:"mytrues-reader"},
+                      {name:"PUBLIC_CALLBACKS",value:"https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io/auth/callback,https://reader.mytrues.io/auth/callback"}
+                    ],
+                    resources:{cpu:0.5,memory:"1Gi"},
+                    probes:[
+                      {
+                        type:"Startup",
+                        httpGet:{path:"/healthz",port:8000},
+                        initialDelaySeconds:2,
+                        periodSeconds:2,
+                        timeoutSeconds:2,
+                        failureThreshold:10,
+                        successThreshold:1
+                      },
+                      {
+                        type:"Readiness",
+                        httpGet:{path:"/healthz",port:8000},
+                        initialDelaySeconds:2,
+                        periodSeconds:3,
+                        timeoutSeconds:2,
+                        failureThreshold:5,
+                        successThreshold:1
+                      },
+                      {
+                        type:"Liveness",
+                        httpGet:{path:"/healthz",port:8000},
+                        initialDelaySeconds:10,
+                        periodSeconds:10,
+                        timeoutSeconds:3,
+                        failureThreshold:3,
+                        successThreshold:1
+                      }
+                    ]
+                  }],
+                  scale:{minReplicas:1,maxReplicas:1}
+                }
+              }
+            }' > /tmp/reader-update.json
+
+          az containerapp ingress enable -g "$rg" -n "$app" \
+            --type external --target-port 8000 --transport auto \
+            --allow-insecure false --only-show-errors -o none
+
+          az containerapp update -g "$rg" -n "$app" \
+            --yaml /tmp/reader-update.json --only-show-errors -o none
+
+          for i in $(seq 1 80); do
+            state="$(az containerapp show -g "$rg" -n "$app" --query properties.provisioningState -o tsv 2>/dev/null || true)"
+            latest="$(az containerapp show -g "$rg" -n "$app" --query properties.latestReadyRevisionName -o tsv 2>/dev/null || true)"
+            if [ "$state" = "Succeeded" ] && printf '%s' "$latest" | grep -Fq "$suffix"; then
+              break
+            fi
+            [ "$state" = "Failed" ] && exit 1
+            sleep 5
+          done
+
+          fqdn="$(az containerapp show -g "$rg" -n "$app" --query properties.configuration.ingress.fqdn -o tsv)"
+          revision="$(az containerapp show -g "$rg" -n "$app" --query properties.latestReadyRevisionName -o tsv)"
+          test -n "$fqdn" && test -n "$revision"
+          echo "fqdn=$fqdn" >> "$GITHUB_OUTPUT"
+          echo "revision=$revision" >> "$GITHUB_OUTPUT"
+
+      - name: Verify Memory MCP read/write surface
+        shell: bash
+        env:
+          MCP_CAPABILITY: ${{ steps.runtime.outputs.mcp_capability }}
+        run: |
+          set -euo pipefail
+          base="https://${{ steps.deploy.outputs.fqdn }}"
+          endpoint="$base/mcp/$MCP_CAPABILITY"
+          echo "::add-mask::$endpoint"
+
+          ok=false
+          for i in $(seq 1 50); do
+            if curl -fsS --max-time 15 "$base/healthz" -o /tmp/health.json; then
+              if jq -e '.ok == true' /tmp/health.json >/dev/null; then
+                ok=true
+                break
+              fi
+            fi
+            sleep 4
+          done
+          test "$ok" = true
+
+          public_code="$(curl -sS -o /tmp/public.html -w '%{http_code}' "$base/")"
+          test "$public_code" = "200"
+          grep -q 'data-i18n="headline_a"' /tmp/public.html
+
+          logo_code="$(curl -sS -o /tmp/logo.png -w '%{http_code}' "$base/assets/mytrues-logo.png")"
+          test "$logo_code" = "200"
+          test "$(wc -c </tmp/logo.png)" -gt 1000
+
+          login_code="$(curl -sS -o /tmp/login.html -w '%{http_code}' "$base/login")"
+          test "$login_code" = "200"
+          grep -q 'class="access-mark"' /tmp/login.html
+
+          curl -sS -D /tmp/auth-h -o /dev/null --max-time 30 "$base/auth/start"
+          auth_code="$(awk 'toupper($1) ~ /^HTTP/ {c=$2} END{print c}' /tmp/auth-h)"
+          auth_loc="$(awk 'BEGIN{IGNORECASE=1}/^location:/{sub(/^[^:]+:[[:space:]]*/,"");gsub(/\r/,"");print;exit}' /tmp/auth-h)"
+          test "$auth_code" = "302"
+          printf '%s' "$auth_loc" | grep -Fq 'https://mcp.mytrues.io/authorize?'
+          printf '%s' "$auth_loc" | grep -Fq 'redirect_uri=https%3A%2F%2Fmytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io%2Fauth%2Fcallback'
+          echo "PUBLIC_TEASER_PASS"
+          echo "LOCAL_LOGO_PASS"
+          echo "PRIVATE_MARKS_ONLY_PASS"
+          echo "GOOGLE_AUTH_ENTRY_PASS"
+
+          preview="${{ steps.runtime.outputs.portal_preview }}"
+          echo "::add-mask::$preview"
+          preview_code="$(curl -sS -c /tmp/cookies -L -o /tmp/portal.html -w '%{http_code}' "$base/preview/$preview")"
+          if [ "$preview_code" = "200" ]; then
+            grep -q '<title>MyTrues · Portal</title>' /tmp/portal.html
+            curl -fsS -b /tmp/cookies "$base/api/me" | jq -e '.role=="admin" and .preview==true' >/dev/null
+            curl -fsS -b /tmp/cookies "$base/api/people" | jq -e '.people | type=="array"' >/dev/null
+            echo "PORTAL_PRIVATE_PREVIEW_PASS"
+          elif [ "$preview_code" = "404" ]; then
+            echo "PORTAL_PRIVATE_PREVIEW_RETIRED_PASS"
+          else
+            echo "Unexpected preview HTTP $preview_code" >&2
+            exit 1
+          fi
+
+          unauth="$(curl -sS -o /tmp/noauth.json -w '%{http_code}' \
+            -H 'content-type: application/json' \
+            --data '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' \
+            "$base/mcp/not-the-capability")"
+          test "$unauth" = "404"
+
+          curl -fsS -H 'content-type: application/json' --data @- "$endpoint" <<'JSON' >/tmp/init.json
+          {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"github-actions-smoke","version":"1"}}}
+          JSON
+          jq -e '.result.serverInfo.name == "MyTrues Memory MCP"' /tmp/init.json >/dev/null
+
+          curl -fsS -H 'content-type: application/json' --data @- "$endpoint" <<'JSON' >/tmp/tools.json
+          {"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}
+          JSON
+          jq -e '.result.tools | map(.name) | sort == ["memory_append","memory_continue","memory_get","memory_search"]' /tmp/tools.json >/dev/null
+
+          curl -fsS -H 'content-type: application/json' --data @- "$endpoint" <<'JSON' >/tmp/search.json
+          {"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"memory_search","arguments":{"term":"MyTrues Memory MCP"}}}
+          JSON
+          jq -e '.result.isError == false' /tmp/search.json >/dev/null
+
+          if ! jq -e '.result.structuredContent.events | length > 0' /tmp/search.json >/dev/null; then
+            curl -fsS -H 'content-type: application/json' --data @- "$endpoint" <<'JSON' >/tmp/append.json
+          {"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"memory_append","arguments":{"subject":"MyTrues Memory MCP","statement":"Memory MCP v0.1.0 habilitado para leitura e criação de memória por sessões externas.","kind":"observation","relation":"none"}}}
+          JSON
+            jq -e '.result.isError == false and .result.structuredContent.created.id' /tmp/append.json >/dev/null
+          fi
+
+          curl -fsS -H 'content-type: application/json' --data @- "$endpoint" <<'JSON' >/tmp/search-after.json
+          {"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"memory_search","arguments":{"term":"MyTrues Memory MCP"}}}
+          JSON
+          jq -e '.result.structuredContent.events | length > 0' /tmp/search-after.json >/dev/null
+
+          echo "MEMORY_MCP_INITIALIZE_PASS"
+          echo "MEMORY_MCP_TOOLS_LIST_PASS"
+          echo "MEMORY_MCP_READ_PASS"
+          echo "MEMORY_MCP_WRITE_PASS"
+          echo "revision=${{ steps.deploy.outputs.revision }}"
+          echo "public_host=$base"
+          echo "capability_secret=Azure Key Vault mytrues-ingest-kv / reader-mcp-capability"
+
+      - name: Custom domain status
+        shell: bash
+        run: |
+          set -euo pipefail
+          if dig +short CNAME reader.mytrues.io | grep -q .; then
+            echo "reader.mytrues.io DNS exists; custom-domain binding workflow can finalize TLS."
+          else
+            echo "reader.mytrues.io DNS not published yet; generated Azure hostname is the active authenticated Reader."
+          fi

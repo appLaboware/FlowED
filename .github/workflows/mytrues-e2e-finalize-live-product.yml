@@ -1,0 +1,219 @@
+name: MyTrues E2E finalize live product
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths:
+      - ".github/workflows/mytrues-e2e-finalize-live-product.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  RESOURCE_NAME: mytrues-phpmysql-36811881875
+  RESOURCE_LOCATION: eastus
+  RESOURCE_FQDN: mytrues-phpmysql-36811881875.eastus.azurecontainer.io
+  RESOURCE_PORT: "8080"
+  REQUESTED_DOMAIN: porter-lab.me.dev.br
+  DECISION_PROVIDER: senior-a
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Clone repository
+        run: git clone --depth 1 --branch tools/ideos-lab https://github.com/appLaboware/FlowED.git repo
+
+      - name: Start selected MyTrues provider
+        working-directory: repo/Tools/MYTRUES
+        run: |
+          docker compose up -d --build mytrues-senior-a
+          for attempt in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:18081/healthz >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          exit 1
+
+      - name: Reconfirm known provider decisions
+        id: decisions
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          decide() {
+            local input="$1"
+            local output="$2"
+            local code
+            code="$(curl -sS -o "$output" -w '%{http_code}'               -H 'Content-Type: application/json'               --data @"$input"               http://127.0.0.1:18081/v1/decisions/resolve.failure)"
+            test "$code" = "200"
+          }
+
+          jq -n '{
+            protocol:"mytrues.decision/v1",
+            requestId:"final-azure-credentials",
+            subject:{kind:"failure",code:"azure.credentials.separate_missing"},
+            context:{legacy_azure_bundle_present:true},
+            constraints:{automation:"automatic",maxRisk:"low"}
+          }' >/tmp/credentials.json
+          decide /tmp/credentials.json /tmp/credentials-decision.json
+
+          jq -n '{
+            protocol:"mytrues.decision/v1",
+            requestId:"final-quota",
+            subject:{kind:"failure",code:"azure.aci.standard_cores_quota_exceeded"},
+            context:{
+              requested_location:"brazilsouth",
+              service:"azure-container-instances",
+              quota_name:"StandardCores",
+              alternate_region_allowed:true
+            },
+            constraints:{automation:"automatic",maxRisk:"low"}
+          }' >/tmp/quota.json
+          decide /tmp/quota.json /tmp/quota-decision.json
+
+          jq -n             --arg fqdn "$RESOURCE_FQDN"             --argjson port "$RESOURCE_PORT"             --arg domain "$REQUESTED_DOMAIN"             '{
+              protocol:"mytrues.decision/v1",
+              requestId:"final-dns",
+              subject:{kind:"failure",code:"dns.requested_provider_credentials_missing"},
+              context:{
+                requested_domain:$domain,
+                azure_provider_fqdn_available:true,
+                azure_provider_fqdn:$fqdn,
+                azure_provider_port:$port,
+                azure_public_ip_available:false
+              },
+              constraints:{automation:"automatic",maxRisk:"low"}
+            }' >/tmp/dns.json
+          decide /tmp/dns.json /tmp/dns-decision.json
+
+          CREDENTIAL_DECISION="$(jq -r '.decision.id' /tmp/credentials-decision.json)"
+          QUOTA_DECISION="$(jq -r '.decision.id' /tmp/quota-decision.json)"
+          QUOTA_LOCATION="$(jq -r '.selected.result.location' /tmp/quota-decision.json)"
+          DNS_DECISION="$(jq -r '.decision.id' /tmp/dns-decision.json)"
+          DNS_TYPE="$(jq -r '.selected.result.endpoint.type' /tmp/dns-decision.json)"
+          DNS_VALUE="$(jq -r '.selected.result.endpoint.value' /tmp/dns-decision.json)"
+          DNS_PORT="$(jq -r '.selected.result.endpoint.port' /tmp/dns-decision.json)"
+
+          test "$CREDENTIAL_DECISION" = "decision.azure.parse_legacy_bundle"
+          test "$QUOTA_DECISION" = "decision.azure.retry_alternate_region"
+          test "$QUOTA_LOCATION" = "$RESOURCE_LOCATION"
+          test "$DNS_DECISION" = "decision.dns.use_azure_provider_fqdn"
+          test "$DNS_TYPE" = "hostname"
+          test "$DNS_VALUE" = "$RESOURCE_FQDN"
+          test "$DNS_PORT" = "$RESOURCE_PORT"
+
+          URL="http://$DNS_VALUE:$DNS_PORT"
+
+          {
+            echo "credential_decision=$CREDENTIAL_DECISION"
+            echo "quota_decision=$QUOTA_DECISION"
+            echo "dns_decision=$DNS_DECISION"
+            echo "url=$URL"
+            echo "credential_notice=$(jq -r '.notice' /tmp/credentials-decision.json)"
+            echo "quota_notice=$(jq -r '.notice' /tmp/quota-decision.json)"
+            echo "dns_notice=$(jq -r '.notice' /tmp/dns-decision.json)"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Verify live product and database persistence
+        id: verify
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="${{ steps.decisions.outputs.url }}"
+
+          curl -fsS --max-time 15 "$URL" >/tmp/first.html
+          FIRST="$(sed -nE 's/.*Visitas persistidas nesta instância: ([0-9]+).*/\1/p' /tmp/first.html | head -n1)"
+
+          sleep 1
+
+          curl -fsS --max-time 15 "$URL" >/tmp/second.html
+          SECOND="$(sed -nE 's/.*Visitas persistidas nesta instância: ([0-9]+).*/\1/p' /tmp/second.html | head -n1)"
+
+          grep -q 'PHP + MySQL materializados no Azure' /tmp/first.html
+          grep -q 'Implantação assistida por MyTrues' /tmp/first.html
+          test -n "$FIRST"
+          test -n "$SECOND"
+          test "$SECOND" -gt "$FIRST"
+
+          echo "first=$FIRST" >> "$GITHUB_OUTPUT"
+          echo "second=$SECOND" >> "$GITHUB_OUTPUT"
+
+          echo "LIVE PRODUCT: $URL"
+          echo "PHP -> MYSQL PERSISTENCE: $FIRST -> $SECOND"
+
+      - name: Human return report
+        id: report
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="${{ steps.decisions.outputs.url }}"
+
+          {
+            echo "# MyTrues — relatório de devolução ao humano"
+            echo
+            echo "**Status:** ENTREGUE E VERIFICADO"
+            echo
+            echo "## Intenção original"
+            echo "- Aplicação: site PHP genérico"
+            echo "- Dependência: MySQL"
+            echo "- Target: Azure"
+            echo "- Domínio solicitado: $REQUESTED_DOMAIN"
+            echo "- Fornecedor decisório: $DECISION_PROVIDER"
+            echo
+            echo "## Produto entregue"
+            echo "- Azure Container Group: $RESOURCE_NAME"
+            echo "- Região: $RESOURCE_LOCATION"
+            echo "- FQDN: $RESOURCE_FQDN"
+            echo "- Porta: $RESOURCE_PORT"
+            echo "- URL final: **$URL**"
+            echo
+            echo "## Decisões do MyTrues"
+            echo "1. ${{ steps.decisions.outputs.credential_decision }}"
+            echo "   - ${{ steps.decisions.outputs.credential_notice }}"
+            echo "2. ${{ steps.decisions.outputs.quota_decision }}"
+            echo "   - ${{ steps.decisions.outputs.quota_notice }}"
+            echo "3. ${{ steps.decisions.outputs.dns_decision }}"
+            echo "   - ${{ steps.decisions.outputs.dns_notice }}"
+            echo
+            echo "## Desvios tratados"
+            echo "- Os identificadores Azure estavam no formato legado agregado."
+            echo "- A região inicial brazilsouth estava sem quota ACI; o Senior A decidiu por eastus."
+            echo "- O domínio solicitado não pôde ser configurado sem o bootstrap DNS."
+            echo "- Em vez de declarar sucesso falso, o Senior A devolveu o hostname Azure funcional."
+            echo
+            echo "## Provas"
+            echo "- HTTP: **OK**"
+            echo "- PHP: **OK**"
+            echo "- MySQL: **OK**"
+            echo "- PHP -> MySQL: **OK**"
+            echo "- Estado persistido entre duas requisições: **${{ steps.verify.outputs.first }} -> ${{ steps.verify.outputs.second }}**"
+            echo "- Endpoint escolhido pelo MyTrues: **OK**"
+            echo
+            echo "## Devolução"
+            echo "- O produto permanece ativo para inspeção."
+            echo "- Nenhuma ação humana é necessária para abrir a URL."
+            echo "- Para cumprir o domínio originalmente solicitado, ainda falta o bootstrap DNS."
+            echo
+            echo "**Run:** $GITHUB_RUN_ID"
+          } >/tmp/report.md
+
+          cat /tmp/report.md
+          cat /tmp/report.md >> "$GITHUB_STEP_SUMMARY"
+
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+
+      - name: Stop local MyTrues provider
+        if: always()
+        working-directory: repo/Tools/MYTRUES
+        run: docker compose down
+
+      - name: Final output
+        if: success()
+        run: |
+          echo "FINAL PRODUCT URL: ${{ steps.report.outputs.url }}"
+          echo "HUMAN RETURN REPORT: GENERATED"

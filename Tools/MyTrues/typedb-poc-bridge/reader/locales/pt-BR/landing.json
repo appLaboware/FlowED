@@ -1,0 +1,16 @@
+{
+  "meta_title": "MyTrues",
+  "status": "Em preparação",
+  "headline_a": "Estamos preparando",
+  "headline_b": "algo incrível.",
+  "lead": "Se quiser acompanhar de perto, deixe seu nome. Quando chegar a hora, você vai saber.",
+  "name_label": "Nome",
+  "email_label": "E-mail",
+  "name_placeholder": "Seu nome",
+  "email_placeholder": "voce@exemplo.com",
+  "submit": "Quero acompanhar",
+  "sending": "Enviando…",
+  "success": "Pronto. Quando for a hora, você vai saber.",
+  "note": "Sem spam. Sem apresentação antes da hora.",
+  "access_aria": "Acesso reservado"
+}

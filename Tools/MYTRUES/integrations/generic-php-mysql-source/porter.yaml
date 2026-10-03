@@ -1,0 +1,175 @@
+schemaType: Bundle
+schemaVersion: 1.0.1
+name: mytrues-generic-php-mysql-source
+version: 0.1.0
+description: "Generic PHP source archive plus optional bootstrap script and MySQL on Azure"
+registry: localhost:5000
+dockerfile: template.Dockerfile
+
+mixins:
+  - az
+  - exec
+
+credentials:
+  - name: azure-client-id
+    env: AZURE_CLIENT_ID
+  - name: azure-tenant-id
+    env: AZURE_TENANT_ID
+  - name: azure-subscription-id
+    env: AZURE_SUBSCRIPTION_ID
+  - name: azure-federated-token
+    env: AZURE_FEDERATED_TOKEN
+
+parameters:
+  - name: source_url
+    type: string
+  - name: bootstrap_url
+    type: string
+    default: ""
+  - name: strip_components
+    type: string
+    default: "0"
+  - name: site_name
+    type: string
+  - name: resource_group
+    type: string
+    default: rg-flowed-ideos-lab
+  - name: location
+    type: string
+    default: eastus
+  - name: db_name
+    type: string
+    default: app
+  - name: db_user
+    type: string
+    default: app
+  - name: db_password
+    type: string
+    default: app-pass
+
+install:
+  - az:
+      description: "Authenticate to Azure using GitHub federated identity"
+      arguments: [login]
+      flags:
+        service-principal:
+        username: ${ bundle.credentials.azure-client-id }
+        tenant: ${ bundle.credentials.azure-tenant-id }
+        federated-token: ${ bundle.credentials.azure-federated-token }
+        allow-no-subscriptions:
+      suppress-output: true
+
+  - az:
+      description: "Select Azure subscription"
+      arguments: [account, set]
+      flags:
+        subscription: ${ bundle.credentials.azure-subscription-id }
+
+  - exec:
+      description: "Translate generic PHP source URL plus optional bootstrap into Azure container group"
+      command: /bin/bash
+      arguments:
+        - -c
+        - |
+          set -euo pipefail
+
+          SOURCE_URL='${ bundle.parameters.source_url }'
+          BOOTSTRAP_URL='${ bundle.parameters.bootstrap_url }'
+          STRIP_COMPONENTS='${ bundle.parameters.strip_components }'
+          DB_NAME='${ bundle.parameters.db_name }'
+          DB_USER='${ bundle.parameters.db_user }'
+          DB_PASSWORD='${ bundle.parameters.db_password }'
+
+          cat >/tmp/application.yaml <<YAML
+          name: ${ bundle.parameters.site_name }
+          apiVersion: '2021-10-01'
+          location: ${ bundle.parameters.location }
+          properties:
+            containers:
+              - name: web
+                properties:
+                  image: quay.io/sclorg/php-83-c9s
+                  command:
+                    - /bin/sh
+                    - -c
+                    - 'set -eu; rm -rf /opt/app-root/src/*; curl -fL --retry 5 --retry-all-errors "$SOURCE_URL" -o /tmp/app.tar.gz; tar -xzf /tmp/app.tar.gz -C /opt/app-root/src --strip-components="$STRIP_COMPONENTS"; if [ -n "$BOOTSTRAP_URL" ]; then curl -fL --retry 5 --retry-all-errors "$BOOTSTRAP_URL" -o /tmp/bootstrap.sh; chmod +x /tmp/bootstrap.sh; APP_ROOT=/opt/app-root/src /tmp/bootstrap.sh; fi; exec php -S 0.0.0.0:8080 -t /opt/app-root/src'
+                  ports:
+                    - protocol: TCP
+                      port: 8080
+                  environmentVariables:
+                    - name: SOURCE_URL
+                      value: '$SOURCE_URL'
+                    - name: BOOTSTRAP_URL
+                      value: '$BOOTSTRAP_URL'
+                    - name: STRIP_COMPONENTS
+                      value: '$STRIP_COMPONENTS'
+                    - name: APP_DB_HOST
+                      value: '127.0.0.1'
+                    - name: APP_DB_NAME
+                      value: '$DB_NAME'
+                    - name: APP_DB_USER
+                      value: '$DB_USER'
+                    - name: APP_DB_PASSWORD
+                      secureValue: '$DB_PASSWORD'
+                  resources:
+                    requests:
+                      cpu: 0.5
+                      memoryInGB: 1.0
+
+              - name: db
+                properties:
+                  image: quay.io/sclorg/mysql-84-c9s
+                  environmentVariables:
+                    - name: MYSQL_USER
+                      value: '$DB_USER'
+                    - name: MYSQL_PASSWORD
+                      secureValue: '$DB_PASSWORD'
+                    - name: MYSQL_DATABASE
+                      value: '$DB_NAME'
+                  resources:
+                    requests:
+                      cpu: 0.5
+                      memoryInGB: 1.0
+
+            restartPolicy: Always
+            ipAddress:
+              ports:
+                - protocol: TCP
+                  port: 8080
+              type: Public
+              dnsNameLabel: ${ bundle.parameters.site_name }
+            osType: Linux
+          YAML
+
+  - az:
+      description: "Materialize generic PHP application plus MySQL on Azure"
+      arguments: [container, create]
+      flags:
+        resource-group: ${ bundle.parameters.resource_group }
+        file: /tmp/application.yaml
+
+uninstall:
+  - az:
+      description: "Authenticate to Azure using GitHub federated identity"
+      arguments: [login]
+      flags:
+        service-principal:
+        username: ${ bundle.credentials.azure-client-id }
+        tenant: ${ bundle.credentials.azure-tenant-id }
+        federated-token: ${ bundle.credentials.azure-federated-token }
+        allow-no-subscriptions:
+      suppress-output: true
+
+  - az:
+      description: "Select Azure subscription"
+      arguments: [account, set]
+      flags:
+        subscription: ${ bundle.credentials.azure-subscription-id }
+
+  - az:
+      description: "Destroy Azure application"
+      arguments: [container, delete]
+      flags:
+        resource-group: ${ bundle.parameters.resource_group }
+        name: ${ bundle.parameters.site_name }
+        yes:

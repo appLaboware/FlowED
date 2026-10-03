@@ -1,0 +1,33 @@
+name: R0 artifact upload probe
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths:
+      - ".github/workflows/r0-artifact-upload-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Produce minimal evidence
+        run: |
+          printf 'run_id=%s\nsha=%s\n' "$GITHUB_RUN_ID" "$GITHUB_SHA" | tee /tmp/r0-artifact-probe.txt
+          {
+            echo "# R0 upload-artifact probe"
+            echo
+            echo "- run_id: $GITHUB_RUN_ID"
+            echo "- sha: $GITHUB_SHA"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload minimal evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: r0-artifact-probe
+          path: /tmp/r0-artifact-probe.txt
+          if-no-files-found: error

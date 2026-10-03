@@ -1,0 +1,139 @@
+name: IDEOS Azure OIDC direct proof
+
+on:
+  push:
+    branches:
+      - tools/ideos-lab
+    paths:
+      - ".github/workflows/ideos-azure-oidc-direct.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  RESOURCE_GROUP: rg-flowed-ideos-lab
+  AZURE_BUNDLE: ${{ secrets.AZURE }}
+  AZURE_CLIENT_ID_SECRET: ${{ secrets.AZURE_CLIENT_ID }}
+  AZURE_TENANT_ID_SECRET: ${{ secrets.AZURE_TENANT_ID }}
+  AZURE_SUBSCRIPTION_ID_SECRET: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+jobs:
+  prove-oidc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Resolve Azure repository credentials
+        id: azure
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          get_bundle_value() {
+            local key="$1"
+            printf '%s\n' "$AZURE_BUNDLE" |
+              sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*=[[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\2/p" |
+              tail -n 1
+          }
+
+          CLIENT_ID="$AZURE_CLIENT_ID_SECRET"
+          TENANT_ID="$AZURE_TENANT_ID_SECRET"
+          SUBSCRIPTION_ID="$AZURE_SUBSCRIPTION_ID_SECRET"
+          SOURCE="separate repository secrets"
+
+          if [ -z "$CLIENT_ID" ] || [ -z "$TENANT_ID" ] || [ -z "$SUBSCRIPTION_ID" ]; then
+            SOURCE="legacy AZURE bundle secret"
+            CLIENT_ID="${CLIENT_ID:-$(get_bundle_value AZURE_CLIENT_ID)}"
+            TENANT_ID="${TENANT_ID:-$(get_bundle_value AZURE_TENANT_ID)}"
+            SUBSCRIPTION_ID="${SUBSCRIPTION_ID:-$(get_bundle_value AZURE_SUBSCRIPTION_ID)}"
+          fi
+
+          test -n "$CLIENT_ID" || { echo "AZURE_CLIENT_ID is unavailable." >&2; exit 1; }
+          test -n "$TENANT_ID" || { echo "AZURE_TENANT_ID is unavailable." >&2; exit 1; }
+          test -n "$SUBSCRIPTION_ID" || { echo "AZURE_SUBSCRIPTION_ID is unavailable." >&2; exit 1; }
+
+          echo "::add-mask::$CLIENT_ID"
+          echo "::add-mask::$TENANT_ID"
+          echo "::add-mask::$SUBSCRIPTION_ID"
+
+          {
+            echo "client_id=$CLIENT_ID"
+            echo "tenant_id=$TENANT_ID"
+            echo "subscription_id=$SUBSCRIPTION_ID"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "Azure credentials resolved from: $SOURCE"
+          echo "Preferred format: three separate repository secrets."
+
+      - name: Request GitHub OIDC token
+        id: oidc
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          RESPONSE="$(curl --fail --silent --show-error             -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN"             "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange")"
+
+          TOKEN="$(jq -r '.value' <<<"$RESPONSE")"
+          test -n "$TOKEN"
+          test "$TOKEN" != "null"
+
+          echo "::add-mask::$TOKEN"
+          {
+            echo "token<<OIDC_EOF"
+            echo "$TOKEN"
+            echo "OIDC_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "GitHub issued an OIDC token."
+
+      - name: Login to Azure using federated identity
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          az login             --service-principal             --username "${{ steps.azure.outputs.client_id }}"             --tenant "${{ steps.azure.outputs.tenant_id }}"             --federated-token "${{ steps.oidc.outputs.token }}"             --allow-no-subscriptions             --output none
+
+          az account set --subscription "${{ steps.azure.outputs.subscription_id }}"
+
+          az account show             --query "{subscription:id,tenant:tenantId,identity:user.name,type:user.type}"             --output table
+
+      - name: Prove read access to laboratory resource group
+        run: |
+          set -euo pipefail
+          az group show             --name "$RESOURCE_GROUP"             --query "{name:name,location:location,id:id}"             --output table
+
+      - name: Prove Contributor write access
+        id: write
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          DEPLOYMENT="ideos-oidc-proof-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          echo "deployment=$DEPLOYMENT" >> "$GITHUB_OUTPUT"
+
+          cat > /tmp/empty-template.json <<'JSON'
+          {
+            "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "resources": []
+          }
+          JSON
+
+          az deployment group create             --resource-group "$RESOURCE_GROUP"             --name "$DEPLOYMENT"             --template-file /tmp/empty-template.json             --output none
+
+          STATE="$(az deployment group show             --resource-group "$RESOURCE_GROUP"             --name "$DEPLOYMENT"             --query properties.provisioningState             --output tsv)"
+
+          test "$STATE" = "Succeeded"
+          echo "Azure accepted a Contributor write operation."
+
+      - name: Remove proof deployment record
+        if: always() && steps.write.outputs.deployment != ''
+        run: |
+          az deployment group delete             --resource-group "$RESOURCE_GROUP"             --name "${{ steps.write.outputs.deployment }}" || true
+
+      - name: Final proof
+        if: success()
+        run: |
+          echo "PROVED: single GitHub secret -> OIDC -> Azure -> RG read -> Contributor write."

@@ -1,0 +1,8 @@
+schemaType: ParameterSet
+schemaVersion: 1.1.0
+name: r1params
+namespace: r1-default
+parameters:
+  - name: greeting
+    source:
+      value: from-parameter-set

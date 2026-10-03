@@ -1,0 +1,36 @@
+schemaType: Bundle
+schemaVersion: 1.0.1
+name: r1-child
+version: 1.0.0
+description: "R1 direct dependency fixture 1.0.0"
+registry: localhost:5000
+
+mixins:
+  - exec
+
+parameters:
+  - name: child_value
+    type: string
+    default: child-default
+    env: CHILD_VALUE
+    applyTo:
+      - install
+
+outputs:
+  - name: child_result
+    type: string
+    path: /cnab/app/child-result.txt
+    applyTo:
+      - install
+
+install:
+  - exec:
+      command: ./run.sh
+      arguments:
+        - install
+
+uninstall:
+  - exec:
+      command: ./run.sh
+      arguments:
+        - uninstall

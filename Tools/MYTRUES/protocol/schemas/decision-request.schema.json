@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mytrues.dev/protocol/0.2/schemas/decision-request.schema.json",
+  "title": "MyTrues Decision Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["protocol", "requestId", "subject", "context"],
+  "properties": {
+    "protocol": {"const": "mytrues.decision/v1"},
+    "requestId": {"type": "string", "minLength": 1},
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "code"],
+      "properties": {
+        "kind": {"const": "failure"},
+        "code": {"type": "string", "minLength": 1}
+      }
+    },
+    "context": {"type": "object", "additionalProperties": true},
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "automation": {"enum": ["automatic", "recommend-only"]},
+        "maxRisk": {"enum": ["low", "medium", "high"]}
+      }
+    }
+  }
+}

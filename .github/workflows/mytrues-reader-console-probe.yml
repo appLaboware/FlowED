@@ -1,0 +1,42 @@
+name: MyTrues Reader console probe
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-reader-console-probe.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AZURE_BUNDLE: ${{ secrets.AZURE }}
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - name: Azure login
+        shell: bash
+        run: |
+          set -euo pipefail
+          extract(){ local key="$1"; printf '%s\n' "$AZURE_BUNDLE" | sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*[:=][[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\\2/p" | tail -n1; }
+          CID="$(extract AZURE_CLIENT_ID)"; TID="$(extract AZURE_TENANT_ID)"; SID="$(extract AZURE_SUBSCRIPTION_ID)"
+          for x in "$CID" "$TID" "$SID"; do echo "::add-mask::$x"; done
+          TOKEN="$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange" | jq -r .value)"
+          echo "::add-mask::$TOKEN"
+          az login --service-principal --username "$CID" --tenant "$TID" --federated-token "$TOKEN" --allow-no-subscriptions -o none
+          az account set --subscription "$SID"
+
+      - name: Trigger login and collect console
+        shell: bash
+        run: |
+          set -euo pipefail
+          base=https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io
+          curl -sS -o /tmp/login.out -w 'LOGIN_HTTP=%{http_code}\n' "$base/login" || true
+          sleep 2
+          rev="$(az containerapp show -g rg-flowed-ideos-lab -n mytrues-reader --query properties.latestReadyRevisionName -o tsv)"
+          echo "REVISION=$rev"
+          az containerapp logs show -g rg-flowed-ideos-lab -n mytrues-reader --type console --revision "$rev" --tail 120 --follow false 2>&1 || true

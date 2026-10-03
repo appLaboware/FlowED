@@ -1,0 +1,41 @@
+name: EXP-005 GRyCAP Infrastructure Manager
+# trigger: async materialization wait
+
+on:
+  push:
+    branches:
+      - tools/ideos-lab
+    paths:
+      - "Tools/IDEOS/experiments/EXP-005-infrastructure-manager/**"
+      - ".github/workflows/ideos-exp005-im.yml"
+  workflow_dispatch:
+
+jobs:
+  official-product-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Clone repository
+        run: |
+          git clone --depth 1 --branch tools/ideos-lab https://github.com/appLaboware/FlowED.git repo
+
+      - name: Show Docker runtime
+        run: |
+          docker version
+          docker compose version
+
+      - name: Run official Infrastructure Manager probe
+        run: |
+          cd repo
+          bash Tools/IDEOS/experiments/EXP-005-infrastructure-manager/probe.sh
+
+      - name: Materialize baseline through IM Docker connector
+        run: |
+          cd repo
+          bash Tools/IDEOS/experiments/EXP-005-infrastructure-manager/materialize-docker.sh
+
+      - name: Experiment result
+        if: always()
+        run: |
+          echo "EXP-005 executed using the official GRyCAP IM server and client images."

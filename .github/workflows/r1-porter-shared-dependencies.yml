@@ -1,0 +1,143 @@
+name: R1 Porter shared dependencies
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths:
+      - "Tools/EVOLUTION/experiments/R1-P03-porter-shared-dependencies/**"
+      - ".github/workflows/r1-porter-shared-dependencies.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: r1-porter-shared-dependencies
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  shared-dependencies:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PORTER_HOME: /tmp/porter-r1-p03
+      PORTER_EXPERIMENTAL: dependencies-v2
+      INFRA_REF: localhost:5000/r1-shared-infra:v1.0.0
+      APP_REF: localhost:5000/r1-shared-app:v1.0.0
+      ROOT_REF: localhost:5000/r1-shared-root:v1.0.0
+
+    steps:
+      - name: Clone
+        run: git clone --depth 1 --branch tools/ideos-lab https://github.com/appLaboware/FlowED.git repo
+
+      - name: Start registry
+        run: |
+          docker run -d -p 5000:5000 --name r1-p03-registry registry:2
+          for i in $(seq 1 30); do
+            curl -fsS http://localhost:5000/v2/ && exit 0
+            sleep 1
+          done
+          exit 1
+
+      - name: Install Porter
+        run: |
+          curl -fsSL https://cdn.porter.sh/latest/install-linux.sh | PORTER_VERSION=v1.6.1 bash
+          "$PORTER_HOME/porter" mixin install exec
+          "$PORTER_HOME/porter" version | grep 'v1.6.1'
+
+      - name: Publish fixtures
+        run: |
+          set -euo pipefail
+          for DIR in infra app root; do
+            (
+              cd "repo/Tools/EVOLUTION/experiments/R1-P03-porter-shared-dependencies/$DIR"
+              "$PORTER_HOME/porter" lint
+              "$PORTER_HOME/porter" build
+              "$PORTER_HOME/porter" publish --insecure-registry
+            )
+          done
+
+      - name: Install independent shared infra
+        run: |
+          set -u
+
+          set +e
+          "$PORTER_HOME/porter" install shared-infra \
+            --reference "$INFRA_REF" \
+            --insecure-registry \
+            --label sh.porter.SharingGroup=r1-shared-group \
+            --verbosity debug \
+            > /tmp/shared-infra-install.log 2>&1
+          INSTALL_RC=$?
+          set -e
+
+          cat /tmp/shared-infra-install.log
+          echo "INSTALL_RC=$INSTALL_RC"
+
+          echo "=== installation after install command ==="
+          "$PORTER_HOME/porter" show shared-infra || true
+
+          echo "=== runs after install command ==="
+          "$PORTER_HOME/porter" installations runs list --installation shared-infra -o json || true
+
+          if [ "$INSTALL_RC" -ne 0 ]; then
+            exit "$INSTALL_RC"
+          fi
+
+          set +e
+          RESULT="$("$PORTER_HOME/porter" installations output show connstr --installation shared-infra 2>/tmp/shared-infra-output.err)"
+          OUTPUT_RC=$?
+          set -e
+
+          cat /tmp/shared-infra-output.err || true
+          echo "OUTPUT_RC=$OUTPUT_RC"
+          echo "INFRA_OUTPUT=$RESULT"
+          test "$OUTPUT_RC" -eq 0
+          test "$RESULT" = "mysql://r1-shared-infra"
+
+      - name: Inspect shared graph and wiring
+        run: |
+          "$PORTER_HOME/porter" inspect             --reference "$ROOT_REF"             --show-dependencies             --insecure-registry             -o json | tee /tmp/shared-graph.json
+
+          grep -q 'r1-shared-infra' /tmp/shared-graph.json
+          grep -q 'r1-shared-app' /tmp/shared-graph.json
+          grep -q 'connstr' /tmp/shared-graph.json
+
+      - name: Install root and prove sibling output wiring
+        run: |
+          set -euo pipefail
+
+          "$PORTER_HOME/porter" install shared-root             --reference "$ROOT_REF"             --insecure-registry | tee /tmp/root-install.log
+
+          grep -q 'APP_WIRED=mysql://r1-shared-infra' /tmp/root-install.log
+
+          "$PORTER_HOME/porter" list --all-namespaces -o json | tee /tmp/installations.json
+          grep -q 'shared-infra' /tmp/installations.json
+
+      - name: Root uninstall preserves independently installed shared infra
+        run: |
+          "$PORTER_HOME/porter" uninstall shared-root
+
+          "$PORTER_HOME/porter" show shared-infra | tee /tmp/infra-after-root-uninstall.txt
+          grep -qi 'succeeded' /tmp/infra-after-root-uninstall.txt
+
+      - name: Cleanup shared infra
+        run: |
+          "$PORTER_HOME/porter" uninstall shared-infra
+
+      - name: Evidence summary
+        run: |
+          {
+            echo "# R1-P03 evidence"
+            echo
+            echo "- Dependencies v2 feature flag: PASS"
+            echo "- Pre-existing shared dependency reuse: PASS"
+            echo "- Sibling dependency output -> parameter wiring: PASS"
+            echo "- Shared graph inspection: PASS"
+            echo "- Root uninstall preserves pre-existing shared dependency: PASS"
+          } | tee /tmp/evidence.md
+          cat /tmp/evidence.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Cleanup registry
+        if: always()
+        run: docker rm -f r1-p03-registry || true

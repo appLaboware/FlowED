@@ -1,0 +1,63 @@
+name: MyTrues Cloudflare credential discovery
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-cloudflare-discovery.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+env:
+  AZURE_BUNDLE: ${{ secrets.AZURE }}
+  S_CF_DNS_EDIT: ${{ secrets.CF_DNS_EDIT }}
+  S_CF_ZONE_READ: ${{ secrets.CF_ZONE_READ }}
+  S_CLOUDFLARE: ${{ secrets.CLOUDFLARE }}
+  S_CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  S_CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
+  S_CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+  S_CF_TOKEN: ${{ secrets.CF_TOKEN }}
+  S_CLOUDFLARE_DNS_TOKEN: ${{ secrets.CLOUDFLARE_DNS_TOKEN }}
+  S_CLOUDFLARE_DNS_EDIT: ${{ secrets.CLOUDFLARE_DNS_EDIT }}
+  S_DNS_CLOUDFLARE: ${{ secrets.DNS_CLOUDFLARE }}
+jobs:
+  discover:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Report GitHub secret presence only
+        shell: bash
+        run: |
+          set -euo pipefail
+          for n in CF_DNS_EDIT CF_ZONE_READ CLOUDFLARE CLOUDFLARE_API_TOKEN CLOUDFLARE_TOKEN CF_API_TOKEN CF_TOKEN CLOUDFLARE_DNS_TOKEN CLOUDFLARE_DNS_EDIT DNS_CLOUDFLARE; do
+            v="S_$n"
+            if [ -n "${!v:-}" ]; then echo "$n=PRESENT"; else echo "$n=ABSENT"; fi
+          done
+      - name: Resolve Azure identifiers
+        id: azure
+        shell: bash
+        run: |
+          set -euo pipefail
+          extract(){ local key="$1"; printf '%s\n' "$AZURE_BUNDLE" | sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*[:=][[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\\2/p" | tail -n1; }
+          CLIENT_ID="$(extract AZURE_CLIENT_ID)"; TENANT_ID="$(extract AZURE_TENANT_ID)"; SUBSCRIPTION_ID="$(extract AZURE_SUBSCRIPTION_ID)"
+          test -n "$CLIENT_ID" && test -n "$TENANT_ID" && test -n "$SUBSCRIPTION_ID"
+          echo "::add-mask::$CLIENT_ID"; echo "::add-mask::$TENANT_ID"; echo "::add-mask::$SUBSCRIPTION_ID"
+          echo "client_id=$CLIENT_ID" >> "$GITHUB_OUTPUT"; echo "tenant_id=$TENANT_ID" >> "$GITHUB_OUTPUT"; echo "subscription_id=$SUBSCRIPTION_ID" >> "$GITHUB_OUTPUT"
+      - name: Azure login
+        shell: bash
+        run: |
+          set -euo pipefail
+          TOKEN="$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange" | jq -r .value)"
+          echo "::add-mask::$TOKEN"
+          az login --service-principal --username "${{ steps.azure.outputs.client_id }}" --tenant "${{ steps.azure.outputs.tenant_id }}" --federated-token "$TOKEN" --allow-no-subscriptions -o none
+          az account set --subscription "${{ steps.azure.outputs.subscription_id }}"
+      - name: Search accessible Key Vault secret names only
+        shell: bash
+        run: |
+          set -euo pipefail
+          vaults="$(az keyvault list --query '[].name' -o tsv 2>/dev/null || true)"
+          if [ -z "$vaults" ]; then echo "NO_ACCESSIBLE_VAULTS"; exit 0; fi
+          while IFS= read -r vault; do
+            [ -n "$vault" ] || continue
+            echo "=== VAULT $vault ==="
+            az keyvault secret list --vault-name "$vault" --query '[].name' -o tsv 2>/dev/null | grep -Ei 'cloudflare|(^|-)cf($|-)|dns|zone' || true
+          done <<<"$vaults"

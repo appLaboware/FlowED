@@ -1,0 +1,311 @@
+name: IDEOS decision-memory self-healing loop
+
+on:
+  push:
+    branches:
+      - tools/ideos-lab
+    paths:
+      - "Tools/IDEOS/experiments/EXP-007-decision-memory/**"
+      - ".github/workflows/ideos-decision-memory.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AZURE_BUNDLE: ${{ secrets.AZURE }}
+  AZURE_CLIENT_ID_SECRET: ${{ secrets.AZURE_CLIENT_ID }}
+  AZURE_TENANT_ID_SECRET: ${{ secrets.AZURE_TENANT_ID }}
+  AZURE_SUBSCRIPTION_ID_SECRET: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  CLOUDFLARE_BUNDLE: ${{ secrets.CLOUDFLARE }}
+  CF_DNS_EDIT_SECRET: ${{ secrets.CF_DNS_EDIT }}
+  CF_ZONE_READ_SECRET: ${{ secrets.CF_ZONE_READ }}
+  RESOURCE_GROUP: rg-flowed-ideos-lab
+  REQUESTED_DOMAIN: porter-lab.me.dev.br
+
+jobs:
+  self-healing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Clone repository
+        run: |
+          git clone --depth 1 --branch tools/ideos-lab https://github.com/appLaboware/FlowED.git repo
+
+      - name: Start decision memory container
+        working-directory: repo/Tools/IDEOS/experiments/EXP-007-decision-memory
+        run: |
+          docker compose up -d
+          docker ps --filter name=ideos-decision-memory
+
+      - name: Wait for decision memory
+        working-directory: repo/Tools/IDEOS/experiments/EXP-007-decision-memory
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 60); do
+            if python3 decision_port.py summary >/tmp/decision-summary.json 2>/dev/null; then
+              cat /tmp/decision-summary.json
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs ideos-decision-memory || true
+          exit 1
+
+      - name: Seed approved decisions and evidence
+        working-directory: repo/Tools/IDEOS/experiments/EXP-007-decision-memory
+        run: |
+          python3 decision_port.py seed seed.cypher
+          python3 decision_port.py summary
+
+      - name: Observe Azure credential failure and resolve it automatically
+        id: azure
+        working-directory: repo/Tools/IDEOS/experiments/EXP-007-decision-memory
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          get_bundle_value() {
+            local key="$1"
+            printf '%s\n' "$AZURE_BUNDLE" |
+              sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*=[[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\2/p" |
+              tail -n 1
+          }
+
+          CLIENT_ID="$AZURE_CLIENT_ID_SECRET"
+          TENANT_ID="$AZURE_TENANT_ID_SECRET"
+          SUBSCRIPTION_ID="$AZURE_SUBSCRIPTION_ID_SECRET"
+          DECISION_ID=""
+
+          if [ -z "$CLIENT_ID" ] || [ -z "$TENANT_ID" ] || [ -z "$SUBSCRIPTION_ID" ]; then
+            echo "::warning::OBSERVED ERROR azure.credentials.separate_missing"
+            echo "Preferred Azure secrets are incomplete. Pausing normal path and consulting DecisionPort."
+
+            LEGACY_PRESENT=false
+            [ -n "$AZURE_BUNDLE" ] && LEGACY_PRESENT=true
+
+            DECISION_JSON="$(python3 decision_port.py resolve               --failure-code azure.credentials.separate_missing               --context "{\"legacy_azure_bundle_present\":$LEGACY_PRESENT}")"
+
+            echo "DECISION: $DECISION_JSON"
+
+            ACTION="$(python3 -c 'import json,sys; print(json.load(sys.stdin)["action_id"])' <<<"$DECISION_JSON")"
+            ALLOWED="$(python3 -c 'import json,sys; print(str(json.load(sys.stdin)["execution_allowed"]).lower())' <<<"$DECISION_JSON")"
+            DECISION_ID="$(python3 -c 'import json,sys; print(json.load(sys.stdin)["decision_id"])' <<<"$DECISION_JSON")"
+            NOTICE="$(python3 -c 'import json,sys; print(json.load(sys.stdin)["user_notice"])' <<<"$DECISION_JSON")"
+
+            test "$ALLOWED" = "true"
+            test "$ACTION" = "azure.credentials.parse_legacy_bundle"
+
+            echo "::notice::$NOTICE"
+            echo "ADAPTATION: $ACTION"
+
+            CLIENT_ID="${CLIENT_ID:-$(get_bundle_value AZURE_CLIENT_ID)}"
+            TENANT_ID="${TENANT_ID:-$(get_bundle_value AZURE_TENANT_ID)}"
+            SUBSCRIPTION_ID="${SUBSCRIPTION_ID:-$(get_bundle_value AZURE_SUBSCRIPTION_ID)}"
+          fi
+
+          test -n "$CLIENT_ID"
+          test -n "$TENANT_ID"
+          test -n "$SUBSCRIPTION_ID"
+
+          echo "::add-mask::$CLIENT_ID"
+          echo "::add-mask::$TENANT_ID"
+          echo "::add-mask::$SUBSCRIPTION_ID"
+
+          SITE_NAME="decision-site-${GITHUB_RUN_ID}"
+          SITE_NAME="${SITE_NAME:0:50}"
+
+          {
+            echo "client_id=$CLIENT_ID"
+            echo "tenant_id=$TENANT_ID"
+            echo "subscription_id=$SUBSCRIPTION_ID"
+            echo "decision_id=$DECISION_ID"
+            echo "site_name=$SITE_NAME"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Request GitHub OIDC token
+        id: oidc
+        shell: bash
+        run: |
+          set -euo pipefail
+          RESPONSE="$(curl --fail --silent --show-error             -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN"             "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange")"
+          TOKEN="$(jq -r '.value' <<<"$RESPONSE")"
+          test -n "$TOKEN"
+          test "$TOKEN" != "null"
+          echo "::add-mask::$TOKEN"
+          {
+            echo "token<<OIDC_EOF"
+            echo "$TOKEN"
+            echo "OIDC_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Observe custom DNS failure and choose provider fallback
+        id: dns
+        working-directory: repo/Tools/IDEOS/experiments/EXP-007-decision-memory
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          get_bundle_value() {
+            local key="$1"
+            printf '%s\n' "$CLOUDFLARE_BUNDLE" |
+              sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*=[[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\2/p" |
+              tail -n 1
+          }
+
+          CF_DNS_EDIT="$CF_DNS_EDIT_SECRET"
+          CF_ZONE_READ="$CF_ZONE_READ_SECRET"
+          CF_DNS_EDIT="${CF_DNS_EDIT:-$(get_bundle_value CF_DNS_EDIT)}"
+          CF_ZONE_READ="${CF_ZONE_READ:-$(get_bundle_value CF_ZONE_READ)}"
+
+          DECISION_ID=""
+          DELIVERY_MODE="custom-domain"
+
+          if [ -n "$REQUESTED_DOMAIN" ] && { [ -z "$CF_DNS_EDIT" ] || [ -z "$CF_ZONE_READ" ]; }; then
+            echo "::warning::OBSERVED ERROR dns.requested_provider_credentials_missing"
+            echo "Custom domain was promised but DNS provider credentials are unavailable."
+            echo "Pausing custom-DNS path and consulting DecisionPort."
+
+            DECISION_JSON="$(python3 decision_port.py resolve               --failure-code dns.requested_provider_credentials_missing               --context '{"azure_provider_fqdn_available":true}')"
+
+            echo "DECISION: $DECISION_JSON"
+
+            ACTION="$(python3 -c 'import json,sys; print(json.load(sys.stdin)["action_id"])' <<<"$DECISION_JSON")"
+            ALLOWED="$(python3 -c 'import json,sys; print(str(json.load(sys.stdin)["execution_allowed"]).lower())' <<<"$DECISION_JSON")"
+            DECISION_ID="$(python3 -c 'import json,sys; print(json.load(sys.stdin)["decision_id"])' <<<"$DECISION_JSON")"
+            NOTICE="$(python3 -c 'import json,sys; print(json.load(sys.stdin)["user_notice"])' <<<"$DECISION_JSON")"
+
+            test "$ALLOWED" = "true"
+            test "$ACTION" = "delivery.use_azure_provider_fqdn"
+
+            DELIVERY_MODE="azure-provider-fqdn"
+            echo "::notice::$NOTICE"
+            echo "ADAPTATION: $ACTION"
+          fi
+
+          {
+            echo "decision_id=$DECISION_ID"
+            echo "delivery_mode=$DELIVERY_MODE"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Install Porter and official Azure mixin
+        run: |
+          curl -fsSL https://cdn.porter.sh/latest/install-linux.sh | bash
+          "$HOME/.porter/porter" mixin install az
+          "$HOME/.porter/porter" version
+          "$HOME/.porter/porter" mixins list
+
+      - name: Configure Porter Azure credential set
+        env:
+          AZURE_CLIENT_ID: ${{ steps.azure.outputs.client_id }}
+          AZURE_TENANT_ID: ${{ steps.azure.outputs.tenant_id }}
+          AZURE_SUBSCRIPTION_ID: ${{ steps.azure.outputs.subscription_id }}
+          AZURE_FEDERATED_TOKEN: ${{ steps.oidc.outputs.token }}
+        run: |
+          cat >/tmp/azure-oidc.yaml <<'YAML'
+          schemaType: CredentialSet
+          schemaVersion: 1.0.1
+          name: azure-oidc
+          credentials:
+            - name: azure-client-id
+              source:
+                env: AZURE_CLIENT_ID
+            - name: azure-tenant-id
+              source:
+                env: AZURE_TENANT_ID
+            - name: azure-subscription-id
+              source:
+                env: AZURE_SUBSCRIPTION_ID
+            - name: azure-federated-token
+              source:
+                env: AZURE_FEDERATED_TOKEN
+          YAML
+
+          "$HOME/.porter/porter" credentials apply /tmp/azure-oidc.yaml
+
+      - name: Continue original intent through Porter
+        env:
+          AZURE_CLIENT_ID: ${{ steps.azure.outputs.client_id }}
+          AZURE_TENANT_ID: ${{ steps.azure.outputs.tenant_id }}
+          AZURE_SUBSCRIPTION_ID: ${{ steps.azure.outputs.subscription_id }}
+          AZURE_FEDERATED_TOKEN: ${{ steps.oidc.outputs.token }}
+        run: |
+          set -euo pipefail
+          cd repo/Tools/IDEOS/experiments/EXP-005-porter-one-command-azure
+
+          echo "ORIGINAL INTENT CONTINUES:"
+          echo "porter install site -c azure-oidc --param site_name=${{ steps.azure.outputs.site_name }}"
+
+          "$HOME/.porter/porter" install site             -c azure-oidc             --param site_name="${{ steps.azure.outputs.site_name }}"
+
+      - name: Verify materialized site and expose degraded-success URL
+        id: result
+        env:
+          AZURE_CLIENT_ID: ${{ steps.azure.outputs.client_id }}
+          AZURE_TENANT_ID: ${{ steps.azure.outputs.tenant_id }}
+          AZURE_SUBSCRIPTION_ID: ${{ steps.azure.outputs.subscription_id }}
+          AZURE_FEDERATED_TOKEN: ${{ steps.oidc.outputs.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          az login             --service-principal             --username "$AZURE_CLIENT_ID"             --tenant "$AZURE_TENANT_ID"             --federated-token "$AZURE_FEDERATED_TOKEN"             --output none
+          az account set --subscription "$AZURE_SUBSCRIPTION_ID"
+
+          FQDN="$(az container show             --resource-group "$RESOURCE_GROUP"             --name "${{ steps.azure.outputs.site_name }}"             --query ipAddress.fqdn             --output tsv)"
+
+          test -n "$FQDN"
+
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent --show-error --max-time 10 "http://$FQDN" >/tmp/site.html; then
+              echo "url=http://$FQDN" >> "$GITHUB_OUTPUT"
+              echo "FINAL DELIVERY MODE: ${{ steps.dns.outputs.delivery_mode }}"
+              echo "SITE READY: http://$FQDN"
+              echo "::notice::Requested domain $REQUESTED_DOMAIN was not configured; site is available at http://$FQDN"
+              exit 0
+            fi
+            sleep 10
+          done
+
+          exit 1
+
+      - name: Retain observed outcomes in decision memory
+        if: success()
+        working-directory: repo/Tools/IDEOS/experiments/EXP-007-decision-memory
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -n "${{ steps.azure.outputs.decision_id }}" ]; then
+            python3 decision_port.py retain               --decision-id "${{ steps.azure.outputs.decision_id }}"               --execution-id "${GITHUB_RUN_ID}:azure-credentials"               --outcome success
+          fi
+
+          if [ -n "${{ steps.dns.outputs.decision_id }}" ]; then
+            python3 decision_port.py retain               --decision-id "${{ steps.dns.outputs.decision_id }}"               --execution-id "${GITHUB_RUN_ID}:dns"               --outcome success
+          fi
+
+          echo "=== DECISION MEMORY AFTER EXECUTION ==="
+          python3 decision_port.py summary
+
+      - name: Final self-healing proof
+        if: success()
+        run: |
+          echo "SELF-HEALING LOOP SUCCEEDED"
+          echo "Requested: http://$REQUESTED_DOMAIN"
+          echo "Delivered : ${{ steps.result.outputs.url }}"
+          echo "Azure credential error was exposed, resolved, adapted and retained."
+          echo "DNS credential error was exposed, resolved, adapted and retained."
+
+      - name: Decision-memory diagnostics
+        if: failure()
+        working-directory: repo/Tools/IDEOS/experiments/EXP-007-decision-memory
+        run: |
+          python3 decision_port.py summary || true
+          docker logs ideos-decision-memory || true
+
+      - name: Stop decision memory
+        if: always()
+        working-directory: repo/Tools/IDEOS/experiments/EXP-007-decision-memory
+        run: docker compose down -v

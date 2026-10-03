@@ -1,0 +1,491 @@
+name: MyTrues publish real WordPress as generic PHP
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths:
+      - ".github/workflows/mytrues-wordpress-publish.yml"
+      - "Tools/MYTRUES/integrations/generic-php-mysql-source/**"
+  workflow_dispatch:
+
+concurrency:
+  group: mytrues-wordpress-publish
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AZURE_BUNDLE: ${{ secrets.AZURE }}
+  AZURE_CLIENT_ID_SECRET: ${{ secrets.AZURE_CLIENT_ID }}
+  AZURE_TENANT_ID_SECRET: ${{ secrets.AZURE_TENANT_ID }}
+  AZURE_SUBSCRIPTION_ID_SECRET: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  RESOURCE_GROUP: rg-flowed-ideos-lab
+  DECISION_PROVIDER: senior-a
+  REQUESTED_DOMAIN: porter-lab.me.dev.br
+  SOURCE_URL: https://wordpress.org/latest.tar.gz
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Clone repository
+        run: git clone --depth 1 --branch tools/ideos-lab https://github.com/appLaboware/FlowED.git repo
+
+      - name: Start selected MyTrues provider
+        working-directory: repo/Tools/MYTRUES
+        run: |
+          docker compose up -d --build mytrues-senior-a
+          for attempt in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:18081/healthz >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          exit 1
+
+      - name: Resolve Azure credentials through MyTrues if needed
+        id: azure
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          get_value() {
+            local key="$1"
+            printf '%s\n' "$AZURE_BUNDLE" |
+              sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*=[[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\2/p" |
+              tail -n1
+          }
+
+          CLIENT_ID="$AZURE_CLIENT_ID_SECRET"
+          TENANT_ID="$AZURE_TENANT_ID_SECRET"
+          SUBSCRIPTION_ID="$AZURE_SUBSCRIPTION_ID_SECRET"
+          DECISION_ID="none"
+          NOTICE="Azure split repository secrets were available."
+
+          if [ -z "$CLIENT_ID" ] || [ -z "$TENANT_ID" ] || [ -z "$SUBSCRIPTION_ID" ]; then
+            LEGACY_PRESENT=false
+            [ -n "$AZURE_BUNDLE" ] && LEGACY_PRESENT=true
+
+            jq -n               --arg requestId "wp-azure-${GITHUB_RUN_ID}"               --argjson legacy "$LEGACY_PRESENT"               '{
+                protocol:"mytrues.decision/v1",
+                requestId:$requestId,
+                subject:{kind:"failure",code:"azure.credentials.separate_missing"},
+                context:{legacy_azure_bundle_present:$legacy},
+                constraints:{automation:"automatic",maxRisk:"low"}
+              }' >/tmp/azure-request.json
+
+            HTTP="$(curl -sS -o /tmp/azure-decision.json -w '%{http_code}'               -H 'Content-Type: application/json'               --data @/tmp/azure-request.json               http://127.0.0.1:18081/v1/decisions/resolve.failure)"
+
+            test "$HTTP" = "200"
+            DECISION_ID="$(jq -r '.decision.id' /tmp/azure-decision.json)"
+            NOTICE="$(jq -r '.notice' /tmp/azure-decision.json)"
+            test "$DECISION_ID" = "decision.azure.parse_legacy_bundle"
+
+            CLIENT_ID="$(get_value AZURE_CLIENT_ID)"
+            TENANT_ID="$(get_value AZURE_TENANT_ID)"
+            SUBSCRIPTION_ID="$(get_value AZURE_SUBSCRIPTION_ID)"
+          fi
+
+          for value in "$CLIENT_ID" "$TENANT_ID" "$SUBSCRIPTION_ID"; do
+            test -n "$value"
+            echo "::add-mask::$value"
+          done
+
+          {
+            echo "client_id=$CLIENT_ID"
+            echo "tenant_id=$TENANT_ID"
+            echo "subscription_id=$SUBSCRIPTION_ID"
+            echo "decision_id=$DECISION_ID"
+            echo "notice=$NOTICE"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Request GitHub OIDC token
+        id: oidc
+        shell: bash
+        run: |
+          set -euo pipefail
+          RESPONSE="$(curl -fsS             -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN"             "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange")"
+          TOKEN="$(jq -r '.value' <<<"$RESPONSE")"
+          test -n "$TOKEN"
+          test "$TOKEN" != "null"
+          echo "::add-mask::$TOKEN"
+          {
+            echo "token<<EOF"
+            echo "$TOKEN"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Login to Azure
+        env:
+          AZURE_CLIENT_ID: ${{ steps.azure.outputs.client_id }}
+          AZURE_TENANT_ID: ${{ steps.azure.outputs.tenant_id }}
+          AZURE_SUBSCRIPTION_ID: ${{ steps.azure.outputs.subscription_id }}
+          AZURE_FEDERATED_TOKEN: ${{ steps.oidc.outputs.token }}
+        run: |
+          az login             --service-principal             --username "$AZURE_CLIENT_ID"             --tenant "$AZURE_TENANT_ID"             --federated-token "$AZURE_FEDERATED_TOKEN"             --output none
+          az account set --subscription "$AZURE_SUBSCRIPTION_ID"
+
+      - name: Free duplicate MyTrues PHP lab quota but keep last verified fallback
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          KEEP="mytrues-phpmysql-36811881875"
+
+          mapfile -t NAMES < <(
+            az container list               --resource-group "$RESOURCE_GROUP"               --query "[?starts_with(name, 'mytrues-phpmysql-')].name"               -o tsv
+          )
+
+          for NAME in "${NAMES[@]}"; do
+            if [ "$NAME" = "$KEEP" ]; then
+              echo "Keeping verified fallback: $NAME"
+              continue
+            fi
+
+            echo "Deleting duplicate lab resource: $NAME"
+            az container delete               --resource-group "$RESOURCE_GROUP"               --name "$NAME"               --yes               --output none
+          done
+
+      - name: Ask MyTrues for remembered Azure placement decision
+        id: placement
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          jq -n             --arg requestId "wp-quota-${GITHUB_RUN_ID}"             '{
+              protocol:"mytrues.decision/v1",
+              requestId:$requestId,
+              subject:{kind:"failure",code:"azure.aci.standard_cores_quota_exceeded"},
+              context:{
+                requested_location:"brazilsouth",
+                service:"azure-container-instances",
+                quota_name:"StandardCores",
+                alternate_region_allowed:true
+              },
+              constraints:{automation:"automatic",maxRisk:"low"}
+            }' >/tmp/quota-request.json
+
+          HTTP="$(curl -sS -o /tmp/quota-decision.json -w '%{http_code}'             -H 'Content-Type: application/json'             --data @/tmp/quota-request.json             http://127.0.0.1:18081/v1/decisions/resolve.failure)"
+
+          test "$HTTP" = "200"
+
+          DECISION_ID="$(jq -r '.decision.id' /tmp/quota-decision.json)"
+          LOCATION="$(jq -r '.selected.result.location' /tmp/quota-decision.json)"
+          NOTICE="$(jq -r '.notice' /tmp/quota-decision.json)"
+
+          test "$DECISION_ID" = "decision.azure.retry_alternate_region"
+          test -n "$LOCATION"
+
+          {
+            echo "decision_id=$DECISION_ID"
+            echo "location=$LOCATION"
+            echo "notice=$NOTICE"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Install Porter and mixins
+        run: |
+          curl -fsSL https://cdn.porter.sh/latest/install-linux.sh | bash
+          "$HOME/.porter/porter" mixin install az
+          "$HOME/.porter/porter" mixin install exec
+          "$HOME/.porter/porter" version
+
+      - name: Validate generic PHP runtime for WordPress requirements
+        run: |
+          docker pull quay.io/sclorg/php-83-c9s
+          docker pull quay.io/sclorg/mysql-84-c9s
+
+          docker run --rm quay.io/sclorg/php-83-c9s sh -c '
+            command -v php
+            command -v curl
+            command -v tar
+            php -m
+          ' | tee /tmp/php-modules.txt
+
+          grep -qx 'PDO' /tmp/php-modules.txt
+          grep -qx 'pdo_mysql' /tmp/php-modules.txt
+          grep -qx 'mysqli' /tmp/php-modules.txt
+          grep -qi '^json$' /tmp/php-modules.txt
+
+      - name: Configure Porter Azure credentials
+        env:
+          AZURE_CLIENT_ID: ${{ steps.azure.outputs.client_id }}
+          AZURE_TENANT_ID: ${{ steps.azure.outputs.tenant_id }}
+          AZURE_SUBSCRIPTION_ID: ${{ steps.azure.outputs.subscription_id }}
+          AZURE_FEDERATED_TOKEN: ${{ steps.oidc.outputs.token }}
+        run: |
+          cat >/tmp/azure-oidc.yaml <<'YAML'
+          schemaType: CredentialSet
+          schemaVersion: 1.0.1
+          name: azure-oidc
+          credentials:
+            - name: azure-client-id
+              source: { env: AZURE_CLIENT_ID }
+            - name: azure-tenant-id
+              source: { env: AZURE_TENANT_ID }
+            - name: azure-subscription-id
+              source: { env: AZURE_SUBSCRIPTION_ID }
+            - name: azure-federated-token
+              source: { env: AZURE_FEDERATED_TOKEN }
+          YAML
+
+          "$HOME/.porter/porter" credentials apply /tmp/azure-oidc.yaml
+
+      - name: Materialize real WordPress source as a generic PHP application
+        id: materialize
+        env:
+          AZURE_CLIENT_ID: ${{ steps.azure.outputs.client_id }}
+          AZURE_TENANT_ID: ${{ steps.azure.outputs.tenant_id }}
+          AZURE_SUBSCRIPTION_ID: ${{ steps.azure.outputs.subscription_id }}
+          AZURE_FEDERATED_TOKEN: ${{ steps.oidc.outputs.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          SITE_NAME="mytrues-wp-${GITHUB_RUN_ID}"
+          SITE_NAME="${SITE_NAME:0:50}"
+
+          BOOTSTRAP_URL="https://raw.githubusercontent.com/appLaboware/FlowED/${GITHUB_SHA}/Tools/MYTRUES/integrations/generic-php-mysql-source/bootstrap/wordpress-config.sh"
+
+          cd repo/Tools/MYTRUES/integrations/generic-php-mysql-source
+
+          echo "GENERIC DEPLOY:"
+          echo "source_url=$SOURCE_URL"
+          echo "bootstrap_url=<application-owned bootstrap>"
+          echo "target=azure"
+          echo "database=mysql"
+          echo "decision_provider=$DECISION_PROVIDER"
+
+          "$HOME/.porter/porter" install wordpress-site             -c azure-oidc             --param source_url="$SOURCE_URL"             --param bootstrap_url="$BOOTSTRAP_URL"             --param strip_components=1             --param site_name="$SITE_NAME"             --param location="${{ steps.placement.outputs.location }}"
+
+          {
+            echo "site_name=$SITE_NAME"
+            echo "bootstrap_url=$BOOTSTRAP_URL"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Discover materialized endpoint
+        id: endpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          FQDN="$(az container show             --resource-group "$RESOURCE_GROUP"             --name "${{ steps.materialize.outputs.site_name }}"             --query ipAddress.fqdn             -o tsv)"
+
+          IP="$(az container show             --resource-group "$RESOURCE_GROUP"             --name "${{ steps.materialize.outputs.site_name }}"             --query ipAddress.ip             -o tsv)"
+
+          STATE="$(az container show             --resource-group "$RESOURCE_GROUP"             --name "${{ steps.materialize.outputs.site_name }}"             --query provisioningState             -o tsv)"
+
+          test -n "$FQDN"
+          test -n "$IP"
+          test "$STATE" = "Succeeded"
+
+          echo "fqdn=$FQDN" >> "$GITHUB_OUTPUT"
+          echo "ip=$IP" >> "$GITHUB_OUTPUT"
+          echo "url=http://$FQDN:8080" >> "$GITHUB_OUTPUT"
+
+      - name: Ask MyTrues for final endpoint because custom DNS is unavailable
+        id: dns
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          jq -n             --arg requestId "wp-dns-${GITHUB_RUN_ID}"             --arg domain "$REQUESTED_DOMAIN"             --arg fqdn "${{ steps.endpoint.outputs.fqdn }}"             --arg ip "${{ steps.endpoint.outputs.ip }}"             '{
+              protocol:"mytrues.decision/v1",
+              requestId:$requestId,
+              subject:{kind:"failure",code:"dns.requested_provider_credentials_missing"},
+              context:{
+                requested_domain:$domain,
+                azure_provider_fqdn_available:true,
+                azure_provider_fqdn:$fqdn,
+                azure_provider_port:8080,
+                azure_public_ip_available:true,
+                azure_public_ip:$ip
+              },
+              constraints:{automation:"automatic",maxRisk:"low"}
+            }' >/tmp/dns-request.json
+
+          HTTP="$(curl -sS -o /tmp/dns-decision.json -w '%{http_code}'             -H 'Content-Type: application/json'             --data @/tmp/dns-request.json             http://127.0.0.1:18081/v1/decisions/resolve.failure)"
+
+          test "$HTTP" = "200"
+
+          DECISION_ID="$(jq -r '.decision.id' /tmp/dns-decision.json)"
+          TYPE="$(jq -r '.selected.result.endpoint.type' /tmp/dns-decision.json)"
+          VALUE="$(jq -r '.selected.result.endpoint.value' /tmp/dns-decision.json)"
+          PORT="$(jq -r '.selected.result.endpoint.port' /tmp/dns-decision.json)"
+          NOTICE="$(jq -r '.notice' /tmp/dns-decision.json)"
+
+          test "$DECISION_ID" = "decision.dns.use_azure_provider_fqdn"
+          test "$TYPE" = "hostname"
+          test "$PORT" = "8080"
+
+          {
+            echo "decision_id=$DECISION_ID"
+            echo "notice=$NOTICE"
+            echo "url=http://$VALUE:$PORT"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Wait for WordPress installer
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="${{ steps.dns.outputs.url }}"
+
+          READY=false
+          for attempt in $(seq 1 90); do
+            set +e
+            CODE="$(curl -sS -o /tmp/install-check.html -w '%{http_code}' --max-time 10 "$URL/wp-admin/install.php")"
+            RC=$?
+            set -e
+
+            if [ "$RC" -eq 0 ] && [ "$CODE" = "200" ]; then
+              if grep -Eq 'Install WordPress|WordPress' /tmp/install-check.html; then
+                READY=true
+                break
+              fi
+            fi
+
+            sleep 5
+          done
+
+          if [ "$READY" != "true" ]; then
+            az container logs               --resource-group "$RESOURCE_GROUP"               --name "${{ steps.materialize.outputs.site_name }}"               --container-name web || true
+            az container logs               --resource-group "$RESOURCE_GROUP"               --name "${{ steps.materialize.outputs.site_name }}"               --container-name db || true
+            exit 1
+          fi
+
+      - name: Complete WordPress application setup through its public HTTP installer
+        id: wp
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="${{ steps.dns.outputs.url }}"
+          TITLE="MyTrues WordPress Lab"
+          ADMIN_USER="mytrues-admin"
+          ADMIN_PASSWORD="$(openssl rand -hex 24)"
+          ADMIN_EMAIL="admin@example.com"
+
+          echo "::add-mask::$ADMIN_PASSWORD"
+
+          curl -sS             -o /tmp/wp-install-result.html             -X POST             --data-urlencode "weblog_title=$TITLE"             --data-urlencode "user_name=$ADMIN_USER"             --data-urlencode "admin_password=$ADMIN_PASSWORD"             --data-urlencode "admin_password2=$ADMIN_PASSWORD"             --data-urlencode "admin_email=$ADMIN_EMAIL"             --data-urlencode "blog_public=0"             --data-urlencode "Submit=Install WordPress"             "$URL/wp-admin/install.php?step=2"
+
+          SUCCESS=false
+
+          for attempt in $(seq 1 30); do
+            curl -fsS --max-time 10 "$URL/" >/tmp/home.html || true
+            curl -fsS --max-time 10 "$URL/wp-login.php" >/tmp/login.html || true
+
+            if grep -q "$TITLE" /tmp/home.html && grep -q 'user_login' /tmp/login.html; then
+              SUCCESS=true
+              break
+            fi
+
+            sleep 3
+          done
+
+          if [ "$SUCCESS" != "true" ]; then
+            echo "=== installer response ==="
+            head -c 5000 /tmp/wp-install-result.html || true
+            echo
+            echo "=== homepage ==="
+            head -c 5000 /tmp/home.html || true
+            exit 1
+          fi
+
+          echo "title=$TITLE" >> "$GITHUB_OUTPUT"
+          echo "admin_user=$ADMIN_USER" >> "$GITHUB_OUTPUT"
+
+      - name: Verify published WordPress twice
+        id: verify
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="${{ steps.dns.outputs.url }}"
+
+          curl -fsS --max-time 15 "$URL/" >/tmp/home-1.html
+          sleep 1
+          curl -fsS --max-time 15 "$URL/" >/tmp/home-2.html
+          curl -fsS --max-time 15 "$URL/wp-login.php" >/tmp/login.html
+
+          grep -q "${{ steps.wp.outputs.title }}" /tmp/home-1.html
+          grep -q "${{ steps.wp.outputs.title }}" /tmp/home-2.html
+          grep -q 'user_login' /tmp/login.html
+
+          echo "WORDPRESS HOMEPAGE: OK"
+          echo "WORDPRESS LOGIN: OK"
+          echo "FINAL WORDPRESS URL: $URL"
+
+      - name: Remove previous generic PHP fallback only after WordPress succeeds
+        shell: bash
+        run: |
+          set -euo pipefail
+          OLD="mytrues-phpmysql-36811881875"
+
+          if az container show             --resource-group "$RESOURCE_GROUP"             --name "$OLD"             --output none 2>/dev/null; then
+            az container delete               --resource-group "$RESOURCE_GROUP"               --name "$OLD"               --yes               --output none
+            echo "Removed superseded generic PHP lab: $OLD"
+          fi
+
+      - name: Human return report
+        id: report
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="${{ steps.dns.outputs.url }}"
+
+          {
+            echo "# MyTrues — publicação WordPress"
+            echo
+            echo "**Status:** WORDPRESS PUBLICADO E VERIFICADO"
+            echo
+            echo "## Produto"
+            echo "- Aplicação: WordPress real, tratado pela implantação como artefato PHP genérico"
+            echo "- Banco: MySQL"
+            echo "- Azure Container Group: ${{ steps.materialize.outputs.site_name }}"
+            echo "- Região: ${{ steps.placement.outputs.location }}"
+            echo "- URL final: **$URL**"
+            echo "- Login: **$URL/wp-login.php**"
+            echo
+            echo "## Decisões MyTrues aplicadas"
+            echo "1. ${{ steps.azure.outputs.decision_id }}"
+            echo "   - ${{ steps.azure.outputs.notice }}"
+            echo "2. ${{ steps.placement.outputs.decision_id }}"
+            echo "   - ${{ steps.placement.outputs.notice }}"
+            echo "3. ${{ steps.dns.outputs.decision_id }}"
+            echo "   - ${{ steps.dns.outputs.notice }}"
+            echo
+            echo "## Desvio conhecido"
+            echo "- O domínio solicitado $REQUESTED_DOMAIN ainda não está configurado porque o bootstrap DNS continua ausente."
+            echo "- O Senior A devolveu o hostname Azure funcional em vez de interromper o ciclo."
+            echo
+            echo "## Verificações"
+            echo "- WordPress homepage: **OK**"
+            echo "- WordPress login: **OK**"
+            echo "- PHP 8.3 runtime: **OK**"
+            echo "- MySQL 8.4 runtime: **OK**"
+            echo "- Fonte oficial baixada em runtime: **$SOURCE_URL**"
+            echo
+            echo "## Segurança do teste"
+            echo "- A senha administrativa foi gerada aleatoriamente e mascarada no workflow."
+            echo "- A credencial administrativa não foi publicada no relatório."
+            echo
+            echo "**Run:** $GITHUB_RUN_ID"
+          } >/tmp/report.md
+
+          cat /tmp/report.md
+          cat /tmp/report.md >> "$GITHUB_STEP_SUMMARY"
+
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+
+      - name: Stop local MyTrues provider
+        if: always()
+        working-directory: repo/Tools/MYTRUES
+        run: docker compose down
+
+      - name: Final output
+        if: success()
+        run: |
+          echo "FINAL WORDPRESS URL: ${{ steps.report.outputs.url }}"
+          echo "WORDPRESS PUBLISHED: YES"
