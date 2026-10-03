@@ -1,10 +1,4 @@
 {
-  "brand": "MyTrues",
-  "access": "Access",
-  "language": "Language",
-  "loading": "Loading…",
-  "error_generic": "We couldn't complete that right now.",
-  "close": "Close",
-  "cancel": "Cancel",
-  "save": "Save"
+  "brand":"MyTrues","access":"Access","language":"Language","loading":"Loading…",
+  "error_generic":"We couldn't complete that right now.","close":"Close","cancel":"Cancel","save":"Save"
 }
