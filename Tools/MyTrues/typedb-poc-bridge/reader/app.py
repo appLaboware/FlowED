@@ -29,6 +29,7 @@ PORTAL = ROOT / "portal.html"
 LOGIN = ROOT / "login.html"
 ASSETS = ROOT / "assets"
 I18N = ROOT / "i18n"
+LOCALES = ROOT / "locales"
 
 OAUTH_BASE = os.getenv("OAUTH_BASE", "https://mcp.mytrues.io").rstrip("/")
 TYPEDB_URL = os.getenv(
@@ -58,6 +59,7 @@ PUBLIC_CALLBACKS = [
 app = FastAPI(title="MyTrues Human Reader", docs_url=None, redoc_url=None)
 app.mount("/assets", StaticFiles(directory=ASSETS), name="assets")
 app.mount("/i18n", StaticFiles(directory=I18N), name="i18n")
+app.mount("/locales", StaticFiles(directory=LOCALES), name="locales")
 
 KIND_MAP = {
     "truth": "kind:truth",
