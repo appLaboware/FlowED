@@ -1,0 +1,356 @@
+{
+  "benchmark": "MYTRUES-COGNITIVE-RETRIEVAL-V1",
+  "description": "Neutral cognition histories for blind retrieval comparison.",
+  "cases": [
+    {
+      "case_id": "case:control-single-decision",
+      "failure_code": "benchmark.control.single_decision",
+      "base_context": {
+        "runtime": "linux",
+        "package_manager": "apt",
+        "environment": "server"
+      },
+      "events": [
+        {
+          "id": "evt:c1-observation-001",
+          "at": "2026-01-01T10:00:00Z",
+          "kind": "observation",
+          "facts": {
+            "symptom": "package-missing"
+          }
+        },
+        {
+          "id": "evt:c1-decision-001",
+          "at": "2026-01-01T10:01:00Z",
+          "kind": "decision",
+          "decision_id": "decision.c1.apt-install",
+          "action": "package.install_with_system_manager",
+          "result": {
+            "manager": "apt"
+          },
+          "rationale": "The target is a managed Linux server using apt.",
+          "trigger": "evt:c1-observation-001",
+          "rejected": [
+            "action:compile-from-source"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "case:control-evidence-before-decision",
+      "failure_code": "benchmark.control.evidence_before_decision",
+      "base_context": {
+        "runtime": "python",
+        "deployment": "container"
+      },
+      "events": [
+        {
+          "id": "evt:c2-observation-001",
+          "at": "2026-01-02T10:00:00Z",
+          "kind": "observation",
+          "facts": {
+            "startup_seconds": 42
+          }
+        },
+        {
+          "id": "evt:c2-evidence-001",
+          "at": "2026-01-02T10:03:00Z",
+          "kind": "evidence",
+          "statement": "Profiling shows dependency import dominates startup time.",
+          "facts": {
+            "dominant_cost": "dependency-import"
+          }
+        },
+        {
+          "id": "evt:c2-decision-001",
+          "at": "2026-01-02T10:05:00Z",
+          "kind": "decision",
+          "decision_id": "decision.c2.precompile",
+          "action": "runtime.precompile_dependencies",
+          "result": {
+            "strategy": "precompile"
+          },
+          "rationale": "Profiling isolated dependency import as the dominant startup cost.",
+          "trigger": "evt:c2-evidence-001",
+          "rejected": [
+            "action:increase-cpu"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "case:revision-immutable-runtime",
+      "failure_code": "benchmark.revision.immutable_runtime",
+      "base_context": {
+        "runtime": "php",
+        "missing_extension": "mysqli",
+        "extension_required": true
+      },
+      "events": [
+        {
+          "id": "evt:c3-observation-001",
+          "at": "2026-01-03T10:00:00Z",
+          "kind": "observation",
+          "facts": {
+            "error_class": "extension-missing"
+          }
+        },
+        {
+          "id": "evt:c3-decision-001",
+          "at": "2026-01-03T10:02:00Z",
+          "kind": "decision",
+          "decision_id": "decision.c3.install-runtime",
+          "action": "runtime.install_extension_and_retry",
+          "result": {
+            "strategy": "install-in-current-runtime",
+            "extension": "mysqli"
+          },
+          "rationale": "Initial evidence allowed mutation of the running environment.",
+          "trigger": "evt:c3-observation-001",
+          "rejected": [
+            "action:rebuild-image"
+          ]
+        },
+        {
+          "id": "evt:c3-evidence-002",
+          "at": "2026-01-03T10:10:00Z",
+          "kind": "evidence",
+          "statement": "Production runtime is immutable and rebuilt from image.",
+          "facts": {
+            "runtime_mutable": false
+          }
+        },
+        {
+          "id": "evt:c3-decision-002",
+          "at": "2026-01-03T10:12:00Z",
+          "kind": "decision",
+          "decision_id": "decision.c3.rebuild-image",
+          "action": "runtime.rebuild_image_with_extension",
+          "result": {
+            "strategy": "immutable-image-rebuild",
+            "extension": "mysqli"
+          },
+          "rationale": "The immutable-runtime constraint invalidated in-place repair.",
+          "trigger": "evt:c3-evidence-002",
+          "supersedes": "evt:c3-decision-001",
+          "rejected": [
+            "action:install-in-place"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "case:preference-lts-exception-return",
+      "failure_code": "benchmark.preference.lts_exception_return",
+      "base_context": {
+        "environment": "production",
+        "default_policy": "prefer-lts"
+      },
+      "events": [
+        {
+          "id": "evt:c4-preference-001",
+          "at": "2026-01-04T09:00:00Z",
+          "kind": "preference",
+          "statement": "Prefer LTS releases for production.",
+          "facts": {
+            "preferred_channel": "lts"
+          }
+        },
+        {
+          "id": "evt:c4-decision-001",
+          "at": "2026-01-04T09:05:00Z",
+          "kind": "decision",
+          "decision_id": "decision.c4.lts",
+          "action": "release.use_lts",
+          "result": {
+            "channel": "lts"
+          },
+          "rationale": "Production defaults to the stable LTS channel.",
+          "trigger": "evt:c4-preference-001",
+          "rejected": [
+            "action:use-latest"
+          ]
+        },
+        {
+          "id": "evt:c4-evidence-002",
+          "at": "2026-01-04T09:20:00Z",
+          "kind": "evidence",
+          "statement": "A critical fix exists only in the latest non-LTS release.",
+          "facts": {
+            "critical_fix_only_latest": true
+          }
+        },
+        {
+          "id": "evt:c4-decision-002",
+          "at": "2026-01-04T09:25:00Z",
+          "kind": "decision",
+          "decision_id": "decision.c4.latest-exception",
+          "action": "release.use_latest_exception",
+          "result": {
+            "channel": "latest",
+            "scope": "security-exception"
+          },
+          "rationale": "Security exception temporarily outweighs the LTS preference.",
+          "trigger": "evt:c4-evidence-002",
+          "supersedes": "evt:c4-decision-001",
+          "rejected": [
+            "action:remain-on-lts"
+          ]
+        },
+        {
+          "id": "evt:c4-evidence-003",
+          "at": "2026-01-04T10:00:00Z",
+          "kind": "evidence",
+          "statement": "The critical fix is now available in the LTS channel.",
+          "facts": {
+            "critical_fix_in_lts": true
+          }
+        },
+        {
+          "id": "evt:c4-decision-003",
+          "at": "2026-01-04T10:05:00Z",
+          "kind": "decision",
+          "decision_id": "decision.c4.return-lts",
+          "action": "release.return_to_lts",
+          "result": {
+            "channel": "lts"
+          },
+          "rationale": "The exception ended once LTS contained the required fix.",
+          "trigger": "evt:c4-evidence-003",
+          "supersedes": "evt:c4-decision-002",
+          "rejected": [
+            "action:stay-on-latest"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "case:database-reconsideration",
+      "failure_code": "benchmark.database.reconsideration",
+      "base_context": {
+        "project_stage": "prototype",
+        "expected_concurrency": 5
+      },
+      "events": [
+        {
+          "id": "evt:c5-decision-001",
+          "at": "2026-01-05T08:00:00Z",
+          "kind": "decision",
+          "decision_id": "decision.c5.sqlite",
+          "action": "database.use_sqlite",
+          "result": {
+            "database": "sqlite"
+          },
+          "rationale": "Prototype concurrency is low and local simplicity matters.",
+          "trigger": null,
+          "rejected": [
+            "action:use-postgresql"
+          ]
+        },
+        {
+          "id": "evt:c5-evidence-002",
+          "at": "2026-01-05T09:00:00Z",
+          "kind": "evidence",
+          "statement": "Load test reports sustained concurrency of 120.",
+          "facts": {
+            "measured_concurrency": 120
+          }
+        },
+        {
+          "id": "evt:c5-decision-002",
+          "at": "2026-01-05T09:05:00Z",
+          "kind": "decision",
+          "decision_id": "decision.c5.postgresql",
+          "action": "database.use_postgresql",
+          "result": {
+            "database": "postgresql"
+          },
+          "rationale": "Measured concurrency exceeds the prototype assumptions.",
+          "trigger": "evt:c5-evidence-002",
+          "supersedes": "evt:c5-decision-001",
+          "rejected": [
+            "action:keep-sqlite"
+          ]
+        },
+        {
+          "id": "evt:c5-correction-003",
+          "at": "2026-01-05T10:00:00Z",
+          "kind": "correction",
+          "statement": "The load generator duplicated each virtual user 30 times.",
+          "facts": {
+            "load_test_invalid": true,
+            "corrected_concurrency": 4
+          }
+        },
+        {
+          "id": "evt:c5-decision-003",
+          "at": "2026-01-05T10:05:00Z",
+          "kind": "decision",
+          "decision_id": "decision.c5.sqlite-reconsidered",
+          "action": "database.return_to_sqlite",
+          "result": {
+            "database": "sqlite"
+          },
+          "rationale": "Corrected evidence restores the original low-concurrency assumption.",
+          "trigger": "evt:c5-correction-003",
+          "supersedes": "evt:c5-decision-002",
+          "rejected": [
+            "action:keep-postgresql"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "case:auth-reuse-existing-oauth",
+      "failure_code": "benchmark.auth.reuse_existing_oauth",
+      "base_context": {
+        "application": "reader",
+        "requirement": "authenticated-entry"
+      },
+      "events": [
+        {
+          "id": "evt:c6-decision-001",
+          "at": "2026-01-06T11:00:00Z",
+          "kind": "decision",
+          "decision_id": "decision.c6.github-oauth",
+          "action": "auth.create_github_oauth",
+          "result": {
+            "provider": "github"
+          },
+          "rationale": "GitHub OAuth looked like the shortest path to protect the Reader.",
+          "trigger": null,
+          "rejected": [
+            "action:anonymous-access"
+          ]
+        },
+        {
+          "id": "evt:c6-evidence-002",
+          "at": "2026-01-06T11:30:00Z",
+          "kind": "evidence",
+          "statement": "The existing MyTrues OAuth service already supports PKCE S256 and dynamic client registration.",
+          "facts": {
+            "existing_oauth": true,
+            "pkce": "S256",
+            "dcr": true
+          }
+        },
+        {
+          "id": "evt:c6-decision-002",
+          "at": "2026-01-06T11:35:00Z",
+          "kind": "decision",
+          "decision_id": "decision.c6.reuse-mytrues-oauth",
+          "action": "auth.reuse_existing_mytrues_oauth",
+          "result": {
+            "provider": "mytrues-oauth"
+          },
+          "rationale": "Reuse avoids a second identity system and preserves one authorization boundary.",
+          "trigger": "evt:c6-evidence-002",
+          "supersedes": "evt:c6-decision-001",
+          "rejected": [
+            "action:create-second-oauth-stack"
+          ]
+        }
+      ]
+    }
+  ]
+}
