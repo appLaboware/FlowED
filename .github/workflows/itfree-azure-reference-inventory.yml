@@ -32,17 +32,39 @@ jobs:
           echo "::add-mask::$TOKEN"
           az login --service-principal --username "${{ steps.azure.outputs.client_id }}" --tenant "${{ steps.azure.outputs.tenant_id }}" --federated-token "$TOKEN" --allow-no-subscriptions -o none
           az account set --subscription "${{ steps.azure.outputs.subscription_id }}"
-      - name: Find ITFREE resources
+      - name: Inventory Azure resources
         shell: bash
         run: |
           set -euo pipefail
-          echo '=== RESOURCES ==='
-          az resource list --query "[?contains(to_lower(name),'itfree') || contains(to_lower(name),'ifree') || contains(to_lower(name),'free')].[name,type,resourceGroup,location]" -o tsv || true
-          echo '=== CONTAINER APPS ==='
-          az containerapp list --query "[?contains(to_lower(name),'itfree') || contains(to_lower(name),'ifree')].[name,resourceGroup,properties.configuration.ingress.fqdn,properties.template.containers[0].image]" -o tsv || true
-          echo '=== STATIC WEB APPS ==='
-          az staticwebapp list --query "[?contains(to_lower(name),'itfree') || contains(to_lower(name),'ifree')].[name,resourceGroup,defaultHostname,repositoryUrl,branch]" -o tsv || true
-          echo '=== WEB APPS ==='
-          az webapp list --query "[?contains(to_lower(name),'itfree') || contains(to_lower(name),'ifree')].[name,resourceGroup,defaultHostName,repositorySiteName]" -o tsv || true
-          echo '=== STORAGE ==='
-          az storage account list --query "[?contains(to_lower(name),'itfree') || contains(to_lower(name),'ifree')].[name,resourceGroup,primaryEndpoints.web]" -o json || true
+          az resource list -o json >/tmp/resources.json
+          python3 - <<'PY'
+          import json,re
+          data=json.load(open('/tmp/resources.json'))
+          hits=[]
+          for r in data:
+              s=' '.join(str(r.get(k,'')) for k in ('name','type','resourceGroup','location')).lower()
+              if re.search(r'itfree|iftree|ifree',s):
+                  hits.append({k:r.get(k) for k in ('name','type','resourceGroup','location','id')})
+          print('AZURE_MATCHES='+json.dumps(hits,ensure_ascii=False))
+          PY
+      - name: Inspect public ITFREE site contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          for host in itfree.org www.itfree.org; do
+            echo "=== $host ==="
+            code="$(curl -ksSL -o /tmp/site -D /tmp/headers -w '%{http_code}' --max-time 20 "https://$host/" || true)"
+            echo "HTTP=$code"
+            awk 'BEGIN{IGNORECASE=1} /^location:|^server:|^content-type:/ {gsub(/\r/,"");print}' /tmp/headers | head -n 10 || true
+            python3 - <<'PY'
+          import re
+          html=open('/tmp/site',errors='ignore').read()
+          print('TITLE=',re.findall(r'<title[^>]*>(.*?)</title>',html,re.I|re.S)[:1])
+          print('LEN=',len(html))
+          for key in ('i18n','locale','translations','lang','json','animation','canvas'):
+              if key in html.lower(): print('HAS_'+key.upper()+'=yes')
+          for u in re.findall(r'(?:src|href)=["\']([^"\']+)["\']',html,re.I):
+              if any(x in u.lower() for x in ('.js','.css','.json','i18n','locale')):
+                  print('ASSET',u)
+          PY
+          done
