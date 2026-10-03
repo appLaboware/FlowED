@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f5f3ee">
+<meta name="theme-color" content="#f3f2ee">
 <title>MyTrues</title>
 <link rel="stylesheet" href="/assets/css/access.css">
 </head>
@@ -12,7 +12,6 @@
 <main class="page">
   <button class="lang" id="lang" type="button">EN</button>
   <div class="stack">
-    <div class="private" data-i18n="private_access">Acesso privado</div>
     <div class="marks" aria-label="MyTrues · Google">
       <img src="/assets/mytrues-logo.png" alt="MyTrues">
       <span class="bridge" aria-hidden="true"></span>
@@ -25,8 +24,7 @@
         </svg>
       </a>
     </div>
-    <div class="status" id="access-status" role="status"></div>
-    <a class="back" href="/" data-i18n="back">Voltar</a>
+    <div class="status" id="access-status" role="status" aria-live="polite"></div>
   </div>
 </main>
 <script src="/assets/js/i18n.js"></script>
