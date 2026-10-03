@@ -101,8 +101,16 @@ jobs:
           curl -fsSL "$base/i18n/en/landing.json" -o /tmp/landing-en.json
           curl -fsSL "$base/i18n/en/access.json" -o /tmp/access-en.json
           curl -fsSL "$base/i18n/en/portal.json" -o /tmp/portal-en.json
+          curl -fsSL "$base/locales/pt-BR/common.json" -o /tmp/locales-common-pt.json
+          curl -fsSL "$base/locales/pt-BR/landing.json" -o /tmp/locales-landing-pt.json
+          curl -fsSL "$base/locales/pt-BR/access.json" -o /tmp/locales-access-pt.json
+          curl -fsSL "$base/locales/pt-BR/portal.json" -o /tmp/locales-portal-pt.json
+          curl -fsSL "$base/locales/en/common.json" -o /tmp/locales-common-en.json
+          curl -fsSL "$base/locales/en/landing.json" -o /tmp/locales-landing-en.json
+          curl -fsSL "$base/locales/en/access.json" -o /tmp/locales-access-en.json
+          curl -fsSL "$base/locales/en/portal.json" -o /tmp/locales-portal-en.json
           python3 -m py_compile /tmp/app.py
-          jq -e . /tmp/common-pt.json /tmp/landing-pt.json /tmp/access-pt.json /tmp/portal-pt.json /tmp/common-en.json /tmp/landing-en.json /tmp/access-en.json /tmp/portal-en.json >/dev/null
+          jq -e . /tmp/common-pt.json /tmp/landing-pt.json /tmp/access-pt.json /tmp/portal-pt.json /tmp/common-en.json /tmp/landing-en.json /tmp/access-en.json /tmp/portal-en.json /tmp/locales-common-pt.json /tmp/locales-landing-pt.json /tmp/locales-access-pt.json /tmp/locales-portal-pt.json /tmp/locales-common-en.json /tmp/locales-landing-en.json /tmp/locales-access-en.json /tmp/locales-portal-en.json >/dev/null
           grep -q '<title>MyTrues</title>' /tmp/index.html
           grep -q 'data-i18n="headline_a"' /tmp/index.html
           grep -q 'data-i18n="headline_b"' /tmp/index.html
@@ -204,7 +212,7 @@ jobs:
                     image:"python:3.12-alpine",
                     command:["/bin/sh"],
                     args:["-c",(
-                      "set -e; mkdir -p /app/assets/css /app/assets/js /app/i18n/pt-BR /app/i18n/en; " +
+                      "set -e; mkdir -p /app/assets/css /app/assets/js /app/i18n/pt-BR /app/i18n/en /app/locales/pt-BR /app/locales/en; " +
                       "wget -qO /app/app.py \"" + $source_base + "/app.py\"; " +
                       "wget -qO /app/index.html \"" + $source_base + "/index.html\"; " +
                       "wget -qO /app/portal.html \"" + $source_base + "/portal.html\"; " +
@@ -225,6 +233,14 @@ jobs:
                       "wget -qO /app/i18n/en/landing.json \"" + $source_base + "/i18n/en/landing.json\"; " +
                       "wget -qO /app/i18n/en/access.json \"" + $source_base + "/i18n/en/access.json\"; " +
                       "wget -qO /app/i18n/en/portal.json \"" + $source_base + "/i18n/en/portal.json\"; " +
+                      "wget -qO /app/locales/pt-BR/common.json \"" + $source_base + "/locales/pt-BR/common.json\"; " +
+                      "wget -qO /app/locales/pt-BR/landing.json \"" + $source_base + "/locales/pt-BR/landing.json\"; " +
+                      "wget -qO /app/locales/pt-BR/access.json \"" + $source_base + "/locales/pt-BR/access.json\"; " +
+                      "wget -qO /app/locales/pt-BR/portal.json \"" + $source_base + "/locales/pt-BR/portal.json\"; " +
+                      "wget -qO /app/locales/en/common.json \"" + $source_base + "/locales/en/common.json\"; " +
+                      "wget -qO /app/locales/en/landing.json \"" + $source_base + "/locales/en/landing.json\"; " +
+                      "wget -qO /app/locales/en/access.json \"" + $source_base + "/locales/en/access.json\"; " +
+                      "wget -qO /app/locales/en/portal.json \"" + $source_base + "/locales/en/portal.json\"; " +
                       "wget -qO /app/assets/mytrues-logo.png 'https://avatars.githubusercontent.com/u/217432391?v=4'; " +
                       "pip install --no-cache-dir fastapi==0.118.0 uvicorn==0.37.0 httpx==0.28.1 psycopg[binary]==3.2.3 >/tmp/pip.log 2>&1; " +
                       "cd /app; exec uvicorn app:app --host 0.0.0.0 --port 8000"
