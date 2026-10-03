@@ -1,0 +1,77 @@
+name: MyTrues Reader API contract probe
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-reader-api-probe.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AZURE_BUNDLE: ${{ secrets.AZURE }}
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Resolve Azure identifiers
+        id: azure
+        shell: bash
+        run: |
+          set -euo pipefail
+          extract(){ local key="$1"; printf '%s\n' "$AZURE_BUNDLE" | sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*[:=][[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\\2/p" | tail -n1; }
+          CLIENT_ID="$(extract AZURE_CLIENT_ID)"; TENANT_ID="$(extract AZURE_TENANT_ID)"; SUBSCRIPTION_ID="$(extract AZURE_SUBSCRIPTION_ID)"
+          test -n "$CLIENT_ID" && test -n "$TENANT_ID" && test -n "$SUBSCRIPTION_ID"
+          echo "::add-mask::$CLIENT_ID"; echo "::add-mask::$TENANT_ID"; echo "::add-mask::$SUBSCRIPTION_ID"
+          echo "client_id=$CLIENT_ID" >> "$GITHUB_OUTPUT"; echo "tenant_id=$TENANT_ID" >> "$GITHUB_OUTPUT"; echo "subscription_id=$SUBSCRIPTION_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Azure OIDC token
+        id: oidc
+        shell: bash
+        run: |
+          set -euo pipefail
+          TOKEN="$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange" | jq -r .value)"
+          test -n "$TOKEN" && test "$TOKEN" != null
+          echo "::add-mask::$TOKEN"
+          { echo "token<<EOF"; echo "$TOKEN"; echo EOF; } >> "$GITHUB_OUTPUT"
+
+      - name: Login Azure and read TypeDB secret
+        id: secret
+        shell: bash
+        run: |
+          set -euo pipefail
+          az login --service-principal --username "${{ steps.azure.outputs.client_id }}" --tenant "${{ steps.azure.outputs.tenant_id }}" --federated-token "${{ steps.oidc.outputs.token }}" --allow-no-subscriptions -o none
+          az account set --subscription "${{ steps.azure.outputs.subscription_id }}"
+          PW="$(az keyvault secret show --vault-name mytrues-ingest-kv -n typedb-poc-admin --query value -o tsv)"
+          test -n "$PW"
+          echo "::add-mask::$PW"
+          { echo "password<<EOF"; echo "$PW"; echo EOF; } >> "$GITHUB_OUTPUT"
+
+      - name: Probe OAuth metadata and TypeDB HTTP shape
+        shell: bash
+        env:
+          TYPEDB_PASSWORD: ${{ steps.secret.outputs.password }}
+        run: |
+          set -euo pipefail
+          echo "=== OAuth metadata ==="
+          curl -fsS https://mcp.mytrues.io/.well-known/oauth-authorization-server | jq '{issuer,authorization_endpoint,token_endpoint,registration_endpoint,code_challenge_methods_supported,scopes_supported}'
+
+          TYPEDB=https://mytrues-tdb-e2f9605d-eastus2.eastus2.cloudapp.azure.com
+          TOKEN="$(curl -fsS "$TYPEDB/v1/signin" -H 'content-type: application/json' --data-binary "$(jq -nc --arg p "$TYPEDB_PASSWORD" '{username:"admin",password:$p}')" | jq -r .token)"
+          test -n "$TOKEN"
+          echo "::add-mask::$TOKEN"
+
+          curl -fsS "$TYPEDB/v1/query"             -H "Authorization: Bearer $TOKEN" -H 'content-type: application/json'             --data-binary @- <<'JSON' > /tmp/query.json
+          {
+            "databaseName":"mytrues_memory_poc_v0",
+            "transactionType":"read",
+            "query":"match $o isa occurrence, has atom-id $oid; $b isa binding, links (occurrence: $o, key: $k, value: $v); $k has atom-id $key; $v has atom-id $value; select $oid, $key, $value;",
+            "queryOptions":{"includeInstanceTypes":false,"answerCountLimit":3}
+          }
+          JSON
+
+          jq '{queryType,answerType,answersType:(.answers|type),first:(.answers[0] // null)}' /tmp/query.json
