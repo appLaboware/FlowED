@@ -48,6 +48,7 @@ OAUTH_CLIENT_ID = os.getenv("OAUTH_CLIENT_ID", "").strip()
 PG_HOST = os.getenv("MYTRUES_POSTGRES_HOST", "mytrues-canonical-pg.postgres.database.azure.com")
 PG_DB = os.getenv("MYTRUES_POSTGRES_DB", "mytrues")
 PG_USER = os.getenv("MYTRUES_POSTGRES_USER", "mytrues-reader")
+CANONICAL_URL = os.getenv("CANONICAL_URL", "https://mytrues.io").rstrip("/")
 PUBLIC_CALLBACKS = [
     x.strip()
     for x in os.getenv(
@@ -220,7 +221,9 @@ def read_payload(token: str | None) -> dict[str, Any] | None:
 
 
 def callback_for(request: Request) -> str:
-    host = request.headers.get("x-forwarded-host") or request.headers.get("host", "")
+    host = (request.headers.get("x-forwarded-host") or request.headers.get("host", "")).split(":", 1)[0].lower()
+    if host in {"mytrues.io", "www.mytrues.io"} and "https://reader.mytrues.io/auth/callback" in PUBLIC_CALLBACKS:
+        return "https://reader.mytrues.io/auth/callback"
     candidate = f"https://{host}/auth/callback"
     if candidate in PUBLIC_CALLBACKS:
         return candidate
@@ -1068,15 +1071,21 @@ async def auth_callback(request: Request, code: str | None = None, state: str | 
     else:
         session_data["role"] = "unbound"
     session = sign_payload(session_data)
-    response = RedirectResponse("/app", status_code=302)
-    response.set_cookie(
-        "mt_session",
-        session,
-        max_age=8 * 3600,
-        httponly=True,
-        secure=True,
-        samesite="lax",
-    )
+    callback_host = (request.headers.get("x-forwarded-host") or request.headers.get("host", "")).split(":", 1)[0].lower()
+    cross_subdomain = callback_host == "reader.mytrues.io"
+    target = CANONICAL_URL + "/app" if cross_subdomain else "/app"
+    response = RedirectResponse(target, status_code=302)
+    cookie_args = {
+        "key": "mt_session",
+        "value": session,
+        "max_age": 8 * 3600,
+        "httponly": True,
+        "secure": True,
+        "samesite": "lax",
+    }
+    if cross_subdomain:
+        cookie_args["domain"] = ".mytrues.io"
+    response.set_cookie(**cookie_args)
     response.delete_cookie("mt_oauth_tx")
     return response
 
