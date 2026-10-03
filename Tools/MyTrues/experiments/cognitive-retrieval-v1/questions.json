@@ -1,0 +1,189 @@
+{
+  "benchmark": "MYTRUES-COGNITIVE-RETRIEVAL-V1",
+  "questions": [
+    {
+      "id": "q01",
+      "case_id": "case:control-single-decision",
+      "kind": "current_decision",
+      "text": "Qual é a decisão atual?"
+    },
+    {
+      "id": "q02",
+      "case_id": "case:control-single-decision",
+      "kind": "decision_count",
+      "text": "Quantas decisões distintas permanecem recuperáveis?"
+    },
+    {
+      "id": "q03",
+      "case_id": "case:control-single-decision",
+      "kind": "original_context_value",
+      "key": "package_manager",
+      "text": "Qual package manager fazia parte do contexto original?"
+    },
+    {
+      "id": "q04",
+      "case_id": "case:control-single-decision",
+      "kind": "current_rationale",
+      "text": "Por que a decisão atual foi tomada?"
+    },
+    {
+      "id": "q05",
+      "case_id": "case:control-evidence-before-decision",
+      "kind": "current_decision",
+      "text": "Qual é a decisão atual?"
+    },
+    {
+      "id": "q06",
+      "case_id": "case:control-evidence-before-decision",
+      "kind": "current_context_value",
+      "key": "dominant_cost",
+      "text": "Qual evidência factual estava disponível no momento da decisão?"
+    },
+    {
+      "id": "q07",
+      "case_id": "case:control-evidence-before-decision",
+      "kind": "current_rationale",
+      "text": "Qual foi a justificativa registrada?"
+    },
+    {
+      "id": "q08",
+      "case_id": "case:revision-immutable-runtime",
+      "kind": "current_decision",
+      "text": "Qual é a decisão atual?"
+    },
+    {
+      "id": "q09",
+      "case_id": "case:revision-immutable-runtime",
+      "kind": "previous_decision",
+      "text": "Qual era a decisão imediatamente anterior?"
+    },
+    {
+      "id": "q10",
+      "case_id": "case:revision-immutable-runtime",
+      "kind": "decision_count",
+      "text": "Quantas decisões distintas permanecem recuperáveis?"
+    },
+    {
+      "id": "q11",
+      "case_id": "case:revision-immutable-runtime",
+      "kind": "trigger_event_of_current",
+      "text": "Qual ocorrência provocou a mudança para a decisão atual?"
+    },
+    {
+      "id": "q12",
+      "case_id": "case:revision-immutable-runtime",
+      "kind": "previous_rationale",
+      "text": "Por que a decisão anterior havia sido tomada?"
+    },
+    {
+      "id": "q13",
+      "case_id": "case:revision-immutable-runtime",
+      "kind": "superseded_by_current",
+      "text": "Qual decisão foi explicitamente superada pela atual?"
+    },
+    {
+      "id": "q14",
+      "case_id": "case:preference-lts-exception-return",
+      "kind": "current_decision",
+      "text": "Qual é a decisão atual?"
+    },
+    {
+      "id": "q15",
+      "case_id": "case:preference-lts-exception-return",
+      "kind": "previous_decision",
+      "text": "Qual era a decisão imediatamente anterior?"
+    },
+    {
+      "id": "q16",
+      "case_id": "case:preference-lts-exception-return",
+      "kind": "first_decision",
+      "text": "Qual foi a primeira decisão dessa história?"
+    },
+    {
+      "id": "q17",
+      "case_id": "case:preference-lts-exception-return",
+      "kind": "decision_count",
+      "text": "Quantas decisões distintas permanecem recuperáveis?"
+    },
+    {
+      "id": "q18",
+      "case_id": "case:preference-lts-exception-return",
+      "kind": "trigger_event_of_current",
+      "text": "Qual evidência encerrou a exceção e levou à decisão atual?"
+    },
+    {
+      "id": "q19",
+      "case_id": "case:preference-lts-exception-return",
+      "kind": "event_count_by_kind",
+      "event_kind": "evidence",
+      "text": "Quantas evidências explícitas existem nessa história?"
+    },
+    {
+      "id": "q20",
+      "case_id": "case:database-reconsideration",
+      "kind": "current_decision",
+      "text": "Qual é a decisão atual?"
+    },
+    {
+      "id": "q21",
+      "case_id": "case:database-reconsideration",
+      "kind": "previous_decision",
+      "text": "Qual decisão foi abandonada imediatamente antes da atual?"
+    },
+    {
+      "id": "q22",
+      "case_id": "case:database-reconsideration",
+      "kind": "first_decision",
+      "text": "Qual foi a primeira decisão?"
+    },
+    {
+      "id": "q23",
+      "case_id": "case:database-reconsideration",
+      "kind": "decision_count",
+      "text": "Quantas decisões distintas permanecem recuperáveis?"
+    },
+    {
+      "id": "q24",
+      "case_id": "case:database-reconsideration",
+      "kind": "trigger_event_of_current",
+      "text": "Qual correção levou à reconsideração final?"
+    },
+    {
+      "id": "q25",
+      "case_id": "case:database-reconsideration",
+      "kind": "previous_rationale",
+      "text": "Por que PostgreSQL havia sido escolhido antes?"
+    },
+    {
+      "id": "q26",
+      "case_id": "case:auth-reuse-existing-oauth",
+      "kind": "current_decision",
+      "text": "Qual é a decisão atual?"
+    },
+    {
+      "id": "q27",
+      "case_id": "case:auth-reuse-existing-oauth",
+      "kind": "previous_decision",
+      "text": "Qual abordagem de autenticação havia sido escolhida antes?"
+    },
+    {
+      "id": "q28",
+      "case_id": "case:auth-reuse-existing-oauth",
+      "kind": "trigger_event_of_current",
+      "text": "Qual evidência levou à reutilização do OAuth existente?"
+    },
+    {
+      "id": "q29",
+      "case_id": "case:auth-reuse-existing-oauth",
+      "kind": "superseded_by_current",
+      "text": "Qual decisão foi explicitamente superada?"
+    },
+    {
+      "id": "q30",
+      "case_id": "case:auth-reuse-existing-oauth",
+      "kind": "original_context_value",
+      "key": "requirement",
+      "text": "Qual era o requisito original da aplicação?"
+    }
+  ]
+}
