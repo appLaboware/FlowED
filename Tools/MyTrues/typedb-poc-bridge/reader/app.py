@@ -396,6 +396,7 @@ async def auth_callback(request: Request, code: str | None = None, state: str | 
                 "client_id": tx["client_id"],
                 "redirect_uri": tx["redirect_uri"],
                 "code_verifier": tx["verifier"],
+                "resource": f"{OAUTH_BASE}/mcp",
             },
             timeout=20,
         )
