@@ -1,0 +1,51 @@
+{
+  "experiment": "MYTRUES-DUAL-MEMORY-AB-001",
+  "case_id": "case:ab-cognition-history",
+  "description": "One neutral cognition stream, materialized independently into the provider-reference memory and the Atom/Occurrence/Binding memory.",
+  "events": [
+    {
+      "event_id": "evt:observation-001",
+      "kind": "observation",
+      "failure_code": "ab.cognition.same_case",
+      "context": {
+        "runtime": "php",
+        "missing_extension": "mysqli",
+        "extension_required": true,
+        "evidence_revision": "e1"
+      }
+    },
+    {
+      "event_id": "evt:decision-001",
+      "kind": "decision",
+      "decision_id": "decision.ab.v1",
+      "action": "runtime.install_extension_and_retry",
+      "result": {
+        "strategy": "install-compatible-package-in-current-runtime",
+        "extension": "mysqli",
+        "retry": true
+      },
+      "reason": "Initial evidence favored repairing the current runtime.",
+      "based_on": "evt:observation-001"
+    },
+    {
+      "event_id": "evt:evidence-002",
+      "kind": "evidence",
+      "statement": "The runtime is immutable and must be rebuilt to preserve deployment reproducibility.",
+      "about": "case:ab-cognition-history"
+    },
+    {
+      "event_id": "evt:decision-002",
+      "kind": "decision",
+      "decision_id": "decision.ab.v2",
+      "action": "runtime.rebuild_image_with_extension",
+      "result": {
+        "strategy": "immutable-image-rebuild",
+        "extension": "mysqli",
+        "redeploy": true
+      },
+      "reason": "New evidence established an immutable-runtime constraint.",
+      "based_on": "evt:evidence-002",
+      "supersedes": "evt:decision-001"
+    }
+  ]
+}
