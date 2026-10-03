@@ -45,5 +45,12 @@ jobs:
           grep -qi '^HTTP/.* 302' /tmp/auth-h
           loc="$(awk 'BEGIN{IGNORECASE=1} /^location:/ {sub(/^[^:]+:[[:space:]]*/,"");gsub(/\r/,"");print;exit}' /tmp/auth-h)"
           printf '%s' "$loc" | grep -Fq 'https://mcp.mytrues.io/authorize?'
-          printf '%s' "$loc" | grep -Fq 'redirect_uri=https%3A%2F%2Fmytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io%2Fauth%2Fcallback'
+          redirect_uri="$(python3 -c 'import sys,urllib.parse as u; print(u.parse_qs(u.urlparse(sys.stdin.read().strip()).query)["redirect_uri"][0])' <<<"$loc")"
+          case "$redirect_uri" in
+            https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io/auth/callback|https://reader.mytrues.io/auth/callback) ;;
+            *) echo "Unexpected redirect_uri" >&2; exit 1 ;;
+          esac
+          auth_code="$(curl -sS -o /tmp/oauth-body -w '%{http_code}' "$loc")"
+          test "$auth_code" = "200" -o "$auth_code" = "302"
+          ! grep -qi 'invalid_redirect_uri' /tmp/oauth-body
           echo "GOOGLE_OAUTH_START_PASS"
