@@ -339,7 +339,7 @@ async def login(request: Request):
             metadata["registration_endpoint"],
             json={
                 "client_name": "MyTrues Human Reader",
-                "redirect_uris": list(dict.fromkeys(PUBLIC_CALLBACKS)),
+                "redirect_uris": [redirect_uri],
                 "grant_types": ["authorization_code", "refresh_token"],
                 "response_types": ["code"],
                 "token_endpoint_auth_method": "none",
