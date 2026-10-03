@@ -66,20 +66,19 @@ jobs:
           az login --service-principal             --username "${{ steps.azure.outputs.client_id }}"             --tenant "${{ steps.azure.outputs.tenant_id }}"             --federated-token "${{ steps.oidc.outputs.token }}"             --allow-no-subscriptions -o none
           az account set --subscription "${{ steps.azure.outputs.subscription_id }}"
 
-      - name: Validate apex DNS
+      - name: Validate reader.mytrues.io DNS
         id: dns
         shell: bash
         run: |
           set -euo pipefail
           rg=rg-flowed-ideos-lab
-          env=mytrues-memory-env
           app=mytrues-reader
           domain=reader.mytrues.io
 
           expected_cname="$(az containerapp show -g "$rg" -n "$app" --query properties.configuration.ingress.fqdn -o tsv)"
           expected_txt="$(az containerapp show -g "$rg" -n "$app" --query properties.customDomainVerificationId -o tsv)"
-          actual_cname="$(dig +short CNAME "$domain" | sort -u | tr '\n' ' ')"
-          actual_txt="$(dig +short TXT asuid.reader.$domain | tr -d '\"' | tr '\n' ' ')"
+          actual_cname="$(dig +short CNAME "$domain" | sed 's/\.$//' | tr '\n' ' ')"
+          actual_txt="$(dig +short TXT asuid.reader.mytrues.io | tr -d '\"' | tr '\n' ' ')"
 
           echo "expected_cname=$expected_cname"
           echo "actual_cname=$actual_cname"
@@ -92,7 +91,7 @@ jobs:
               echo
               echo "Configure Cloudflare as **DNS only**:"
               echo "- CNAME `reader` -> `$expected_cname`"
-              echo "- TXT `asuid` -> `$expected_txt`"
+              echo "- TXT `asuid.reader` -> `$expected_txt`"
             } >> "$GITHUB_STEP_SUMMARY"
             echo "ready=false" >> "$GITHUB_OUTPUT"
             exit 0
@@ -100,7 +99,7 @@ jobs:
 
           echo "ready=true" >> "$GITHUB_OUTPUT"
 
-      - name: Bind mytrues.io and managed TLS
+      - name: Bind reader.mytrues.io and managed TLS
         if: steps.dns.outputs.ready == 'true'
         shell: bash
         run: |
@@ -110,19 +109,24 @@ jobs:
           env=mytrues-memory-env
           domain=reader.mytrues.io
 
-          if ! az containerapp show -g "$rg" -n "$app" --query "properties.configuration.ingress.customDomains[?name=='$domain'].name | [0]" -o tsv | grep -qx "$domain"; then
+          existing="$(az containerapp show -g "$rg" -n "$app" --query "properties.configuration.ingress.customDomains[?name=='$domain'].name | [0]" -o tsv)"
+          if [ "$existing" != "$domain" ]; then
             az containerapp hostname add -g "$rg" -n "$app" --hostname "$domain" --only-show-errors -o none
           fi
 
           az containerapp hostname bind             -g "$rg" -n "$app"             --hostname "$domain"             --environment "$env"             --validation-method CNAME             --only-show-errors -o none
 
+          ok=false
           for i in $(seq 1 60); do
             if curl -fsS --max-time 15 "https://$domain/" -o /tmp/domain.html; then
-              break
+              if grep -q '<title>MyTrues · Human Reader</title>' /tmp/domain.html; then
+                ok=true
+                break
+              fi
             fi
             sleep 5
           done
-          grep -q '<title>MyTrues · Human Reader</title>' /tmp/domain.html
+          test "$ok" = true
           echo "DOMAIN_TLS_PASS=https://$domain/"
 
       - name: Check GitHub OAuth secrets
@@ -160,8 +164,6 @@ jobs:
           az containerapp auth github update             -g "$rg" -n "$app"             --client-id "$GITHUB_OAUTH_CLIENT_ID"             --client-secret "$GITHUB_OAUTH_CLIENT_SECRET"             --yes --only-show-errors -o none
 
           az containerapp auth update             -g "$rg" -n "$app"             --enabled true             --unauthenticated-client-action RedirectToLoginPage             --redirect-provider GitHub             --require-https true             --token-store true             --yes --only-show-errors -o none
-
-          az containerapp auth show -g "$rg" -n "$app"             --query '{enabled:platform.enabled,action:globalValidation.unauthenticatedClientAction,provider:globalValidation.redirectToProvider,githubConfigured:identityProviders.gitHub.registration.clientId!=null}'             -o json
 
       - name: Verify login gate
         if: steps.dns.outputs.ready == 'true' && steps.oauth.outputs.ready == 'true'
