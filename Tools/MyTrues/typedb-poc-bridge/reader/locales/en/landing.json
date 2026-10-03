@@ -1,0 +1,16 @@
+{
+  "meta_title":"MyTrues",
+  "status":"In the making",
+  "headline_a":"We’re preparing",
+  "headline_b":"something remarkable.",
+  "lead":"If you want to follow along, leave your name. When the time comes, you’ll know.",
+  "name_label":"Name",
+  "email_label":"Email",
+  "name_placeholder":"Your name",
+  "email_placeholder":"you@example.com",
+  "submit":"Keep me posted",
+  "sending":"Sending…",
+  "success":"Done. When the time comes, you’ll know.",
+  "note":"No spam. No reveal before its time.",
+  "access_aria":"Reserved access"
+}
