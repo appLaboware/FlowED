@@ -1,0 +1,49 @@
+name: MyTrues public-private site smoke
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-site-smoke.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - name: Verify teaser, private portal gate, interest route and OAuth start
+        shell: bash
+        run: |
+          set -euo pipefail
+          base=https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io
+
+          curl -fsS "$base/" -o /tmp/home
+          grep -q '<title>MyTrues</title>' /tmp/home
+          grep -q 'Estamos preparando' /tmp/home
+          grep -q 'Acesso reservado' /tmp/home
+          echo "PUBLIC_TEASER_PASS"
+
+          code="$(curl -sS -D /tmp/app-h -o /dev/null -w '%{http_code}' "$base/app")"
+          test "$code" = "302"
+          grep -qi '^location: /login' /tmp/app-h
+          echo "PRIVATE_APP_GATE_PASS"
+
+          curl -fsS "$base/login" -o /tmp/login
+          grep -q 'Continuar com Google' /tmp/login
+          echo "BRANDED_LOGIN_PASS"
+
+          # Honeypot path proves the public interest route without creating test data.
+          code="$(curl -sS -o /tmp/interest -w '%{http_code}'             -H 'content-type: application/json'             --data '{"display_name":"Smoke","email":"smoke@example.invalid","website":"bot-field"}'             "$base/api/interest")"
+          test "$code" = "200"
+          jq -e '.ok == true' /tmp/interest >/dev/null
+          echo "PUBLIC_INTEREST_ROUTE_PASS"
+
+          curl -sS -D /tmp/auth-h -o /dev/null "$base/auth/start"
+          grep -qi '^HTTP/.* 302' /tmp/auth-h
+          loc="$(awk 'BEGIN{IGNORECASE=1} /^location:/ {sub(/^[^:]+:[[:space:]]*/,"");gsub(/\r/,"");print;exit}' /tmp/auth-h)"
+          printf '%s' "$loc" | grep -Fq 'https://mcp.mytrues.io/authorize?'
+          printf '%s' "$loc" | grep -Fq 'redirect_uri=https%3A%2F%2Fmytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io%2Fauth%2Fcallback'
+          echo "GOOGLE_OAUTH_START_PASS"
