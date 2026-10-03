@@ -37,6 +37,7 @@ TYPEDB_PASSWORD = os.environ["TYPEDB_PASSWORD"]
 SESSION_KEY = os.environ["READER_SESSION_KEY"].encode()
 MCP_CAPABILITY = os.environ.get("MCP_CAPABILITY", "")
 PORTAL_PREVIEW_CAPABILITY = os.environ.get("PORTAL_PREVIEW_CAPABILITY", "")
+PORTAL_ADMIN_BOOTSTRAP = os.environ.get("PORTAL_ADMIN_BOOTSTRAP", "")
 PG_HOST = os.getenv("MYTRUES_POSTGRES_HOST", "mytrues-canonical-pg.postgres.database.azure.com")
 PG_DB = os.getenv("MYTRUES_POSTGRES_DB", "mytrues")
 PG_USER = os.getenv("MYTRUES_POSTGRES_USER", "mytrues-reader")
@@ -353,8 +354,23 @@ async def create_person_record(display_name: str, email: str, role: str):
             "memory_namespace":namespace,"invite_code":invite_code}
 
 
-async def claim_invite(subject: str, code: str):
-    digest = hashlib.sha256(code.strip().encode()).hexdigest()
+async def admin_exists() -> bool:
+    def work(token: str):
+        with _pg_connect(token) as db:
+            return bool(db.execute("SELECT 1 FROM mytrues_access WHERE role='admin' LIMIT 1").fetchone())
+    return await pg_call(work)
+
+
+async def claim_invite(
+    subject: str,
+    code: str,
+    email: str | None = None,
+    display: str | None = None,
+):
+    raw_code = code.strip()
+    digest = hashlib.sha256(raw_code.encode()).hexdigest()
+    bootstrap = bool(PORTAL_ADMIN_BOOTSTRAP) and hmac.compare_digest(raw_code, PORTAL_ADMIN_BOOTSTRAP)
+
     def work(token: str):
         with _pg_connect(token) as db:
             row = db.execute(
@@ -366,14 +382,41 @@ async def claim_invite(subject: str, code: str):
                 WHERE i.code_hash=%s AND i.status='active'
                 """,(digest,)
             ).fetchone()
-            if not row:
+            if row:
+                db.execute(
+                    "INSERT INTO mytrues_identities(provider,subject,user_id) VALUES('google',%s,%s) ON CONFLICT DO NOTHING",
+                    (subject,row[0]),
+                )
+                db.execute("UPDATE mytrues_invites SET status='claimed',claimed_at=now() WHERE invite_id=%s",(row[6],))
+                return row[:6]
+
+            if not bootstrap:
                 return None
+
+            # Bootstrap is single-use by invariant: it is accepted only while no admin exists.
+            if db.execute("SELECT 1 FROM mytrues_access WHERE role='admin' LIMIT 1").fetchone():
+                return None
+
+            user_id = str(uuid.uuid4())
+            namespace = "owner:" + user_id
+            safe_email = (email or "").strip()
+            if not safe_email:
+                safe_email = "google-" + hashlib.sha256(subject.encode()).hexdigest()[:16] + "@identity.mytrues.local"
+            safe_name = (display or "MyTrues Admin").strip()[:120] or "MyTrues Admin"
+
             db.execute(
-                "INSERT INTO mytrues_identities(provider,subject,user_id) VALUES('google',%s,%s) ON CONFLICT DO NOTHING",
-                (subject,row[0]),
+                "INSERT INTO mytrues_users(user_id,display_name,email,status) VALUES(%s,%s,%s,'active')",
+                (user_id,safe_name,safe_email),
             )
-            db.execute("UPDATE mytrues_invites SET status='claimed',claimed_at=now() WHERE invite_id=%s",(row[6],))
-            return row[:6]
+            db.execute(
+                "INSERT INTO mytrues_access(user_id,role,memory_namespace) VALUES(%s,'admin',%s)",
+                (user_id,namespace),
+            )
+            db.execute(
+                "INSERT INTO mytrues_identities(provider,subject,user_id) VALUES('google',%s,%s)",
+                (subject,user_id),
+            )
+            return (user_id,safe_name,safe_email,"active","admin",namespace)
     return await pg_call(work)
 
 
@@ -949,6 +992,8 @@ async def logout():
 async def preview(capability: str):
     if not PORTAL_PREVIEW_CAPABILITY or not hmac.compare_digest(capability, PORTAL_PREVIEW_CAPABILITY):
         raise HTTPException(status_code=404)
+    if await admin_exists():
+        raise HTTPException(status_code=404)
     session = sign_payload({
         "sub":"preview-admin","name":"MyTrues Admin Preview","role":"admin","preview":True,
         "iat":int(time.time()),"exp":time.time()+4*3600,
@@ -976,7 +1021,7 @@ async def api_me(request: Request):
 @app.post("/api/claim")
 async def api_claim(request: Request, body: ClaimInvite):
     user=require_user(request)
-    row=await claim_invite(str(user["sub"]),body.code)
+    row=await claim_invite(str(user["sub"]),body.code,user.get("email"),user.get("name"))
     if not row:
         raise HTTPException(status_code=404,detail="convite inválido ou já utilizado")
     response=JSONResponse({"ok":True})
