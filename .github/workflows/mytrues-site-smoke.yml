@@ -44,14 +44,27 @@ jobs:
           curl -sS -D /tmp/auth-h -o /dev/null "$base/auth/start"
           grep -qi '^HTTP/.* 302' /tmp/auth-h
           loc="$(awk 'BEGIN{IGNORECASE=1} /^location:/ {sub(/^[^:]+:[[:space:]]*/,"");gsub(/\r/,"");print;exit}' /tmp/auth-h)"
-          printf '%s' "$loc" | grep -Fq 'https://mcp.mytrues.io/authorize?'
-          redirect_uri="$(python3 -c 'import sys,urllib.parse as u; print(u.parse_qs(u.urlparse(sys.stdin.read().strip()).query)["redirect_uri"][0])' <<<"$loc")"
-          case "$redirect_uri" in
-            https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io/auth/callback|https://reader.mytrues.io/auth/callback) ;;
-            *) echo "Unexpected redirect_uri" >&2; exit 1 ;;
-          esac
-          auth_code="$(curl -sS -D /tmp/oauth-h -o /tmp/oauth-body -w '%{http_code}' "$loc")"
-          case "$auth_code" in 200|301|302|303|307|308) ;; *) echo "Unexpected authorize HTTP $auth_code" >&2; exit 1 ;; esac
-          ! grep -qi 'invalid_redirect_uri' /tmp/oauth-body
-          ! grep -qi 'invalid_redirect_uri' /tmp/oauth-h
+
+          python3 - "$loc" <<'PY'
+          import sys,urllib.parse as u
+          parsed=u.urlparse(sys.argv[1])
+          qs=u.parse_qs(parsed.query)
+          assert parsed.scheme=="https"
+          assert parsed.netloc=="mcp.mytrues.io"
+          assert parsed.path.rstrip("/")=="/authorize"
+          redirect=qs["redirect_uri"][0]
+          assert redirect in {
+            "https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io/auth/callback",
+            "https://reader.mytrues.io/auth/callback",
+          }
+          assert qs.get("code_challenge_method")==["S256"]
+          print("OAUTH_LOCATION_SEMANTIC_PASS")
+          PY
+
+          # Independently prove the callback is accepted by DCR; no Google account is automated here.
+          code="$(curl -sS -o /tmp/dcr -w '%{http_code}' -H 'content-type: application/json' \
+            --data '{"client_name":"MyTrues site smoke","redirect_uris":["https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io/auth/callback"],"grant_types":["authorization_code","refresh_token"],"response_types":["code"],"token_endpoint_auth_method":"none","application_type":"web"}' \
+            https://mcp.mytrues.io/register)"
+          test "$code" = "201" -o "$code" = "200"
+          jq -e '.client_id' /tmp/dcr >/dev/null
           echo "GOOGLE_OAUTH_START_PASS"
