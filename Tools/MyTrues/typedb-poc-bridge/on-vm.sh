@@ -9,6 +9,7 @@ if ! command -v docker >/dev/null; then
 fi
 systemctl enable --now docker >/dev/null
 install -d -m 700 /var/lib/mytrues-typedb/data /var/lib/mytrues-typedb/poc
+install -d -m 755 /var/lib/mytrues-typedb/reader
 
 IMAGE='typedb/typedb:3.12.1@sha256:4224951114b044d52e2fe48108be26ae2734726041dae8d63453ecd407fe2422'
 docker pull "$IMAGE" >/dev/null
@@ -30,6 +31,7 @@ base="https://raw.githubusercontent.com/appLaboware/FlowED/$BRIDGE_SHA/Tools/MyT
 curl -fsSL "$base/00-schema.tql" -o /var/lib/mytrues-typedb/poc/00-schema.tql
 curl -fsSL "$base/canonical-memory.json" -o /var/lib/mytrues-typedb/poc/canonical-memory.json
 curl -fsSL "$base/seed_once.py" -o /var/lib/mytrues-typedb/poc/seed_once.py
+curl -fsSL "$base/reader/index.html" -o /var/lib/mytrues-typedb/reader/index.html
 
 python3 -m venv /var/lib/mytrues-typedb/venv
 /var/lib/mytrues-typedb/venv/bin/pip install -q 'typedb-driver==3.13.6'
@@ -38,7 +40,17 @@ TYPEDB_ADMIN_PASSWORD="$TYPEDB_ADMIN_PASSWORD" \
 
 cat >/var/lib/mytrues-typedb/Caddyfile <<EOF
 $PUBLIC_HOST {
-  reverse_proxy 127.0.0.1:8000
+  redir /reader /reader/ 308
+
+  handle_path /reader/* {
+    root * /srv/mytrues-reader
+    try_files {path} /index.html
+    file_server
+  }
+
+  handle {
+    reverse_proxy 127.0.0.1:8000
+  }
 }
 EOF
 
@@ -50,6 +62,7 @@ docker run -d --name mytrues-typedb-https --restart unless-stopped --network hos
   -v /var/lib/mytrues-typedb/Caddyfile:/etc/caddy/Caddyfile:ro \
   -v /var/lib/mytrues-typedb/caddy-data:/data \
   -v /var/lib/mytrues-typedb/caddy-config:/config \
+  -v /var/lib/mytrues-typedb/reader:/srv/mytrues-reader:ro \
   caddy:2 >/dev/null
 
 echo "DEPLOY_OK"
