@@ -125,13 +125,22 @@ jobs:
               --value "$PORTAL_PREVIEW" --only-show-errors -o none
           fi
 
+          ADMIN_BOOTSTRAP="$(az keyvault secret show \
+            --vault-name "$vault" -n portal-admin-bootstrap --query value -o tsv 2>/dev/null || true)"
+          if [ -z "$ADMIN_BOOTSTRAP" ]; then
+            ADMIN_BOOTSTRAP="$(openssl rand -hex 24)"
+            az keyvault secret set --vault-name "$vault" -n portal-admin-bootstrap \
+              --value "$ADMIN_BOOTSTRAP" --only-show-errors -o none
+          fi
+
           echo "::add-mask::$TYPEDB_PASSWORD"
           echo "::add-mask::$SESSION_KEY"
           echo "::add-mask::$MCP_CAPABILITY"
           echo "::add-mask::$PORTAL_PREVIEW"
+          echo "::add-mask::$ADMIN_BOOTSTRAP"
 
           az containerapp secret set -g "$rg" -n mytrues-reader \
-            --secrets "typedb-password=$TYPEDB_PASSWORD" "reader-session-key=$SESSION_KEY" "mcp-capability=$MCP_CAPABILITY" "portal-preview-capability=$PORTAL_PREVIEW" \
+            --secrets "typedb-password=$TYPEDB_PASSWORD" "reader-session-key=$SESSION_KEY" "mcp-capability=$MCP_CAPABILITY" "portal-preview-capability=$PORTAL_PREVIEW" "portal-admin-bootstrap=$ADMIN_BOOTSTRAP" \
             --only-show-errors -o none
 
           {
@@ -190,6 +199,7 @@ jobs:
                       {name:"READER_SESSION_KEY",secretRef:"reader-session-key"},
                       {name:"MCP_CAPABILITY",secretRef:"mcp-capability"},
                       {name:"PORTAL_PREVIEW_CAPABILITY",secretRef:"portal-preview-capability"},
+                      {name:"PORTAL_ADMIN_BOOTSTRAP",secretRef:"portal-admin-bootstrap"},
                       {name:"MYTRUES_POSTGRES_HOST",value:"mytrues-canonical-pg.postgres.database.azure.com"},
                       {name:"MYTRUES_POSTGRES_DB",value:"mytrues"},
                       {name:"MYTRUES_POSTGRES_USER",value:"mytrues-reader"},
@@ -249,11 +259,18 @@ jobs:
 
           preview="${{ steps.runtime.outputs.portal_preview }}"
           echo "::add-mask::$preview"
-          curl -fsS -c /tmp/cookies -L "$base/preview/$preview" -o /tmp/portal.html
-          grep -q 'Sua verdade tem história' /tmp/portal.html
-          curl -fsS -b /tmp/cookies "$base/api/me" | jq -e '.role=="admin" and .preview==true' >/dev/null
-          curl -fsS -b /tmp/cookies "$base/api/people" | jq -e '.people | type=="array"' >/dev/null
-          echo "PORTAL_PRIVATE_PREVIEW_PASS"
+          preview_code="$(curl -sS -c /tmp/cookies -L -o /tmp/portal.html -w '%{http_code}' "$base/preview/$preview")"
+          if [ "$preview_code" = "200" ]; then
+            grep -q 'Sua verdade tem história' /tmp/portal.html
+            curl -fsS -b /tmp/cookies "$base/api/me" | jq -e '.role=="admin" and .preview==true' >/dev/null
+            curl -fsS -b /tmp/cookies "$base/api/people" | jq -e '.people | type=="array"' >/dev/null
+            echo "PORTAL_PRIVATE_PREVIEW_PASS"
+          elif [ "$preview_code" = "404" ]; then
+            echo "PORTAL_PRIVATE_PREVIEW_RETIRED_PASS"
+          else
+            echo "Unexpected preview HTTP $preview_code" >&2
+            exit 1
+          fi
 
           unauth="$(curl -sS -o /tmp/noauth.json -w '%{http_code}' \
             -H 'content-type: application/json' \
