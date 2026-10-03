@@ -26,6 +26,12 @@ jobs:
     timeout-minutes: 25
 
     steps:
+      - name: Debounce rapid pushes
+        shell: bash
+        run: |
+          # Concurrency cancels superseded runs during this window, before they touch Azure.
+          sleep 30
+
       - name: Resolve Azure identifiers
         id: azure
         shell: bash
@@ -262,7 +268,36 @@ jobs:
                       {name:"MYTRUES_POSTGRES_USER",value:"mytrues-reader"},
                       {name:"PUBLIC_CALLBACKS",value:"https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io/auth/callback,https://reader.mytrues.io/auth/callback"}
                     ],
-                    resources:{cpu:0.5,memory:"1Gi"}
+                    resources:{cpu:0.5,memory:"1Gi"},
+                    probes:[
+                      {
+                        type:"Startup",
+                        httpGet:{path:"/healthz",port:8000},
+                        initialDelaySeconds:2,
+                        periodSeconds:2,
+                        timeoutSeconds:2,
+                        failureThreshold:10,
+                        successThreshold:1
+                      },
+                      {
+                        type:"Readiness",
+                        httpGet:{path:"/healthz",port:8000},
+                        initialDelaySeconds:2,
+                        periodSeconds:3,
+                        timeoutSeconds:2,
+                        failureThreshold:5,
+                        successThreshold:1
+                      },
+                      {
+                        type:"Liveness",
+                        httpGet:{path:"/healthz",port:8000},
+                        initialDelaySeconds:10,
+                        periodSeconds:10,
+                        timeoutSeconds:3,
+                        failureThreshold:3,
+                        successThreshold:1
+                      }
+                    ]
                   }],
                   scale:{minReplicas:1,maxReplicas:1}
                 }
