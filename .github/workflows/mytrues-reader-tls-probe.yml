@@ -1,0 +1,48 @@
+name: MyTrues Reader TLS probe
+
+on:
+  push:
+    branches:
+      - tools/ideos-lab
+    paths:
+      - ".github/workflows/mytrues-reader-tls-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Probe generated Azure hostname
+        shell: bash
+        run: |
+          set -euo pipefail
+          host=mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io
+          echo "=== DNS ==="
+          dig +short "$host"
+          echo "=== CURL ==="
+          curl -sS -o /dev/null -w 'http=%{http_code} verify=%{ssl_verify_result} remote_ip=%{remote_ip}\n' "https://$host/"
+          echo "=== CERT ==="
+          echo | openssl s_client -connect "$host:443" -servername "$host" -verify_return_error 2>/tmp/ssl.err |             openssl x509 -noout -subject -issuer -dates -ext subjectAltName
+          grep -E 'Verify return code|verify error' /tmp/ssl.err || true
+
+      - name: Probe reader.mytrues.io
+        shell: bash
+        run: |
+          set -euo pipefail
+          host=reader.mytrues.io
+          echo "=== DNS ==="
+          dig +short CNAME "$host" || true
+          dig +short A "$host" || true
+          if ! getent ahosts "$host" >/dev/null 2>&1; then
+            echo "CUSTOM_DOMAIN_DNS_ABSENT"
+            exit 0
+          fi
+          echo "=== CURL ==="
+          curl -k -sS -o /dev/null -w 'http=%{http_code} verify=%{ssl_verify_result} remote_ip=%{remote_ip}\n' "https://$host/" || true
+          echo "=== CERT ==="
+          echo | openssl s_client -connect "$host:443" -servername "$host" 2>/tmp/custom.err |             openssl x509 -noout -subject -issuer -dates -ext subjectAltName || true
+          grep -E 'Verify return code|verify error' /tmp/custom.err || true
