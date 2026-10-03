@@ -32,6 +32,7 @@ TYPEDB_DB = os.getenv("TYPEDB_DB", "mytrues_memory_poc_v0")
 TYPEDB_USERNAME = os.getenv("TYPEDB_USERNAME", "admin")
 TYPEDB_PASSWORD = os.environ["TYPEDB_PASSWORD"]
 SESSION_KEY = os.environ["READER_SESSION_KEY"].encode()
+MCP_CAPABILITY = os.environ.get("MCP_CAPABILITY", "")
 PUBLIC_CALLBACKS = [
     x.strip()
     for x in os.getenv(
@@ -60,6 +61,85 @@ RELATION_MAP = {
     "based-on": "key:based-on",
     "influenced-by": "key:influenced-by",
 }
+
+MCP_TOOLS = [
+    {
+        "name": "memory_search",
+        "description": "Search MyTrues historical memory by partial term and return related occurrences in chronological order.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "term": {"type": "string", "description": "Partial term to search, such as npm, pnpm, schema, OAuth, or a subject."}
+            },
+            "required": ["term"],
+            "additionalProperties": False,
+        },
+        "annotations": {"readOnlyHint": True},
+    },
+    {
+        "name": "memory_get",
+        "description": "Fetch one MyTrues occurrence by its occurrence id.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "occurrence_id": {"type": "string", "description": "Occurrence id beginning with occ:"}
+            },
+            "required": ["occurrence_id"],
+            "additionalProperties": False,
+        },
+        "annotations": {"readOnlyHint": True},
+    },
+    {
+        "name": "memory_append",
+        "description": "Append a new immutable occurrence to MyTrues memory. This never edits an older occurrence.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "subject": {"type": "string"},
+                "statement": {"type": "string"},
+                "kind": {
+                    "type": "string",
+                    "enum": ["truth", "observation", "decision", "preference", "correction"],
+                    "default": "truth",
+                },
+                "relation": {
+                    "type": "string",
+                    "enum": ["none", "continues", "corrects", "confirms", "contradicts", "based-on", "influenced-by"],
+                    "default": "none",
+                },
+                "related_occurrence": {"type": ["string", "null"]},
+            },
+            "required": ["subject", "statement"],
+            "additionalProperties": False,
+        },
+        "annotations": {"readOnlyHint": False, "destructiveHint": False},
+    },
+    {
+        "name": "memory_continue",
+        "description": "Continue an existing cognitive history by appending a new occurrence linked to an earlier occurrence.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "related_occurrence": {"type": "string", "description": "Existing occurrence id to continue."},
+                "subject": {"type": "string"},
+                "statement": {"type": "string"},
+                "kind": {
+                    "type": "string",
+                    "enum": ["truth", "observation", "decision", "preference", "correction"],
+                    "default": "truth",
+                },
+                "relation": {
+                    "type": "string",
+                    "enum": ["continues", "corrects", "confirms", "contradicts", "based-on", "influenced-by"],
+                    "default": "continues",
+                },
+            },
+            "required": ["related_occurrence", "subject", "statement"],
+            "additionalProperties": False,
+        },
+        "annotations": {"readOnlyHint": False, "destructiveHint": False},
+    },
+]
 
 
 class OccurrenceCreate(BaseModel):
@@ -321,6 +401,247 @@ async def read_memory(query_text: str = "") -> list[dict[str, Any]]:
     return events
 
 
+async def get_memory_occurrence(occurrence_id: str) -> dict[str, Any] | None:
+    events = await read_memory("")
+    return next((event for event in events if event["id"] == occurrence_id), None)
+
+
+async def append_memory_occurrence(
+    *,
+    subject: str,
+    statement: str,
+    kind: str = "truth",
+    relation: str = "none",
+    related_occurrence: str | None = None,
+    author_id: str = "auth:mcp-capability",
+    author_lexical: str = "MCP capability client",
+    provenance_id: str = "source:mcp",
+    provenance_lexical: str = "MyTrues Memory MCP",
+) -> dict[str, Any]:
+    subject = subject.strip()
+    statement = statement.strip()
+    if not subject:
+        raise HTTPException(status_code=400, detail="subject is required")
+    if len(statement) < 3:
+        raise HTTPException(status_code=400, detail="statement is too short")
+    if kind not in KIND_MAP:
+        raise HTTPException(status_code=400, detail="unsupported kind")
+    if relation not in RELATION_MAP:
+        raise HTTPException(status_code=400, detail="unsupported relation")
+
+    relation_key = RELATION_MAP[relation]
+    if relation_key and not related_occurrence:
+        raise HTTPException(status_code=400, detail="related occurrence is required")
+    if related_occurrence and not related_occurrence.startswith("occ:"):
+        raise HTTPException(status_code=400, detail="invalid related occurrence")
+
+    now = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+    occ_id = f"occ:{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S')}-{uuid.uuid4().hex[:8]}"
+    statement_id = "statement:" + hashlib.sha256(statement.encode()).hexdigest()[:20]
+    subject_id = "subject:" + slug(subject)
+    time_id = "time:" + now
+
+    atoms: dict[str, str] = {
+        "key:type": "type",
+        "key:subject": "subject",
+        "key:statement": "statement",
+        "key:author": "author",
+        "key:time": "time",
+        "key:provenance": "provenance",
+        KIND_MAP[kind]: kind,
+        subject_id: subject,
+        statement_id: statement,
+        author_id: author_lexical,
+        time_id: now,
+        provenance_id: provenance_lexical,
+    }
+    if relation_key:
+        atoms[relation_key] = relation_key.split(":", 1)[-1]
+
+    bindings = [
+        ("key:type", KIND_MAP[kind]),
+        ("key:subject", subject_id),
+        ("key:statement", statement_id),
+        ("key:author", author_id),
+        ("key:time", time_id),
+        ("key:provenance", provenance_id),
+    ]
+    if relation_key and related_occurrence:
+        bindings.append((relation_key, related_occurrence))
+
+    async with httpx.AsyncClient(follow_redirects=True) as client:
+        token = await typedb_access_token(client)
+        if related_occurrence and not await occurrence_exists(client, token, related_occurrence):
+            raise HTTPException(status_code=404, detail="related occurrence not found")
+
+        tx = await transaction_open(client, token)
+        try:
+            for atom_id, lexical in atoms.items():
+                exists = await atom_exists(client, token, atom_id)
+                if not exists:
+                    await transaction_query(
+                        client,
+                        token,
+                        tx,
+                        f"insert $a isa atom, has atom-id {q(atom_id)}, has lexical {q(lexical)};",
+                    )
+
+            await transaction_query(
+                client,
+                token,
+                tx,
+                f"insert $o isa occurrence, has atom-id {q(occ_id)}, has lexical {q(statement[:240])};",
+            )
+
+            for key_id, value_id in bindings:
+                await transaction_query(
+                    client,
+                    token,
+                    tx,
+                    "match "
+                    f"$o isa occurrence, has atom-id {q(occ_id)}; "
+                    f"$k isa atom, has atom-id {q(key_id)}; "
+                    f"$v isa atom, has atom-id {q(value_id)}; "
+                    "insert $b isa binding, links (occurrence: $o, key: $k, value: $v);",
+                )
+
+            await transaction_finish(client, token, tx, "commit")
+        except Exception:
+            try:
+                await transaction_finish(client, token, tx, "close")
+            except Exception:
+                pass
+            raise
+
+    created = await get_memory_occurrence(occ_id)
+    return created or {"id": occ_id}
+
+
+def mcp_text_result(payload: Any) -> dict[str, Any]:
+    return {
+        "content": [
+            {
+                "type": "text",
+                "text": json.dumps(payload, ensure_ascii=False, indent=2),
+            }
+        ],
+        "structuredContent": payload if isinstance(payload, dict) else {"result": payload},
+        "isError": False,
+    }
+
+
+async def run_mcp_tool(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
+    if name == "memory_search":
+        term = str(arguments.get("term") or "").strip()
+        return mcp_text_result({"term": term, "events": await read_memory(term)})
+
+    if name == "memory_get":
+        occurrence_id = str(arguments.get("occurrence_id") or "").strip()
+        event = await get_memory_occurrence(occurrence_id)
+        if not event:
+            return {
+                "content": [{"type": "text", "text": f"Occurrence not found: {occurrence_id}"}],
+                "isError": True,
+            }
+        return mcp_text_result(event)
+
+    if name in {"memory_append", "memory_continue"}:
+        relation = str(arguments.get("relation") or ("continues" if name == "memory_continue" else "none"))
+        created = await append_memory_occurrence(
+            subject=str(arguments.get("subject") or ""),
+            statement=str(arguments.get("statement") or ""),
+            kind=str(arguments.get("kind") or "truth"),
+            relation=relation,
+            related_occurrence=arguments.get("related_occurrence"),
+        )
+        return mcp_text_result({"created": created})
+
+    return {
+        "content": [{"type": "text", "text": f"Unknown tool: {name}"}],
+        "isError": True,
+    }
+
+
+@app.post("/mcp/{capability}")
+async def memory_mcp(capability: str, request: Request):
+    if not MCP_CAPABILITY or not hmac.compare_digest(capability, MCP_CAPABILITY):
+        raise HTTPException(status_code=404, detail="not found")
+
+    try:
+        payload = await request.json()
+    except Exception:
+        raise HTTPException(status_code=400, detail="invalid JSON")
+
+    method = payload.get("method")
+    request_id = payload.get("id")
+
+    if method == "notifications/initialized":
+        return JSONResponse({}, status_code=202)
+
+    if method == "initialize":
+        requested = (payload.get("params") or {}).get("protocolVersion") or "2025-06-18"
+        return JSONResponse(
+            {
+                "jsonrpc": "2.0",
+                "id": request_id,
+                "result": {
+                    "protocolVersion": requested,
+                    "capabilities": {"tools": {"listChanged": False}},
+                    "serverInfo": {"name": "MyTrues Memory MCP", "version": "0.1.0"},
+                    "instructions": (
+                        "Use memory_search and memory_get to inspect MyTrues historical memory. "
+                        "Use memory_append or memory_continue to add immutable occurrences. "
+                        "Never rewrite an old occurrence to represent a changed belief."
+                    ),
+                },
+            }
+        )
+
+    if method == "ping":
+        return JSONResponse({"jsonrpc": "2.0", "id": request_id, "result": {}})
+
+    if method == "tools/list":
+        return JSONResponse(
+            {"jsonrpc": "2.0", "id": request_id, "result": {"tools": MCP_TOOLS}}
+        )
+
+    if method == "tools/call":
+        params = payload.get("params") or {}
+        try:
+            result = await run_mcp_tool(str(params.get("name") or ""), params.get("arguments") or {})
+            return JSONResponse({"jsonrpc": "2.0", "id": request_id, "result": result})
+        except HTTPException as exc:
+            return JSONResponse(
+                {
+                    "jsonrpc": "2.0",
+                    "id": request_id,
+                    "result": {
+                        "content": [{"type": "text", "text": str(exc.detail)}],
+                        "isError": True,
+                    },
+                }
+            )
+        except Exception as exc:
+            return JSONResponse(
+                {
+                    "jsonrpc": "2.0",
+                    "id": request_id,
+                    "result": {
+                        "content": [{"type": "text", "text": f"Memory tool failed: {exc}"}],
+                        "isError": True,
+                    },
+                }
+            )
+
+    return JSONResponse(
+        {
+            "jsonrpc": "2.0",
+            "id": request_id,
+            "error": {"code": -32601, "message": f"Method not found: {method}"},
+        }
+    )
+
+
 @app.get("/healthz")
 async def healthz():
     return {"ok": True, "auth": OAUTH_BASE, "database": TYPEDB_DB}
@@ -460,98 +781,18 @@ async def api_history(request: Request, q: str = ""):
 @app.post("/api/occurrences")
 async def api_create_occurrence(request: Request, body: OccurrenceCreate):
     user = require_user(request)
-    if body.kind not in KIND_MAP:
-        raise HTTPException(status_code=400, detail="unsupported kind")
-    if body.relation not in RELATION_MAP:
-        raise HTTPException(status_code=400, detail="unsupported relation")
-    relation_key = RELATION_MAP[body.relation]
-    if relation_key and not body.related_occurrence:
-        raise HTTPException(status_code=400, detail="related occurrence is required")
-    if body.related_occurrence and not body.related_occurrence.startswith("occ:"):
-        raise HTTPException(status_code=400, detail="invalid related occurrence")
-
-    now = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
-    occ_id = f"occ:{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S')}-{uuid.uuid4().hex[:8]}"
-    statement_id = "statement:" + hashlib.sha256(body.statement.encode()).hexdigest()[:20]
-    subject_id = "subject:" + slug(body.subject)
-    author_id = "auth:" + slug(str(user["sub"]), 120)
-    time_id = "time:" + now
-
-    atoms: dict[str, str] = {
-        "key:type": "type",
-        "key:subject": "subject",
-        "key:statement": "statement",
-        "key:author": "author",
-        "key:time": "time",
-        "key:provenance": "provenance",
-        KIND_MAP[body.kind]: body.kind,
-        subject_id: body.subject,
-        statement_id: body.statement,
-        author_id: str(user.get("name") or user["sub"]),
-        time_id: now,
-        "source:reader": "MyTrues Human Reader",
-    }
-    if relation_key:
-        atoms[relation_key] = relation_key.split(":", 1)[-1]
-
-    bindings = [
-        ("key:type", KIND_MAP[body.kind]),
-        ("key:subject", subject_id),
-        ("key:statement", statement_id),
-        ("key:author", author_id),
-        ("key:time", time_id),
-        ("key:provenance", "source:reader"),
-    ]
-    if relation_key and body.related_occurrence:
-        bindings.append((relation_key, body.related_occurrence))
-
-    async with httpx.AsyncClient(follow_redirects=True) as client:
-        token = await typedb_access_token(client)
-        if body.related_occurrence and not await occurrence_exists(client, token, body.related_occurrence):
-            raise HTTPException(status_code=404, detail="related occurrence not found")
-
-        tx = await transaction_open(client, token)
-        try:
-            for atom_id, lexical in atoms.items():
-                exists = await atom_exists(client, token, atom_id)
-                if not exists:
-                    await transaction_query(
-                        client,
-                        token,
-                        tx,
-                        f"insert $a isa atom, has atom-id {q(atom_id)}, has lexical {q(lexical)};",
-                    )
-
-            await transaction_query(
-                client,
-                token,
-                tx,
-                f"insert $o isa occurrence, has atom-id {q(occ_id)}, has lexical {q(body.statement[:240])};",
-            )
-
-            for key_id, value_id in bindings:
-                await transaction_query(
-                    client,
-                    token,
-                    tx,
-                    "match "
-                    f"$o isa occurrence, has atom-id {q(occ_id)}; "
-                    f"$k isa atom, has atom-id {q(key_id)}; "
-                    f"$v isa atom, has atom-id {q(value_id)}; "
-                    "insert $b isa binding, links (occurrence: $o, key: $k, value: $v);",
-                )
-
-            await transaction_finish(client, token, tx, "commit")
-        except Exception:
-            try:
-                await transaction_finish(client, token, tx, "close")
-            except Exception:
-                pass
-            raise
-
-    events = await read_memory(body.subject)
-    created = next((event for event in events if event["id"] == occ_id), None)
-    return JSONResponse({"created": created or {"id": occ_id}, "id": occ_id}, status_code=201)
+    created = await append_memory_occurrence(
+        subject=body.subject,
+        statement=body.statement,
+        kind=body.kind,
+        relation=body.relation,
+        related_occurrence=body.related_occurrence,
+        author_id="auth:" + slug(str(user["sub"]), 120),
+        author_lexical=str(user.get("name") or user["sub"]),
+        provenance_id="source:reader",
+        provenance_lexical="MyTrues Human Reader",
+    )
+    return JSONResponse({"created": created, "id": created["id"]}, status_code=201)
 
 
 @app.get("/")
