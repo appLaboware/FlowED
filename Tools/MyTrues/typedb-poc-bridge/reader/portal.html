@@ -54,13 +54,45 @@
    <div v-else class="empty">{{t('no_memory')}}</div>
   </section>
 
-  <section v-if="section==='people' && me.role==='admin'" class="section">
-   <div class="sectionhead"><div><h2>{{t('people_title')}}</h2><p>{{t('people_note')}}</p></div><button class="btn primary" @click="personDialog=true">{{t('add_person')}}</button></div>
-   <div class="people">
-    <div class="card person" v-for="p in people" :key="p.user_id">
+  <section v-if="section==='people' && me.role==='admin'" class="section admin-space">
+   <div class="sectionhead admin-head">
+    <div><div class="eyebrow">{{t('admin_overline')}}</div><h2>{{t('people_title')}}</h2><p>{{t('people_note')}}</p></div>
+    <button class="btn primary" @click="personDialog=true">{{t('add_person')}}</button>
+   </div>
+
+   <div class="admin-metrics">
+    <div class="admin-metric"><span>{{t('admin_people')}}</span><strong>{{admin.counts.people||0}}</strong></div>
+    <div class="admin-metric"><span>{{t('admin_interests')}}</span><strong>{{admin.counts.interests||0}}</strong></div>
+    <div class="admin-metric"><span>{{t('admin_admins')}}</span><strong>{{admin.counts.admins||0}}</strong></div>
+   </div>
+
+   <div class="admin-tabs">
+    <button :class="{active:adminTab==='people'}" @click="adminTab='people'">{{t('admin_people')}}</button>
+    <button :class="{active:adminTab==='interests'}" @click="adminTab='interests'">{{t('admin_interests')}}</button>
+    <button :class="{active:adminTab==='admins'}" @click="adminTab='admins'">{{t('admin_admins')}}</button>
+   </div>
+
+   <div v-if="adminTab==='people'" class="people">
+    <div class="card person" v-for="p in admin.people" :key="p.user_id">
      <div class="personmain"><div class="personavatar">{{initials(p.display_name)}}</div><div style="min-width:0"><div class="personname">{{p.display_name}}</div><div class="personmail">{{p.email}}</div><div class="personmeta">{{p.role}} · {{p.claimed?t('google_linked'):t('waiting_link')}}</div></div></div>
      <span class="status" :class="{off:p.status!=='active'}">{{p.status==='active'?t('status_active'):t('status_disabled')}}</span>
     </div>
+   </div>
+
+   <div v-if="adminTab==='interests'" class="admin-list">
+    <div class="admin-row" v-for="x in admin.interests" :key="x.email">
+      <div><strong>{{x.display_name}}</strong><span>{{x.email}}</span></div>
+      <time>{{date(x.created_at)}}</time>
+    </div>
+    <div class="empty" v-if="!admin.interests.length">{{t('admin_no_interests')}}</div>
+   </div>
+
+   <div v-if="adminTab==='admins'" class="admin-list">
+    <div class="admin-row" v-for="x in admin.admins" :key="x.user_id">
+      <div><strong>{{x.display_name}}</strong><span>{{x.email}}</span><small>{{x.google_linked?t('google_linked'):t('waiting_link')}}</small></div>
+      <span class="status" :class="{off:x.status!=='active'}">{{x.status==='active'?t('status_active'):t('status_disabled')}}</span>
+    </div>
+    <div class="empty" v-if="!admin.admins.length">{{t('admin_no_admins')}}</div>
    </div>
   </section>
  </template>
