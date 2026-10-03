@@ -1,0 +1,152 @@
+name: MyTrues account database
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-account-database.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+env:
+  AZURE_BUNDLE: ${{ secrets.AZURE }}
+  AZURE_CLIENT_ID_SECRET: ${{ secrets.AZURE_CLIENT_ID }}
+  AZURE_TENANT_ID_SECRET: ${{ secrets.AZURE_TENANT_ID }}
+  AZURE_SUBSCRIPTION_ID_SECRET: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+jobs:
+  host:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Resolve Azure repository credentials
+        id: azure
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          get_bundle_value() {
+            local key="$1"
+            printf '%s\n' "$AZURE_BUNDLE" |
+              sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*=[[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\2/p" |
+              tail -n 1
+          }
+
+          CLIENT_ID="$AZURE_CLIENT_ID_SECRET"
+          TENANT_ID="$AZURE_TENANT_ID_SECRET"
+          SUBSCRIPTION_ID="$AZURE_SUBSCRIPTION_ID_SECRET"
+          SOURCE="separate repository secrets"
+
+          if [ -z "$CLIENT_ID" ] || [ -z "$TENANT_ID" ] || [ -z "$SUBSCRIPTION_ID" ]; then
+            SOURCE="legacy AZURE bundle secret"
+            CLIENT_ID="${CLIENT_ID:-$(get_bundle_value AZURE_CLIENT_ID)}"
+            TENANT_ID="${TENANT_ID:-$(get_bundle_value AZURE_TENANT_ID)}"
+            SUBSCRIPTION_ID="${SUBSCRIPTION_ID:-$(get_bundle_value AZURE_SUBSCRIPTION_ID)}"
+          fi
+
+          test -n "$CLIENT_ID" || { echo "AZURE_CLIENT_ID is unavailable." >&2; exit 1; }
+          test -n "$TENANT_ID" || { echo "AZURE_TENANT_ID is unavailable." >&2; exit 1; }
+          test -n "$SUBSCRIPTION_ID" || { echo "AZURE_SUBSCRIPTION_ID is unavailable." >&2; exit 1; }
+
+          echo "::add-mask::$CLIENT_ID"
+          echo "::add-mask::$TENANT_ID"
+          echo "::add-mask::$SUBSCRIPTION_ID"
+
+          {
+            echo "client_id=$CLIENT_ID"
+            echo "tenant_id=$TENANT_ID"
+            echo "subscription_id=$SUBSCRIPTION_ID"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "Azure credentials resolved from: $SOURCE"
+          echo "Preferred format: three separate repository secrets."
+
+      - name: Request GitHub OIDC token
+        id: oidc
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          RESPONSE="$(curl --fail --silent --show-error             -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN"             "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange")"
+
+          TOKEN="$(jq -r '.value' <<<"$RESPONSE")"
+          test -n "$TOKEN"
+          test "$TOKEN" != "null"
+
+          echo "::add-mask::$TOKEN"
+          {
+            echo "token<<OIDC_EOF"
+            echo "$TOKEN"
+            echo "OIDC_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "GitHub issued an OIDC token."
+
+      - name: Login to Azure using federated identity
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          az login             --service-principal             --username "${{ steps.azure.outputs.client_id }}"             --tenant "${{ steps.azure.outputs.tenant_id }}"             --federated-token "${{ steps.oidc.outputs.token }}"             --allow-no-subscriptions             --output none
+
+          az account set --subscription "${{ steps.azure.outputs.subscription_id }}"
+
+          az account show             --query "{subscription:id,tenant:tenantId,identity:user.name,type:user.type}"             --output table
+
+
+      - name: Provision account schema and exact runtime egress rules
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install 'psycopg[binary]==3.2.3' --quiet
+          python3 - <<'PY'
+          import concurrent.futures,ipaddress,json,os,subprocess,time,urllib.request
+          import psycopg
+          RG="rg-flowed-ideos-lab"
+          SERVER="mytrues-canonical-pg"
+          def az(*args):
+              r=subprocess.run(["az",*args,"--only-show-errors","-o","json"],capture_output=True,text=True)
+              if r.returncode: raise RuntimeError("Azure operation failed: "+" ".join(args[:3]))
+              return json.loads(r.stdout) if r.stdout.strip() else None
+          app=az("containerapp","show","-g",RG,"-n","mytrues-mcp")
+          ips=sorted(set(app["properties"]["outboundIpAddresses"]))
+          assert ips and all(ipaddress.ip_address(ip).version==4 for ip in ips)
+          server=az("postgres","flexible-server","show","-g",RG,"-n",SERVER)
+          existing=az("postgres","flexible-server","firewall-rule","list","-g",RG,"--server-name",SERVER)
+          known={(x["startIpAddress"],x["endIpAddress"]) for x in existing}
+          def permit(ip):
+              if (ip,ip) in known:return
+              url="https://management.azure.com"+server["id"]+"/firewallRules/mcp-egress-"+ip.replace(".","-")+"?api-version=2024-08-01"
+              for attempt in range(4):
+                  try:
+                      az("rest","--method","put","--url",url,"--body",json.dumps({"properties":{"startIpAddress":ip,"endIpAddress":ip}}))
+                      return
+                  except RuntimeError:
+                      if attempt==3:raise
+                      time.sleep(3)
+          with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
+              list(pool.map(permit,ips))
+          print("EXACT_OUTBOUND_IP_RULES="+str(len(ips)),flush=True)
+          rule="accounts-provision-"+os.environ["GITHUB_RUN_ID"]
+          ip=urllib.request.urlopen("https://api.ipify.org",timeout=20).read().decode().strip()
+          ipaddress.ip_address(ip)
+          az("postgres","flexible-server","firewall-rule","create","-g",RG,"--name",rule,"--server-name",SERVER,"--start-ip-address",ip,"--end-ip-address",ip)
+          try:
+              token=az("account","get-access-token","--resource","https://ossrdbms-aad.database.windows.net")["accessToken"]
+              for attempt in range(12):
+                  try:
+                      db=psycopg.connect(host=SERVER+".postgres.database.azure.com",dbname="mytrues",user="mytrues-workflow",password=token,sslmode="verify-full",sslrootcert="/etc/ssl/certs/ca-certificates.crt",connect_timeout=10)
+                      break
+                  except psycopg.OperationalError:
+                      if attempt==11:raise RuntimeError("Database connection failed") from None
+                      time.sleep(5)
+              with db:
+                  db.execute("CREATE TABLE IF NOT EXISTS mytrues_users(user_id UUID PRIMARY KEY,display_name TEXT NOT NULL CHECK(length(display_name) BETWEEN 1 AND 120),email TEXT NOT NULL,status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','disabled')),created_at TIMESTAMPTZ NOT NULL DEFAULT now())")
+                  db.execute("CREATE TABLE IF NOT EXISTS mytrues_identities(provider TEXT NOT NULL,subject TEXT NOT NULL,user_id UUID NOT NULL REFERENCES mytrues_users(user_id),created_at TIMESTAMPTZ NOT NULL DEFAULT now(),PRIMARY KEY(provider,subject))")
+                  db.execute('GRANT SELECT,INSERT ON mytrues_users,mytrues_identities TO "mytrues-mcp"')
+                  for table in ("mytrues_users","mytrues_identities"):
+                      row=db.execute("SELECT has_table_privilege('mytrues-mcp',%s,'SELECT'),has_table_privilege('mytrues-mcp',%s,'INSERT'),has_table_privilege('mytrues-mcp',%s,'UPDATE'),has_table_privilege('mytrues-mcp',%s,'DELETE')",(table,)*4).fetchone()
+                      assert row==(True,True,False,False),row
+              print("ACCOUNT_SCHEMA_READY; RUNTIME_SELECT_INSERT_ONLY",flush=True)
+          finally:
+              az("postgres","flexible-server","firewall-rule","delete","-g",RG,"--server-name",SERVER,"--name",rule,"--yes")
+          
+          PY
