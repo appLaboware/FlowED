@@ -1,0 +1,64 @@
+name: MyTrues dual-memory A/B
+
+on:
+  push:
+    branches:
+      - experiment/mytrues-dual-memory-ab
+    paths:
+      - "Tools/MyTrues/experiments/dual-memory-ab/**"
+      - ".github/workflows/mytrues-dual-memory-ab.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+
+    steps:
+      - name: Clone isolated experiment branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth 1 --branch experiment/mytrues-dual-memory-ab https://github.com/appLaboware/FlowED.git repo
+
+      - name: Start clean TypeDB CE
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run -d --name mytrues-dual-memory-ab             -p 127.0.0.1:1729:1729             -p 127.0.0.1:8000:8000             typedb/typedb:3.12.1
+
+      - name: Install pinned TypeDB driver
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv /tmp/mytrues-ab-venv
+          /tmp/mytrues-ab-venv/bin/pip install -q 'typedb-driver==3.13.6'
+
+      - name: Run identical-cognition dual-memory retrieval experiment
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd repo
+          /tmp/mytrues-ab-venv/bin/python Tools/MyTrues/experiments/dual-memory-ab/compare_memory_models.py | tee /tmp/mytrues-dual-memory-ab-report.json.txt
+          grep -q 'DUAL_MEMORY_AB_PASS' /tmp/mytrues-dual-memory-ab-report.json.txt
+
+      - name: Preserve concise evidence in step summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo '## MyTrues dual-memory A/B'
+            echo
+            grep 'DUAL_MEMORY_AB_PASS' /tmp/mytrues-dual-memory-ab-report.json.txt || true
+            echo
+            echo 'Same cognition stream; existing provider reference and Atom/Occurrence/Binding tested independently.'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Show TypeDB runtime identity
+        if: always()
+        shell: bash
+        run: |
+          docker inspect mytrues-dual-memory-ab --format 'image={{.Config.Image}} status={{.State.Status}}' || true
