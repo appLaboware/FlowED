@@ -1,0 +1,33 @@
+name: MyTrues public auth surface probe
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-public-auth-surface-probe.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Inspect public account/auth surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '=== /cad HEADERS ==='
+          curl -sS -D /tmp/h -o /tmp/cad https://mcp.mytrues.io/cad
+          sed -n '1,30p' /tmp/h
+          echo '=== /cad LINKS/FORMS ==='
+          python3 - <<'PY'
+          import re
+          html=open('/tmp/cad',encoding='utf-8').read()
+          for pat in [r'href=["\']([^"\']+)',r'action=["\']([^"\']+)',r'fetch\(([^\)]+)',r'form[^>]*',r'Continuar com Google']:
+              print('PATTERN',pat)
+              for m in re.findall(pat,html,re.I)[:80]:
+                  print(m)
+          print('LENGTH',len(html))
+          print('TITLE', re.findall(r'<title>(.*?)</title>',html,re.I|re.S)[:3])
+          PY
+          echo '=== WELL-KNOWN ==='
+          curl -fsS https://mcp.mytrues.io/.well-known/oauth-authorization-server | jq .
