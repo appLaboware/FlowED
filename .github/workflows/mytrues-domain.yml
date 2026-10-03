@@ -92,11 +92,25 @@ jobs:
           az account show             --query "{subscription:id,tenant:tenantId,identity:user.name,type:user.type}"             --output table
 
 
-      - name: Inspect DNS and bind only when ownership is verified
+      - name: Verify DNS and finish custom domain HTTPS
         shell: bash
         run: |
           set -euo pipefail
-          az containerapp show -g rg-flowed-ideos-lab -n mytrues-mcp --query '{fqdn:properties.configuration.ingress.fqdn,verification:properties.customDomainVerificationId,domains:properties.configuration.ingress.customDomains}' -o json
-          dig +short NS mytrues.io
-          dig +short CNAME mcp.mytrues.io
-          dig +short TXT asuid.mcp.mytrues.io
+          rg=rg-flowed-ideos-lab
+          app=mytrues-mcp
+          domain=mcp.mytrues.io
+          target="$(az containerapp show -g "$rg" -n "$app" --query properties.configuration.ingress.fqdn -o tsv)"
+          verification="$(az containerapp show -g "$rg" -n "$app" --query properties.customDomainVerificationId -o tsv)"
+          cname="$(dig +short CNAME "$domain" | sed 's/\.$//')"
+          txt="$(dig +short TXT asuid.mcp.mytrues.io | tr -d '"')"
+          printf 'DNS_CNAME=%s\nDNS_TXT=%s\n' "$cname" "$txt"
+          if [ "$cname" != "$target" ] || [ "$txt" != "$verification" ]; then
+            echo "DOMAIN_RESULT=DNS_PENDING"
+            exit 0
+          fi
+          az containerapp hostname add -g "$rg" -n "$app" --hostname "$domain" --only-show-errors -o none
+          az containerapp hostname bind -g "$rg" -n "$app" --hostname "$domain" --environment mytrues-memory-env --validation-method CNAME --only-show-errors -o none
+          curl --fail --silent --show-error --retry 6 --retry-delay 10 --retry-all-errors --max-time 30 "https://$domain/healthz"
+          az containerapp update -g "$rg" -n "$app" --set-env-vars "MYTRUES_PUBLIC_URL=https://$domain" --only-show-errors -o none
+          echo "DOMAIN_RESULT=HTTPS_VERIFIED"
+          az containerapp show -g "$rg" -n "$app" --query properties.configuration.ingress.customDomains -o json
