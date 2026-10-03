@@ -104,9 +104,11 @@ jobs:
           python3 -m py_compile /tmp/app.py
           jq -e . /tmp/common-pt.json /tmp/landing-pt.json /tmp/access-pt.json /tmp/portal-pt.json /tmp/common-en.json /tmp/landing-en.json /tmp/access-en.json /tmp/portal-en.json >/dev/null
           grep -q '<title>MyTrues</title>' /tmp/index.html
-          grep -q 'data-i18n="headline"' /tmp/index.html
+          grep -q 'data-i18n="headline_a"' /tmp/index.html
+          grep -q 'data-i18n="headline_b"' /tmp/index.html
           grep -q '<title>MyTrues · Portal</title>' /tmp/portal.html
-          grep -q 'MyTrues · Google' /tmp/login.html
+          grep -q 'class="access-mark"' /tmp/login.html
+          grep -q 'mytrues-logo.png' /tmp/login.html
           echo "READER_SOURCE_VALID"
 
       - name: Resolve runtime secrets
@@ -294,6 +296,25 @@ jobs:
             sleep 4
           done
           test "$ok" = true
+
+          public_code="$(curl -sS -o /tmp/public.html -w '%{http_code}' "$base/")"
+          test "$public_code" = "200"
+          grep -q 'data-i18n="headline_a"' /tmp/public.html
+
+          logo_code="$(curl -sS -o /tmp/logo.png -w '%{http_code}' "$base/assets/mytrues-logo.png")"
+          test "$logo_code" = "200"
+          test "$(wc -c </tmp/logo.png)" -gt 1000
+
+          login_code="$(curl -sS -o /tmp/login.html -w '%{http_code}' "$base/login")"
+          test "$login_code" = "200"
+          grep -q 'class="access-mark"' /tmp/login.html
+
+          auth_code="$(curl -sS -L -o /tmp/auth.html -w '%{http_code}' --max-time 30 "$base/auth/start" || true)"
+          test "$auth_code" != "500"
+          echo "PUBLIC_TEASER_PASS"
+          echo "LOCAL_LOGO_PASS"
+          echo "PRIVATE_MARKS_ONLY_PASS"
+          echo "AUTH_NO_500_PASS"
 
           preview="${{ steps.runtime.outputs.portal_preview }}"
           echo "::add-mask::$preview"
