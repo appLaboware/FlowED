@@ -1,8 +1,13 @@
 {
-  "meta_title":"MyTrues","status":"In the works",
+  "meta_title":"MyTrues",
+  "status":"In the works",
   "headline":"We're preparing something remarkable for you.",
-  "lead":"It is not time to reveal everything yet. If you want to follow closely and know when the doors open, leave your name.",
-  "name_placeholder":"Your name","email_placeholder":"Your best email","submit":"Keep me posted",
-  "sending":"Sending…","success":"Done. When the time is right, you'll know.",
-  "note":"No spam. No reveal before it's ready.","access_aria":"Private access"
+  "lead":"It is not time to reveal everything yet. If you want to follow from the beginning and know when the doors open, leave your name.",
+  "name_placeholder":"Your name",
+  "email_placeholder":"Your best email",
+  "submit":"Keep me posted",
+  "sending":"Sending…",
+  "success":"Done. When the time is right, you'll know.",
+  "note":"No spam. No reveal before it's ready.",
+  "access_aria":"Private access"
 }
