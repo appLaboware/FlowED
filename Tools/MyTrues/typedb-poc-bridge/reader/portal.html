@@ -2,79 +2,94 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f5f7fb"><title>MyTrues · Portal</title>
+<meta name="theme-color" content="#f5f3ee"><title>MyTrues · Portal</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vuetify@4.2.2/dist/vuetify.min.css">
-<style>
-:root{--navy:#0f2f27;--navy2:#173f33;--blue:#f47a45;--blue2:#ff9a67;--paper:#f5f7fb;--ink:#121a2a;--muted:#6b7280;--line:#e4e9f2;--white:#fff;--green:#197a63;--amber:#a55a14;--violet:#7350a8}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,sans-serif}[v-cloak]{display:none}
-.shell{min-height:100vh}.rail{display:none}.mobilebar{position:fixed;bottom:0;left:0;right:0;z-index:40;background:#ffffffed;border-top:1px solid var(--line);backdrop-filter:blur(14px);display:grid;grid-template-columns:repeat(4,1fr);padding:8px 8px calc(8px + env(safe-area-inset-bottom))}
-.navbtn{border:0;background:none;padding:8px 4px;color:#7a8495;font-size:10px;font-weight:700}.navbtn i{display:block;font-size:22px;margin-bottom:2px}.navbtn.active{color:var(--blue)}
-.main{padding:16px 14px 92px;max-width:1280px;margin:auto}.top{display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{display:flex;align-items:center;gap:11px}.brand img{width:40px;height:40px;border-radius:13px}.word{font-weight:900;letter-spacing:-.035em;font-size:19px}.sub{font-size:11px;color:var(--muted)}
-.user{display:flex;align-items:center;gap:8px}.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#fce9dd,#fff1e7);display:grid;place-items:center;color:var(--blue);font-weight:900}
-.hero{margin-top:22px;background:linear-gradient(135deg,var(--navy),#18473a 65%,#a44b28);border-radius:28px;padding:26px 22px;color:white;overflow:hidden;position:relative}.hero:after{content:"";position:absolute;width:280px;height:280px;border-radius:50%;right:-100px;top:-120px;background:#6c8cff33}.eyebrow{text-transform:uppercase;letter-spacing:.16em;font-size:10px;font-weight:900;color:#f6c3a5}.hero h1{font-size:clamp(34px,8vw,62px);line-height:.98;letter-spacing:-.055em;margin:10px 0 12px;max-width:760px}.hero p{color:#ced7e8;line-height:1.6;max-width:700px}.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
-.primary,.secondary{border:0;border-radius:14px;padding:12px 16px;font-weight:800;cursor:pointer}.primary{background:white;color:var(--navy)}.secondary{background:#ffffff16;color:white;border:1px solid #ffffff28}
-.grid{display:grid;gap:12px;margin-top:14px}.card{background:white;border:1px solid var(--line);border-radius:20px;padding:17px;box-shadow:0 12px 28px #1d2a4610}.kicker{font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:#8a94a5;font-weight:900}.metric{font-size:28px;font-weight:900;letter-spacing:-.05em;margin-top:5px}.section{margin-top:22px}.sectionhead{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:12px}.sectionhead h2{margin:0;font-size:25px;letter-spacing:-.045em}.muted{color:var(--muted)}
-.searchbox{display:flex;align-items:center;gap:10px;background:white;border:1px solid var(--line);border-radius:17px;padding:5px 10px;box-shadow:0 10px 24px #15223d0d}.searchbox input{border:0;outline:0;flex:1;padding:12px 4px;font:inherit}.chips{display:flex;gap:7px;overflow:auto;padding:9px 0}.chip{border:1px solid var(--line);background:white;border-radius:999px;padding:8px 11px;white-space:nowrap;font-size:12px}
-.timeline{position:relative;padding-left:25px}.timeline:before{content:"";position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:#e4e9f2}.event{position:relative;margin-bottom:11px}.event:before{content:"";position:absolute;left:-24px;top:21px;width:11px;height:11px;border-radius:50%;background:white;border:3px solid var(--blue)}.event.decision:before{border-color:#b95b34}.event.correction:before{border-color:var(--amber)}.event.preference:before{border-color:var(--violet)}
-.badge{display:inline-flex;padding:5px 8px;border-radius:999px;background:#fff1e7;color:#b95b34;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.05em}.title{font-size:17px;font-weight:850;line-height:1.25;margin:9px 0 5px}.body{font-size:13px;line-height:1.55;color:#5f6878}.eventtop{display:flex;justify-content:space-between;gap:12px}.time{font-size:11px;color:#8b95a6}.rowactions{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
-.smallbtn{border:1px solid var(--line);background:#f8faff;border-radius:10px;padding:8px 10px;font-size:11px;font-weight:800}.empty{border:1px dashed #cfd7e5;border-radius:20px;padding:32px;text-align:center;color:var(--muted);background:#ffffff99}
-.people{display:grid;gap:10px}.person{display:flex;align-items:center;justify-content:space-between;gap:12px}.personmain{display:flex;align-items:center;gap:11px;min-width:0}.personname{font-weight:850}.personmail{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis}.status{font-size:10px;padding:5px 8px;border-radius:999px;background:#ecfdf5;color:#15735d;font-weight:900}.status.off{background:#fff1f2;color:#be334a}.role{font-size:10px;color:#6c7484}.lockpanel{max-width:520px;margin:60px auto}.invite{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#0b2922;color:#f6eee8;padding:12px;border-radius:12px;word-break:break-all}
-@media(min-width:760px){.grid.stats{grid-template-columns:repeat(3,1fr)}.people{grid-template-columns:1fr 1fr}.main{padding:24px 24px 80px}.hero{padding:38px}.card{padding:20px}}
-@media(min-width:1060px){.shell{display:grid;grid-template-columns:250px 1fr}.rail{display:flex;position:sticky;top:0;height:100vh;background:var(--navy);color:white;padding:26px 18px;flex-direction:column}.mobilebar{display:none}.main{padding:28px 34px 60px}.railbrand{display:flex;gap:12px;align-items:center;margin-bottom:36px}.railbrand img{width:44px;height:44px;border-radius:14px}.railnav{display:grid;gap:6px}.railnav button{border:0;background:transparent;color:#aebbd1;text-align:left;padding:11px 12px;border-radius:12px;font-weight:750}.railnav button.active{background:#ffffff12;color:white}.railnav i{margin-right:10px}.railfoot{margin-top:auto;color:#8290a9;font-size:11px;line-height:1.5}.top .brand{display:none}.people{grid-template-columns:repeat(3,1fr)}}
-</style>
+<link rel="stylesheet" href="/assets/css/portal.css">
 </head>
-<body><div id="app" v-cloak><v-app><div class="shell">
-<aside class="rail"><div class="railbrand"><img src="https://avatars.githubusercontent.com/u/217432391?v=4"><div><div class="word">MyTrues</div><div class="sub" style="color:#8492aa">decision memory</div></div></div>
-<div class="railnav"><button v-for="n in nav" :class="{active:section===n.id}" @click="go(n.id)"><i :class="'mdi '+n.icon"></i>{{n.label}}</button></div>
-<div class="railfoot">Privado por enquanto.<br>Google Auth obrigatório.<br>Memória append-only.</div></aside>
+<body><div id="app" v-cloak>
+<div class="app">
+<header class="topbar"><div class="topinner">
+ <div class="brand"><img src="/assets/mytrues-logo.png" alt=""><span class="word">MyTrues</span></div>
+ <nav class="nav" v-if="me && me.role!=='unbound'"><button v-for="n in nav" :key="n.id" :class="{active:section===n.id}" @click="go(n.id)">{{n.label}}</button></nav>
+ <div class="topright"><button class="lang" @click="switchLocale">{{locale==='pt-BR'?'EN':'PT'}}</button><div class="user" v-if="me">{{initials(me.name)}}</div></div>
+</div></header>
+
 <main class="main">
-<div class="top"><div class="brand"><img src="https://avatars.githubusercontent.com/u/217432391?v=4"><div><div class="word">MyTrues</div><div class="sub">decision memory</div></div></div>
-<div class="user" v-if="me"><div class="avatar">{{initials(me.name)}}</div><div><div style="font-size:12px;font-weight:800">{{me.name}}</div><div class="sub">{{me.role}}</div></div></div></div>
+ <section v-if="me && me.role==='unbound'" class="claim">
+  <div class="card">
+   <div class="eyebrow">{{t('claim_title')}}</div>
+   <h1 style="font-size:34px;letter-spacing:-.045em;font-weight:580;margin:8px 0 10px">{{t('private_memory')}}</h1>
+   <p style="font-size:12px;color:var(--muted);line-height:1.55">{{t('claim_note')}}</p>
+   <div class="field"><input v-model="claimCode" :placeholder="t('invite_code')"></div>
+   <button class="btn primary" style="margin-top:12px" @click="claim">{{t('claim')}}</button>
+  </div>
+ </section>
 
-<section v-if="me && me.role==='unbound'" class="lockpanel card">
-<div class="eyebrow" style="color:var(--blue)">ativar acesso</div><h2>Seu Google foi autenticado.</h2><p class="muted">Agora vincule esta identidade ao MyTrues criado pelo administrador.</p>
-<v-text-field v-model="claimCode" label="Código de convite" variant="outlined"></v-text-field><v-btn color="primary" @click="claim">Ativar meu MyTrues</v-btn>
-</section>
+ <template v-else-if="me">
+  <section class="intro">
+   <div><div class="eyebrow">{{t('private_memory')}}</div><h1>{{t('hello')}}, {{(me.name||'').split(' ')[0]}}.</h1></div>
+   <div class="intro-actions"><button class="btn primary" @click="openNew">+ {{t('new_truth')}}</button></div>
+  </section>
 
-<template v-else-if="me">
-<section v-if="section==='home'">
-<div class="hero"><div class="eyebrow">memória cognitiva privada</div><h1>Sua verdade tem história.</h1><p>Registre o que você acredita, decidiu, observou ou corrigiu. Quando algo mudar, o MyTrues preserva o caminho — em vez de apagar o passado.</p><div class="hero-actions"><button class="primary" @click="openNew()">Registrar nova verdade</button><button class="secondary" @click="go('memory')">Consultar minha história</button></div></div>
-<div class="grid stats"><div class="card"><div class="kicker">memórias encontradas</div><div class="metric">{{events.length}}</div><div class="muted" style="font-size:12px">na consulta atual</div></div><div class="card"><div class="kicker">estado</div><div class="metric" style="font-size:21px">{{reading.title}}</div><div class="muted" style="font-size:12px">{{reading.text}}</div></div><div class="card"><div class="kicker">identidade</div><div class="metric" style="font-size:18px">{{me.role==='admin'?'Administrador':'Meu MyTrues'}}</div><div class="muted" style="font-size:12px">{{me.email||'identidade vinculada'}}</div></div></div>
-</section>
+  <section v-if="section==='home'" class="summary">
+   <div class="cell"><div class="label">{{t('memory_current')}}</div><div class="value">{{events.length}}</div><div class="subvalue">{{t('memories_found')}}</div></div>
+   <div class="cell"><div class="label">{{t('signed_as')}}</div><div class="value" style="font-size:17px">{{me.role==='admin'?t('role_admin'):t('role_member')}}</div><div class="subvalue">{{me.email||''}}</div></div>
+   <div class="cell"><div class="label">MyTrues</div><div class="value" style="font-size:17px">{{me.memory_namespace||'private'}}</div><div class="subvalue">append-only</div></div>
+  </section>
 
-<section v-if="section==='memory' || section==='home'" class="section">
-<div class="sectionhead"><div><div class="kicker">resgate cognitivo</div><h2>{{section==='home'?'Memórias recentes':'Consultar verdades'}}</h2></div><button class="smallbtn" @click="openNew()">+ Nova verdade</button></div>
-<div class="searchbox"><i class="mdi mdi-magnify"></i><input v-model="query" placeholder="Busque por termo, decisão, assunto..." @keyup.enter="search"><button class="smallbtn" @click="search">Buscar</button></div>
-<div class="chips"><button class="chip" v-for="x in suggestions" @click="query=x;search()">{{x}}</button></div>
-<div v-if="loading" class="muted">Consultando memória…</div>
-<div v-else-if="events.length" class="timeline"><article v-for="e in events" :key="e.id" class="event" :class="bucket(e)"><div class="card"><div class="eventtop"><span class="badge">{{humanType(e)}}</span><span class="time">{{date(e.time)}}</span></div><div class="title">{{humanTitle(e)}}</div><div class="body">{{humanBody(e)}}</div><div class="rowactions"><button class="smallbtn" @click="continueFrom(e)">Continuar</button><button class="smallbtn" @click="continueFrom(e,'corrects')">Corrigir</button><button class="smallbtn" @click="continueFrom(e,'confirms')">Confirmar</button></div></div></article></div>
-<div v-else class="empty">Nenhuma memória encontrada. Este pode ser o começo de uma nova história.</div>
-</section>
+  <section v-if="section==='home'||section==='memory'" class="section">
+   <div class="sectionhead"><div><h2>{{section==='home'?t('recent'):t('nav_memory')}}</h2></div><button class="btn ghost" @click="openNew">{{t('new_truth')}}</button></div>
+   <div class="search"><i class="mdi mdi-magnify" style="color:#919792"></i><input v-model="query" :placeholder="t('search_placeholder')" @keyup.enter="search"><button class="go" @click="search">{{t('search')}}</button></div>
+   <div class="chips"><button class="chip" v-for="x in suggestions" :key="x" @click="query=x;search()">{{x}}</button></div>
+   <div v-if="loading" style="font-size:12px;color:var(--muted);padding:20px 0">{{t('loading')}}</div>
+   <div v-else-if="events.length" class="timeline">
+    <article v-for="e in events" :key="e.id" class="event" :class="bucket(e)">
+     <div class="card">
+      <div class="eventtop"><span class="badge">{{humanType(e)}}</span><span class="time">{{date(e.time)}}</span></div>
+      <div class="title">{{humanTitle(e)}}</div><div class="body">{{humanBody(e)}}</div>
+      <div class="rowactions"><button class="textbtn" @click="continueFrom(e)">{{t('continue')}}</button><button class="textbtn" @click="continueFrom(e,'corrects')">{{t('correct')}}</button><button class="textbtn" @click="continueFrom(e,'confirms')">{{t('confirm')}}</button></div>
+     </div>
+    </article>
+   </div>
+   <div v-else class="empty">{{t('no_memory')}}</div>
+  </section>
 
-<section v-if="section==='people' && me.role==='admin'" class="section">
-<div class="sectionhead"><div><div class="kicker">administração</div><h2>Pessoas</h2><div class="muted" style="font-size:13px">Cada pessoa recebe seu próprio namespace de memória.</div></div><button class="smallbtn" @click="personDialog=true">+ Cadastrar pessoa</button></div>
-<div class="people"><div class="card person" v-for="p in people" :key="p.user_id"><div class="personmain"><div class="avatar">{{initials(p.display_name)}}</div><div style="min-width:0"><div class="personname">{{p.display_name}}</div><div class="personmail">{{p.email}}</div><div class="role">{{p.role}} · {{p.claimed?'Google vinculado':'aguardando vínculo'}}</div></div></div><span class="status" :class="{off:p.status!=='active'}">{{p.status}}</span></div></div>
-</section>
-</template>
+  <section v-if="section==='people' && me.role==='admin'" class="section">
+   <div class="sectionhead"><div><h2>{{t('people_title')}}</h2><p>{{t('people_note')}}</p></div><button class="btn primary" @click="personDialog=true">{{t('add_person')}}</button></div>
+   <div class="people">
+    <div class="card person" v-for="p in people" :key="p.user_id">
+     <div class="personmain"><div class="personavatar">{{initials(p.display_name)}}</div><div style="min-width:0"><div class="personname">{{p.display_name}}</div><div class="personmail">{{p.email}}</div><div class="personmeta">{{p.role}} · {{p.claimed?t('google_linked'):t('waiting_link')}}</div></div></div>
+     <span class="status" :class="{off:p.status!=='active'}">{{p.status==='active'?t('status_active'):t('status_disabled')}}</span>
+    </div>
+   </div>
+  </section>
+ </template>
 </main>
 
-<nav class="mobilebar" v-if="me && me.role!=='unbound'"><button class="navbtn" v-for="n in mobileNav" :class="{active:section===n.id}" @click="go(n.id)"><i :class="'mdi '+n.icon"></i>{{n.label}}</button></nav>
+<nav class="mobilebar" v-if="me && me.role!=='unbound'"><button v-for="n in mobileNav" :key="n.id" :class="{active:section===n.id}" @click="go(n.id)"><i :class="'mdi '+n.icon"></i>{{n.label}}</button></nav>
 
-<v-dialog v-model="truthDialog" max-width="680"><v-card rounded="xl"><v-card-title style="padding:22px 22px 8px">Nova ocorrência</v-card-title><v-card-text style="padding:14px 22px"><div class="muted" style="font-size:12px;margin-bottom:12px">Uma nova verdade nunca altera a anterior; ela entra como uma nova ocorrência.</div><v-text-field v-model="form.subject" label="Assunto" variant="outlined"></v-text-field><v-textarea v-model="form.statement" label="O que passou a ser verdade?" rows="4" auto-grow variant="outlined"></v-textarea><v-select v-model="form.kind" :items="kindItems" item-title="title" item-value="value" label="Natureza" variant="outlined"></v-select><v-select v-model="form.relation" :items="relationItems" item-title="title" item-value="value" label="Ligação histórica" variant="outlined"></v-select><v-select v-if="form.relation!=='none'" v-model="form.related_occurrence" :items="occurrenceItems" item-title="title" item-value="value" label="Ocorrência relacionada" variant="outlined"></v-select></v-card-text><v-card-actions style="padding:8px 22px 22px"><v-spacer></v-spacer><v-btn variant="text" @click="truthDialog=false">Cancelar</v-btn><v-btn color="primary" :loading="saving" @click="saveTruth">Registrar</v-btn></v-card-actions></v-card></v-dialog>
+<div class="overlay" v-if="truthDialog" @click.self="truthDialog=false"><section class="modal">
+ <h3>{{t('truth_title')}}</h3><p>{{t('truth_note')}}</p>
+ <div class="field"><label>{{t('subject')}}</label><input v-model="form.subject"></div>
+ <div class="field"><label>{{t('statement')}}</label><textarea v-model="form.statement"></textarea></div>
+ <div class="field"><label>{{t('nature')}}</label><select v-model="form.kind"><option v-for="x in kindItems" :key="x.value" :value="x.value">{{x.title}}</option></select></div>
+ <div class="field"><label>{{t('historical_link')}}</label><select v-model="form.relation"><option v-for="x in relationItems" :key="x.value" :value="x.value">{{x.title}}</option></select></div>
+ <div class="field" v-if="form.relation!=='none'"><label>{{t('related_occurrence')}}</label><select v-model="form.related_occurrence"><option v-for="x in occurrenceItems" :key="x.value" :value="x.value">{{x.title}}</option></select></div>
+ <div class="modalactions"><button class="btn ghost" @click="truthDialog=false">{{t('cancel')}}</button><button class="btn primary" :disabled="saving" @click="saveTruth">{{t('register')}}</button></div>
+</section></div>
 
-<v-dialog v-model="personDialog" max-width="560"><v-card rounded="xl"><v-card-title style="padding:22px 22px 8px">Cadastrar pessoa</v-card-title><v-card-text style="padding:14px 22px"><v-text-field v-model="personForm.display_name" label="Nome" variant="outlined"></v-text-field><v-text-field v-model="personForm.email" label="E-mail Google" variant="outlined"></v-text-field><v-select v-model="personForm.role" :items="[{title:'Pessoa',value:'member'},{title:'Administrador',value:'admin'}]" item-title="title" item-value="value" label="Perfil" variant="outlined"></v-select><div v-if="lastInvite" class="invite"><strong>Código de ativação</strong><br>{{lastInvite}}</div></v-card-text><v-card-actions style="padding:8px 22px 22px"><v-spacer></v-spacer><v-btn variant="text" @click="personDialog=false">Fechar</v-btn><v-btn color="primary" @click="savePerson">Cadastrar</v-btn></v-card-actions></v-card></v-dialog>
+<div class="overlay" v-if="personDialog" @click.self="personDialog=false"><section class="modal">
+ <h3>{{t('add_person')}}</h3>
+ <div class="field"><label>{{t('person_name')}}</label><input v-model="personForm.display_name"></div>
+ <div class="field"><label>{{t('person_email')}}</label><input v-model="personForm.email"></div>
+ <div class="field"><label>{{t('person_role')}}</label><select v-model="personForm.role"><option v-for="x in roleItems" :key="x.value" :value="x.value">{{x.title}}</option></select></div>
+ <div class="invite" v-if="lastInvite"><strong>{{t('invite_code')}}</strong><br>{{lastInvite}}</div>
+ <div class="modalactions"><button class="btn ghost" @click="personDialog=false">{{t('close')}}</button><button class="btn primary" @click="savePerson">{{t('register')}}</button></div>
+</section></div>
 
-<v-snackbar v-model="snackbar" :timeout="4500">{{message}}</v-snackbar>
-</div></v-app></div>
-<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script><script src="https://cdn.jsdelivr.net/npm/vuetify@4.2.2/dist/vuetify.min.js"></script>
-<script>
-const {createApp}=Vue,{createVuetify}=Vuetify;
-createApp({data:()=>({me:null,section:'home',query:'',events:[],people:[],loading:false,saving:false,truthDialog:false,personDialog:false,snackbar:false,message:'',claimCode:'',lastInvite:'',
-suggestions:['npm','pnpm','OAuth','schema','package manager'],form:{subject:'',statement:'',kind:'truth',relation:'none',related_occurrence:null},personForm:{display_name:'',email:'',role:'member'},
-kindItems:[{title:'Verdade',value:'truth'},{title:'Observação',value:'observation'},{title:'Decisão',value:'decision'},{title:'Preferência',value:'preference'},{title:'Correção',value:'correction'}],
-relationItems:[{title:'Sem ligação explícita',value:'none'},{title:'Continua',value:'continues'},{title:'Corrige',value:'corrects'},{title:'Confirma',value:'confirms'},{title:'Contradiz',value:'contradicts'},{title:'Baseia-se em',value:'based-on'},{title:'Foi influenciada por',value:'influenced-by'}]}),
-computed:{nav(){const x=[{id:'home',label:'Início',icon:'mdi-home-variant-outline'},{id:'memory',label:'Minhas verdades',icon:'mdi-timeline-text-outline'}];if(this.me?.role==='admin')x.push({id:'people',label:'Pessoas',icon:'mdi-account-group-outline'});return x},mobileNav(){return [...this.nav,{id:'new',label:'Nova',icon:'mdi-plus-circle-outline'}].slice(0,4)},reading(){if(this.events.some(e=>this.bucket(e)==='correction'))return{title:'Em evolução',text:'Há correções preservadas na história.'};if(this.events.some(e=>this.bucket(e)==='decision'))return{title:'Decisão registrada',text:'Há decisões ligadas à consulta.'};return{title:'Memória viva',text:'O histórico permanece consultável.'}},occurrenceItems(){return [...this.events].reverse().map(e=>({value:e.id,title:this.short(this.humanTitle(e),72)}))}},
-async mounted(){await this.loadMe();if(this.me?.role!=='unbound'){await this.search();if(this.me?.role==='admin')await this.loadPeople()}},
-methods:{async api(url,opt={}){const r=await fetch(url,{credentials:'same-origin',headers:{'Content-Type':'application/json',...(opt.headers||{})},...opt});if(r.status===401){location.href='/login';throw new Error('auth')}const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.detail||'HTTP '+r.status);return d},async loadMe(){this.me=await this.api('/api/me')},go(id){if(id==='new'){this.openNew();return}this.section=id;if(id==='people')this.loadPeople()},async search(){this.loading=true;try{const d=await this.api('/api/history?q='+encodeURIComponent(this.query||''));this.events=d.events||[]}catch(e){this.toast(e.message)}finally{this.loading=false}},openNew(){this.form={subject:this.query||'',statement:'',kind:'truth',relation:'none',related_occurrence:null};this.truthDialog=true},continueFrom(e,rel='continues'){this.form={subject:this.subjectOf(e)||this.query||'',statement:'',kind:rel==='corrects'?'correction':'truth',relation:rel,related_occurrence:e.id};this.truthDialog=true},async saveTruth(){this.saving=true;try{const d=await this.api('/api/occurrences',{method:'POST',body:JSON.stringify(this.form)});this.truthDialog=false;this.query=this.form.subject;await this.search();this.section='memory';this.toast('Ocorrência registrada: '+d.id)}catch(e){this.toast(e.message)}finally{this.saving=false}},async loadPeople(){if(this.me?.role!=='admin')return;try{this.people=(await this.api('/api/people')).people||[]}catch(e){this.toast(e.message)}},async savePerson(){try{const d=await this.api('/api/people',{method:'POST',body:JSON.stringify(this.personForm)});this.lastInvite=d.invite_code;await this.loadPeople();this.toast('Pessoa cadastrada. Copie o código de ativação.')}catch(e){this.toast(e.message)}},async claim(){try{await this.api('/api/claim',{method:'POST',body:JSON.stringify({code:this.claimCode})});location.reload()}catch(e){this.toast(e.message)}},toast(s){this.message=s;this.snackbar=true},initials(s){return String(s||'?').split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()},link(e,k){return e.links?.find(l=>l.key===k)},val(e,k){const l=this.link(e,k);return l?(l.valueLexical||this.labelValue(l.value)):''},subjectOf(e){return this.val(e,'key:subject')},bucket(e){const t=e.type||this.link(e,'key:type')?.value||'';if(String(t).includes('decision'))return'decision';if(String(t).includes('correction'))return'correction';if(String(t).includes('preference'))return'preference';return'experience'},humanType(e){return({decision:'decisão',correction:'correção',preference:'preferência',experience:'ocorrência'})[this.bucket(e)]},humanTitle(e){return this.val(e,'key:statement')||e.id.replace('occ:','')},humanBody(e){const subject=this.subjectOf(e),author=this.val(e,'key:author');return [subject?'Assunto: '+subject:null,author?'Registrada por '+author:null].filter(Boolean).join(' · ')},labelValue(v){return String(v||'').replace(/^occ:/,'').replace(/^[a-z-]+:/,'').replaceAll('-',' ')},date(v){if(!v)return'';const d=new Date(v);return Number.isNaN(d.getTime())?v:d.toLocaleString('pt-BR',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})},short(s,n){s=String(s||'');return s.length>n?s.slice(0,n-1)+'…':s}}}).use(createVuetify({theme:{defaultTheme:'light'}})).mount('#app');
-</script></body></html>
+<div v-if="snackbar" style="position:fixed;left:50%;bottom:26px;z-index:90;transform:translateX(-50%);background:#18211d;color:white;border-radius:999px;padding:10px 14px;font-size:11px">{{message}}</div>
+</div></div>
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script src="/assets/js/i18n.js"></script>
+<script src="/assets/js/portal.js"></script>
+</body></html>
