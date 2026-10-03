@@ -46,20 +46,25 @@ jobs:
           loc="$(awk 'BEGIN{IGNORECASE=1} /^location:/ {sub(/^[^:]+:[[:space:]]*/,"");gsub(/\r/,"");print;exit}' /tmp/auth-h)"
 
           python3 - "$loc" <<'PY'
-          import sys,urllib.parse as u
-          parsed=u.urlparse(sys.argv[1])
-          qs=u.parse_qs(parsed.query)
-          assert parsed.scheme=="https"
-          assert parsed.netloc=="mcp.mytrues.io"
-          assert parsed.path.rstrip("/")=="/authorize"
-          redirect=qs["redirect_uri"][0]
-          assert redirect in {
-            "https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io/auth/callback",
-            "https://reader.mytrues.io/auth/callback",
-          }
-          assert qs.get("code_challenge_method")==["S256"]
-          print("OAUTH_LOCATION_SEMANTIC_PASS")
-          PY
+import sys,urllib.parse as u
+parsed=u.urlparse(sys.argv[1])
+qs=u.parse_qs(parsed.query)
+redirect=(qs.get("redirect_uri") or [""])[0]
+method=(qs.get("code_challenge_method") or [""])[0]
+print("OAUTH_HOST="+parsed.netloc)
+print("OAUTH_PATH="+parsed.path)
+print("OAUTH_REDIRECT="+redirect)
+print("OAUTH_PKCE_METHOD="+method)
+assert parsed.scheme=="https"
+assert parsed.netloc=="mcp.mytrues.io"
+assert parsed.path.rstrip("/")=="/authorize"
+assert redirect in {
+    "https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io/auth/callback",
+    "https://reader.mytrues.io/auth/callback",
+}
+assert method=="S256"
+print("OAUTH_LOCATION_SEMANTIC_PASS")
+PY
 
           # Independently prove the callback is accepted by DCR; no Google account is automated here.
           code="$(curl -sS -o /tmp/dcr -w '%{http_code}' -H 'content-type: application/json' \
