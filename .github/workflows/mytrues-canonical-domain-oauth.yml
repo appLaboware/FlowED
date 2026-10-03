@@ -75,7 +75,6 @@ jobs:
           payload="$(jq -nc '{
             client_name:"MyTrues Portal",
             redirect_uris:[
-              "https://mytrues.io/auth/callback",
               "https://reader.mytrues.io/auth/callback",
               "https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io/auth/callback"
             ],
@@ -95,6 +94,7 @@ jobs:
           echo "client_id=$cid" >> "$GITHUB_OUTPUT"
           echo "OAUTH_CLIENT_READY"
       - name: Inspect available Cloudflare credential
+        if: always()
         shell: bash
         run: |
           set -euo pipefail
