@@ -3,144 +3,55 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0f2f27">
-<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#f5f3ee">
+<meta name="color-scheme" content="light">
 <title>MyTrues</title>
 <meta name="description" content="Estamos preparando algo incrível para você.">
-<style>
-:root{
-  --forest:#0f2f27;
-  --forest-2:#16483a;
-  --forest-3:#1f5d49;
-  --orange:#f47a45;
-  --orange-soft:#ffb182;
-  --cream:#f6f1e8;
-  --paper:#fffaf2;
-  --ink:#f7f4ee;
-  --muted:#c3cec8;
-  --line:rgba(255,255,255,.12);
-  --glass:rgba(255,255,255,.055);
-}
-*{box-sizing:border-box}
-html,body{margin:0;min-height:100%;background:var(--forest);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,ui-sans-serif,system-ui,sans-serif}
-body{color:var(--ink);overflow-x:hidden}
-a{color:inherit}
-.page{position:relative;min-height:100svh;isolation:isolate;overflow:hidden;background:
-  radial-gradient(circle at 12% 20%,rgba(244,122,69,.11),transparent 26rem),
-  radial-gradient(circle at 80% 5%,rgba(95,174,136,.12),transparent 32rem),
-  linear-gradient(155deg,#0b2922 0%,#10362d 58%,#0e2e27 100%)}
-.page:before{
-  content:"";position:absolute;inset:-18%;z-index:-3;
-  background:
-    radial-gradient(ellipse at 28% 40%,rgba(244,122,69,.16),transparent 23%),
-    radial-gradient(ellipse at 70% 58%,rgba(63,151,112,.18),transparent 26%),
-    radial-gradient(ellipse at 47% 80%,rgba(255,177,130,.08),transparent 20%);
-  filter:blur(54px);animation:drift 22s ease-in-out infinite alternate
-}
-.page:after{
-  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.24;
-  background-image:
-    linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
-  background-size:48px 48px;
-  mask-image:linear-gradient(to bottom,transparent,black 28%,black 70%,transparent)
-}
-.orb{position:absolute;border-radius:50%;filter:blur(1px);opacity:.5;z-index:-2;pointer-events:none}
-.orb.a{width:32rem;height:32rem;right:-18rem;top:13%;background:radial-gradient(circle at 35% 35%,rgba(244,122,69,.26),rgba(244,122,69,.02) 62%,transparent 72%);animation:floatA 18s ease-in-out infinite}
-.orb.b{width:29rem;height:29rem;left:-16rem;bottom:-5rem;background:radial-gradient(circle at 55% 40%,rgba(77,165,124,.2),rgba(77,165,124,.02) 65%,transparent 75%);animation:floatB 24s ease-in-out infinite}
-.shell{min-height:100svh;display:flex;flex-direction:column;width:min(1180px,100%);margin:auto;padding:22px 20px 18px}
-.header{display:flex;align-items:center;justify-content:space-between;gap:16px}
-.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
-.brand img{width:42px;height:42px;border-radius:13px;display:block;box-shadow:0 10px 34px rgba(0,0,0,.28)}
-.brandword{font-size:17px;font-weight:760;letter-spacing:-.035em}
-.access{font-size:12px;color:rgba(247,244,238,.58);text-decoration:none;padding:8px 0;transition:color .2s ease}
-.access:hover{color:rgba(247,244,238,.9)}
-.hero{flex:1;display:grid;align-items:center;padding:64px 0 42px}
-.hero-inner{max-width:870px}
-.eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:11px;letter-spacing:.17em;text-transform:uppercase;font-weight:750;color:#d3ddd8;margin-bottom:24px}
-.spark{width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 7px rgba(244,122,69,.08),0 0 28px rgba(244,122,69,.45)}
-h1{font-size:clamp(50px,11vw,104px);line-height:.9;letter-spacing:-.072em;font-weight:780;margin:0;max-width:960px;text-wrap:balance}
-h1 .warm{color:var(--orange-soft);font-weight:760}
-.lead{font-size:clamp(17px,2.6vw,22px);line-height:1.55;color:var(--muted);max-width:650px;margin:26px 0 0;letter-spacing:-.012em}
-.form-wrap{margin-top:38px;max-width:700px}
-.form{display:grid;grid-template-columns:1fr;gap:11px;padding:8px;border:1px solid var(--line);background:rgba(255,255,255,.06);backdrop-filter:blur(18px);border-radius:22px;box-shadow:0 20px 70px rgba(0,0,0,.18)}
-.input{width:100%;border:0;outline:none;background:transparent;color:white;font:inherit;padding:13px 14px;border-radius:15px}
-.input::placeholder{color:rgba(255,255,255,.42)}
-.field{position:relative}
-.field+.field{border-top:1px solid rgba(255,255,255,.08)}
-.submit{border:0;cursor:pointer;border-radius:15px;padding:14px 18px;background:linear-gradient(135deg,#f47a45,#ef6430);color:#fffaf5;font-weight:760;font-size:14px;box-shadow:0 10px 30px rgba(244,122,69,.25);transition:transform .2s ease,box-shadow .2s ease,filter .2s ease}
-.submit:hover{transform:translateY(-1px);box-shadow:0 14px 34px rgba(244,122,69,.32)}
-.submit:disabled{opacity:.6;cursor:default;transform:none}
-.note{font-size:11px;color:rgba(247,244,238,.5);margin:12px 5px 0;line-height:1.45}
-.message{font-size:13px;margin-top:12px;color:#dff7e9;min-height:20px}
-.hp{position:absolute!important;left:-9999px!important;opacity:0!important;pointer-events:none!important}
-.footer{display:flex;flex-direction:column;gap:8px;padding:16px 0 4px;color:rgba(247,244,238,.42);font-size:11px}
-.wordmark-rule{width:54px;height:2px;border-radius:999px;background:linear-gradient(90deg,var(--orange),rgba(244,122,69,0))}
-@media(min-width:720px){
-  .shell{padding:28px 34px 22px}.hero{padding:80px 0 56px}
-  .form{grid-template-columns:1fr 1.18fr auto;align-items:center;border-radius:19px}
-  .field+.field{border-top:0;border-left:1px solid rgba(255,255,255,.08)}
-  .submit{min-height:48px}
-  .footer{flex-direction:row;align-items:center;justify-content:space-between}
-}
-@media(min-width:1024px){.shell{padding-left:48px;padding-right:48px}.hero-inner{padding-left:4px}}
-@keyframes drift{0%{transform:translate3d(-2%,0,0) scale(1)}50%{transform:translate3d(3%,-2%,0) scale(1.03)}100%{transform:translate3d(-1%,3%,0) scale(1.01)}}
-@keyframes floatA{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(-28px,18px,0) scale(1.05)}}
-@keyframes floatB{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(34px,-22px,0) scale(.96)}}
-@media(prefers-reduced-motion:reduce){.page:before,.orb{animation:none!important}}
-</style>
+<link rel="stylesheet" href="/assets/css/public.css">
 </head>
 <body>
+<canvas id="ambient" class="ambient" aria-hidden="true"></canvas>
 <main class="page">
-  <div class="orb a"></div><div class="orb b"></div>
   <div class="shell">
     <header class="header">
       <a class="brand" href="/" aria-label="MyTrues">
-        <img src="https://avatars.githubusercontent.com/u/217432391?v=4" alt="">
+        <img src="/assets/mytrues-logo.png" alt="">
         <span class="brandword">MyTrues</span>
       </a>
-      <a class="access" href="/app">Acesso reservado</a>
+      <div class="header-actions">
+        <button class="quiet" id="lang" type="button">EN</button>
+        <a class="quiet" href="/app" data-i18n="access" data-i18n-aria="access_aria">Acesso</a>
+      </div>
     </header>
 
     <section class="hero">
       <div class="hero-inner">
-        <div class="eyebrow"><span class="spark"></span>em preparação</div>
-        <h1>Estamos preparando<br>algo <span class="warm">incrível</span> para você.</h1>
-        <p class="lead">Ainda não é hora de contar tudo. Mas, se quiser acompanhar de perto e ser avisado quando abrirmos as portas, deixe seu nome.</p>
+        <div class="status"><span class="status-dot"></span><span data-i18n="status">Em preparação</span></div>
+        <h1 data-i18n="headline">Estamos preparando algo incrível para você.</h1>
+        <p class="lead" data-i18n="lead">Ainda não é hora de contar tudo. Se quiser acompanhar de perto e ser avisado quando abrirmos as portas, deixe seu nome.</p>
+        <div class="rule" aria-hidden="true"></div>
 
         <div class="form-wrap">
           <form class="form" id="interest-form" novalidate>
-            <div class="field"><input class="input" id="name" name="name" maxlength="120" autocomplete="name" placeholder="Seu nome" required></div>
-            <div class="field"><input class="input" id="email" name="email" type="email" maxlength="240" autocomplete="email" placeholder="Seu melhor e-mail" required></div>
+            <div class="field"><input class="input" id="name" name="name" maxlength="120" autocomplete="name" data-i18n-placeholder="name_placeholder" placeholder="Seu nome" required></div>
+            <div class="field"><input class="input" id="email" name="email" type="email" maxlength="240" autocomplete="email" data-i18n-placeholder="email_placeholder" placeholder="Seu melhor e-mail" required></div>
             <input class="hp" name="website" id="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-            <button class="submit" id="submit" type="submit">Quero acompanhar</button>
+            <button class="submit" id="submit" type="submit" data-i18n="submit">Quero acompanhar</button>
           </form>
           <div class="message" id="message" role="status" aria-live="polite"></div>
-          <div class="note">Sem spam. Sem apresentação antes da hora. Só avisaremos quando houver algo que valha a pena ver.</div>
+          <div class="note" data-i18n="note">Sem spam. Sem apresentação antes da hora.</div>
         </div>
       </div>
     </section>
 
     <footer class="footer">
-      <div><div class="wordmark-rule"></div></div>
-      <div>© <span id="year"></span> MyTrues</div>
+      <div class="footer-mark">MyTrues</div>
+      <div>© <span id="year"></span></div>
     </footer>
   </div>
 </main>
-<script>
-document.getElementById('year').textContent=new Date().getFullYear();
-const form=document.getElementById('interest-form'),button=document.getElementById('submit'),message=document.getElementById('message');
-form.addEventListener('submit',async(e)=>{
-  e.preventDefault();message.textContent='';button.disabled=true;button.textContent='Enviando…';
-  try{
-    const payload={display_name:document.getElementById('name').value.trim(),email:document.getElementById('email').value.trim(),website:document.getElementById('website').value};
-    const r=await fetch('/api/interest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    const data=await r.json().catch(()=>({}));
-    if(!r.ok)throw new Error(data.detail||'Não foi possível enviar agora.');
-    form.reset();message.textContent='Pronto. Quando for a hora, você vai saber.';
-  }catch(err){message.textContent=err.message||'Não foi possível enviar agora.'}
-  finally{button.disabled=false;button.textContent='Quero acompanhar'}
-});
-</script>
+<script src="/assets/js/i18n.js"></script>
+<script src="/assets/js/ambient.js"></script>
+<script src="/assets/js/landing.js"></script>
 </body>
 </html>
