@@ -1,10 +1,10 @@
 {
-  "brand": "MyTrues",
-  "access": "Acesso",
-  "language": "Idioma",
-  "loading": "Carregando…",
-  "error_generic": "Não foi possível concluir agora.",
-  "close": "Fechar",
-  "cancel": "Cancelar",
-  "save": "Salvar"
+  "brand":"MyTrues",
+  "access":"Acesso",
+  "language":"Idioma",
+  "loading":"Carregando…",
+  "error_generic":"Não foi possível concluir agora.",
+  "close":"Fechar",
+  "cancel":"Cancelar",
+  "save":"Salvar"
 }
