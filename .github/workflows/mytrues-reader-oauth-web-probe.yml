@@ -1,0 +1,25 @@
+name: MyTrues Reader OAuth web-client probe
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-reader-oauth-web-probe.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Probe DCR as web application
+        shell: bash
+        run: |
+          set -euo pipefail
+          reg=https://mcp.mytrues.io/register
+          for uri in             https://reader.mytrues.io/auth/callback             https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io/auth/callback
+          do
+            echo "=== $uri ==="
+            code="$(curl -sS -o /tmp/out -w '%{http_code}' -H 'content-type: application/json' --data "$(jq -nc --arg uri "$uri" '{client_name:"MyTrues Portal probe",redirect_uris:[$uri],grant_types:["authorization_code","refresh_token"],response_types:["code"],token_endpoint_auth_method:"none",application_type:"web"}')" "$reg")"
+            echo "HTTP=$code"
+            jq 'if .client_id then {accepted:true,client_id:"<issued>",redirect_uris,application_type} else . end' /tmp/out || cat /tmp/out
+          done
