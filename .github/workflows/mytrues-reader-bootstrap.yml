@@ -71,13 +71,50 @@ jobs:
           env=mytrues-memory-env
           app=mytrues-reader
           source="https://raw.githubusercontent.com/appLaboware/FlowED/tools/ideos-lab/Tools/MyTrues/typedb-poc-bridge/reader/index.html"
+          sub="$(az account show --query id -o tsv)"
+          env_id="$(az containerapp env show -g "$rg" -n "$env" --query id -o tsv)"
+          location="$(az containerapp env show -g "$rg" -n "$env" --query location -o tsv)"
+          url="https://management.azure.com/subscriptions/$sub/resourceGroups/$rg/providers/Microsoft.App/containerApps/$app?api-version=2025-07-01"
 
-          if ! az containerapp show -g "$rg" -n "$app" -o none 2>/dev/null; then
-            az containerapp create -g "$rg" -n "$app"               --environment "$env"               --image nginx:1.27-alpine               --ingress external --target-port 80               --min-replicas 1 --max-replicas 1               --cpu 0.25 --memory 0.5Gi               --command /bin/sh               --args -c "wget -qO /usr/share/nginx/html/index.html '$source' && exec nginx -g 'daemon off;'"               --tags project=MyTrues role=human-reader               --only-show-errors -o none
-          else
-            az containerapp update -g "$rg" -n "$app"               --image nginx:1.27-alpine               --command /bin/sh               --args -c "wget -qO /usr/share/nginx/html/index.html '$source' && exec nginx -g 'daemon off;'"               --min-replicas 1 --max-replicas 1               --cpu 0.25 --memory 0.5Gi               --only-show-errors -o none
-            az containerapp ingress enable -g "$rg" -n "$app" --type external --target-port 80 --only-show-errors -o none
-          fi
+          SOURCE="$source" ENV_ID="$env_id" LOCATION="$location" python3 - <<'PY'
+import json, os
+body={
+  "location":os.environ["LOCATION"],
+  "tags":{"project":"MyTrues","role":"human-reader"},
+  "properties":{
+    "managedEnvironmentId":os.environ["ENV_ID"],
+    "configuration":{
+      "activeRevisionsMode":"Single",
+      "ingress":{
+        "external":True,
+        "targetPort":80,
+        "transport":"Auto",
+        "allowInsecure":False
+      }
+    },
+    "template":{
+      "containers":[{
+        "name":"reader",
+        "image":"nginx:1.27-alpine",
+        "command":["/bin/sh"],
+        "args":["-c",f"wget -qO /usr/share/nginx/html/index.html '{os.environ['SOURCE']}' && exec nginx -g 'daemon off;'"],
+        "resources":{"cpu":0.25,"memory":"0.5Gi"}
+      }],
+      "scale":{"minReplicas":1,"maxReplicas":1}
+    }
+  }
+}
+json.dump(body,open("/tmp/reader-app.json","w"))
+PY
+
+          az rest --method put --url "$url"             --headers "Content-Type=application/json"             --body @/tmp/reader-app.json             --only-show-errors -o none
+
+          for i in $(seq 1 60); do
+            state="$(az containerapp show -g "$rg" -n "$app" --query properties.provisioningState -o tsv 2>/dev/null || true)"
+            [ "$state" = "Succeeded" ] && break
+            [ "$state" = "Failed" ] && { az containerapp show -g "$rg" -n "$app" -o json; exit 1; }
+            sleep 5
+          done
 
           fqdn="$(az containerapp show -g "$rg" -n "$app" --query properties.configuration.ingress.fqdn -o tsv)"
           verify="$(az containerapp show -g "$rg" -n "$app" --query properties.customDomainVerificationId -o tsv)"
