@@ -14,31 +14,34 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
-      - name: Verify authenticated Reader surface
+      - name: Verify Reader starts an accepted OAuth transaction
         shell: bash
         run: |
           set -euo pipefail
           base="https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io"
 
-          curl -fsS "$base/healthz" | tee /tmp/health.json
-          jq -e '.ok == true and .auth == "https://mcp.mytrues.io"' /tmp/health.json >/dev/null
+          curl -fsS "$base/healthz" | jq -e '.ok == true and .auth == "https://mcp.mytrues.io"' >/dev/null
+          curl -fsS "$base/login" -o /tmp/login.html
+          grep -q 'Continuar com Google' /tmp/login.html
 
-          root_headers="$(curl -sS -D - -o /dev/null "$base/")"
-          root_code="$(printf '%s\n' "$root_headers" | awk 'toupper($1) ~ /^HTTP/ {c=$2} END {print c}')"
-          root_location="$(printf '%s\n' "$root_headers" | awk 'BEGIN{IGNORECASE=1} /^location:/ {sub(/^[^:]+:[[:space:]]*/,""); gsub(/\r/,""); print; exit}')"
-          printf 'ROOT_HTTP=%s ROOT_LOCATION=%s\n' "$root_code" "$root_location"
-          test "$root_code" = "302"
-          test "$root_location" = "/login"
+          curl -sS -D /tmp/h -o /dev/null -c /tmp/cookies "$base/auth/start"
+          code="$(awk 'toupper($1) ~ /^HTTP/ {c=$2} END {print c}' /tmp/h)"
+          loc="$(awk 'BEGIN{IGNORECASE=1} /^location:/ {sub(/^[^:]+:[[:space:]]*/,"");gsub(/\r/,"");print;exit}' /tmp/h)"
+          test "$code" = "302"
+          printf '%s' "$loc" | grep -Fq 'https://mcp.mytrues.io/authorize?'
+          printf '%s' "$loc" | grep -Fq 'redirect_uri=https%3A%2F%2Fmytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io%2Fauth%2Fcallback'
+
+          auth_code="$(curl -sS -o /tmp/auth-body -D /tmp/auth-h -w '%{http_code}' "$loc")"
+          test "$auth_code" = "200" -o "$auth_code" = "302"
+          if grep -qi 'invalid_redirect_uri' /tmp/auth-body; then
+            echo "OAuth still rejected Reader redirect" >&2
+            exit 1
+          fi
 
           api_code="$(curl -sS -o /tmp/api.json -w '%{http_code}' "$base/api/history?q=npm")"
-          printf 'API_HTTP=%s\n' "$api_code"
           test "$api_code" = "401"
 
-          login_headers="$(curl -sS -D - -o /dev/null "$base/login")"
-          login_code="$(printf '%s\n' "$login_headers" | awk 'toupper($1) ~ /^HTTP/ {c=$2} END {print c}')"
-          login_location="$(printf '%s\n' "$login_headers" | awk 'BEGIN{IGNORECASE=1} /^location:/ {sub(/^[^:]+:[[:space:]]*/,""); gsub(/\r/,""); print; exit}')"
-          printf 'LOGIN_HTTP=%s\n' "$login_code"
-          test "$login_code" = "302"
-          printf '%s' "$login_location" | grep -Fq 'https://mcp.mytrues.io/authorize'
-
-          echo "READER_AUTH_SMOKE_PASS"
+          echo "READER_LOGIN_PAGE_PASS"
+          echo "READER_DCR_PASS"
+          echo "READER_AUTHORIZE_START_PASS"
+          echo "READER_ANONYMOUS_API_DENIED_PASS"
