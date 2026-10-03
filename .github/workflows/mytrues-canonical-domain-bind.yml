@@ -20,24 +20,56 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
-      - name: Resolve Azure
-        id: az
+      - name: Resolve Azure identifiers
+        id: azure
         shell: bash
         run: |
           set -euo pipefail
-          extract(){ local key="$1"; printf '%s\n' "$AZURE_BUNDLE" | sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*[:=][[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\\2/p" | tail -n1; }
-          CLIENT_ID="$(extract AZURE_CLIENT_ID)"; TENANT_ID="$(extract AZURE_TENANT_ID)"; SUBSCRIPTION_ID="$(extract AZURE_SUBSCRIPTION_ID)"
+          extract() {
+            local key="$1"
+            printf '%s\n' "$AZURE_BUNDLE" |
+              sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*[:=][[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\\2/p" |
+              tail -n 1
+          }
+          CLIENT_ID="$(extract AZURE_CLIENT_ID)"
+          TENANT_ID="$(extract AZURE_TENANT_ID)"
+          SUBSCRIPTION_ID="$(extract AZURE_SUBSCRIPTION_ID)"
           test -n "$CLIENT_ID" && test -n "$TENANT_ID" && test -n "$SUBSCRIPTION_ID"
-          echo "::add-mask::$CLIENT_ID"; echo "::add-mask::$TENANT_ID"; echo "::add-mask::$SUBSCRIPTION_ID"
-          echo "client=$CLIENT_ID" >> "$GITHUB_OUTPUT"; echo "tenant=$TENANT_ID" >> "$GITHUB_OUTPUT"; echo "sub=$SUBSCRIPTION_ID" >> "$GITHUB_OUTPUT"
-      - name: Azure login
+          echo "::add-mask::$CLIENT_ID"
+          echo "::add-mask::$TENANT_ID"
+          echo "::add-mask::$SUBSCRIPTION_ID"
+          echo "client_id=$CLIENT_ID" >> "$GITHUB_OUTPUT"
+          echo "tenant_id=$TENANT_ID" >> "$GITHUB_OUTPUT"
+          echo "subscription_id=$SUBSCRIPTION_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Request GitHub OIDC token
+        id: oidc
         shell: bash
         run: |
           set -euo pipefail
-          TOKEN="$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "\${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange" | jq -r .value)"
+          RESPONSE="$(curl --fail --silent --show-error \
+            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange")"
+          TOKEN="$(jq -r '.value' <<<"$RESPONSE")"
+          test -n "$TOKEN" && test "$TOKEN" != "null"
           echo "::add-mask::$TOKEN"
-          az login --service-principal --username "\${{ steps.az.outputs.client }}" --tenant "\${{ steps.az.outputs.tenant }}" --federated-token "$TOKEN" --allow-no-subscriptions -o none
-          az account set --subscription "\${{ steps.az.outputs.sub }}"
+          {
+            echo "token<<EOF"
+            echo "$TOKEN"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Login Azure
+        shell: bash
+        run: |
+          set -euo pipefail
+          az login --service-principal \
+            --username "${{ steps.azure.outputs.client_id }}" \
+            --tenant "${{ steps.azure.outputs.tenant_id }}" \
+            --federated-token "${{ steps.oidc.outputs.token }}" \
+            --allow-no-subscriptions -o none
+          az account set --subscription "${{ steps.azure.outputs.subscription_id }}"
+
       - name: Check authoritative DNS
         id: dns
         shell: bash
