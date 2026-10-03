@@ -1,0 +1,54 @@
+name: MyTrues DNS audit
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-dns-audit.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Audit authoritative and public DNS
+        shell: bash
+        run: |
+          set -euo pipefail
+          auth=rosa.ns.cloudflare.com
+
+          probe() {
+            local host="$1" txt="$2"
+            echo "=== $host ==="
+            echo "AUTH_CNAME=$(dig +short CNAME "$host" @"$auth" | sed 's/\.$//' | tr '\n' ' ')"
+            echo "AUTH_A=$(dig +short A "$host" @"$auth" | tr '\n' ' ')"
+            echo "AUTH_TXT=$(dig +short TXT "$txt" @"$auth" | tr -d '\"' | tr '\n' ' ')"
+            echo "CF_CNAME=$(dig +short CNAME "$host" @1.1.1.1 | sed 's/\.$//' | tr '\n' ' ')"
+            echo "CF_A=$(dig +short A "$host" @1.1.1.1 | tr '\n' ' ')"
+            echo "GOOGLE_CNAME=$(dig +short CNAME "$host" @8.8.8.8 | sed 's/\.$//' | tr '\n' ' ')"
+            echo "GOOGLE_A=$(dig +short A "$host" @8.8.8.8 | tr '\n' ' ')"
+          }
+
+          echo "=== ZONE ==="
+          echo "NS=$(dig +short NS mytrues.io | tr '\n' ' ')"
+          probe mcp.mytrues.io asuid.mcp.mytrues.io
+          probe reader.mytrues.io asuid.reader.mytrues.io
+
+      - name: Audit HTTPS and certificates
+        shell: bash
+        run: |
+          set -euo pipefail
+          for host in mcp.mytrues.io reader.mytrues.io; do
+            echo "=== HTTPS $host ==="
+            if getent ahosts "$host" >/dev/null 2>&1; then
+              curl -ksS -o /tmp/body -D /tmp/headers --max-time 15 "https://$host/" || true
+              awk 'toupper($1) ~ /^HTTP/ {print "HTTP=" $2}' /tmp/headers | tail -n1 || true
+              awk 'BEGIN{IGNORECASE=1} /^location:/ {gsub(/\r/,""); print "LOCATION=" substr($0,index($0,":")+2)}' /tmp/headers | head -n1 || true
+              echo | openssl s_client -connect "$host:443" -servername "$host" 2>/dev/null |                 openssl x509 -noout -subject -issuer -dates -ext subjectAltName 2>/dev/null || true
+            else
+              echo "UNRESOLVED"
+            fi
+          done
