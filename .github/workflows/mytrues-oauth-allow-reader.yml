@@ -1,0 +1,202 @@
+name: MyTrues OAuth allow Reader callback
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-oauth-allow-reader.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AZURE_BUNDLE: ${{ secrets.AZURE }}
+
+jobs:
+  patch:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Resolve Azure identifiers
+        id: azure
+        shell: bash
+        run: |
+          set -euo pipefail
+          extract(){ local key="$1"; printf '%s\n' "$AZURE_BUNDLE" | sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*[:=][[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\\2/p" | tail -n1; }
+          CLIENT_ID="$(extract AZURE_CLIENT_ID)"; TENANT_ID="$(extract AZURE_TENANT_ID)"; SUBSCRIPTION_ID="$(extract AZURE_SUBSCRIPTION_ID)"
+          test -n "$CLIENT_ID" && test -n "$TENANT_ID" && test -n "$SUBSCRIPTION_ID"
+          echo "::add-mask::$CLIENT_ID"; echo "::add-mask::$TENANT_ID"; echo "::add-mask::$SUBSCRIPTION_ID"
+          echo "client_id=$CLIENT_ID" >> "$GITHUB_OUTPUT"; echo "tenant_id=$TENANT_ID" >> "$GITHUB_OUTPUT"; echo "subscription_id=$SUBSCRIPTION_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Azure login
+        shell: bash
+        run: |
+          set -euo pipefail
+          TOKEN="$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange" | jq -r .value)"
+          echo "::add-mask::$TOKEN"
+          az login --service-principal --username "${{ steps.azure.outputs.client_id }}" --tenant "${{ steps.azure.outputs.tenant_id }}" --federated-token "$TOKEN" --allow-no-subscriptions -o none
+          az account set --subscription "${{ steps.azure.outputs.subscription_id }}"
+
+      - name: Snapshot current MCP image and revision
+        id: current
+        shell: bash
+        run: |
+          set -euo pipefail
+          rg=rg-flowed-ideos-lab
+          app=mytrues-mcp
+          image="$(az containerapp show -g "$rg" -n "$app" --query properties.template.containers[0].image -o tsv)"
+          revision="$(az containerapp show -g "$rg" -n "$app" --query properties.latestReadyRevisionName -o tsv)"
+          test -n "$image" && test -n "$revision"
+          echo "image=$image" >> "$GITHUB_OUTPUT"
+          echo "revision=$revision" >> "$GITHUB_OUTPUT"
+          echo "BASE_IMAGE=$image"
+          echo "BASE_REVISION=$revision"
+
+      - name: Pull and locate OAuth source without disclosure
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          image="${{ steps.current.outputs.image }}"
+          registry="${image%%/*}"
+          az acr login --name "${registry%%.*}" --only-show-errors
+          docker pull "$image" >/dev/null
+          cid="$(docker create "$image")"
+          mkdir -p /tmp/rootfs
+          docker export "$cid" | tar -xf - -C /tmp/rootfs
+          docker rm "$cid" >/dev/null
+
+          python3 - <<'PY'
+          from pathlib import Path
+          roots=[Path('/tmp/rootfs/app'),Path('/tmp/rootfs/code'),Path('/tmp/rootfs/srv'),Path('/tmp/rootfs/opt')]
+          candidates=[]
+          needles=('allowed_client_redirect_uris','connector_platform_oauth_redirect')
+          for root in roots:
+              if not root.exists(): continue
+              for p in root.rglob('*.py'):
+                  try: s=p.read_text(errors='ignore')
+                  except Exception: continue
+                  if any(n in s for n in needles):
+                      candidates.append(p)
+          if len(candidates)!=1:
+              raise SystemExit(f"Expected exactly one OAuth source file, found {len(candidates)}")
+          p=candidates[0]
+          rel='/' + str(p.relative_to('/tmp/rootfs'))
+          Path('/tmp/oauth-source-path').write_text(rel)
+          print('OAUTH_SOURCE_FOUND='+rel)
+          PY
+
+      - name: Patch only the allowed redirect URI list
+        id: patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          src="$(cat /tmp/oauth-source-path)"
+          host="/tmp/rootfs${src}"
+          mkdir -p /tmp/patch
+          cp "$host" /tmp/patch/app.py
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('/tmp/patch/app.py')
+          s=p.read_text()
+          reader='https://reader.mytrues.io/auth/callback'
+          azure='https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io/auth/callback'
+          if reader in s:
+              print('READER_CALLBACK_ALREADY_PRESENT')
+          else:
+              # Prefer adding beside the already-approved ChatGPT callback.
+              marker='"https://chatgpt.com/connector_platform_oauth_redirect"'
+              if marker in s:
+                  s=s.replace(marker, marker+',\n            "'+reader+'",\n            "'+azure+'"',1)
+              else:
+                  # Fallback: add to literal allowed_client_redirect_uris list.
+                  pat=r'(allowed_client_redirect_uris\s*=\s*\[)'
+                  s2,n=re.subn(pat, r'\1\n            "'+reader+'",\n            "'+azure+'",', s, count=1)
+                  if n!=1:
+                      raise SystemExit('Could not safely locate redirect allowlist')
+                  s=s2
+              p.write_text(s)
+          # Verify syntax and exact callbacks without printing source.
+          compile(p.read_text(),str(p),'exec')
+          out=p.read_text()
+          assert reader in out and azure in out
+          print('OAUTH_ALLOWLIST_PATCH_VALID')
+          PY
+          echo "source_path=$src" >> "$GITHUB_OUTPUT"
+
+      - name: Build a reversible derived image
+        id: image
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="${{ steps.current.outputs.image }}"
+          registry="${base%%/*}"
+          repo_tag="${base#*/}"
+          repo="${repo_tag%%:*}"
+          tag="reader-callback-${GITHUB_SHA::7}-a$GITHUB_RUN_ATTEMPT"
+          target="$registry/$repo:$tag"
+          source_path="${{ steps.patch.outputs.source_path }}"
+
+          cat >/tmp/patch/Dockerfile <<EOF
+          FROM $base
+          COPY app.py $source_path
+          EOF
+          docker build -t "$target" /tmp/patch >/dev/null
+          docker push "$target" >/dev/null
+          echo "target=$target" >> "$GITHUB_OUTPUT"
+          echo "DERIVED_IMAGE_PUSHED=$target"
+
+      - name: Deploy patched MCP revision
+        id: deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          rg=rg-flowed-ideos-lab
+          app=mytrues-mcp
+          target="${{ steps.image.outputs.target }}"
+          az containerapp update -g "$rg" -n "$app" --image "$target" --only-show-errors -o none
+
+          for i in $(seq 1 60); do
+            state="$(az containerapp show -g "$rg" -n "$app" --query properties.provisioningState -o tsv 2>/dev/null || true)"
+            ready="$(az containerapp show -g "$rg" -n "$app" --query properties.latestReadyRevisionName -o tsv 2>/dev/null || true)"
+            live_image="$(az containerapp show -g "$rg" -n "$app" --query properties.template.containers[0].image -o tsv 2>/dev/null || true)"
+            if [ "$state" = "Succeeded" ] && [ "$live_image" = "$target" ] && [ -n "$ready" ]; then
+              echo "revision=$ready" >> "$GITHUB_OUTPUT"
+              break
+            fi
+            [ "$state" = "Failed" ] && exit 1
+            sleep 5
+          done
+          echo "PATCHED_REVISION=${{ steps.deploy.outputs.revision }}"
+
+      - name: Prove old and new OAuth clients remain valid
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 40); do
+            if curl -fsS --max-time 15 https://mcp.mytrues.io/healthz >/tmp/health; then break; fi
+            sleep 4
+          done
+          curl -fsS https://mcp.mytrues.io/.well-known/oauth-authorization-server | jq -e '.code_challenge_methods_supported | index("S256") != null' >/dev/null
+
+          probe() {
+            local uri="$1" type="$2"
+            code="$(curl -sS -o /tmp/reg -w '%{http_code}' -H 'content-type: application/json'               --data "$(jq -nc --arg uri "$uri" --arg typ "$type" '{client_name:"MyTrues callback proof",redirect_uris:[$uri],grant_types:["authorization_code","refresh_token"],response_types:["code"],token_endpoint_auth_method:"none",application_type:$typ}')"               https://mcp.mytrues.io/register)"
+            test "$code" = "201" -o "$code" = "200"
+            jq -e '.client_id and (.redirect_uris|length==1)' /tmp/reg >/dev/null
+          }
+          probe "https://chatgpt.com/connector_platform_oauth_redirect" "web"
+          echo "CHATGPT_CALLBACK_STILL_ACCEPTED"
+          probe "https://reader.mytrues.io/auth/callback" "web"
+          echo "READER_CALLBACK_ACCEPTED"
+          probe "https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io/auth/callback" "web"
+          echo "AZURE_READER_CALLBACK_ACCEPTED"
+          echo "OAUTH_PATCH_PASS"
+
+      - name: Record rollback target
+        shell: bash
+        run: |
+          echo "ROLLBACK_IMAGE=${{ steps.current.outputs.image }}"
+          echo "ROLLBACK_REVISION=${{ steps.current.outputs.revision }}"
