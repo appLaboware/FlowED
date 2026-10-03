@@ -1,1 +1,6 @@
-document.addEventListener('DOMContentLoaded',async()=>{try{const {d,locale}=await MyTruesI18n.load('access');MyTruesI18n.apply(d);document.documentElement.lang=locale}catch(e){}const p=new URLSearchParams(location.search),status=document.getElementById('access-status');if(status&&p.get('status'))status.dataset.error='1'});
+document.addEventListener('DOMContentLoaded',async()=>{
+ let d={unavailable:'Acesso temporariamente indisponível.'};
+ try{const loaded=await MyTruesI18n.load('access');d=loaded.d;MyTruesI18n.apply(d);document.documentElement.lang=loaded.locale}catch(e){}
+ const p=new URLSearchParams(location.search),status=document.getElementById('access-status');
+ if(status&&p.get('status'))status.textContent=d.unavailable||'Acesso temporariamente indisponível.';
+});
