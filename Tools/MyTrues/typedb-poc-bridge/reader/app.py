@@ -24,6 +24,7 @@ import psycopg
 
 ROOT = Path(__file__).resolve().parent
 INDEX = ROOT / "index.html"
+PORTAL = ROOT / "portal.html"
 LOGIN = ROOT / "login.html"
 
 OAUTH_BASE = os.getenv("OAUTH_BASE", "https://mcp.mytrues.io").rstrip("/")
@@ -148,6 +149,12 @@ MCP_TOOLS = [
         "annotations": {"readOnlyHint": False, "destructiveHint": False},
     },
 ]
+
+
+class InterestCreate(BaseModel):
+    display_name: str = Field(min_length=1, max_length=120)
+    email: str = Field(min_length=3, max_length=240)
+    website: str = Field(default="", max_length=240)
 
 
 class PersonCreate(BaseModel):
@@ -306,6 +313,25 @@ async def portal_user_for_identity(subject: str, email: str | None, display: str
                     return row
             return None
     return await pg_call(work)
+
+
+async def register_interest(display_name: str, email: str) -> None:
+    name = display_name.strip()
+    mail = email.strip().lower()
+    if not name or "@" not in mail:
+        raise HTTPException(status_code=400, detail="Informe nome e e-mail válidos.")
+    def work(token: str):
+        with _pg_connect(token) as db:
+            db.execute(
+                """
+                INSERT INTO mytrues_interest(interest_id,display_name,email,source)
+                VALUES(%s,%s,%s,'public-site')
+                ON CONFLICT (lower(email))
+                DO UPDATE SET display_name=excluded.display_name,updated_at=now()
+                """,
+                (str(uuid.uuid4()),name,mail),
+            )
+    await pg_call(work)
 
 
 async def list_people():
@@ -998,7 +1024,7 @@ async def preview(capability: str):
         "sub":"preview-admin","name":"MyTrues Admin Preview","role":"admin","preview":True,
         "iat":int(time.time()),"exp":time.time()+4*3600,
     })
-    response=RedirectResponse("/",status_code=302)
+    response=RedirectResponse("/app",status_code=302)
     response.set_cookie("mt_session",session,max_age=4*3600,httponly=True,secure=True,samesite="lax")
     return response
 
@@ -1029,6 +1055,15 @@ async def api_claim(request: Request, body: ClaimInvite):
     session_data.update({"user_id":row[0],"name":row[1],"email":row[2],"status":row[3],"role":row[4],"memory_namespace":row[5]})
     response.set_cookie("mt_session",sign_payload(session_data),max_age=8*3600,httponly=True,secure=True,samesite="lax")
     return response
+
+
+@app.post("/api/interest")
+async def api_interest(body: InterestCreate):
+    # Honeypot: return success without persistence to avoid signaling bot detection.
+    if body.website.strip():
+        return {"ok": True}
+    await register_interest(body.display_name, body.email)
+    return {"ok": True}
 
 
 @app.get("/api/people")
@@ -1105,16 +1140,24 @@ async def api_create_occurrence(request: Request, body: OccurrenceCreate):
 
 
 @app.get("/")
-async def root(request: Request):
+async def root():
+    return FileResponse(INDEX)
+
+
+@app.get("/app")
+async def portal(request: Request):
     if not current_user(request):
         return RedirectResponse("/login", status_code=302)
-    return FileResponse(INDEX)
+    return FileResponse(PORTAL)
+
+
+@app.get("/app/{path:path}")
+async def portal_fallback(request: Request, path: str):
+    if not current_user(request):
+        return RedirectResponse("/login", status_code=302)
+    return FileResponse(PORTAL)
 
 
 @app.get("/{path:path}")
-async def spa_fallback(request: Request, path: str):
-    if path.startswith("api/") or path.startswith("auth/"):
-        raise HTTPException(status_code=404)
-    if not current_user(request):
-        return RedirectResponse("/login", status_code=302)
-    return FileResponse(INDEX)
+async def public_fallback(path: str):
+    raise HTTPException(status_code=404)
