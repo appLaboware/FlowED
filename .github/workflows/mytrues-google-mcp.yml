@@ -122,5 +122,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          az containerapp update -g rg-flowed-ideos-lab -n mytrues-mcp --set-env-vars 'MYTRUES_OWNER_BINDINGS={}' --only-show-errors -o none
+          BINDING_COUNT=$(az containerapp show -g rg-flowed-ideos-lab -n mytrues-mcp --query "length(properties.template.containers[0].env[?name=='MYTRUES_OWNER_BINDINGS'])" -o tsv)
+          if [ "$BINDING_COUNT" = "0" ]; then
+            az containerapp update -g rg-flowed-ideos-lab -n mytrues-mcp --set-env-vars 'MYTRUES_OWNER_BINDINGS={}' --only-show-errors -o none
+          fi
           curl --fail --silent --show-error --retry 6 --retry-delay 5 --retry-all-errors https://mcp.mytrues.io/.well-known/oauth-authorization-server | python3 -c 'import json,sys; m=json.load(sys.stdin); assert "S256" in m["code_challenge_methods_supported"]; print("OAuth discovery and PKCE verified")'
