@@ -248,6 +248,7 @@ jobs:
                     env:[
                       {name:"READER_GIT_SHA",value:$sha},
                       {name:"OAUTH_BASE",value:"https://mcp.mytrues.io"},
+                      {name:"PORTAL_AUTH_ENABLED",value:"false"},
                       {name:"TYPEDB_URL",value:"https://mytrues-tdb-e2f9605d-eastus2.eastus2.cloudapp.azure.com"},
                       {name:"TYPEDB_DB",value:"mytrues_memory_poc_v0"},
                       {name:"TYPEDB_USERNAME",value:"admin"},
