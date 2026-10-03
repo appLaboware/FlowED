@@ -50,7 +50,8 @@ jobs:
             https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io/auth/callback|https://reader.mytrues.io/auth/callback) ;;
             *) echo "Unexpected redirect_uri" >&2; exit 1 ;;
           esac
-          auth_code="$(curl -sS -o /tmp/oauth-body -w '%{http_code}' "$loc")"
-          test "$auth_code" = "200" -o "$auth_code" = "302"
+          auth_code="$(curl -sS -D /tmp/oauth-h -o /tmp/oauth-body -w '%{http_code}' "$loc")"
+          case "$auth_code" in 200|301|302|303|307|308) ;; *) echo "Unexpected authorize HTTP $auth_code" >&2; exit 1 ;; esac
           ! grep -qi 'invalid_redirect_uri' /tmp/oauth-body
+          ! grep -qi 'invalid_redirect_uri' /tmp/oauth-h
           echo "GOOGLE_OAUTH_START_PASS"
