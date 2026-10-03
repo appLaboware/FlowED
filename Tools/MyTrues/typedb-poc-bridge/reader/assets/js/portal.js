@@ -3,6 +3,7 @@ createApp({
  data:()=>({
   me:null,section:'home',query:'',events:[],people:[],loading:false,saving:false,
   truthDialog:false,personDialog:false,snackbar:false,message:'',claimCode:'',lastInvite:'',
+  adminTab:'people',admin:{people:[],interests:[],admins:[],counts:{people:0,interests:0,admins:0}},
   i18n:{},locale:'pt-BR',
   suggestions:['npm','pnpm','OAuth','schema','package manager'],
   form:{subject:'',statement:'',kind:'truth',relation:'none',related_occurrence:null},
@@ -33,7 +34,7 @@ createApp({
  async mounted(){
   const pack=await MyTruesI18n.load('portal');this.i18n=pack.d;this.locale=pack.locale;document.documentElement.lang=pack.locale;
   await this.loadMe();
-  if(this.me?.role!=='unbound'){await this.search();if(this.me?.role==='admin')await this.loadPeople()}
+  if(this.me?.role!=='unbound'){await this.search();if(this.me?.role==='admin')await this.loadAdmin()}
  },
  methods:{
   t(k){return this.i18n[k]||k},
@@ -43,7 +44,7 @@ createApp({
    const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.detail||this.t('error_generic'));return d
   },
   async loadMe(){this.me=await this.api('/api/me')},
-  go(id){if(id==='new'){this.openNew();return}this.section=id;if(id==='people')this.loadPeople()},
+  go(id){if(id==='new'){this.openNew();return}this.section=id;if(id==='people')this.loadAdmin()},
   switchLocale(){MyTruesI18n.setLocale(this.locale==='pt-BR'?'en':'pt-BR')},
   async search(){
    this.loading=true;
@@ -57,8 +58,22 @@ createApp({
    try{const d=await this.api('/api/occurrences',{method:'POST',body:JSON.stringify(this.form)});this.truthDialog=false;this.query=this.form.subject;await this.search();this.section='memory';this.toast(d.id)}
    catch(e){this.toast(e.message)}finally{this.saving=false}
   },
-  async loadPeople(){if(this.me?.role!=='admin')return;try{this.people=(await this.api('/api/people')).people||[]}catch(e){this.toast(e.message)}},
-  async savePerson(){try{const d=await this.api('/api/people',{method:'POST',body:JSON.stringify(this.personForm)});this.lastInvite=d.invite_code;await this.loadPeople()}catch(e){this.toast(e.message)}},
+  async loadAdmin(){
+   if(this.me?.role!=='admin')return;
+   try{
+    this.admin=await this.api('/api/admin/overview');
+    this.people=this.admin.people||[];
+   }catch(e){this.toast(e.message)}
+  },
+  async loadPeople(){return this.loadAdmin()},
+  async savePerson(){
+   try{
+    const d=await this.api('/api/people',{method:'POST',body:JSON.stringify(this.personForm)});
+    this.lastInvite=d.invite_code;
+    await this.loadAdmin();
+    this.toast(this.t('person_created_ok'));
+   }catch(e){this.toast(e.message)}
+  },
   async claim(){try{await this.api('/api/claim',{method:'POST',body:JSON.stringify({code:this.claimCode})});location.reload()}catch(e){this.toast(e.message)}},
   toast(s){this.message=s;this.snackbar=true;setTimeout(()=>this.snackbar=false,4200)},
   initials(s){return String(s||'?').split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()},
