@@ -83,9 +83,12 @@ jobs:
           base="https://raw.githubusercontent.com/appLaboware/FlowED/$GITHUB_SHA/Tools/MyTrues/typedb-poc-bridge/reader"
           curl -fsSL "$base/app.py" -o /tmp/app.py
           curl -fsSL "$base/index.html" -o /tmp/index.html
+          curl -fsSL "$base/portal.html" -o /tmp/portal.html
           curl -fsSL "$base/login.html" -o /tmp/login.html
           python3 -m py_compile /tmp/app.py
-          grep -q '<title>MyTrues · Portal</title>' /tmp/index.html
+          grep -q '<title>MyTrues</title>' /tmp/index.html
+          grep -q 'Estamos preparando' /tmp/index.html
+          grep -q '<title>MyTrues · Portal</title>' /tmp/portal.html
           grep -q '<title>MyTrues · acesso privado</title>' /tmp/login.html
           echo "READER_SOURCE_VALID"
 
@@ -185,6 +188,7 @@ jobs:
                       "set -e; mkdir -p /app; " +
                       "wget -qO /app/app.py \"" + $source_base + "/app.py\"; " +
                       "wget -qO /app/index.html \"" + $source_base + "/index.html\"; " +
+                      "wget -qO /app/portal.html \"" + $source_base + "/portal.html\"; " +
                       "wget -qO /app/login.html \"" + $source_base + "/login.html\"; " +
                       "pip install --no-cache-dir fastapi==0.118.0 uvicorn==0.37.0 httpx==0.28.1 psycopg[binary]==3.2.3 >/tmp/pip.log 2>&1; " +
                       "cd /app; exec uvicorn app:app --host 0.0.0.0 --port 8000"
