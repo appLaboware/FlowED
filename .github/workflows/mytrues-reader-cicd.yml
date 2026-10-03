@@ -85,11 +85,28 @@ jobs:
           curl -fsSL "$base/index.html" -o /tmp/index.html
           curl -fsSL "$base/portal.html" -o /tmp/portal.html
           curl -fsSL "$base/login.html" -o /tmp/login.html
+          curl -fsSL "$base/assets/css/public.css" -o /tmp/public.css
+          curl -fsSL "$base/assets/css/access.css" -o /tmp/access.css
+          curl -fsSL "$base/assets/css/portal.css" -o /tmp/portal.css
+          curl -fsSL "$base/assets/js/i18n.js" -o /tmp/i18n.js
+          curl -fsSL "$base/assets/js/ambient.js" -o /tmp/ambient.js
+          curl -fsSL "$base/assets/js/landing.js" -o /tmp/landing.js
+          curl -fsSL "$base/assets/js/access.js" -o /tmp/access.js
+          curl -fsSL "$base/assets/js/portal.js" -o /tmp/portal.js
+          curl -fsSL "$base/i18n/pt-BR/common.json" -o /tmp/common-pt.json
+          curl -fsSL "$base/i18n/pt-BR/landing.json" -o /tmp/landing-pt.json
+          curl -fsSL "$base/i18n/pt-BR/access.json" -o /tmp/access-pt.json
+          curl -fsSL "$base/i18n/pt-BR/portal.json" -o /tmp/portal-pt.json
+          curl -fsSL "$base/i18n/en/common.json" -o /tmp/common-en.json
+          curl -fsSL "$base/i18n/en/landing.json" -o /tmp/landing-en.json
+          curl -fsSL "$base/i18n/en/access.json" -o /tmp/access-en.json
+          curl -fsSL "$base/i18n/en/portal.json" -o /tmp/portal-en.json
           python3 -m py_compile /tmp/app.py
+          jq -e . /tmp/common-pt.json /tmp/landing-pt.json /tmp/access-pt.json /tmp/portal-pt.json /tmp/common-en.json /tmp/landing-en.json /tmp/access-en.json /tmp/portal-en.json >/dev/null
           grep -q '<title>MyTrues</title>' /tmp/index.html
-          grep -q 'Estamos preparando' /tmp/index.html
+          grep -q 'data-i18n="headline"' /tmp/index.html
           grep -q '<title>MyTrues · Portal</title>' /tmp/portal.html
-          grep -q '<title>MyTrues · acesso privado</title>' /tmp/login.html
+          grep -q 'MyTrues · Google' /tmp/login.html
           echo "READER_SOURCE_VALID"
 
       - name: Resolve runtime secrets
@@ -185,11 +202,28 @@ jobs:
                     image:"python:3.12-alpine",
                     command:["/bin/sh"],
                     args:["-c",(
-                      "set -e; mkdir -p /app; " +
+                      "set -e; mkdir -p /app/assets/css /app/assets/js /app/i18n/pt-BR /app/i18n/en; " +
                       "wget -qO /app/app.py \"" + $source_base + "/app.py\"; " +
                       "wget -qO /app/index.html \"" + $source_base + "/index.html\"; " +
                       "wget -qO /app/portal.html \"" + $source_base + "/portal.html\"; " +
                       "wget -qO /app/login.html \"" + $source_base + "/login.html\"; " +
+                      "wget -qO /app/assets/css/public.css \"" + $source_base + "/assets/css/public.css\"; " +
+                      "wget -qO /app/assets/css/access.css \"" + $source_base + "/assets/css/access.css\"; " +
+                      "wget -qO /app/assets/css/portal.css \"" + $source_base + "/assets/css/portal.css\"; " +
+                      "wget -qO /app/assets/js/i18n.js \"" + $source_base + "/assets/js/i18n.js\"; " +
+                      "wget -qO /app/assets/js/ambient.js \"" + $source_base + "/assets/js/ambient.js\"; " +
+                      "wget -qO /app/assets/js/landing.js \"" + $source_base + "/assets/js/landing.js\"; " +
+                      "wget -qO /app/assets/js/access.js \"" + $source_base + "/assets/js/access.js\"; " +
+                      "wget -qO /app/assets/js/portal.js \"" + $source_base + "/assets/js/portal.js\"; " +
+                      "wget -qO /app/i18n/pt-BR/common.json \"" + $source_base + "/i18n/pt-BR/common.json\"; " +
+                      "wget -qO /app/i18n/pt-BR/landing.json \"" + $source_base + "/i18n/pt-BR/landing.json\"; " +
+                      "wget -qO /app/i18n/pt-BR/access.json \"" + $source_base + "/i18n/pt-BR/access.json\"; " +
+                      "wget -qO /app/i18n/pt-BR/portal.json \"" + $source_base + "/i18n/pt-BR/portal.json\"; " +
+                      "wget -qO /app/i18n/en/common.json \"" + $source_base + "/i18n/en/common.json\"; " +
+                      "wget -qO /app/i18n/en/landing.json \"" + $source_base + "/i18n/en/landing.json\"; " +
+                      "wget -qO /app/i18n/en/access.json \"" + $source_base + "/i18n/en/access.json\"; " +
+                      "wget -qO /app/i18n/en/portal.json \"" + $source_base + "/i18n/en/portal.json\"; " +
+                      "wget -qO /app/assets/mytrues-logo.png 'https://avatars.githubusercontent.com/u/217432391?v=4'; " +
                       "pip install --no-cache-dir fastapi==0.118.0 uvicorn==0.37.0 httpx==0.28.1 psycopg[binary]==3.2.3 >/tmp/pip.log 2>&1; " +
                       "cd /app; exec uvicorn app:app --host 0.0.0.0 --port 8000"
                     )],
@@ -265,7 +299,7 @@ jobs:
           echo "::add-mask::$preview"
           preview_code="$(curl -sS -c /tmp/cookies -L -o /tmp/portal.html -w '%{http_code}' "$base/preview/$preview")"
           if [ "$preview_code" = "200" ]; then
-            grep -q 'Sua verdade tem história' /tmp/portal.html
+            grep -q '<title>MyTrues · Portal</title>' /tmp/portal.html
             curl -fsS -b /tmp/cookies "$base/api/me" | jq -e '.role=="admin" and .preview==true' >/dev/null
             curl -fsS -b /tmp/cookies "$base/api/people" | jq -e '.people | type=="array"' >/dev/null
             echo "PORTAL_PRIVATE_PREVIEW_PASS"
