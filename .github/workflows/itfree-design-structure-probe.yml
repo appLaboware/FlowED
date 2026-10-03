@@ -1,0 +1,36 @@
+name: ITFREE design structure probe
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/itfree-design-structure-probe.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Inspect public structure without copying content
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL https://itfree.org/assets/css/main.css -o /tmp/main.css
+          curl -fsSL 'https://itfree.org/assets/js/main.js?v=5' -o /tmp/main.js
+          curl -fsSL https://itfree.org/assets/js/theme.js -o /tmp/theme.js
+          python3 - <<'PY'
+          import re
+          css=open('/tmp/main.css',errors='ignore').read()
+          js=open('/tmp/main.js',errors='ignore').read()
+          theme=open('/tmp/theme.js',errors='ignore').read()
+          print("CSS_BYTES",len(css),"JS_BYTES",len(js),"THEME_BYTES",len(theme))
+          print("CSS_CUSTOM_PROPERTIES",len(set(re.findall(r'--[a-zA-Z0-9_-]+',css))))
+          print("CSS_KEYFRAMES",re.findall(r'@keyframes\s+([\w-]+)',css)[:30])
+          print("ANIMATION_DURATIONS",sorted(set(re.findall(r'(?<![\d.])(\d+(?:\.\d+)?s)',css)))[:40])
+          print("CANVAS_USED", 'canvas' in js.lower())
+          print("RAF_USED", 'requestAnimationFrame' in js)
+          print("MATCHMEDIA_USED", 'matchMedia' in js)
+          print("FETCH_JSON",re.findall(r'fetch\(([^\)]*\.json[^\)]*)\)',js)[:20])
+          print("LOCALE_TERMS",sorted(set(re.findall(r'\b(?:locale|language|lang|i18n|translation|translations)\b',js,re.I)))[:30])
+          print("THEME_STORAGE", 'localStorage' in theme)
+          PY
