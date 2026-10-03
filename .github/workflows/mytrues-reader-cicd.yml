@@ -23,7 +23,8 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 25
+
     steps:
       - name: Resolve Azure identifiers
         id: azure
@@ -40,7 +41,9 @@ jobs:
           TENANT_ID="$(extract AZURE_TENANT_ID)"
           SUBSCRIPTION_ID="$(extract AZURE_SUBSCRIPTION_ID)"
           test -n "$CLIENT_ID" && test -n "$TENANT_ID" && test -n "$SUBSCRIPTION_ID"
-          echo "::add-mask::$CLIENT_ID"; echo "::add-mask::$TENANT_ID"; echo "::add-mask::$SUBSCRIPTION_ID"
+          echo "::add-mask::$CLIENT_ID"
+          echo "::add-mask::$TENANT_ID"
+          echo "::add-mask::$SUBSCRIPTION_ID"
           echo "client_id=$CLIENT_ID" >> "$GITHUB_OUTPUT"
           echo "tenant_id=$TENANT_ID" >> "$GITHUB_OUTPUT"
           echo "subscription_id=$SUBSCRIPTION_ID" >> "$GITHUB_OUTPUT"
@@ -50,7 +53,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          RESPONSE="$(curl --fail --silent --show-error -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange")"
+          RESPONSE="$(curl --fail --silent --show-error \
+            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange")"
           TOKEN="$(jq -r '.value' <<<"$RESPONSE")"
           test -n "$TOKEN" && test "$TOKEN" != "null"
           echo "::add-mask::$TOKEN"
@@ -64,10 +69,54 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          az login --service-principal             --username "${{ steps.azure.outputs.client_id }}"             --tenant "${{ steps.azure.outputs.tenant_id }}"             --federated-token "${{ steps.oidc.outputs.token }}"             --allow-no-subscriptions -o none
+          az login --service-principal \
+            --username "${{ steps.azure.outputs.client_id }}" \
+            --tenant "${{ steps.azure.outputs.tenant_id }}" \
+            --federated-token "${{ steps.oidc.outputs.token }}" \
+            --allow-no-subscriptions -o none
           az account set --subscription "${{ steps.azure.outputs.subscription_id }}"
 
-      - name: Deploy exact Git commit to Azure Container Apps
+      - name: Validate Reader backend source
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://raw.githubusercontent.com/appLaboware/FlowED/$GITHUB_SHA/Tools/MyTrues/typedb-poc-bridge/reader"
+          curl -fsSL "$base/app.py" -o /tmp/app.py
+          curl -fsSL "$base/index.html" -o /tmp/index.html
+          python3 -m py_compile /tmp/app.py
+          grep -q '<title>MyTrues · Human Reader</title>' /tmp/index.html
+          echo "READER_SOURCE_VALID"
+
+      - name: Resolve runtime secrets
+        id: runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          rg=rg-flowed-ideos-lab
+          vault=mytrues-ingest-kv
+
+          TYPEDB_PASSWORD="$(az keyvault secret show \
+            --vault-name "$vault" -n typedb-poc-admin --query value -o tsv)"
+          test -n "$TYPEDB_PASSWORD"
+
+          SESSION_KEY="$(az keyvault secret show \
+            --vault-name "$vault" -n reader-session-key --query value -o tsv 2>/dev/null || true)"
+          if [ -z "$SESSION_KEY" ]; then
+            SESSION_KEY="$(openssl rand -hex 48)"
+            az keyvault secret set --vault-name "$vault" -n reader-session-key \
+              --value "$SESSION_KEY" --only-show-errors -o none
+          fi
+
+          echo "::add-mask::$TYPEDB_PASSWORD"
+          echo "::add-mask::$SESSION_KEY"
+
+          az containerapp secret set -g "$rg" -n mytrues-reader \
+            --secrets "typedb-password=$TYPEDB_PASSWORD" "reader-session-key=$SESSION_KEY" \
+            --only-show-errors -o none
+
+          echo "RUNTIME_SECRETS_READY"
+
+      - name: Deploy authenticated Reader backend
         id: deploy
         shell: bash
         run: |
@@ -75,42 +124,59 @@ jobs:
           rg=rg-flowed-ideos-lab
           env=mytrues-memory-env
           app=mytrues-reader
-          sub="$(az account show --query id -o tsv)"
           env_id="$(az containerapp env show -g "$rg" -n "$env" --query id -o tsv)"
-          location="$(az containerapp env show -g "$rg" -n "$env" --query location -o tsv)"
-          source="https://raw.githubusercontent.com/appLaboware/FlowED/${GITHUB_SHA}/Tools/MyTrues/typedb-poc-bridge/reader/index.html"
-          suffix="git-$(printf '%s' "$GITHUB_SHA" | cut -c1-7)"
-          url="https://management.azure.com/subscriptions/$sub/resourceGroups/$rg/providers/Microsoft.App/containerApps/$app?api-version=2025-07-01"
+          source_base="https://raw.githubusercontent.com/appLaboware/FlowED/$GITHUB_SHA/Tools/MyTrues/typedb-poc-bridge/reader"
+          sha7="$(printf '%s' "$GITHUB_SHA" | cut -c1-7)"
+          suffix="git-$sha7-a$GITHUB_RUN_ATTEMPT"
 
-          jq -n             --arg location "$location"             --arg env_id "$env_id"             --arg source "$source"             --arg suffix "$suffix"             --arg sha "$GITHUB_SHA"             '{
-              location:$location,
-              tags:{project:"MyTrues",role:"human-reader",deployedBy:"github-actions"},
+          jq -n \
+            --arg env_id "$env_id" \
+            --arg source_base "$source_base" \
+            --arg suffix "$suffix" \
+            --arg sha "$GITHUB_SHA" \
+            '{
               properties:{
                 managedEnvironmentId:$env_id,
-                configuration:{
-                  activeRevisionsMode:"Single",
-                  ingress:{external:true,targetPort:80,transport:"Auto",allowInsecure:false}
-                },
                 template:{
                   revisionSuffix:$suffix,
                   containers:[{
                     name:"reader",
-                    image:"nginx:1.27-alpine",
+                    image:"python:3.12-alpine",
                     command:["/bin/sh"],
-                    args:["-c",("wget -qO /usr/share/nginx/html/index.html \"" + $source + "\" && exec nginx -g \"daemon off;\"")],
-                    env:[{name:"READER_GIT_SHA",value:$sha}],
-                    resources:{cpu:0.25,memory:"0.5Gi"}
+                    args:["-c",(
+                      "set -e; mkdir -p /app; " +
+                      "wget -qO /app/app.py \"" + $source_base + "/app.py\"; " +
+                      "wget -qO /app/index.html \"" + $source_base + "/index.html\"; " +
+                      "pip install --no-cache-dir fastapi==0.118.0 uvicorn==0.37.0 httpx==0.28.1 >/tmp/pip.log 2>&1; " +
+                      "cd /app; exec uvicorn app:app --host 0.0.0.0 --port 8000"
+                    )],
+                    env:[
+                      {name:"READER_GIT_SHA",value:$sha},
+                      {name:"OAUTH_BASE",value:"https://mcp.mytrues.io"},
+                      {name:"TYPEDB_URL",value:"https://mytrues-tdb-e2f9605d-eastus2.eastus2.cloudapp.azure.com"},
+                      {name:"TYPEDB_DB",value:"mytrues_memory_poc_v0"},
+                      {name:"TYPEDB_USERNAME",value:"admin"},
+                      {name:"TYPEDB_PASSWORD",secretRef:"typedb-password"},
+                      {name:"READER_SESSION_KEY",secretRef:"reader-session-key"},
+                      {name:"PUBLIC_CALLBACKS",value:"https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io/auth/callback,https://reader.mytrues.io/auth/callback"}
+                    ],
+                    resources:{cpu:0.5,memory:"1Gi"}
                   }],
                   scale:{minReplicas:1,maxReplicas:1}
                 }
               }
-            }' > /tmp/reader-app.json
+            }' > /tmp/reader-update.json
 
-          az rest --method put --url "$url"             --headers "Content-Type=application/json"             --body @/tmp/reader-app.json             --only-show-errors -o none
+          az containerapp ingress enable -g "$rg" -n "$app" \
+            --type external --target-port 8000 --transport auto \
+            --allow-insecure false --only-show-errors -o none
 
-          for i in $(seq 1 60); do
+          az containerapp update -g "$rg" -n "$app" \
+            --yaml /tmp/reader-update.json --only-show-errors -o none
+
+          for i in $(seq 1 80); do
             state="$(az containerapp show -g "$rg" -n "$app" --query properties.provisioningState -o tsv 2>/dev/null || true)"
-            latest="$(az containerapp show -g "$rg" -n "$app" --query properties.latestRevisionName -o tsv 2>/dev/null || true)"
+            latest="$(az containerapp show -g "$rg" -n "$app" --query properties.latestReadyRevisionName -o tsv 2>/dev/null || true)"
             if [ "$state" = "Succeeded" ] && printf '%s' "$latest" | grep -Fq "$suffix"; then
               break
             fi
@@ -119,40 +185,56 @@ jobs:
           done
 
           fqdn="$(az containerapp show -g "$rg" -n "$app" --query properties.configuration.ingress.fqdn -o tsv)"
-          revision="$(az containerapp show -g "$rg" -n "$app" --query properties.latestRevisionName -o tsv)"
+          revision="$(az containerapp show -g "$rg" -n "$app" --query properties.latestReadyRevisionName -o tsv)"
+          test -n "$fqdn" && test -n "$revision"
           echo "fqdn=$fqdn" >> "$GITHUB_OUTPUT"
           echo "revision=$revision" >> "$GITHUB_OUTPUT"
 
-      - name: Smoke test deployed Reader
+      - name: Verify auth gate and backend
         shell: bash
         run: |
           set -euo pipefail
-          url="https://${{ steps.deploy.outputs.fqdn }}/"
+          base="https://${{ steps.deploy.outputs.fqdn }}"
+
           ok=false
-          for i in $(seq 1 40); do
-            if curl -fsS --max-time 15 "$url" -o /tmp/reader.html; then
-              if grep -q '<title>MyTrues · Human Reader</title>' /tmp/reader.html; then
+          for i in $(seq 1 50); do
+            if curl -fsS --max-time 15 "$base/healthz" -o /tmp/health.json; then
+              if jq -e '.ok == true and .auth == "https://mcp.mytrues.io"' /tmp/health.json >/dev/null; then
                 ok=true
                 break
               fi
             fi
-            sleep 3
+            sleep 4
           done
           test "$ok" = true
-          echo "READER_CICD_PASS"
-          echo "commit=$GITHUB_SHA"
-          echo "revision=${{ steps.deploy.outputs.revision }}"
-          echo "url=$url"
 
-      - name: Smoke custom domain when available
+          headers="$(curl -sS -D - -o /dev/null --max-time 15 "$base/")"
+          root_code="$(printf '%s\n' "$headers" | awk 'toupper($1) ~ /^HTTP/ {c=$2} END {print c}')"
+          root_location="$(printf '%s\n' "$headers" | awk 'BEGIN{IGNORECASE=1} /^location:/ {sub(/^[^:]+:[[:space:]]*/,""); gsub(/\r/,""); print; exit}')"
+          test "$root_code" = "302"
+          test "$root_location" = "/login"
+
+          api_code="$(curl -sS -o /tmp/api.json -w '%{http_code}' --max-time 15 "$base/api/history?q=npm")"
+          test "$api_code" = "401"
+
+          login_headers="$(curl -sS -D - -o /dev/null --max-time 20 "$base/login")"
+          login_code="$(printf '%s\n' "$login_headers" | awk 'toupper($1) ~ /^HTTP/ {c=$2} END {print c}')"
+          login_location="$(printf '%s\n' "$login_headers" | awk 'BEGIN{IGNORECASE=1} /^location:/ {sub(/^[^:]+:[[:space:]]*/,""); gsub(/\r/,""); print; exit}')"
+          test "$login_code" = "302"
+          printf '%s' "$login_location" | grep -Fq 'https://mcp.mytrues.io/authorize'
+
+          echo "READER_AUTH_GATE_PASS"
+          echo "ANONYMOUS_API_DENIED_401"
+          echo "OAUTH_REDIRECT_PASS"
+          echo "revision=${{ steps.deploy.outputs.revision }}"
+          echo "url=$base"
+
+      - name: Custom domain status
         shell: bash
         run: |
           set -euo pipefail
           if dig +short CNAME reader.mytrues.io | grep -q .; then
-            if curl -fsS --max-time 15 https://reader.mytrues.io/ -o /tmp/custom.html; then
-              grep -q '<title>MyTrues · Human Reader</title>' /tmp/custom.html
-              echo "READER_CUSTOM_DOMAIN_PASS=https://reader.mytrues.io/"
-            fi
+            echo "reader.mytrues.io DNS exists; custom-domain binding workflow can finalize TLS."
           else
-            echo "reader.mytrues.io not published yet; generated Azure endpoint passed."
+            echo "reader.mytrues.io DNS not published yet; generated Azure hostname is the active authenticated Reader."
           fi
