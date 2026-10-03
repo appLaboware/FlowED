@@ -1,0 +1,44 @@
+name: MyTrues Reader auth smoke
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-reader-auth-smoke.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Verify authenticated Reader surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io"
+
+          curl -fsS "$base/healthz" | tee /tmp/health.json
+          jq -e '.ok == true and .auth == "https://mcp.mytrues.io"' /tmp/health.json >/dev/null
+
+          root_headers="$(curl -sS -D - -o /dev/null "$base/")"
+          root_code="$(printf '%s\n' "$root_headers" | awk 'toupper($1) ~ /^HTTP/ {c=$2} END {print c}')"
+          root_location="$(printf '%s\n' "$root_headers" | awk 'BEGIN{IGNORECASE=1} /^location:/ {sub(/^[^:]+:[[:space:]]*/,""); gsub(/\r/,""); print; exit}')"
+          printf 'ROOT_HTTP=%s ROOT_LOCATION=%s\n' "$root_code" "$root_location"
+          test "$root_code" = "302"
+          test "$root_location" = "/login"
+
+          api_code="$(curl -sS -o /tmp/api.json -w '%{http_code}' "$base/api/history?q=npm")"
+          printf 'API_HTTP=%s\n' "$api_code"
+          test "$api_code" = "401"
+
+          login_headers="$(curl -sS -D - -o /dev/null "$base/login")"
+          login_code="$(printf '%s\n' "$login_headers" | awk 'toupper($1) ~ /^HTTP/ {c=$2} END {print c}')"
+          login_location="$(printf '%s\n' "$login_headers" | awk 'BEGIN{IGNORECASE=1} /^location:/ {sub(/^[^:]+:[[:space:]]*/,""); gsub(/\r/,""); print; exit}')"
+          printf 'LOGIN_HTTP=%s\n' "$login_code"
+          test "$login_code" = "302"
+          printf '%s' "$login_location" | grep -Fq 'https://mcp.mytrues.io/authorize'
+
+          echo "READER_AUTH_SMOKE_PASS"
