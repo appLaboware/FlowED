@@ -1,0 +1,132 @@
+name: MyTrues OAuth persistence proof
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-oauth-proof.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+env:
+  AZURE_BUNDLE: ${{ secrets.AZURE }}
+  AZURE_CLIENT_ID_SECRET: ${{ secrets.AZURE_CLIENT_ID }}
+  AZURE_TENANT_ID_SECRET: ${{ secrets.AZURE_TENANT_ID }}
+  AZURE_SUBSCRIPTION_ID_SECRET: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+jobs:
+  host:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Resolve Azure repository credentials
+        id: azure
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          get_bundle_value() {
+            local key="$1"
+            printf '%s\n' "$AZURE_BUNDLE" |
+              sed -nE "s/^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*=[[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\2/p" |
+              tail -n 1
+          }
+
+          CLIENT_ID="$AZURE_CLIENT_ID_SECRET"
+          TENANT_ID="$AZURE_TENANT_ID_SECRET"
+          SUBSCRIPTION_ID="$AZURE_SUBSCRIPTION_ID_SECRET"
+          SOURCE="separate repository secrets"
+
+          if [ -z "$CLIENT_ID" ] || [ -z "$TENANT_ID" ] || [ -z "$SUBSCRIPTION_ID" ]; then
+            SOURCE="legacy AZURE bundle secret"
+            CLIENT_ID="${CLIENT_ID:-$(get_bundle_value AZURE_CLIENT_ID)}"
+            TENANT_ID="${TENANT_ID:-$(get_bundle_value AZURE_TENANT_ID)}"
+            SUBSCRIPTION_ID="${SUBSCRIPTION_ID:-$(get_bundle_value AZURE_SUBSCRIPTION_ID)}"
+          fi
+
+          test -n "$CLIENT_ID" || { echo "AZURE_CLIENT_ID is unavailable." >&2; exit 1; }
+          test -n "$TENANT_ID" || { echo "AZURE_TENANT_ID is unavailable." >&2; exit 1; }
+          test -n "$SUBSCRIPTION_ID" || { echo "AZURE_SUBSCRIPTION_ID is unavailable." >&2; exit 1; }
+
+          echo "::add-mask::$CLIENT_ID"
+          echo "::add-mask::$TENANT_ID"
+          echo "::add-mask::$SUBSCRIPTION_ID"
+
+          {
+            echo "client_id=$CLIENT_ID"
+            echo "tenant_id=$TENANT_ID"
+            echo "subscription_id=$SUBSCRIPTION_ID"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "Azure credentials resolved from: $SOURCE"
+          echo "Preferred format: three separate repository secrets."
+
+      - name: Request GitHub OIDC token
+        id: oidc
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          RESPONSE="$(curl --fail --silent --show-error             -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN"             "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange")"
+
+          TOKEN="$(jq -r '.value' <<<"$RESPONSE")"
+          test -n "$TOKEN"
+          test "$TOKEN" != "null"
+
+          echo "::add-mask::$TOKEN"
+          {
+            echo "token<<OIDC_EOF"
+            echo "$TOKEN"
+            echo "OIDC_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "GitHub issued an OIDC token."
+
+      - name: Login to Azure using federated identity
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          az login             --service-principal             --username "${{ steps.azure.outputs.client_id }}"             --tenant "${{ steps.azure.outputs.tenant_id }}"             --federated-token "${{ steps.oidc.outputs.token }}"             --allow-no-subscriptions             --output none
+
+          az account set --subscription "${{ steps.azure.outputs.subscription_id }}"
+
+          az account show             --query "{subscription:id,tenant:tenantId,identity:user.name,type:user.type}"             --output table
+
+
+      - name: Verify durable registration and anonymous denial
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import base64,hashlib,json,secrets,subprocess,time,urllib.request,urllib.parse,urllib.error
+          BASE="https://mcp.mytrues.io"
+          def read(url,data=None):
+              request=urllib.request.Request(url,data=json.dumps(data).encode() if data is not None else None,headers={"Content-Type":"application/json"})
+              with urllib.request.urlopen(request,timeout=25) as response:
+                  return response.status,response.read()
+          metadata=json.loads(read(BASE+"/.well-known/oauth-authorization-server")[1])
+          assert "S256" in metadata["code_challenge_methods_supported"]
+          client=json.loads(read(metadata["registration_endpoint"],{"client_name":"MyTrues persistence verification","redirect_uris":["https://chatgpt.com/connector_platform_oauth_redirect"],"grant_types":["authorization_code","refresh_token"],"response_types":["code"],"token_endpoint_auth_method":"none"})[1])
+          challenge=base64.urlsafe_b64encode(hashlib.sha256(secrets.token_urlsafe(48).encode()).digest()).decode().rstrip("=")
+          params={"response_type":"code","client_id":client["client_id"],"redirect_uri":"https://chatgpt.com/connector_platform_oauth_redirect","scope":"openid","code_challenge":challenge,"code_challenge_method":"S256","state":secrets.token_urlsafe(32),"resource":BASE+"/mcp"}
+          url=metadata["authorization_endpoint"]+"?"+urllib.parse.urlencode(params)
+          assert read(url)[0]==200
+          print("DCR_CLIENT_ACCEPTED_BEFORE_RESTART",flush=True)
+          revision=subprocess.check_output(["az","containerapp","show","-g","rg-flowed-ideos-lab","-n","mytrues-mcp","--query","properties.latestReadyRevisionName","-o","tsv"],text=True).strip()
+          subprocess.run(["az","containerapp","revision","restart","-g","rg-flowed-ideos-lab","-n","mytrues-mcp","--revision",revision,"--only-show-errors","-o","none"],check=True)
+          time.sleep(10)
+          for attempt in range(24):
+              try:
+                  assert json.loads(read(BASE+"/healthz")[1])["oauth_configured"] is True
+                  assert read(url)[0]==200
+                  break
+              except (urllib.error.URLError,TimeoutError,AssertionError):
+                  if attempt==23: raise RuntimeError("OAuth client did not survive restart") from None
+                  time.sleep(5)
+          try:
+              read(BASE+"/mcp",{"jsonrpc":"2.0","id":1,"method":"tools/list"})
+              raise RuntimeError("Anonymous MCP request unexpectedly succeeded")
+          except urllib.error.HTTPError as error:
+              assert error.code==401,error.code
+          print("OAUTH_CLIENT_PERSISTED_AFTER_RESTART; ANONYMOUS_MCP_DENIED_401",flush=True)
+          print("REAL_GOOGLE_LOGIN_AND_AUTHORIZED_DATABASE_OPERATIONS_NOT_YET_VERIFIED",flush=True)
+          
+          PY
