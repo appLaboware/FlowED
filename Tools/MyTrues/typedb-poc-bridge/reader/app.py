@@ -44,6 +44,7 @@ MCP_CAPABILITY = os.environ.get("MCP_CAPABILITY", "")
 PORTAL_PREVIEW_CAPABILITY = os.environ.get("PORTAL_PREVIEW_CAPABILITY", "")
 PORTAL_ADMIN_BOOTSTRAP = os.environ.get("PORTAL_ADMIN_BOOTSTRAP", "")
 PORTAL_AUTH_ENABLED = os.getenv("PORTAL_AUTH_ENABLED", "false").lower() in {"1","true","yes","on"}
+OAUTH_CLIENT_ID = os.getenv("OAUTH_CLIENT_ID", "").strip()
 PG_HOST = os.getenv("MYTRUES_POSTGRES_HOST", "mytrues-canonical-pg.postgres.database.azure.com")
 PG_DB = os.getenv("MYTRUES_POSTGRES_DB", "mytrues")
 PG_USER = os.getenv("MYTRUES_POSTGRES_USER", "mytrues-reader")
@@ -340,6 +341,62 @@ async def register_interest(display_name: str, email: str) -> None:
                 (str(uuid.uuid4()),name,mail),
             )
     await pg_call(work)
+
+
+async def admin_overview():
+    def work(token: str):
+        with _pg_connect(token) as db:
+            people_rows = db.execute(
+                """
+                SELECT u.user_id::text,u.display_name,u.email,u.status,a.role,a.memory_namespace,u.created_at::text,
+                       EXISTS(SELECT 1 FROM mytrues_identities i WHERE i.user_id=u.user_id AND i.provider='google') AS claimed
+                FROM mytrues_users u
+                JOIN mytrues_access a ON a.user_id=u.user_id
+                ORDER BY u.created_at DESC
+                """
+            ).fetchall()
+            interest_rows = db.execute(
+                """
+                SELECT display_name,email,source,created_at::text,updated_at::text
+                FROM mytrues_interest
+                ORDER BY created_at DESC
+                """
+            ).fetchall()
+            admin_rows = db.execute(
+                """
+                SELECT u.user_id::text,u.display_name,u.email,u.status,u.created_at::text,
+                       EXISTS(SELECT 1 FROM mytrues_identities i WHERE i.user_id=u.user_id AND i.provider='google') AS google_linked
+                FROM mytrues_users u
+                JOIN mytrues_access a ON a.user_id=u.user_id
+                WHERE a.role='admin'
+                ORDER BY u.created_at ASC
+                """
+            ).fetchall()
+            people = [
+                {"user_id":r[0],"display_name":r[1],"email":r[2],"status":r[3],"role":r[4],
+                 "memory_namespace":r[5],"created_at":r[6],"claimed":r[7]}
+                for r in people_rows
+            ]
+            interests = [
+                {"display_name":r[0],"email":r[1],"source":r[2],"created_at":r[3],"updated_at":r[4]}
+                for r in interest_rows
+            ]
+            admins = [
+                {"user_id":r[0],"display_name":r[1],"email":r[2],"status":r[3],
+                 "created_at":r[4],"google_linked":r[5]}
+                for r in admin_rows
+            ]
+            return {
+                "people": people,
+                "interests": interests,
+                "admins": admins,
+                "counts": {
+                    "people": len(people),
+                    "interests": len(interests),
+                    "admins": len(admins),
+                },
+            }
+    return await pg_call(work)
 
 
 async def list_people():
@@ -905,25 +962,27 @@ async def login(request: Request):
     challenge = b64(hashlib.sha256(verifier.encode()).digest())
     state = secrets.token_urlsafe(24)
 
-    try:
-        async with httpx.AsyncClient(follow_redirects=True) as client:
-            metadata = await oauth_metadata(client)
-            registration = await client.post(
-                metadata["registration_endpoint"],
-                json={
-                    "client_name": "MyTrues Portal",
-                    "redirect_uris": [redirect_uri],
-                    "grant_types": ["authorization_code", "refresh_token"],
-                    "response_types": ["code"],
-                    "token_endpoint_auth_method": "none",
-                    "application_type": "web",
-                },
-                timeout=20,
-            )
-            registration.raise_for_status()
-            client_id = registration.json()["client_id"]
-    except Exception:
-        return RedirectResponse("/login?status=unavailable", status_code=303)
+    client_id = OAUTH_CLIENT_ID
+    if not client_id:
+        try:
+            async with httpx.AsyncClient(follow_redirects=True) as client:
+                metadata = await oauth_metadata(client)
+                registration = await client.post(
+                    metadata["registration_endpoint"],
+                    json={
+                        "client_name": "MyTrues Portal",
+                        "redirect_uris": [redirect_uri],
+                        "grant_types": ["authorization_code", "refresh_token"],
+                        "response_types": ["code"],
+                        "token_endpoint_auth_method": "none",
+                        "application_type": "web",
+                    },
+                    timeout=20,
+                )
+                registration.raise_for_status()
+                client_id = registration.json()["client_id"]
+        except Exception:
+            return RedirectResponse("/login?status=unavailable", status_code=303)
 
     tx = sign_payload(
         {
@@ -1079,6 +1138,14 @@ async def api_interest(body: InterestCreate):
         return {"ok": True}
     await register_interest(body.display_name, body.email)
     return {"ok": True}
+
+
+@app.get("/api/admin/overview")
+async def api_admin_overview(request: Request):
+    user = require_user(request)
+    if user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="admin required")
+    return await admin_overview()
 
 
 @app.get("/api/people")
