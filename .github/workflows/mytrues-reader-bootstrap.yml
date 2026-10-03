@@ -35,7 +35,9 @@ jobs:
           TENANT_ID="$(extract AZURE_TENANT_ID)"
           SUBSCRIPTION_ID="$(extract AZURE_SUBSCRIPTION_ID)"
           test -n "$CLIENT_ID" && test -n "$TENANT_ID" && test -n "$SUBSCRIPTION_ID"
-          echo "::add-mask::$CLIENT_ID"; echo "::add-mask::$TENANT_ID"; echo "::add-mask::$SUBSCRIPTION_ID"
+          echo "::add-mask::$CLIENT_ID"
+          echo "::add-mask::$TENANT_ID"
+          echo "::add-mask::$SUBSCRIPTION_ID"
           echo "client_id=$CLIENT_ID" >> "$GITHUB_OUTPUT"
           echo "tenant_id=$TENANT_ID" >> "$GITHUB_OUTPUT"
           echo "subscription_id=$SUBSCRIPTION_ID" >> "$GITHUB_OUTPUT"
@@ -59,7 +61,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          az login --service-principal             --username "${{ steps.azure.outputs.client_id }}"             --tenant "${{ steps.azure.outputs.tenant_id }}"             --federated-token "${{ steps.oidc.outputs.token }}"             --allow-no-subscriptions -o none
+          az login --service-principal \
+            --username "${{ steps.azure.outputs.client_id }}" \
+            --tenant "${{ steps.azure.outputs.tenant_id }}" \
+            --federated-token "${{ steps.oidc.outputs.token }}" \
+            --allow-no-subscriptions -o none
           az account set --subscription "${{ steps.azure.outputs.subscription_id }}"
 
       - name: Create or update Reader Container App
@@ -76,38 +82,41 @@ jobs:
           location="$(az containerapp env show -g "$rg" -n "$env" --query location -o tsv)"
           url="https://management.azure.com/subscriptions/$sub/resourceGroups/$rg/providers/Microsoft.App/containerApps/$app?api-version=2025-07-01"
 
-          SOURCE="$source" ENV_ID="$env_id" LOCATION="$location" python3 - <<'PY'
-import json, os
-body={
-  "location":os.environ["LOCATION"],
-  "tags":{"project":"MyTrues","role":"human-reader"},
-  "properties":{
-    "managedEnvironmentId":os.environ["ENV_ID"],
-    "configuration":{
-      "activeRevisionsMode":"Single",
-      "ingress":{
-        "external":True,
-        "targetPort":80,
-        "transport":"Auto",
-        "allowInsecure":False
-      }
-    },
-    "template":{
-      "containers":[{
-        "name":"reader",
-        "image":"nginx:1.27-alpine",
-        "command":["/bin/sh"],
-        "args":["-c",f"wget -qO /usr/share/nginx/html/index.html '{os.environ['SOURCE']}' && exec nginx -g 'daemon off;'"],
-        "resources":{"cpu":0.25,"memory":"0.5Gi"}
-      }],
-      "scale":{"minReplicas":1,"maxReplicas":1}
-    }
-  }
-}
-json.dump(body,open("/tmp/reader-app.json","w"))
-PY
+          jq -n \
+            --arg location "$location" \
+            --arg env_id "$env_id" \
+            --arg source "$source" \
+            '{
+              location:$location,
+              tags:{project:"MyTrues",role:"human-reader"},
+              properties:{
+                managedEnvironmentId:$env_id,
+                configuration:{
+                  activeRevisionsMode:"Single",
+                  ingress:{
+                    external:true,
+                    targetPort:80,
+                    transport:"Auto",
+                    allowInsecure:false
+                  }
+                },
+                template:{
+                  containers:[{
+                    name:"reader",
+                    image:"nginx:1.27-alpine",
+                    command:["/bin/sh"],
+                    args:["-c",("wget -qO /usr/share/nginx/html/index.html \"" + $source + "\" && exec nginx -g \"daemon off;\"")],
+                    resources:{cpu:0.25,memory:"0.5Gi"}
+                  }],
+                  scale:{minReplicas:1,maxReplicas:1}
+                }
+              }
+            }' > /tmp/reader-app.json
 
-          az rest --method put --url "$url"             --headers "Content-Type=application/json"             --body @/tmp/reader-app.json             --only-show-errors -o none
+          az rest --method put --url "$url" \
+            --headers "Content-Type=application/json" \
+            --body @/tmp/reader-app.json \
+            --only-show-errors -o none
 
           for i in $(seq 1 60); do
             state="$(az containerapp show -g "$rg" -n "$app" --query properties.provisioningState -o tsv 2>/dev/null || true)"
@@ -130,10 +139,15 @@ PY
         run: |
           set -euo pipefail
           url="https://${{ steps.reader.outputs.fqdn }}/"
+          ok=false
           for i in $(seq 1 30); do
-            if curl -fsS --max-time 15 "$url" -o /tmp/reader.html; then break; fi
+            if curl -fsS --max-time 15 "$url" -o /tmp/reader.html; then
+              ok=true
+              break
+            fi
             sleep 3
           done
+          test "$ok" = true
           grep -q '<title>MyTrues · Human Reader</title>' /tmp/reader.html
           echo "GENERATED_READER_PASS=$url"
 
@@ -168,7 +182,7 @@ PY
             echo "### GitHub OAuth application"
             echo "- Homepage: `https://mytrues.io/`"
             echo "- Callback: `https://mytrues.io/.auth/login/github/callback`"
-            echo "- Temporary generated-host callback: `https://$fqdn/.auth/login/github/callback`"
+            echo "- Temporary callback: `https://$fqdn/.auth/login/github/callback`"
           } >> "$GITHUB_STEP_SUMMARY"
 
           echo "READER_FQDN=$fqdn"
