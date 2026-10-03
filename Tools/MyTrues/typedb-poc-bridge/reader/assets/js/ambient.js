@@ -16,8 +16,8 @@ function resize(){
 function splitX(y,t){
   const yn=y/Math.max(h,1);
   const base=w*(w<560?.52:.56);
-  const broad=Math.sin(t*.72+yn*Math.PI*1.35)*w*(w<560?.13:.10);
-  const detail=Math.sin(t*1.05-yn*Math.PI*3.15+1.4)*w*(w<560?.045:.035);
+  const broad=Math.sin(t*.42+yn*Math.PI*1.35)*w*(w<560?.075:.06);
+  const detail=Math.sin(t*.68-yn*Math.PI*3.15+1.4)*w*(w<560?.024:.018);
   return base+broad+detail;
 }
 
@@ -25,15 +25,15 @@ function fillField(t){
   ctx.fillStyle='#f3f1eb';ctx.fillRect(0,0,w,h);
 
   const cool=ctx.createLinearGradient(0,0,w*.72,h);
-  cool.addColorStop(0,'#dfe8e2');
-  cool.addColorStop(.58,'#e5ece8');
-  cool.addColorStop(1,'#edf0eb');
+  cool.addColorStop(0,'#e6ebe7');
+  cool.addColorStop(.58,'#e9ede9');
+  cool.addColorStop(1,'#eff1ed');
   ctx.fillStyle=cool;ctx.fillRect(0,0,w,h);
 
   const warm=ctx.createLinearGradient(w*.25,0,w,h);
-  warm.addColorStop(0,'#f0dfd4');
-  warm.addColorStop(.55,'#edcfbd');
-  warm.addColorStop(1,'#e7b99e');
+  warm.addColorStop(0,'#efe5de');
+  warm.addColorStop(.55,'#ecd9cd');
+  warm.addColorStop(1,'#e8cbbb');
 
   ctx.beginPath();
   ctx.moveTo(w,0);ctx.lineTo(splitX(0,t),0);
@@ -42,12 +42,12 @@ function fillField(t){
   ctx.lineTo(w,h);ctx.closePath();ctx.fillStyle=warm;ctx.fill();
 
   const seam=ctx.createLinearGradient(0,0,w,h);
-  seam.addColorStop(0,'rgba(45,91,75,.11)');
-  seam.addColorStop(.48,'rgba(255,255,255,.18)');
-  seam.addColorStop(1,'rgba(201,104,61,.12)');
+  seam.addColorStop(0,'rgba(45,91,75,.055)');
+  seam.addColorStop(.48,'rgba(255,255,255,.12)');
+  seam.addColorStop(1,'rgba(201,104,61,.06)');
   ctx.beginPath();ctx.moveTo(splitX(0,t),0);
   for(let y=0;y<=h+step;y+=step)ctx.lineTo(splitX(y,t),y);
-  ctx.strokeStyle=seam;ctx.lineWidth=Math.max(72,Math.min(w,h)*.17);ctx.lineCap='round';ctx.stroke();
+  ctx.strokeStyle=seam;ctx.lineWidth=Math.max(96,Math.min(w,h)*.22);ctx.lineCap='round';ctx.stroke();
 }
 
 function cell(x,y,r,inner,outer,alpha){
@@ -61,18 +61,18 @@ function cell(x,y,r,inner,outer,alpha){
 function thoughts(t){
   const s=Math.max(w,h);
   cell(
-    w*(.16+.10*Math.sin(t*.83)),
-    h*(.22+.11*Math.cos(t*.67)),
+    w*(.16+.10*Math.sin(t*.46)),
+    h*(.22+.11*Math.cos(t*.39)),
     s*.34,'rgba(31,91,72,ALPHA)','rgba(31,91,72,0)',.105
   );
   cell(
-    w*(.84+.08*Math.cos(t*.79+1.2)),
-    h*(.72+.12*Math.sin(t*.74)),
+    w*(.84+.08*Math.cos(t*.43+1.2)),
+    h*(.72+.12*Math.sin(t*.40)),
     s*.37,'rgba(196,94,50,ALPHA)','rgba(196,94,50,0)',.095
   );
   cell(
-    w*(.55+.15*Math.sin(t*.58+2.4)),
-    h*(.45+.13*Math.cos(t*.71+1.1)),
+    w*(.55+.15*Math.sin(t*.36+2.4)),
+    h*(.45+.13*Math.cos(t*.41+1.1)),
     s*.27,'rgba(255,255,255,ALPHA)','rgba(255,255,255,0)',.34
   );
 }
