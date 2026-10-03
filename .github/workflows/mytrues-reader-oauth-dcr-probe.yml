@@ -1,0 +1,43 @@
+name: MyTrues Reader OAuth DCR probe
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-reader-oauth-dcr-probe.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Probe single-callback DCR contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          base=https://mcp.mytrues.io
+          callback=https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io/auth/callback
+
+          metadata="$(curl -fsS "$base/.well-known/oauth-authorization-server")"
+          reg="$(jq -r .registration_endpoint <<<"$metadata")"
+          test -n "$reg"
+
+          payload="$(jq -nc --arg cb "$callback" '{
+            client_name:"MyTrues Human Reader",
+            redirect_uris:[$cb],
+            grant_types:["authorization_code","refresh_token"],
+            response_types:["code"],
+            token_endpoint_auth_method:"none"
+          }')"
+
+          code="$(curl -sS -o /tmp/dcr.json -w '%{http_code}'             -X POST "$reg" -H 'content-type: application/json'             --data-binary "$payload")"
+
+          echo "DCR_HTTP=$code"
+          cat /tmp/dcr.json | jq .
+
+          test "$code" = "200" -o "$code" = "201"
+          jq -e '.client_id | type=="string" and length>0' /tmp/dcr.json >/dev/null
+          echo "SINGLE_CALLBACK_DCR_PASS"
