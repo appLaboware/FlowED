@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
    const r=await fetch('/api/interest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
    const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.detail||d.error_generic);
    form.reset();message.textContent=d.success;
+   const interest=form.closest('.interest');if(interest){interest.classList.add('is-success');interest.dataset.success=d.success||''}
   }catch(err){message.textContent=err.message||d.error_generic}
   finally{button.disabled=false;if(label)label.textContent=d.submit}
  });
