@@ -1,0 +1,93 @@
+name: MyTrues cognitive retrieval benchmark v1
+
+on:
+  push:
+    branches:
+      - experiment/mytrues-dual-memory-ab
+    paths:
+      - "Tools/MyTrues/experiments/cognitive-retrieval-v1/**"
+      - ".github/workflows/mytrues-cognitive-retrieval-v1.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mytrues-cognitive-retrieval-v1
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    steps:
+      - name: Clone isolated experiment branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth 1 --branch experiment/mytrues-dual-memory-ab https://github.com/appLaboware/FlowED.git repo
+
+      - name: Start clean TypeDB CE
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run -d --name mytrues-cognitive-retrieval-v1             -p 127.0.0.1:1729:1729             -p 127.0.0.1:8000:8000             typedb/typedb:3.12.1
+
+      - name: Install pinned TypeDB driver
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv /tmp/mytrues-bench-venv
+          /tmp/mytrues-bench-venv/bin/pip install -q 'typedb-driver==3.13.6'
+
+      - name: Materialize identical cognition in both stores
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd repo
+          base=Tools/MyTrues/experiments/cognitive-retrieval-v1
+          /tmp/mytrues-bench-venv/bin/python "$base/materialize.py"             --corpus "$base/corpus.json"             --provider-db /tmp/mytrues-provider-benchmark.sqlite | tee /tmp/materialize.log
+          grep -q MATERIALIZATION_PASS /tmp/materialize.log
+
+      - name: Blind retrieval — provider/reference
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd repo
+          base=Tools/MyTrues/experiments/cognitive-retrieval-v1
+          /tmp/mytrues-bench-venv/bin/python "$base/retrieve_provider.py"             --db /tmp/mytrues-provider-benchmark.sqlite             --questions "$base/questions.json"             --out /tmp/provider-answers.json
+
+      - name: Blind retrieval — Atom/Occurrence/Binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd repo
+          base=Tools/MyTrues/experiments/cognitive-retrieval-v1
+          /tmp/mytrues-bench-venv/bin/python "$base/retrieve_typedb.py"             --questions "$base/questions.json"             --out /tmp/typedb-answers.json
+
+      - name: Score only after both retrievals are complete
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd repo
+          base=Tools/MyTrues/experiments/cognitive-retrieval-v1
+          /tmp/mytrues-bench-venv/bin/python "$base/score.py"             --questions "$base/questions.json"             --answer-key "$base/answer-key.json"             --provider /tmp/provider-answers.json             --typedb /tmp/typedb-answers.json             --json-out /tmp/benchmark-report.json             --md-out /tmp/benchmark-report.md | tee /tmp/score.log
+          grep -q COGNITIVE_RETRIEVAL_BENCHMARK_COMPLETE /tmp/score.log
+
+      - name: Publish benchmark report to job summary
+        if: always()
+        shell: bash
+        run: |
+          if [ -f /tmp/benchmark-report.md ]; then
+            cat /tmp/benchmark-report.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo >> "$GITHUB_STEP_SUMMARY"
+          echo '## Runtime' >> "$GITHUB_STEP_SUMMARY"
+          docker inspect mytrues-cognitive-retrieval-v1 --format 'image={{.Config.Image}} status={{.State.Status}}' >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+
+      - name: Print machine-readable evidence
+        if: always()
+        shell: bash
+        run: |
+          test -f /tmp/benchmark-report.json && cat /tmp/benchmark-report.json || true
