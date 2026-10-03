@@ -10,6 +10,7 @@ import secrets
 import time
 import unicodedata
 import uuid
+import asyncio
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -19,9 +20,11 @@ import httpx
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from pydantic import BaseModel, Field
+import psycopg
 
 ROOT = Path(__file__).resolve().parent
 INDEX = ROOT / "index.html"
+LOGIN = ROOT / "login.html"
 
 OAUTH_BASE = os.getenv("OAUTH_BASE", "https://mcp.mytrues.io").rstrip("/")
 TYPEDB_URL = os.getenv(
@@ -33,6 +36,10 @@ TYPEDB_USERNAME = os.getenv("TYPEDB_USERNAME", "admin")
 TYPEDB_PASSWORD = os.environ["TYPEDB_PASSWORD"]
 SESSION_KEY = os.environ["READER_SESSION_KEY"].encode()
 MCP_CAPABILITY = os.environ.get("MCP_CAPABILITY", "")
+PORTAL_PREVIEW_CAPABILITY = os.environ.get("PORTAL_PREVIEW_CAPABILITY", "")
+PG_HOST = os.getenv("MYTRUES_POSTGRES_HOST", "mytrues-canonical-pg.postgres.database.azure.com")
+PG_DB = os.getenv("MYTRUES_POSTGRES_DB", "mytrues")
+PG_USER = os.getenv("MYTRUES_POSTGRES_USER", "mytrues-reader")
 PUBLIC_CALLBACKS = [
     x.strip()
     for x in os.getenv(
@@ -142,6 +149,20 @@ MCP_TOOLS = [
 ]
 
 
+class PersonCreate(BaseModel):
+    display_name: str = Field(min_length=1, max_length=120)
+    email: str = Field(min_length=3, max_length=240)
+    role: str = Field(default="member")
+
+
+class PersonStatus(BaseModel):
+    status: str = Field(pattern="^(active|disabled)$")
+
+
+class ClaimInvite(BaseModel):
+    code: str = Field(min_length=8, max_length=128)
+
+
 class OccurrenceCreate(BaseModel):
     subject: str = Field(min_length=1, max_length=240)
     statement: str = Field(min_length=3, max_length=4000)
@@ -218,6 +239,142 @@ def slug(text: str, limit: int = 80) -> str:
 
 def q(value: str) -> str:
     return '"' + value.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n") + '"'
+
+
+async def managed_identity_pg_token() -> str:
+    endpoint = os.getenv("IDENTITY_ENDPOINT")
+    header = os.getenv("IDENTITY_HEADER")
+    if not endpoint or not header:
+        raise RuntimeError("Azure managed identity is not available")
+    async with httpx.AsyncClient() as client:
+        r = await client.get(
+            endpoint,
+            params={"api-version": "2019-08-01", "resource": "https://ossrdbms-aad.database.windows.net"},
+            headers={"X-IDENTITY-HEADER": header},
+            timeout=15,
+        )
+        r.raise_for_status()
+        return r.json()["access_token"]
+
+
+def _pg_connect(token: str):
+    return psycopg.connect(
+        host=PG_HOST,
+        dbname=PG_DB,
+        user=PG_USER,
+        password=token,
+        sslmode="require",
+        connect_timeout=10,
+    )
+
+
+async def pg_call(fn):
+    token = await managed_identity_pg_token()
+    return await asyncio.to_thread(fn, token)
+
+
+async def portal_user_for_identity(subject: str, email: str | None, display: str):
+    def work(token: str):
+        with _pg_connect(token) as db:
+            row = db.execute(
+                """
+                SELECT u.user_id::text,u.display_name,u.email,u.status,a.role,a.memory_namespace
+                FROM mytrues_identities i
+                JOIN mytrues_users u ON u.user_id=i.user_id
+                JOIN mytrues_access a ON a.user_id=u.user_id
+                WHERE i.provider='google' AND i.subject=%s
+                """,
+                (subject,),
+            ).fetchone()
+            if row:
+                return row
+            if email:
+                row = db.execute(
+                    """
+                    SELECT u.user_id::text,u.display_name,u.email,u.status,a.role,a.memory_namespace
+                    FROM mytrues_users u JOIN mytrues_access a ON a.user_id=u.user_id
+                    WHERE lower(u.email)=lower(%s)
+                    """,
+                    (email,),
+                ).fetchone()
+                if row:
+                    db.execute(
+                        "INSERT INTO mytrues_identities(provider,subject,user_id) VALUES('google',%s,%s) ON CONFLICT DO NOTHING",
+                        (subject,row[0]),
+                    )
+                    return row
+            return None
+    return await pg_call(work)
+
+
+async def list_people():
+    def work(token: str):
+        with _pg_connect(token) as db:
+            rows = db.execute(
+                """
+                SELECT u.user_id::text,u.display_name,u.email,u.status,a.role,a.memory_namespace,u.created_at::text,
+                       EXISTS(SELECT 1 FROM mytrues_identities i WHERE i.user_id=u.user_id) AS claimed
+                FROM mytrues_users u JOIN mytrues_access a ON a.user_id=u.user_id
+                ORDER BY u.created_at DESC
+                """
+            ).fetchall()
+            return [
+                {"user_id":r[0],"display_name":r[1],"email":r[2],"status":r[3],"role":r[4],
+                 "memory_namespace":r[5],"created_at":r[6],"claimed":r[7]}
+                for r in rows
+            ]
+    return await pg_call(work)
+
+
+async def create_person_record(display_name: str, email: str, role: str):
+    if role not in {"member","admin"}:
+        raise HTTPException(status_code=400, detail="invalid role")
+    invite_code = secrets.token_urlsafe(18)
+    code_hash = hashlib.sha256(invite_code.encode()).hexdigest()
+    user_id = str(uuid.uuid4())
+    invite_id = str(uuid.uuid4())
+    namespace = "owner:" + user_id
+    def work(token: str):
+        with _pg_connect(token) as db:
+            db.execute(
+                "INSERT INTO mytrues_users(user_id,display_name,email,status) VALUES(%s,%s,%s,'active')",
+                (user_id,display_name.strip(),email.strip()),
+            )
+            db.execute(
+                "INSERT INTO mytrues_access(user_id,role,memory_namespace) VALUES(%s,%s,%s)",
+                (user_id,role,namespace),
+            )
+            db.execute(
+                "INSERT INTO mytrues_invites(invite_id,user_id,code_hash) VALUES(%s,%s,%s)",
+                (invite_id,user_id,code_hash),
+            )
+    await pg_call(work)
+    return {"user_id":user_id,"display_name":display_name.strip(),"email":email.strip(),"role":role,
+            "memory_namespace":namespace,"invite_code":invite_code}
+
+
+async def claim_invite(subject: str, code: str):
+    digest = hashlib.sha256(code.strip().encode()).hexdigest()
+    def work(token: str):
+        with _pg_connect(token) as db:
+            row = db.execute(
+                """
+                SELECT u.user_id::text,u.display_name,u.email,u.status,a.role,a.memory_namespace,i.invite_id::text
+                FROM mytrues_invites i
+                JOIN mytrues_users u ON u.user_id=i.user_id
+                JOIN mytrues_access a ON a.user_id=u.user_id
+                WHERE i.code_hash=%s AND i.status='active'
+                """,(digest,)
+            ).fetchone()
+            if not row:
+                return None
+            db.execute(
+                "INSERT INTO mytrues_identities(provider,subject,user_id) VALUES('google',%s,%s) ON CONFLICT DO NOTHING",
+                (subject,row[0]),
+            )
+            db.execute("UPDATE mytrues_invites SET status='claimed',claimed_at=now() WHERE invite_id=%s",(row[6],))
+            return row[:6]
+    return await pg_call(work)
 
 
 async def oauth_metadata(client: httpx.AsyncClient) -> dict[str, Any]:
@@ -320,7 +477,7 @@ async def transaction_finish(client: httpx.AsyncClient, token: str, tx: str, act
     r.raise_for_status()
 
 
-async def read_memory(query_text: str = "") -> list[dict[str, Any]]:
+async def read_memory(query_text: str = "", owner_id: str | None = None) -> list[dict[str, Any]]:
     async with httpx.AsyncClient(follow_redirects=True) as client:
         token = await typedb_access_token(client)
         binding_response = await typedb_query(
@@ -362,6 +519,10 @@ async def read_memory(query_text: str = "") -> list[dict[str, Any]]:
         event["type"] = (type_link or {}).get("value") or ""
 
     events = list(grouped.values())
+    if owner_id is None:
+        events = [e for e in events if not any(l["key"]=="key:owner" for l in e["links"])]
+    else:
+        events = [e for e in events if any(l["key"]=="key:owner" and l["value"]==owner_id for l in e["links"])]
     needle = query_text.strip().casefold()
     if needle:
         direct = set()
@@ -417,6 +578,7 @@ async def append_memory_occurrence(
     author_lexical: str = "MCP capability client",
     provenance_id: str = "source:mcp",
     provenance_lexical: str = "MyTrues Memory MCP",
+    owner_id: str | None = None,
 ) -> dict[str, Any]:
     subject = subject.strip()
     statement = statement.strip()
@@ -455,6 +617,9 @@ async def append_memory_occurrence(
         time_id: now,
         provenance_id: provenance_lexical,
     }
+    if owner_id:
+        atoms["key:owner"] = "owner"
+        atoms[owner_id] = owner_id
     if relation_key:
         atoms[relation_key] = relation_key.split(":", 1)[-1]
 
@@ -466,6 +631,8 @@ async def append_memory_occurrence(
         ("key:time", time_id),
         ("key:provenance", provenance_id),
     ]
+    if owner_id:
+        bindings.append(("key:owner", owner_id))
     if relation_key and related_occurrence:
         bindings.append((relation_key, related_occurrence))
 
@@ -513,7 +680,7 @@ async def append_memory_occurrence(
                 pass
             raise
 
-    created = await get_memory_occurrence(occ_id)
+    created = next((e for e in await read_memory("", owner_id=owner_id) if e["id"]==occ_id), None)
     return created or {"id": occ_id}
 
 
@@ -648,6 +815,11 @@ async def healthz():
 
 
 @app.get("/login")
+async def login_page():
+    return FileResponse(LOGIN)
+
+
+@app.get("/auth/start")
 async def login(request: Request):
     redirect_uri = callback_for(request)
     verifier = secrets.token_urlsafe(48)
@@ -664,6 +836,7 @@ async def login(request: Request):
                 "grant_types": ["authorization_code", "refresh_token"],
                 "response_types": ["code"],
                 "token_endpoint_auth_method": "none",
+                "application_type": "web",
             },
             timeout=20,
         )
@@ -735,14 +908,23 @@ async def auth_callback(request: Request, code: str | None = None, state: str | 
         or subject
     )
 
-    session = sign_payload(
-        {
-            "sub": subject,
-            "name": display,
-            "iat": int(time.time()),
-            "exp": time.time() + 8 * 3600,
-        }
-    )
+    email = claims.get("email")
+    portal = await portal_user_for_identity(subject, str(email) if email else None, display)
+    session_data = {
+        "sub": subject,
+        "name": display,
+        "email": email,
+        "iat": int(time.time()),
+        "exp": time.time() + 8 * 3600,
+    }
+    if portal:
+        session_data.update({
+            "user_id": portal[0], "name": portal[1], "email": portal[2],
+            "status": portal[3], "role": portal[4], "memory_namespace": portal[5],
+        })
+    else:
+        session_data["role"] = "unbound"
+    session = sign_payload(session_data)
     response = RedirectResponse("/", status_code=302)
     response.set_cookie(
         "mt_session",
@@ -763,17 +945,96 @@ async def logout():
     return response
 
 
+@app.get("/preview/{capability}")
+async def preview(capability: str):
+    if not PORTAL_PREVIEW_CAPABILITY or not hmac.compare_digest(capability, PORTAL_PREVIEW_CAPABILITY):
+        raise HTTPException(status_code=404)
+    session = sign_payload({
+        "sub":"preview-admin","name":"MyTrues Admin Preview","role":"admin","preview":True,
+        "iat":int(time.time()),"exp":time.time()+4*3600,
+    })
+    response=RedirectResponse("/",status_code=302)
+    response.set_cookie("mt_session",session,max_age=4*3600,httponly=True,secure=True,samesite="lax")
+    return response
+
+
 @app.get("/api/me")
 async def api_me(request: Request):
     user = require_user(request)
-    return {"authenticated": True, "sub": user["sub"], "name": user.get("name") or user["sub"]}
+    return {
+        "authenticated": True,
+        "sub": user["sub"],
+        "name": user.get("name") or user["sub"],
+        "email": user.get("email"),
+        "user_id": user.get("user_id"),
+        "role": user.get("role","unbound"),
+        "memory_namespace": user.get("memory_namespace"),
+        "preview": bool(user.get("preview")),
+    }
+
+
+@app.post("/api/claim")
+async def api_claim(request: Request, body: ClaimInvite):
+    user=require_user(request)
+    row=await claim_invite(str(user["sub"]),body.code)
+    if not row:
+        raise HTTPException(status_code=404,detail="convite inválido ou já utilizado")
+    response=JSONResponse({"ok":True})
+    session_data=dict(user)
+    session_data.update({"user_id":row[0],"name":row[1],"email":row[2],"status":row[3],"role":row[4],"memory_namespace":row[5]})
+    response.set_cookie("mt_session",sign_payload(session_data),max_age=8*3600,httponly=True,secure=True,samesite="lax")
+    return response
+
+
+@app.get("/api/people")
+async def api_people(request: Request):
+    user=require_user(request)
+    if user.get("role")!="admin":
+        raise HTTPException(status_code=403,detail="admin required")
+    return {"people":await list_people()}
+
+
+@app.post("/api/people")
+async def api_people_create(request: Request, body: PersonCreate):
+    user=require_user(request)
+    if user.get("role")!="admin":
+        raise HTTPException(status_code=403,detail="admin required")
+    try:
+        person=await create_person_record(body.display_name,body.email,body.role)
+    except Exception as exc:
+        if "duplicate" in str(exc).lower() or "unique" in str(exc).lower():
+            raise HTTPException(status_code=409,detail="email já cadastrado") from exc
+        raise
+    return JSONResponse(person,status_code=201)
+
+
+@app.patch("/api/people/{user_id}/status")
+async def api_people_status(user_id: str, request: Request, body: PersonStatus):
+    user=require_user(request)
+    if user.get("role")!="admin":
+        raise HTTPException(status_code=403,detail="admin required")
+    def work(token: str):
+        with _pg_connect(token) as db:
+            db.execute("UPDATE mytrues_users SET status=%s WHERE user_id=%s",(body.status,user_id))
+    await pg_call(work)
+    return {"ok":True}
 
 
 @app.get("/api/history")
-async def api_history(request: Request, q: str = ""):
-    require_user(request)
+async def api_history(request: Request, q: str = "", user_id: str | None = None):
+    user=require_user(request)
+    if user.get("role")=="unbound":
+        raise HTTPException(status_code=403,detail="claim required")
+    owner=user.get("memory_namespace")
+    if user.get("role")=="admin" and user_id:
+        people=await list_people()
+        match=next((p for p in people if p["user_id"]==user_id),None)
+        if not match: raise HTTPException(status_code=404,detail="person not found")
+        owner=match["memory_namespace"]
+    if not owner:
+        return {"events":[],"query":q}
     try:
-        return {"events": await read_memory(q), "query": q}
+        return {"events": await read_memory(q, owner_id=owner), "query": q}
     except Exception as exc:
         raise HTTPException(status_code=502, detail=f"memory query failed: {exc}") from exc
 
@@ -781,6 +1042,8 @@ async def api_history(request: Request, q: str = ""):
 @app.post("/api/occurrences")
 async def api_create_occurrence(request: Request, body: OccurrenceCreate):
     user = require_user(request)
+    if user.get("role")=="unbound" or not user.get("memory_namespace"):
+        raise HTTPException(status_code=403, detail="claim required")
     created = await append_memory_occurrence(
         subject=body.subject,
         statement=body.statement,
@@ -791,6 +1054,7 @@ async def api_create_occurrence(request: Request, body: OccurrenceCreate):
         author_lexical=str(user.get("name") or user["sub"]),
         provenance_id="source:reader",
         provenance_lexical="MyTrues Human Reader",
+        owner_id=str(user["memory_namespace"]),
     )
     return JSONResponse({"created": created, "id": created["id"]}, status_code=201)
 
