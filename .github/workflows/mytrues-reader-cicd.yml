@@ -83,8 +83,10 @@ jobs:
           base="https://raw.githubusercontent.com/appLaboware/FlowED/$GITHUB_SHA/Tools/MyTrues/typedb-poc-bridge/reader"
           curl -fsSL "$base/app.py" -o /tmp/app.py
           curl -fsSL "$base/index.html" -o /tmp/index.html
+          curl -fsSL "$base/login.html" -o /tmp/login.html
           python3 -m py_compile /tmp/app.py
-          grep -q '<title>MyTrues · Human Reader</title>' /tmp/index.html
+          grep -q '<title>MyTrues · Portal</title>' /tmp/index.html
+          grep -q '<title>MyTrues · acesso privado</title>' /tmp/login.html
           echo "READER_SOURCE_VALID"
 
       - name: Resolve runtime secrets
@@ -115,17 +117,29 @@ jobs:
               --value "$MCP_CAPABILITY" --only-show-errors -o none
           fi
 
+          PORTAL_PREVIEW="$(az keyvault secret show \
+            --vault-name "$vault" -n portal-preview-capability --query value -o tsv 2>/dev/null || true)"
+          if [ -z "$PORTAL_PREVIEW" ]; then
+            PORTAL_PREVIEW="$(openssl rand -hex 32)"
+            az keyvault secret set --vault-name "$vault" -n portal-preview-capability \
+              --value "$PORTAL_PREVIEW" --only-show-errors -o none
+          fi
+
           echo "::add-mask::$TYPEDB_PASSWORD"
           echo "::add-mask::$SESSION_KEY"
           echo "::add-mask::$MCP_CAPABILITY"
+          echo "::add-mask::$PORTAL_PREVIEW"
 
           az containerapp secret set -g "$rg" -n mytrues-reader \
-            --secrets "typedb-password=$TYPEDB_PASSWORD" "reader-session-key=$SESSION_KEY" "mcp-capability=$MCP_CAPABILITY" \
+            --secrets "typedb-password=$TYPEDB_PASSWORD" "reader-session-key=$SESSION_KEY" "mcp-capability=$MCP_CAPABILITY" "portal-preview-capability=$PORTAL_PREVIEW" \
             --only-show-errors -o none
 
           {
             echo "mcp_capability<<EOF"
             echo "$MCP_CAPABILITY"
+            echo "EOF"
+            echo "portal_preview<<EOF"
+            echo "$PORTAL_PREVIEW"
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
@@ -162,7 +176,8 @@ jobs:
                       "set -e; mkdir -p /app; " +
                       "wget -qO /app/app.py \"" + $source_base + "/app.py\"; " +
                       "wget -qO /app/index.html \"" + $source_base + "/index.html\"; " +
-                      "pip install --no-cache-dir fastapi==0.118.0 uvicorn==0.37.0 httpx==0.28.1 >/tmp/pip.log 2>&1; " +
+                      "wget -qO /app/login.html \"" + $source_base + "/login.html\"; " +
+                      "pip install --no-cache-dir fastapi==0.118.0 uvicorn==0.37.0 httpx==0.28.1 psycopg[binary]==3.2.3 >/tmp/pip.log 2>&1; " +
                       "cd /app; exec uvicorn app:app --host 0.0.0.0 --port 8000"
                     )],
                     env:[
@@ -174,6 +189,10 @@ jobs:
                       {name:"TYPEDB_PASSWORD",secretRef:"typedb-password"},
                       {name:"READER_SESSION_KEY",secretRef:"reader-session-key"},
                       {name:"MCP_CAPABILITY",secretRef:"mcp-capability"},
+                      {name:"PORTAL_PREVIEW_CAPABILITY",secretRef:"portal-preview-capability"},
+                      {name:"MYTRUES_POSTGRES_HOST",value:"mytrues-canonical-pg.postgres.database.azure.com"},
+                      {name:"MYTRUES_POSTGRES_DB",value:"mytrues"},
+                      {name:"MYTRUES_POSTGRES_USER",value:"mytrues-reader"},
                       {name:"PUBLIC_CALLBACKS",value:"https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io/auth/callback,https://reader.mytrues.io/auth/callback"}
                     ],
                     resources:{cpu:0.5,memory:"1Gi"}
@@ -227,6 +246,14 @@ jobs:
             sleep 4
           done
           test "$ok" = true
+
+          preview="${{ steps.runtime.outputs.portal_preview }}"
+          echo "::add-mask::$preview"
+          curl -fsS -c /tmp/cookies -L "$base/preview/$preview" -o /tmp/portal.html
+          grep -q 'Sua verdade tem história' /tmp/portal.html
+          curl -fsS -b /tmp/cookies "$base/api/me" | jq -e '.role=="admin" and .preview==true' >/dev/null
+          curl -fsS -b /tmp/cookies "$base/api/people" | jq -e '.people | type=="array"' >/dev/null
+          echo "PORTAL_PRIVATE_PREVIEW_PASS"
 
           unauth="$(curl -sS -o /tmp/noauth.json -w '%{http_code}' \
             -H 'content-type: application/json' \
