@@ -96,8 +96,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          az containerapp show -g rg-flowed-ideos-lab -n mytrues-mcp --query "{identity:identity.principalId,outboundCount:length(properties.outboundIpAddresses || `[]`),env:properties.template.containers[0].env[].{name:name,secretRef:secretRef},volumes:properties.template.volumes}" -o json
-          az containerapp env show -g rg-flowed-ideos-lab -n mytrues-memory-env --query "{outbound:properties.outboundIpAddresses,vnet:properties.vnetConfiguration}" -o json
+          az containerapp show -g rg-flowed-ideos-lab -n mytrues-mcp --query "{identity:identity.principalId,env:properties.template.containers[0].env[].{name:name,secretRef:secretRef},volumes:properties.template.volumes}" -o json
+          az containerapp env show -g rg-flowed-ideos-lab -n mytrues-memory-env --query "{vnet:properties.vnetConfiguration}" -o json
           az storage account list -g rg-flowed-ideos-lab --query "[].{name:name,kind:kind}" -o json
           az postgres flexible-server firewall-rule list -g rg-flowed-ideos-lab --server-name mytrues-canonical-pg --query "[].{name:name,start:startIpAddress,end:endIpAddress}" -o json
           curl --fail --silent --show-error https://mcp.mytrues.io/healthz
