@@ -1,0 +1,110 @@
+name: MyTrues canonical domain bind
+
+on:
+  push:
+    branches: [tools/ideos-lab]
+    paths: ['.github/workflows/mytrues-canonical-domain-bind.yml']
+  workflow_dispatch:
+  schedule:
+    - cron: '*/15 * * * *'
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AZURE_BUNDLE: \${{ secrets.AZURE }}
+
+jobs:
+  bind:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Resolve Azure
+        id: az
+        shell: bash
+        run: |
+          set -euo pipefail
+          extract(){ local key="$1"; printf '%s\n' "$AZURE_BUNDLE" | sed -nE "s/^[[:space:]]*(export[[:space:]]+)?\${key}[[:space:]]*[:=][[:space:]]*['\"]?([^'\"]+)['\"]?[[:space:]]*$/\\2/p" | tail -n1; }
+          CLIENT_ID="$(extract AZURE_CLIENT_ID)"; TENANT_ID="$(extract AZURE_TENANT_ID)"; SUBSCRIPTION_ID="$(extract AZURE_SUBSCRIPTION_ID)"
+          test -n "$CLIENT_ID" && test -n "$TENANT_ID" && test -n "$SUBSCRIPTION_ID"
+          echo "::add-mask::$CLIENT_ID"; echo "::add-mask::$TENANT_ID"; echo "::add-mask::$SUBSCRIPTION_ID"
+          echo "client=$CLIENT_ID" >> "$GITHUB_OUTPUT"; echo "tenant=$TENANT_ID" >> "$GITHUB_OUTPUT"; echo "sub=$SUBSCRIPTION_ID" >> "$GITHUB_OUTPUT"
+      - name: Azure login
+        shell: bash
+        run: |
+          set -euo pipefail
+          TOKEN="$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "\${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api://AzureADTokenExchange" | jq -r .value)"
+          echo "::add-mask::$TOKEN"
+          az login --service-principal --username "\${{ steps.az.outputs.client }}" --tenant "\${{ steps.az.outputs.tenant }}" --federated-token "$TOKEN" --allow-no-subscriptions -o none
+          az account set --subscription "\${{ steps.az.outputs.sub }}"
+      - name: Check authoritative DNS
+        id: dns
+        shell: bash
+        run: |
+          set -euo pipefail
+          rg=rg-flowed-ideos-lab
+          app=mytrues-reader
+          env=mytrues-memory-env
+          fqdn="$(az containerapp show -g "$rg" -n "$app" --query properties.configuration.ingress.fqdn -o tsv)"
+          verify="$(az containerapp show -g "$rg" -n "$app" --query properties.customDomainVerificationId -o tsv)"
+          ip="$(az containerapp env show -g "$rg" -n "$env" --query properties.staticIp -o tsv)"
+          auth="$(dig +short NS mytrues.io | head -n1)"
+          apex_a="$(dig +short A mytrues.io @"$auth" | head -n1)"
+          apex_txt="$(dig +short TXT asuid.mytrues.io @"$auth" | tr -d '"' | head -n1)"
+          reader_cname="$(dig +short CNAME reader.mytrues.io @"$auth" | sed 's/\.$//' | head -n1)"
+          reader_txt="$(dig +short TXT asuid.reader.mytrues.io @"$auth" | tr -d '"' | head -n1)"
+          echo "APEX_A=$apex_a"
+          echo "APEX_TXT=$apex_txt"
+          echo "READER_CNAME=$reader_cname"
+          echo "READER_TXT=$reader_txt"
+          apex=false; reader=false
+          [ "$apex_a" = "$ip" ] && [ "$apex_txt" = "$verify" ] && apex=true
+          [ "$reader_cname" = "$fqdn" ] && [ "$reader_txt" = "$verify" ] && reader=true
+          echo "apex=$apex" >> "$GITHUB_OUTPUT"
+          echo "reader=$reader" >> "$GITHUB_OUTPUT"
+          echo "EXPECTED_A=$ip"
+          echo "EXPECTED_TXT=$verify"
+          echo "EXPECTED_READER_CNAME=$fqdn"
+      - name: Bind canonical apex with managed TLS
+        if: steps.dns.outputs.apex == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          rg=rg-flowed-ideos-lab; app=mytrues-reader; env=mytrues-memory-env
+          host=mytrues.io
+          az containerapp hostname add -g "$rg" -n "$app" --hostname "$host" --only-show-errors -o none 2>/dev/null || true
+          az containerapp hostname bind -g "$rg" -n "$app" --hostname "$host" --environment "$env" --validation-method HTTP --only-show-errors -o none
+          echo "APEX_BOUND"
+      - name: Bind reader callback hostname with managed TLS
+        if: steps.dns.outputs.reader == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          rg=rg-flowed-ideos-lab; app=mytrues-reader; env=mytrues-memory-env
+          host=reader.mytrues.io
+          az containerapp hostname add -g "$rg" -n "$app" --hostname "$host" --only-show-errors -o none 2>/dev/null || true
+          az containerapp hostname bind -g "$rg" -n "$app" --hostname "$host" --environment "$env" --validation-method CNAME --only-show-errors -o none
+          echo "READER_BOUND"
+      - name: Verify canonical experience
+        if: steps.dns.outputs.apex == 'true' && steps.dns.outputs.reader == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 60); do
+            if curl -fsS --max-time 15 https://mytrues.io/ -o /tmp/home && curl -fsS --max-time 15 https://reader.mytrues.io/login -o /tmp/login; then break; fi
+            sleep 5
+          done
+          grep -q 'data-i18n="headline_a"' /tmp/home
+          grep -q 'class="access-mark"' /tmp/login
+          curl -sS -D /tmp/auth-h -o /dev/null https://mytrues.io/auth/start
+          code="$(awk 'toupper($1) ~ /^HTTP/ {c=$2} END{print c}' /tmp/auth-h)"
+          loc="$(awk 'BEGIN{IGNORECASE=1}/^location:/{sub(/^[^:]+:[[:space:]]*/,"");gsub(/\r/,"");print;exit}' /tmp/auth-h)"
+          test "$code" = "302"
+          printf '%s' "$loc" | grep -Fq 'redirect_uri=https%3A%2F%2Freader.mytrues.io%2Fauth%2Fcallback'
+          echo | openssl s_client -connect mytrues.io:443 -servername mytrues.io 2>/dev/null | openssl x509 -noout -ext subjectAltName >/tmp/apex-cert
+          echo | openssl s_client -connect reader.mytrues.io:443 -servername reader.mytrues.io 2>/dev/null | openssl x509 -noout -ext subjectAltName >/tmp/reader-cert
+          grep -Fq 'DNS:mytrues.io' /tmp/apex-cert
+          grep -Fq 'DNS:reader.mytrues.io' /tmp/reader-cert
+          echo "MYTRUES_CANONICAL_DOMAIN_PASS"
+          echo "MYTRUES_CANONICAL_AUTH_ENTRY_PASS"
