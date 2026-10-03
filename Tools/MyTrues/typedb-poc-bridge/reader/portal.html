@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css">
 <link rel="stylesheet" href="/assets/css/portal.css">
 </head>
-<body><div id="app" v-cloak>
+<body><canvas id="ambient" class="portal-ambient" aria-hidden="true"></canvas><div id="app" v-cloak>
 <div class="app">
 <header class="topbar"><div class="topinner">
  <div class="brand"><img src="/assets/mytrues-logo.png" alt=""><span class="word">MyTrues</span></div>
@@ -123,5 +123,6 @@
 </div></div>
 <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 <script src="/assets/js/i18n.js"></script>
+<script src="/assets/js/ambient.js"></script>
 <script src="/assets/js/portal.js"></script>
 </body></html>
