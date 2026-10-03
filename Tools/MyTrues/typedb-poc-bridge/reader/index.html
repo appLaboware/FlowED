@@ -10,18 +10,20 @@
   <style>
     :root{--paper:#f6f7f2;--ink:#18211c;--muted:#6c766e;--line:#dfe5df;--accent:#1f6a4d;--decision:#203f71;--corr:#8a4c15;--rel:#694a82}
     *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 5% 0,#e7f2ec,transparent 28rem),var(--paper);color:var(--ink);font-family:Inter,system-ui,sans-serif}
-    [v-cloak]{display:none}.page{max-width:1120px;margin:auto;padding:16px 14px 80px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{display:flex;gap:10px;align-items:center}.mark{width:38px;height:38px;border-radius:12px;background:#18211c;color:white;display:grid;place-items:center;font-weight:800}.muted{color:var(--muted)}
-    .hero{padding:28px 0 16px}.hero h1{font-size:clamp(30px,8vw,52px);line-height:1;margin:8px 0 12px;letter-spacing:-.045em}.lead{max-width:760px;font-size:16px;line-height:1.55}
+    [v-cloak]{display:none}.page{max-width:1120px;margin:auto;padding:16px 14px 96px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.brand{display:flex;gap:10px;align-items:center}.mark{width:38px;height:38px;border-radius:12px;background:#18211c;color:white;display:grid;place-items:center;font-weight:800}.muted{color:var(--muted)}
+    .who{display:flex;align-items:center;gap:8px;font-size:12px}.avatar{width:30px;height:30px;border-radius:50%;background:#e7f2ec;display:grid;place-items:center;font-weight:800;color:var(--accent)}
+    .hero{padding:28px 0 16px}.hero h1{font-size:clamp(30px,8vw,52px);line-height:1;margin:8px 0 12px;letter-spacing:-.045em}.lead{max-width:780px;font-size:16px;line-height:1.55}
     .search{position:sticky;top:8px;z-index:20;background:#f6f7f2dd;backdrop-filter:blur(10px);padding:8px 0 10px}.searchbox{background:white;border:1px solid var(--line);border-radius:18px;padding:7px;box-shadow:0 10px 28px #24302812}
     .chips{display:flex;gap:7px;overflow:auto;padding:8px 0 2px}.chip{border:1px solid var(--line);background:white;border-radius:999px;padding:8px 11px;font-size:12px;white-space:nowrap;cursor:pointer}.chip.active{background:var(--ink);border-color:var(--ink);color:white}
     .summary{display:grid;grid-template-columns:1fr;gap:10px;margin:14px 0}.card{background:#ffffffdd;border:1px solid var(--line);border-radius:18px;padding:15px;box-shadow:0 5px 20px #2430280a}.kicker{text-transform:uppercase;letter-spacing:.1em;font-size:10px;font-weight:800;color:var(--muted)}.big{font-size:24px;font-weight:800;margin-top:3px}
     .tabs{display:flex;gap:6px;margin:16px 0}.tab{flex:1;padding:10px;border-radius:12px;border:1px solid var(--line);background:white;font-weight:700}.tab.active{background:var(--ink);color:white}
     .timeline{position:relative;padding-left:28px}.timeline:before{content:"";position:absolute;left:8px;top:8px;bottom:8px;width:1px;background:var(--line)}.event{position:relative;margin:0 0 12px}.event:before{content:"";position:absolute;left:-26px;top:20px;width:11px;height:11px;border-radius:50%;background:white;border:3px solid var(--accent)}.event.decision:before{border-color:var(--decision)}.event.correction:before{border-color:var(--corr)}.event.relation:before{border-color:var(--rel)}
     .event-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.badge{display:inline-block;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:800;background:#e7f2ec;color:var(--accent)}.badge.decision{background:#eaf0fb;color:var(--decision)}.badge.correction{background:#fff0df;color:var(--corr)}.badge.relation{background:#f3ecf8;color:var(--rel)}.title{font-size:17px;font-weight:800;margin:10px 0 6px;line-height:1.25}.body{font-size:13px;line-height:1.55;color:#59635c}.time{font-size:11px;color:var(--muted);white-space:nowrap}
-    .why{margin-top:10px;border-top:1px solid #edf0ed;padding-top:10px;font-size:12px}.why summary{cursor:pointer;font-weight:700}.raw{display:grid;grid-template-columns:1fr;gap:5px;margin-top:8px}.raw-row{display:flex;justify-content:space-between;gap:12px;padding:6px 8px;background:#f7f8f5;border-radius:8px}.raw-key{color:var(--muted)}
+    .event-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.why{margin-top:10px;border-top:1px solid #edf0ed;padding-top:10px;font-size:12px}.why summary{cursor:pointer;font-weight:700}.raw{display:grid;grid-template-columns:1fr;gap:5px;margin-top:8px}.raw-row{display:flex;justify-content:space-between;gap:12px;padding:6px 8px;background:#f7f8f5;border-radius:8px}.raw-key{color:var(--muted)}
     .graph{overflow:auto}.graph svg{min-width:760px;width:100%;height:500px}.edge{stroke:#c9d2cc;stroke-width:1.5}.edge.strong{stroke:#718a7b;stroke-width:2.3}.node circle{fill:white;stroke:#9aad9f;stroke-width:1.5}.node.focus circle{fill:#18211c;stroke:#18211c}.node.focus text{fill:white}.node.decision circle{fill:#eaf0fb;stroke:#7188ac}.node.correction circle{fill:#fff0df;stroke:#b58b63}.node.relation circle{fill:#f3ecf8;stroke:#9f86b2}.node text{font-size:11px;fill:#273129;text-anchor:middle;dominant-baseline:middle}
     .empty{text-align:center;padding:42px 15px;border:1px dashed #cad4cc;border-radius:20px;color:var(--muted);background:#ffffff88}.footer{margin-top:30px;font-size:12px;color:var(--muted);line-height:1.5}
-    @media(min-width:760px){.page{padding:24px 24px 90px}.summary{grid-template-columns:repeat(3,1fr)}.raw{grid-template-columns:1fr 1fr}.tabs{width:420px}.event .card{padding:18px}}
+    .fab-wrap{position:fixed;right:18px;bottom:18px;z-index:30}.dialog-note{font-size:12px;line-height:1.5;color:var(--muted);margin:-4px 0 12px}
+    @media(min-width:760px){.page{padding:24px 24px 100px}.summary{grid-template-columns:repeat(3,1fr)}.raw{grid-template-columns:1fr 1fr}.tabs{width:420px}.event .card{padding:18px}.fab-wrap{right:28px;bottom:28px}}
   </style>
 </head>
 <body>
@@ -29,38 +31,55 @@
   <v-app>
     <main class="page">
       <div class="top">
-        <div class="brand"><div class="mark">MT</div><div><strong>MyTrues</strong><div class="muted" style="font-size:12px">Human Memory Reader · POC</div></div></div>
-        <div class="muted" style="font-size:11px">8 ocorrências · 45 ligações</div>
+        <div class="brand">
+          <div class="mark">MT</div>
+          <div><strong>MyTrues</strong><div class="muted" style="font-size:12px">Human Memory Reader</div></div>
+        </div>
+        <div class="who" v-if="me">
+          <div class="avatar">{{initials(me.name)}}</div>
+          <div><strong>{{me.name}}</strong><div><a href="/logout" class="muted">sair</a></div></div>
+        </div>
       </div>
 
       <section class="hero">
-        <div class="kicker">memória histórica pesquisável</div>
+        <div class="kicker">memória histórica autenticada</div>
         <h1>O que já aconteceu com isto?</h1>
-        <p class="lead muted">Digite parte de um termo. O MyTrues recompõe as ocorrências e as relações ligadas a ele em ordem histórica — sem transformar memória em uma única “resposta atual”.</p>
+        <p class="lead muted">Digite parte de um termo. O MyTrues recompõe as ocorrências e suas ligações históricas. Uma nova verdade nunca apaga a anterior: ela entra como uma nova ocorrência e pode continuar, corrigir, confirmar ou contradizer o que já existia.</p>
       </section>
 
       <section class="search">
         <div class="searchbox">
-          <v-text-field v-model="query" clearable hide-details variant="plain" prepend-inner-icon="mdi-magnify" placeholder="Ex.: npm, pnpm, schema, variável, influence…" @keyup.enter="activate"></v-text-field>
+          <v-text-field
+            v-model="query"
+            clearable
+            hide-details
+            variant="plain"
+            prepend-inner-icon="mdi-magnify"
+            placeholder="Ex.: npm, pnpm, schema, variável…"
+            :loading="loading"
+            @keyup.enter="search"
+          ></v-text-field>
         </div>
         <div class="chips">
-          <button class="chip" v-for="x in suggestions" :key="x" @click="query=x;activate()">{{x}}</button>
+          <button class="chip" v-for="x in suggestions" :key="x" @click="query=x;search()">{{x}}</button>
         </div>
       </section>
 
-      <section class="summary" v-if="related.length">
-        <div class="card"><div class="kicker">termo</div><div class="big">{{activeTerm}}</div><div class="muted" style="font-size:12px">busca parcial determinística</div></div>
-        <div class="card"><div class="kicker">história encontrada</div><div class="big">{{related.length}}</div><div class="muted" style="font-size:12px">ocorrências direta ou indiretamente relacionadas</div></div>
+      <section class="summary" v-if="events.length">
+        <div class="card"><div class="kicker">termo</div><div class="big">{{activeTerm || 'toda a memória'}}</div><div class="muted" style="font-size:12px">consulta live ao TypeDB</div></div>
+        <div class="card"><div class="kicker">história encontrada</div><div class="big">{{events.length}}</div><div class="muted" style="font-size:12px">ocorrências direta ou indiretamente relacionadas</div></div>
         <div class="card"><div class="kicker">leitura atual</div><div class="big" style="font-size:18px">{{reading.title}}</div><div class="muted" style="font-size:12px">{{reading.text}}</div></div>
       </section>
 
-      <div class="tabs" v-if="related.length">
+      <div class="tabs" v-if="events.length">
         <button class="tab" :class="{active:mode==='history'}" @click="mode='history'">História</button>
         <button class="tab" :class="{active:mode==='graph'}" @click="mode='graph'">Relações</button>
       </div>
 
-      <div class="chips" v-if="related.length">
-        <button v-for="f in filters" :key="f.id" class="chip" :class="{active:filter===f.id}" @click="filter=f.id">{{f.label}} <span v-if="f.id!=='all'">· {{countType(f.id)}}</span></button>
+      <div class="chips" v-if="events.length">
+        <button v-for="f in filters" :key="f.id" class="chip" :class="{active:filter===f.id}" @click="filter=f.id">
+          {{f.label}} <span v-if="f.id!=='all'">· {{countType(f.id)}}</span>
+        </button>
       </div>
 
       <section v-if="mode==='history' && filtered.length" class="timeline">
@@ -72,22 +91,28 @@
             </div>
             <div class="title">{{humanTitle(e)}}</div>
             <div class="body">{{humanBody(e)}}</div>
+            <div class="event-actions">
+              <v-btn size="small" variant="tonal" prepend-icon="mdi-source-branch" @click="continueFrom(e)">Continuar esta história</v-btn>
+            </div>
             <details class="why">
               <summary>Por que isso apareceu?</summary>
               <div class="raw">
-                <div class="raw-row" v-for="l in e.links" :key="l.key+l.value"><span class="raw-key">{{labelKey(l.key)}}</span><strong>{{labelValue(l.value)}}</strong></div>
+                <div class="raw-row" v-for="l in e.links" :key="l.key+l.value">
+                  <span class="raw-key">{{labelKey(l.key)}}</span>
+                  <strong>{{l.valueLexical || labelValue(l.value)}}</strong>
+                </div>
               </div>
             </details>
           </div>
         </article>
       </section>
 
-      <section v-if="mode==='graph' && related.length" class="card graph">
+      <section v-if="mode==='graph' && events.length" class="card graph">
         <div class="kicker">mapa humanizado</div>
-        <div class="title" style="margin-top:5px">“{{activeTerm}}” no centro; acontecimentos ao redor</div>
+        <div class="title" style="margin-top:5px">“{{activeTerm || 'memória'}}” no centro; acontecimentos ao redor</div>
         <svg viewBox="0 0 900 500">
-          <line v-for="n in graphNodes" :key="'e'+n.id" class="edge" :class="{strong:matches(n.e)}" x1="450" y1="250" :x2="n.x" :y2="n.y"/>
-          <g class="node focus"><circle cx="450" cy="250" r="62"/><text x="450" y="250">{{short(activeTerm,14)}}</text></g>
+          <line v-for="n in graphNodes" :key="'e'+n.id" class="edge" x1="450" y1="250" :x2="n.x" :y2="n.y"/>
+          <g class="node focus"><circle cx="450" cy="250" r="62"/><text x="450" y="250">{{short(activeTerm || 'memória',14)}}</text></g>
           <g v-for="n in graphNodes" :key="n.id" class="node" :class="bucket(n.e)">
             <circle :cx="n.x" :cy="n.y" r="46"/>
             <text :x="n.x" :y="n.y">{{short(nodeLabel(n.e),15)}}</text>
@@ -95,57 +120,208 @@
         </svg>
       </section>
 
-      <div v-if="!related.length" class="empty">Nenhuma ocorrência relacionada a “{{activeTerm}}” neste corpus do POC.</div>
+      <div v-if="!loading && !events.length" class="empty">Nenhuma ocorrência relacionada a “{{activeTerm}}”. Você pode registrar a primeira verdade sobre este assunto.</div>
 
       <div class="footer">
-        Este preview usa o corpus canônico do POC no navegador. A próxima etapa liga a busca ao TypeDB por um endpoint seguro; nenhuma credencial do banco será embutida nesta página.
+        A página exige autenticação. O navegador nunca recebe a senha do TypeDB. Escritas são append-only: cada cadastro cria uma nova ocorrência com autor, instante e proveniência.
       </div>
     </main>
+
+    <div class="fab-wrap">
+      <v-btn color="primary" size="large" rounded="xl" prepend-icon="mdi-plus" @click="openNew()">Nova verdade</v-btn>
+    </div>
+
+    <v-dialog v-model="dialog" max-width="680">
+      <v-card rounded="xl">
+        <v-card-title style="padding:22px 22px 8px">Registrar nova verdade</v-card-title>
+        <v-card-text style="padding:14px 22px">
+          <div class="dialog-note">Isto não altera nenhuma ocorrência anterior. O MyTrues acrescentará uma nova ocorrência à história.</div>
+          <v-text-field v-model="form.subject" label="Assunto / termo" variant="outlined" placeholder="Ex.: package manager"></v-text-field>
+          <v-textarea v-model="form.statement" label="O que passou a ser verdade para você?" variant="outlined" rows="4" auto-grow placeholder="Escreva a ocorrência em linguagem humana."></v-textarea>
+          <v-select v-model="form.kind" :items="kindItems" item-title="title" item-value="value" label="Natureza" variant="outlined"></v-select>
+          <v-select v-model="form.relation" :items="relationItems" item-title="title" item-value="value" label="Ligação com a história anterior" variant="outlined"></v-select>
+          <v-select
+            v-if="form.relation!=='none'"
+            v-model="form.related_occurrence"
+            :items="occurrenceItems"
+            item-title="title"
+            item-value="value"
+            label="Ocorrência relacionada"
+            variant="outlined"
+          ></v-select>
+        </v-card-text>
+        <v-card-actions style="padding:8px 22px 22px">
+          <v-spacer></v-spacer>
+          <v-btn variant="text" @click="dialog=false">Cancelar</v-btn>
+          <v-btn color="primary" :loading="saving" @click="saveTruth">Registrar ocorrência</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-snackbar v-model="snackbar" :timeout="4500">{{message}}</v-snackbar>
   </v-app>
 </div>
 
 <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vuetify@4.2.2/dist/vuetify.min.js"></script>
 <script>
-const memory=[
-{id:'occ:npm-failure-001',time:'2026-10-02T10:00:00-03:00',links:[['type','kind:use'],['actor','person:rold'],['action','action:npm-install'],['tool','tool:npm'],['context','project:alpha'],['outcome','outcome:dependency-error-x'],['provenance','source:terminal'],['conforms-to','schema:v1']]},
-{id:'occ:decision-pnpm-001',time:'2026-10-02T10:05:00-03:00',links:[['type','kind:decision'],['decider','person:rold'],['subject','subject:package-manager'],['selected','tool:pnpm'],['based-on','occ:npm-failure-001'],['provenance','source:human'],['conforms-to','schema:v1']]},
-{id:'occ:influence-001',time:'2026-10-02T10:05:00-03:00',links:[['type','kind:influence'],['source','occ:npm-failure-001'],['target','occ:decision-pnpm-001']]},
-{id:'occ:variable-alias-001',time:'2026-10-02T11:00:00-03:00',links:[['type','kind:variable-alias'],['scope','project:github-x'],['expected','variable:DATABASE_URL'],['actual','variable:MY_DATABASE'],['author','person:rold']]},
-{id:'occ:correction-001',time:'2026-10-02T11:10:00-03:00',links:[['type','kind:correction'],['corrects','occ:variable-alias-001'],['author','person:rold'],['reason','reason:prod-only-alias']]},
-{id:'occ:schema-evolution-001',time:'2026-10-02T12:00:00-03:00',links:[['type','kind:schema-evolution'],['from','schema:v1'],['to','schema:v2'],['introduced','concept:action']]},
-{id:'occ:semantic-declaration-001',time:'2026-10-02T12:00:00-03:00',links:[['type','kind:semantic-declaration'],['subject','kind:influence'],['is-a','kind:relation-kind']]},
-{id:'occ:relation-correction-001',time:'2026-10-02T12:00:00-03:00',links:[['type','kind:correction'],['corrects','occ:influence-001'],['author','person:rold']]}
-].map(e=>({...e,links:e.links.map(([key,value])=>({key,value}))}));
-
 const {createApp}=Vue; const {createVuetify}=Vuetify;
 createApp({
- data:()=>({query:'npm',activeTerm:'npm',mode:'history',filter:'all',memory,suggestions:['npm','pnpm','influence','schema','DATABASE_URL'],filters:[{id:'all',label:'Tudo'},{id:'experience',label:'Experiências'},{id:'decision',label:'Decisões'},{id:'relation',label:'Relações'},{id:'correction',label:'Correções'},{id:'schema',label:'Modelo'}]}),
- computed:{
-  direct(){const q=this.norm(this.activeTerm);return this.memory.filter(e=>this.hay(e).includes(q))},
-  related(){const ids=new Set(this.direct.map(e=>e.id));for(let i=0;i<3;i++)for(const e of this.memory){if(e.links.some(l=>ids.has(l.value))||e.links.some(l=>[...ids].some(id=>this.hay(this.byId(id)).includes(this.norm(l.value)))))ids.add(e.id)}return this.memory.filter(e=>ids.has(e.id)).sort((a,b)=>new Date(a.time)-new Date(b.time))},
-  filtered(){return this.related.filter(e=>this.filter==='all'||this.bucket(e)===this.filter)},
-  reading(){if(this.related.some(e=>this.bucket(e)==='correction'))return{title:'em evolução',text:'Há correções posteriores; a história original permanece visível.'};if(this.related.some(e=>this.bucket(e)==='decision'))return{title:'há decisão registrada',text:'Existe pelo menos uma decisão materializada ligada ao termo.'};return{title:'há memória',text:'Foram encontradas ocorrências relacionadas, sem decisão explícita neste recorte.'}},
-  graphNodes(){const a=this.filtered.slice(0,10),cx=450,cy=250,rx=320,ry=190;return a.map((e,i)=>{const ang=-Math.PI/2+i*2*Math.PI/Math.max(a.length,1);return{id:e.id,e,x:cx+Math.cos(ang)*rx,y:cy+Math.sin(ang)*ry}})}
- },
- methods:{
-  activate(){this.activeTerm=(this.query||'').trim();this.filter='all'},
-  byId(id){return this.memory.find(e=>e.id===id)||{id:'',links:[]}},
-  norm(v){return String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[_:-]+/g,' ')},
-  hay(e){return this.norm([e.id,...e.links.flatMap(l=>[l.key,l.value])].join(' '))},
-  val(e,k){return e.links.find(l=>l.key===k)?.value||''},
-  bucket(e){const t=this.val(e,'type');if(t.includes('decision'))return'decision';if(t.includes('correction'))return'correction';if(t.includes('influence')||t.includes('semantic-declaration'))return'relation';if(t.includes('schema'))return'schema';return'experience'},
-  humanType(e){return({decision:'decisão',correction:'correção',relation:'relação',schema:'modelo',experience:'experiência'})[this.bucket(e)]},
-  humanTitle(e){const id=e.id;if(id.includes('npm-failure'))return'npm foi usado e produziu um erro de dependência';if(id.includes('decision-pnpm'))return'Foi tomada a decisão de usar pnpm';if(id.includes('influence'))return'A falha com npm influenciou a decisão seguinte';if(id.includes('variable-alias'))return'Foi observada uma variável equivalente com outro nome';if(id==='occ:correction-001')return'A interpretação da variável recebeu uma correção posterior';if(id.includes('schema-evolution'))return'O modelo cognitivo evoluiu de v1 para v2';if(id.includes('semantic-declaration'))return'“Influência” entrou no patrimônio como conhecimento';if(id.includes('relation-correction'))return'A própria relação de influência recebeu uma correção';return id.replace('occ:','')},
-  humanBody(e){const id=e.id;if(id.includes('npm-failure'))return'No projeto Alpha, npm install terminou com dependency-error-x. A origem registrada foi o terminal.';if(id.includes('decision-pnpm'))return'Depois da ocorrência anterior, pnpm foi selecionado para o assunto package-manager. A decisão está marcada como humana.';if(id.includes('influence'))return'Esta ocorrência não reescreve as outras duas: ela materializa que uma foi considerada fonte de influência para a outra.';if(id.includes('variable-alias'))return'No projeto GitHub X, DATABASE_URL era esperada, mas MY_DATABASE apareceu como valor observado.';if(id==='occ:correction-001')return'Mais tarde foi registrado que o alias valia apenas em produção. A ocorrência anterior continua intacta.';if(id.includes('schema-evolution'))return'O schema cognitivo passou de v1 para v2 e introduziu action, sem migration do schema físico.';if(id.includes('semantic-declaration'))return'O próprio significado de influence passou a ser informação endereçável.';if(id.includes('relation-correction'))return'Uma nova ocorrência passou a apontar para a relação de influência, mostrando que relações também têm história.';return''},
-  labelKey(k){return({type:'tipo',actor:'ator',action:'ação',tool:'ferramenta',context:'contexto',outcome:'resultado',provenance:'origem','conforms-to':'modelo',decider:'quem decidiu',subject:'assunto',selected:'escolha','based-on':'baseada em',source:'origem da relação',target:'destino da relação',scope:'escopo',expected:'esperado',actual:'observado',author:'autor',reason:'motivo',corrects:'corrige',from:'de',to:'para',introduced:'introduziu','is-a':'é um'})[k]||k},
-  labelValue(v){return String(v).replace(/^occ:/,'').replace(/^[a-z-]+:/,'').replaceAll('-',' ')},
-  date(v){return new Date(v).toLocaleString('pt-BR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}).replace('.','')},
-  countType(t){return this.related.filter(e=>this.bucket(e)===t).length},
-  matches(e){return this.hay(e).includes(this.norm(this.activeTerm))},
-  nodeLabel(e){if(e.id.includes('npm-failure'))return'erro npm';if(e.id.includes('decision-pnpm'))return'usar pnpm';if(e.id.includes('influence'))return'influência';if(e.id.includes('correction'))return'correção';return e.id.replace('occ:','').replace('-001','')},
-  short(s,n){s=String(s||'');return s.length>n?s.slice(0,n-1)+'…':s}
- }
+  data:()=>({
+    me:null, query:'npm', activeTerm:'npm', events:[], loading:false, saving:false,
+    mode:'history', filter:'all', dialog:false, snackbar:false, message:'',
+    suggestions:['npm','pnpm','influence','schema','DATABASE_URL'],
+    filters:[
+      {id:'all',label:'Tudo'},{id:'experience',label:'Experiências'},
+      {id:'decision',label:'Decisões'},{id:'relation',label:'Relações'},
+      {id:'correction',label:'Correções'},{id:'schema',label:'Modelo'}
+    ],
+    kindItems:[
+      {title:'Verdade / afirmação',value:'truth'},
+      {title:'Observação',value:'observation'},
+      {title:'Decisão',value:'decision'},
+      {title:'Preferência',value:'preference'},
+      {title:'Correção',value:'correction'}
+    ],
+    relationItems:[
+      {title:'Sem ligação explícita',value:'none'},
+      {title:'Continua esta história',value:'continues'},
+      {title:'Corrige',value:'corrects'},
+      {title:'Confirma',value:'confirms'},
+      {title:'Contradiz',value:'contradicts'},
+      {title:'Baseia-se em',value:'based-on'},
+      {title:'Foi influenciada por',value:'influenced-by'}
+    ],
+    form:{subject:'',statement:'',kind:'truth',relation:'none',related_occurrence:null}
+  }),
+  computed:{
+    filtered(){return this.events.filter(e=>this.filter==='all'||this.bucket(e)===this.filter)},
+    reading(){
+      if(this.events.some(e=>this.bucket(e)==='correction')) return {title:'em evolução',text:'Há correções posteriores; a história original continua preservada.'};
+      if(this.events.some(e=>this.bucket(e)==='decision')) return {title:'há decisão registrada',text:'Existe pelo menos uma decisão materializada ligada ao termo.'};
+      return {title:'há memória',text:'O termo possui ocorrências históricas registradas.'};
+    },
+    graphNodes(){
+      const a=this.filtered.slice(0,10),cx=450,cy=250,rx=320,ry=190;
+      return a.map((e,i)=>{const ang=-Math.PI/2+i*2*Math.PI/Math.max(a.length,1);return{id:e.id,e,x:cx+Math.cos(ang)*rx,y:cy+Math.sin(ang)*ry}});
+    },
+    occurrenceItems(){
+      return [...this.events].reverse().map(e=>({value:e.id,title:this.short(this.humanTitle(e),70)}));
+    }
+  },
+  async mounted(){
+    await this.loadMe();
+    await this.search();
+  },
+  methods:{
+    async api(url,options={}){
+      const r=await fetch(url,{credentials:'same-origin',headers:{'Content-Type':'application/json',...(options.headers||{})},...options});
+      if(r.status===401){location.href='/login';throw new Error('auth');}
+      const data=await r.json().catch(()=>({}));
+      if(!r.ok) throw new Error(data.detail||('HTTP '+r.status));
+      return data;
+    },
+    async loadMe(){this.me=await this.api('/api/me')},
+    async search(){
+      this.activeTerm=(this.query||'').trim();
+      this.loading=true; this.filter='all';
+      try{
+        const data=await this.api('/api/history?q='+encodeURIComponent(this.activeTerm));
+        this.events=data.events||[];
+      }catch(e){this.toast('Falha ao ler memória: '+e.message)}
+      finally{this.loading=false}
+    },
+    openNew(){
+      this.form={subject:this.activeTerm||'',statement:'',kind:'truth',relation:'none',related_occurrence:null};
+      this.dialog=true;
+    },
+    continueFrom(e){
+      this.form={
+        subject:this.subjectOf(e)||this.activeTerm||'',
+        statement:'',
+        kind:'truth',
+        relation:'continues',
+        related_occurrence:e.id
+      };
+      this.dialog=true;
+    },
+    async saveTruth(){
+      if(!this.form.subject.trim()||this.form.statement.trim().length<3){this.toast('Informe o assunto e a nova verdade.');return}
+      this.saving=true;
+      try{
+        const data=await this.api('/api/occurrences',{method:'POST',body:JSON.stringify(this.form)});
+        this.dialog=false;
+        this.query=this.form.subject;
+        await this.search();
+        this.toast('Nova ocorrência registrada: '+data.id);
+      }catch(e){this.toast('Não foi possível registrar: '+e.message)}
+      finally{this.saving=false}
+    },
+    toast(s){this.message=s;this.snackbar=true},
+    initials(s){return String(s||'?').split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()},
+    link(e,key){return e.links.find(l=>l.key===key)},
+    val(e,key){const l=this.link(e,key);return l?(l.valueLexical||this.labelValue(l.value)):''},
+    idVal(e,key){return this.link(e,key)?.value||''},
+    subjectOf(e){return this.val(e,'key:subject')||this.val(e,'subject')},
+    bucket(e){
+      const t=e.type||this.idVal(e,'key:type')||this.idVal(e,'type');
+      if(String(t).includes('decision'))return'decision';
+      if(String(t).includes('correction'))return'correction';
+      if(String(t).includes('influence')||String(t).includes('semantic-declaration'))return'relation';
+      if(String(t).includes('schema'))return'schema';
+      return'experience';
+    },
+    humanType(e){return({decision:'decisão',correction:'correção',relation:'relação',schema:'modelo',experience:'experiência'})[this.bucket(e)]},
+    humanTitle(e){
+      const statement=this.val(e,'key:statement'); if(statement)return statement;
+      const id=e.id;
+      if(id.includes('npm-failure'))return'npm foi usado e produziu um erro de dependência';
+      if(id.includes('decision-pnpm'))return'Foi tomada a decisão de usar pnpm';
+      if(id.includes('influence'))return'A falha com npm influenciou a decisão seguinte';
+      if(id.includes('variable-alias'))return'Foi observada uma variável equivalente com outro nome';
+      if(id==='occ:correction-001')return'A interpretação da variável recebeu uma correção posterior';
+      if(id.includes('schema-evolution'))return'O modelo cognitivo evoluiu de v1 para v2';
+      if(id.includes('semantic-declaration'))return'“Influência” entrou no patrimônio como conhecimento';
+      if(id.includes('relation-correction'))return'A própria relação de influência recebeu uma correção';
+      return id.replace('occ:','');
+    },
+    humanBody(e){
+      const statement=this.val(e,'key:statement');
+      if(statement){
+        const subject=this.subjectOf(e);
+        const author=this.val(e,'key:author');
+        const rel=e.links.find(l=>['key:continues','key:corrects','key:confirms','key:contradicts','key:based-on','key:influenced-by'].includes(l.key));
+        let s=subject?'Assunto: '+subject+'. ':'';
+        if(rel)s+='Ligação: '+this.labelKey(rel.key)+' '+this.labelValue(rel.value)+'. ';
+        if(author)s+='Registrada por '+author+'.';
+        return s.trim();
+      }
+      const id=e.id;
+      if(id.includes('npm-failure'))return'No projeto Alpha, npm install terminou com dependency-error-x. A origem registrada foi o terminal.';
+      if(id.includes('decision-pnpm'))return'Depois da ocorrência anterior, pnpm foi selecionado para o assunto package-manager.';
+      if(id.includes('influence'))return'Esta ocorrência materializa que uma ocorrência foi considerada fonte de influência para outra.';
+      if(id.includes('variable-alias'))return'No projeto GitHub X, DATABASE_URL era esperada, mas MY_DATABASE apareceu como valor observado.';
+      if(id==='occ:correction-001')return'Mais tarde foi registrado que o alias valia apenas em produção. A ocorrência anterior continua intacta.';
+      if(id.includes('schema-evolution'))return'O schema cognitivo passou de v1 para v2 sem migration do schema físico.';
+      if(id.includes('semantic-declaration'))return'O próprio significado de influence passou a ser informação endereçável.';
+      if(id.includes('relation-correction'))return'Uma nova ocorrência passou a apontar para a relação de influência.';
+      return'';
+    },
+    labelKey(k){
+      const key=String(k).replace(/^key:/,'');
+      return({type:'tipo',actor:'ator',action:'ação',tool:'ferramenta',context:'contexto',outcome:'resultado',provenance:'origem','conforms-to':'modelo',decider:'quem decidiu',subject:'assunto',statement:'verdade',selected:'escolha','based-on':'baseia-se em',source:'origem da relação',target:'destino da relação',scope:'escopo',expected:'esperado',actual:'observado',author:'autor',reason:'motivo',corrects:'corrige',continues:'continua',confirms:'confirma',contradicts:'contradiz','influenced-by':'influenciada por',from:'de',to:'para',introduced:'introduziu','is-a':'é um',time:'instante'})[key]||key
+    },
+    labelValue(v){return String(v||'').replace(/^occ:/,'').replace(/^[a-z-]+:/,'').replaceAll('-',' ')},
+    date(v){
+      if(!v)return'';
+      const d=new Date(v); if(Number.isNaN(d.getTime()))return v;
+      return d.toLocaleString('pt-BR',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}).replace('.','');
+    },
+    countType(t){return this.events.filter(e=>this.bucket(e)===t).length},
+    nodeLabel(e){return this.val(e,'key:statement')||this.subjectOf(e)||this.humanTitle(e)},
+    short(s,n){s=String(s||'');return s.length>n?s.slice(0,n-1)+'…':s}
+  }
 }).use(createVuetify({theme:{defaultTheme:'light'}})).mount('#app');
 </script>
-</body></html>
+</body>
+</html>
