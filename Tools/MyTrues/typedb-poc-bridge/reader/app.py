@@ -43,6 +43,7 @@ SESSION_KEY = os.environ["READER_SESSION_KEY"].encode()
 MCP_CAPABILITY = os.environ.get("MCP_CAPABILITY", "")
 PORTAL_PREVIEW_CAPABILITY = os.environ.get("PORTAL_PREVIEW_CAPABILITY", "")
 PORTAL_ADMIN_BOOTSTRAP = os.environ.get("PORTAL_ADMIN_BOOTSTRAP", "")
+PORTAL_AUTH_ENABLED = os.getenv("PORTAL_AUTH_ENABLED", "false").lower() in {"1","true","yes","on"}
 PG_HOST = os.getenv("MYTRUES_POSTGRES_HOST", "mytrues-canonical-pg.postgres.database.azure.com")
 PG_DB = os.getenv("MYTRUES_POSTGRES_DB", "mytrues")
 PG_USER = os.getenv("MYTRUES_POSTGRES_USER", "mytrues-reader")
@@ -897,6 +898,8 @@ async def login_page():
 
 @app.get("/auth/start")
 async def login(request: Request):
+    if not PORTAL_AUTH_ENABLED:
+        return RedirectResponse("/login?status=unavailable", status_code=303)
     redirect_uri = callback_for(request)
     verifier = secrets.token_urlsafe(48)
     challenge = b64(hashlib.sha256(verifier.encode()).digest())
