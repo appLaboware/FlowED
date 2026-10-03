@@ -1,5 +1,4 @@
 (()=>{
-const SUPPORTED=['pt-BR','en'];
 const normalize=v=>String(v||'').toLowerCase().startsWith('pt')?'pt-BR':'en';
 const getLocale=()=>normalize(localStorage.getItem('mytrues.locale')||navigator.language||'pt-BR');
 const get=(obj,path,fallback='')=>path.split('.').reduce((a,k)=>a&&a[k]!==undefined?a[k]:undefined,obj)??fallback;
