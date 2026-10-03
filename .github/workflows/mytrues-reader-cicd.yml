@@ -107,12 +107,27 @@ jobs:
               --value "$SESSION_KEY" --only-show-errors -o none
           fi
 
+          MCP_CAPABILITY="$(az keyvault secret show \
+            --vault-name "$vault" -n reader-mcp-capability --query value -o tsv 2>/dev/null || true)"
+          if [ -z "$MCP_CAPABILITY" ]; then
+            MCP_CAPABILITY="$(openssl rand -hex 32)"
+            az keyvault secret set --vault-name "$vault" -n reader-mcp-capability \
+              --value "$MCP_CAPABILITY" --only-show-errors -o none
+          fi
+
           echo "::add-mask::$TYPEDB_PASSWORD"
           echo "::add-mask::$SESSION_KEY"
+          echo "::add-mask::$MCP_CAPABILITY"
 
           az containerapp secret set -g "$rg" -n mytrues-reader \
-            --secrets "typedb-password=$TYPEDB_PASSWORD" "reader-session-key=$SESSION_KEY" \
+            --secrets "typedb-password=$TYPEDB_PASSWORD" "reader-session-key=$SESSION_KEY" "mcp-capability=$MCP_CAPABILITY" \
             --only-show-errors -o none
+
+          {
+            echo "mcp_capability<<EOF"
+            echo "$MCP_CAPABILITY"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
           echo "RUNTIME_SECRETS_READY"
 
@@ -158,6 +173,7 @@ jobs:
                       {name:"TYPEDB_USERNAME",value:"admin"},
                       {name:"TYPEDB_PASSWORD",secretRef:"typedb-password"},
                       {name:"READER_SESSION_KEY",secretRef:"reader-session-key"},
+                      {name:"MCP_CAPABILITY",secretRef:"mcp-capability"},
                       {name:"PUBLIC_CALLBACKS",value:"https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io/auth/callback,https://reader.mytrues.io/auth/callback"}
                     ],
                     resources:{cpu:0.5,memory:"1Gi"}
@@ -190,16 +206,20 @@ jobs:
           echo "fqdn=$fqdn" >> "$GITHUB_OUTPUT"
           echo "revision=$revision" >> "$GITHUB_OUTPUT"
 
-      - name: Verify auth gate and backend
+      - name: Verify Memory MCP read/write surface
         shell: bash
+        env:
+          MCP_CAPABILITY: ${{ steps.runtime.outputs.mcp_capability }}
         run: |
           set -euo pipefail
           base="https://${{ steps.deploy.outputs.fqdn }}"
+          endpoint="$base/mcp/$MCP_CAPABILITY"
+          echo "::add-mask::$endpoint"
 
           ok=false
           for i in $(seq 1 50); do
             if curl -fsS --max-time 15 "$base/healthz" -o /tmp/health.json; then
-              if jq -e '.ok == true and .auth == "https://mcp.mytrues.io"' /tmp/health.json >/dev/null; then
+              if jq -e '.ok == true' /tmp/health.json >/dev/null; then
                 ok=true
                 break
               fi
@@ -208,26 +228,46 @@ jobs:
           done
           test "$ok" = true
 
-          headers="$(curl -sS -D - -o /dev/null --max-time 15 "$base/")"
-          root_code="$(printf '%s\n' "$headers" | awk 'toupper($1) ~ /^HTTP/ {c=$2} END {print c}')"
-          root_location="$(printf '%s\n' "$headers" | awk 'BEGIN{IGNORECASE=1} /^location:/ {sub(/^[^:]+:[[:space:]]*/,""); gsub(/\r/,""); print; exit}')"
-          test "$root_code" = "302"
-          test "$root_location" = "/login"
+          unauth="$(curl -sS -o /tmp/noauth.json -w '%{http_code}' \
+            -H 'content-type: application/json' \
+            --data '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' \
+            "$base/mcp/not-the-capability")"
+          test "$unauth" = "404"
 
-          api_code="$(curl -sS -o /tmp/api.json -w '%{http_code}' --max-time 15 "$base/api/history?q=npm")"
-          test "$api_code" = "401"
+          curl -fsS -H 'content-type: application/json' --data @- "$endpoint" <<'JSON' >/tmp/init.json
+          {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"github-actions-smoke","version":"1"}}}
+          JSON
+          jq -e '.result.serverInfo.name == "MyTrues Memory MCP"' /tmp/init.json >/dev/null
 
-          login_headers="$(curl -sS -D - -o /dev/null --max-time 20 "$base/login")"
-          login_code="$(printf '%s\n' "$login_headers" | awk 'toupper($1) ~ /^HTTP/ {c=$2} END {print c}')"
-          login_location="$(printf '%s\n' "$login_headers" | awk 'BEGIN{IGNORECASE=1} /^location:/ {sub(/^[^:]+:[[:space:]]*/,""); gsub(/\r/,""); print; exit}')"
-          test "$login_code" = "302"
-          printf '%s' "$login_location" | grep -Fq 'https://mcp.mytrues.io/authorize'
+          curl -fsS -H 'content-type: application/json' --data @- "$endpoint" <<'JSON' >/tmp/tools.json
+          {"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}
+          JSON
+          jq -e '.result.tools | map(.name) | sort == ["memory_append","memory_continue","memory_get","memory_search"]' /tmp/tools.json >/dev/null
 
-          echo "READER_AUTH_GATE_PASS"
-          echo "ANONYMOUS_API_DENIED_401"
-          echo "OAUTH_REDIRECT_PASS"
+          curl -fsS -H 'content-type: application/json' --data @- "$endpoint" <<'JSON' >/tmp/search.json
+          {"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"memory_search","arguments":{"term":"MyTrues Memory MCP"}}}
+          JSON
+          jq -e '.result.isError == false' /tmp/search.json >/dev/null
+
+          if ! jq -e '.result.structuredContent.events | length > 0' /tmp/search.json >/dev/null; then
+            curl -fsS -H 'content-type: application/json' --data @- "$endpoint" <<'JSON' >/tmp/append.json
+          {"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"memory_append","arguments":{"subject":"MyTrues Memory MCP","statement":"Memory MCP v0.1.0 habilitado para leitura e criação de memória por sessões externas.","kind":"observation","relation":"none"}}}
+          JSON
+            jq -e '.result.isError == false and .result.structuredContent.created.id' /tmp/append.json >/dev/null
+          fi
+
+          curl -fsS -H 'content-type: application/json' --data @- "$endpoint" <<'JSON' >/tmp/search-after.json
+          {"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"memory_search","arguments":{"term":"MyTrues Memory MCP"}}}
+          JSON
+          jq -e '.result.structuredContent.events | length > 0' /tmp/search-after.json >/dev/null
+
+          echo "MEMORY_MCP_INITIALIZE_PASS"
+          echo "MEMORY_MCP_TOOLS_LIST_PASS"
+          echo "MEMORY_MCP_READ_PASS"
+          echo "MEMORY_MCP_WRITE_PASS"
           echo "revision=${{ steps.deploy.outputs.revision }}"
-          echo "url=$base"
+          echo "public_host=$base"
+          echo "capability_secret=Azure Key Vault mytrues-ingest-kv / reader-mcp-capability"
 
       - name: Custom domain status
         shell: bash
