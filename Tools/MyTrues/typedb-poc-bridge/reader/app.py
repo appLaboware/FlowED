@@ -19,6 +19,7 @@ from urllib.parse import urlencode
 import httpx
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 import psycopg
 
@@ -26,6 +27,8 @@ ROOT = Path(__file__).resolve().parent
 INDEX = ROOT / "index.html"
 PORTAL = ROOT / "portal.html"
 LOGIN = ROOT / "login.html"
+ASSETS = ROOT / "assets"
+I18N = ROOT / "i18n"
 
 OAUTH_BASE = os.getenv("OAUTH_BASE", "https://mcp.mytrues.io").rstrip("/")
 TYPEDB_URL = os.getenv(
@@ -53,6 +56,8 @@ PUBLIC_CALLBACKS = [
 ]
 
 app = FastAPI(title="MyTrues Human Reader", docs_url=None, redoc_url=None)
+app.mount("/assets", StaticFiles(directory=ASSETS), name="assets")
+app.mount("/i18n", StaticFiles(directory=I18N), name="i18n")
 
 KIND_MAP = {
     "truth": "kind:truth",
@@ -895,22 +900,25 @@ async def login(request: Request):
     challenge = b64(hashlib.sha256(verifier.encode()).digest())
     state = secrets.token_urlsafe(24)
 
-    async with httpx.AsyncClient(follow_redirects=True) as client:
-        metadata = await oauth_metadata(client)
-        registration = await client.post(
-            metadata["registration_endpoint"],
-            json={
-                "client_name": "MyTrues Human Reader",
-                "redirect_uris": [redirect_uri],
-                "grant_types": ["authorization_code", "refresh_token"],
-                "response_types": ["code"],
-                "token_endpoint_auth_method": "none",
-                "application_type": "web",
-            },
-            timeout=20,
-        )
-        registration.raise_for_status()
-        client_id = registration.json()["client_id"]
+    try:
+        async with httpx.AsyncClient(follow_redirects=True) as client:
+            metadata = await oauth_metadata(client)
+            registration = await client.post(
+                metadata["registration_endpoint"],
+                json={
+                    "client_name": "MyTrues Portal",
+                    "redirect_uris": [redirect_uri],
+                    "grant_types": ["authorization_code", "refresh_token"],
+                    "response_types": ["code"],
+                    "token_endpoint_auth_method": "none",
+                    "application_type": "web",
+                },
+                timeout=20,
+            )
+            registration.raise_for_status()
+            client_id = registration.json()["client_id"]
+    except Exception:
+        return RedirectResponse("/login?status=unavailable", status_code=303)
 
     tx = sign_payload(
         {
@@ -942,16 +950,16 @@ async def login(request: Request):
     )
     return response
 
-
 @app.get("/auth/callback")
 async def auth_callback(request: Request, code: str | None = None, state: str | None = None):
     tx = read_payload(request.cookies.get("mt_oauth_tx"))
     if not tx or not code or not state or state != tx.get("state"):
-        raise HTTPException(status_code=400, detail="invalid oauth transaction")
+        return RedirectResponse("/login?status=unavailable", status_code=303)
 
-    async with httpx.AsyncClient(follow_redirects=True) as client:
-        metadata = await oauth_metadata(client)
-        token_response = await client.post(
+    try:
+        async with httpx.AsyncClient(follow_redirects=True) as client:
+            metadata = await oauth_metadata(client)
+            token_response = await client.post(
             metadata["token_endpoint"],
             data={
                 "grant_type": "authorization_code",
@@ -963,8 +971,10 @@ async def auth_callback(request: Request, code: str | None = None, state: str | 
             },
             timeout=20,
         )
-        token_response.raise_for_status()
-        token_data = token_response.json()
+            token_response.raise_for_status()
+            token_data = token_response.json()
+    except Exception:
+        return RedirectResponse("/login?status=unavailable", status_code=303)
 
     access_token = token_data.get("access_token") or ""
     id_token = token_data.get("id_token") or ""
@@ -994,7 +1004,7 @@ async def auth_callback(request: Request, code: str | None = None, state: str | 
     else:
         session_data["role"] = "unbound"
     session = sign_payload(session_data)
-    response = RedirectResponse("/", status_code=302)
+    response = RedirectResponse("/app", status_code=302)
     response.set_cookie(
         "mt_session",
         session,
