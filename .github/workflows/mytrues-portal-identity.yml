@@ -159,16 +159,28 @@ jobs:
                       claimed_at TIMESTAMPTZ
                     )
                   """)
+                  db.execute("""
+                    CREATE TABLE IF NOT EXISTS mytrues_interest(
+                      interest_id UUID PRIMARY KEY,
+                      display_name TEXT NOT NULL CHECK(length(display_name) BETWEEN 1 AND 120),
+                      email TEXT NOT NULL,
+                      source TEXT NOT NULL DEFAULT 'public-site',
+                      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+                      updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+                    )
+                  """)
+                  db.execute("CREATE UNIQUE INDEX IF NOT EXISTS mytrues_interest_email_lower_uq ON mytrues_interest(lower(email))")
 
                   db.execute('GRANT CONNECT ON DATABASE mytrues TO "mytrues-reader"')
                   db.execute('GRANT USAGE ON SCHEMA public TO "mytrues-reader"')
-                  db.execute('GRANT SELECT,INSERT,UPDATE ON mytrues_users,mytrues_access,mytrues_invites TO "mytrues-reader"')
+                  db.execute('GRANT SELECT,INSERT,UPDATE ON mytrues_users,mytrues_access,mytrues_invites,mytrues_interest TO "mytrues-reader"')
                   db.execute('GRANT SELECT,INSERT ON mytrues_identities TO "mytrues-reader"')
 
                   checks={
                     "mytrues_users":("SELECT","INSERT","UPDATE"),
                     "mytrues_access":("SELECT","INSERT","UPDATE"),
                     "mytrues_invites":("SELECT","INSERT","UPDATE"),
+                    "mytrues_interest":("SELECT","INSERT","UPDATE"),
                     "mytrues_identities":("SELECT","INSERT"),
                   }
                   for table,privs in checks.items():
