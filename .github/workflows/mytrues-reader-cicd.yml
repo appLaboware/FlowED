@@ -169,14 +169,37 @@ jobs:
               --value "$ADMIN_BOOTSTRAP" --only-show-errors -o none
           fi
 
+          OAUTH_CLIENT_ID="$(az keyvault secret show \
+            --vault-name "$vault" -n portal-oauth-client-id --query value -o tsv 2>/dev/null || true)"
+          if [ -z "$OAUTH_CLIENT_ID" ]; then
+            payload="$(jq -nc '{
+              client_name:"MyTrues Portal",
+              redirect_uris:[
+                "https://reader.mytrues.io/auth/callback",
+                "https://mytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io/auth/callback"
+              ],
+              grant_types:["authorization_code","refresh_token"],
+              response_types:["code"],
+              token_endpoint_auth_method:"none",
+              application_type:"web"
+            }')"
+            code="$(curl -sS -o /tmp/oauth-reg -w '%{http_code}' -H 'content-type: application/json' --data "$payload" https://mcp.mytrues.io/register)"
+            test "$code" = "200" -o "$code" = "201"
+            OAUTH_CLIENT_ID="$(jq -r .client_id /tmp/oauth-reg)"
+            test -n "$OAUTH_CLIENT_ID" && test "$OAUTH_CLIENT_ID" != null
+            az keyvault secret set --vault-name "$vault" -n portal-oauth-client-id \
+              --value "$OAUTH_CLIENT_ID" --only-show-errors -o none
+          fi
+
           echo "::add-mask::$TYPEDB_PASSWORD"
           echo "::add-mask::$SESSION_KEY"
           echo "::add-mask::$MCP_CAPABILITY"
           echo "::add-mask::$PORTAL_PREVIEW"
           echo "::add-mask::$ADMIN_BOOTSTRAP"
+          echo "::add-mask::$OAUTH_CLIENT_ID"
 
           az containerapp secret set -g "$rg" -n mytrues-reader \
-            --secrets "typedb-password=$TYPEDB_PASSWORD" "reader-session-key=$SESSION_KEY" "mcp-capability=$MCP_CAPABILITY" "portal-preview-capability=$PORTAL_PREVIEW" "portal-admin-bootstrap=$ADMIN_BOOTSTRAP" \
+            --secrets "typedb-password=$TYPEDB_PASSWORD" "reader-session-key=$SESSION_KEY" "mcp-capability=$MCP_CAPABILITY" "portal-preview-capability=$PORTAL_PREVIEW" "portal-admin-bootstrap=$ADMIN_BOOTSTRAP" "portal-oauth-client-id=$OAUTH_CLIENT_ID" \
             --only-show-errors -o none
 
           {
@@ -254,7 +277,9 @@ jobs:
                     env:[
                       {name:"READER_GIT_SHA",value:$sha},
                       {name:"OAUTH_BASE",value:"https://mcp.mytrues.io"},
-                      {name:"PORTAL_AUTH_ENABLED",value:"false"},
+                      {name:"OAUTH_CLIENT_ID",secretRef:"portal-oauth-client-id"},
+                      {name:"PORTAL_AUTH_ENABLED",value:"true"},
+                      {name:"CANONICAL_URL",value:"https://mytrues.io"},
                       {name:"TYPEDB_URL",value:"https://mytrues-tdb-e2f9605d-eastus2.eastus2.cloudapp.azure.com"},
                       {name:"TYPEDB_DB",value:"mytrues_memory_poc_v0"},
                       {name:"TYPEDB_USERNAME",value:"admin"},
@@ -361,12 +386,16 @@ jobs:
           test "$login_code" = "200"
           grep -q 'class="access-mark"' /tmp/login.html
 
-          auth_code="$(curl -sS -L -o /tmp/auth.html -w '%{http_code}' --max-time 30 "$base/auth/start" || true)"
-          test "$auth_code" != "500"
+          curl -sS -D /tmp/auth-h -o /dev/null --max-time 30 "$base/auth/start"
+          auth_code="$(awk 'toupper($1) ~ /^HTTP/ {c=$2} END{print c}' /tmp/auth-h)"
+          auth_loc="$(awk 'BEGIN{IGNORECASE=1}/^location:/{sub(/^[^:]+:[[:space:]]*/,"");gsub(/\r/,"");print;exit}' /tmp/auth-h)"
+          test "$auth_code" = "302"
+          printf '%s' "$auth_loc" | grep -Fq 'https://mcp.mytrues.io/authorize?'
+          printf '%s' "$auth_loc" | grep -Fq 'redirect_uri=https%3A%2F%2Fmytrues-reader.ambitioushill-c7dc3aef.brazilsouth.azurecontainerapps.io%2Fauth%2Fcallback'
           echo "PUBLIC_TEASER_PASS"
           echo "LOCAL_LOGO_PASS"
           echo "PRIVATE_MARKS_ONLY_PASS"
-          echo "AUTH_NO_500_PASS"
+          echo "GOOGLE_AUTH_ENTRY_PASS"
 
           preview="${{ steps.runtime.outputs.portal_preview }}"
           echo "::add-mask::$preview"
